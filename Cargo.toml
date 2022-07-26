@@ -1,0 +1,26 @@
+# https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[package]
+name                        = "win32_security_playground"
+version                     = "0.0.0-git"
+publish                     = false
+authors                     = ["MaulingMonkey <git@maulingmonkey.com>"]
+edition                     = "2021"
+license                     = "Apache-2.0 OR MIT"
+readme                      = "Readme.md"
+
+[dependencies]
+
+[target.'cfg(windows)'.dependencies]
+winapi.version = "0.3"
+winapi.features = [
+    # shared
+    "winerror",
+
+    # um
+    "errhandlingapi",
+    "handleapi",
+    "processthreadsapi",
+    "securitybaseapi",
+    "winnt",
+]
