@@ -33,7 +33,7 @@ impl AccessToken {
         assert!(!process.is_null(), "GetCurrentProcess");
 
         let mut new = null_mut();
-        let success = 0 != unsafe { DuplicateHandle(process, handle, process, &mut new, DUPLICATE_SAME_ACCESS, false as _, 0) };
+        let success = 0 != unsafe { DuplicateHandle(process, handle, process, &mut new, 0, false as _, DUPLICATE_SAME_ACCESS) };
         assert!(success, "DuplicateHandle GetLastError()={}", get_last_error());
         // N.B. handle != new - this isn't refcounting per se
 
