@@ -8,6 +8,10 @@ pub mod handle {
     mod psuedo_access_token;        pub use psuedo_access_token::*;
 }
 
+pub mod refs {
+    mod sid;                        pub use sid::*;
+}
+
 pub(crate) use util::*;
 mod util {
     mod bits32;                     pub(crate) use bits32::*;

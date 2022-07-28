@@ -1,5 +1,6 @@
 use crate::error::{get_last_error, LastError};
 use crate::From32;
+use crate::refs::SidAndAttributes;
 
 use winapi::shared::winerror::*;
 
@@ -49,7 +50,7 @@ impl AccessToken {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenUser, ...)`
     pub fn get_token_user(&self) -> Result<impl Deref<Target = TOKEN_USER>, LastError> { unsafe { self.get_token_information_raw_header(TokenUser) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenGroups, ...)`
-    pub fn get_token_groups(&self) -> Result<impl Deref<Target=[SID_AND_ATTRIBUTES]>, LastError> { unsafe { self.get_token_information_raw_u32_headers(TokenGroups) } }
+    pub fn get_token_groups(&self) -> Result<BoxTokenGroups, LastError> { unsafe { Ok(BoxTokenGroups::from_raw(self.get_token_information_raw_bytes(TokenGroups)?)) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenPrivileges, ...)`
     pub fn get_token_privileges(&self) -> Result<impl Deref<Target=[LUID_AND_ATTRIBUTES]>, LastError> { unsafe { self.get_token_information_raw_u32_headers(TokenPrivileges) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenOwner, ...)`
@@ -109,11 +110,11 @@ impl AccessToken {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenMandatoryPolicy, ...)`
     pub fn get_token_mandatory_policy(&self) -> Result<TOKEN_MANDATORY_POLICY, LastError> { unsafe { self.get_token_information_raw_fixed(TokenMandatoryPolicy) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenLogonSid, ...)`
-    pub fn get_token_login_sid(&self) -> Result<impl Deref<Target=[SID_AND_ATTRIBUTES]>, LastError> { unsafe { self.get_token_information_raw_u32_headers(TokenLogonSid) } }
+    pub fn get_token_login_sid(&self) -> Result<BoxTokenGroups, LastError> { unsafe { Ok(BoxTokenGroups::from_raw(self.get_token_information_raw_bytes(TokenLogonSid)?)) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenIsAppContainer, ...)`
     pub fn get_token_is_app_container(&self) -> Result<bool, LastError> { unsafe { self.get_token_information_raw_bool(TokenIsAppContainer) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenCapabilities, ...)`
-    pub fn get_token_capabilities(&self) -> Result<impl Deref<Target=[SID_AND_ATTRIBUTES]>, LastError> { unsafe { self.get_token_information_raw_u32_headers(TokenCapabilities) } }
+    pub fn get_token_capabilities(&self) -> Result<BoxTokenGroups, LastError> { unsafe { Ok(BoxTokenGroups::from_raw(self.get_token_information_raw_bytes(TokenCapabilities)?)) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenAppContainerSid, ...)`
     pub fn get_token_app_container_sid(&self) -> Result<impl Deref<Target=TOKEN_APPCONTAINER_INFORMATION>, LastError> { unsafe { self.get_token_information_raw_header(TokenAppContainerSid) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenAppContainerNumber, ...)`
@@ -125,16 +126,16 @@ impl AccessToken {
     // RESERVED: TokenRestrictedUserClaimAttributes
     // RESERVED: TokenRestrictedDeviceClaimAttributes
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenDeviceGroups, ...)`
-    pub fn get_token_device_groups(&self) -> Result<impl Deref<Target=[SID_AND_ATTRIBUTES]>, LastError> { unsafe { self.get_token_information_raw_u32_headers(TokenDeviceGroups) } }
+    pub fn get_token_device_groups(&self) -> Result<BoxTokenGroups, LastError> { unsafe { Ok(BoxTokenGroups::from_raw(self.get_token_information_raw_bytes(TokenDeviceGroups)?)) } }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\]
     /// `GetTokenInformation(self, TokenRestrictedDeviceGroups, ...)`
     ///
     /// ### Errors
     /// *   `ERROR_INVALID_PARAMETER`   If `self` is a primary token instead of an impersonation token?
-    pub fn get_token_restricted_device_groups(&self) -> Result<impl Deref<Target=[SID_AND_ATTRIBUTES]>, LastError> {
+    pub fn get_token_restricted_device_groups(&self) -> Result<BoxTokenGroups, LastError> {
         // XXX: Return Option<...> instead?
-        unsafe { self.get_token_information_raw_u32_headers(TokenRestrictedDeviceGroups) }
+        unsafe { Ok(BoxTokenGroups::from_raw(self.get_token_information_raw_bytes(TokenRestrictedDeviceGroups)?)) }
     }
 
     // RESERVED: TokenSecurityAttributes
@@ -379,5 +380,45 @@ impl AccessToken {
             }
         }
         Ok(R(bytes, PhantomData))
+    }
+}
+
+
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_groups)\] ~ `Box<(TOKEN_GROUPS, ..)>`
+pub struct BoxTokenGroups(Box<[u8]>);
+
+impl BoxTokenGroups {
+    pub unsafe fn from_raw(bytes: Box<[u8]>) -> Self {
+        assert!(bytes.len() >= 4);
+        let btg = Self(bytes);
+        assert!(usize::from32(btg.group_count()) <= (btg.0.len()-Self::GROUPS_OFFSET)/size_of::<SidAndAttributes>());
+        assert!(btg.groups_ptr() as usize % Self::GROUPS_ALIGN == 0);
+        btg
+    }
+
+    pub fn group_count(&self) -> u32 {
+        let b = &*self.0;
+        u32::from_ne_bytes([b[0], b[1], b[2], b[3]])
+    }
+
+    pub fn groups<'s>(&'s self) -> &'s [SidAndAttributes<'s>] {
+        unsafe { std::slice::from_raw_parts(self.groups_ptr(), usize::from32(self.group_count())) }
+    }
+
+    fn groups_ptr<'s>(&'s self) -> *const SidAndAttributes<'s> {
+        self.0[Self::GROUPS_OFFSET..].as_ptr().cast()
+    }
+
+    const fn max_usize(a: usize, b: usize) -> usize { if a < b { b } else { a } }
+    const GROUPS_ALIGN  : usize = Self::max_usize(align_of::<u32>(), align_of::<SidAndAttributes>());
+    const GROUPS_OFFSET : usize = Self::max_usize(size_of ::<u32>(), align_of::<SidAndAttributes>());
+}
+
+impl Debug for BoxTokenGroups {
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+        fmt.debug_list()
+            .entries(self.groups().iter())
+            .finish()
     }
 }

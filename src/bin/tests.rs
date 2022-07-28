@@ -23,7 +23,7 @@ fn main() {
         dbg!(u.User.Sid);
         dbg!(u.User.Sid as usize - &*u as *const winapi::um::winnt::TOKEN_USER as usize); // 16 into 44 byte buffer, showing Sid is self-referential within the byte buffer.
     }).map_err(|err_get_token_user| dbg!(err_get_token_user));
-    dbg!(t.get_token_groups().map(|g| g.len()));
+    dbg!(t.get_token_groups());
     dbg!(t.get_token_privileges().map(|g| g.len()));
     dbg!(t.get_token_owner().map(|o| o.Owner));
     dbg!(t.get_token_primary_group().map(|pg| pg.PrimaryGroup)); // ???
@@ -47,13 +47,13 @@ fn main() {
     dbg!(t.get_token_integrity_level().map(|i| i.Label.Attributes)); // Sid
     dbg!(t.get_token_ui_access());
     dbg!(t.get_token_mandatory_policy().map(|p| p.Policy));
-    dbg!(t.get_token_login_sid().map(|l| l.len()));
+    dbg!(t.get_token_login_sid());
     dbg!(t.get_token_is_app_container());
-    dbg!(t.get_token_capabilities().map(|c| c.len()));
+    dbg!(t.get_token_capabilities());
     dbg!(t.get_token_app_container_sid().map(|s| s.TokenAppContainer));
     dbg!(t.get_token_app_container_number());
     dbg!(t.get_token_user_claim_attributes().map(|a| a.AttributeCount));
     dbg!(t.get_token_device_claim_attributes().map(|a| a.AttributeCount));
-    dbg!(t.get_token_device_groups().map(|g| g.len()));
-    dbg!(t.get_token_restricted_device_groups().map(|g| g.len()));
+    dbg!(t.get_token_device_groups());
+    dbg!(t.get_token_restricted_device_groups());
 }
