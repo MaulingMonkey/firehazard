@@ -3,9 +3,25 @@
 version = 3
 
 [[package]]
+name = "abistr"
+version = "0.2.0-rc1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bff0cfced5a7d2a8b05b1fe7cd630825db4ebe649dfc67d7c1976275581b5cad"
+dependencies = [
+ "abistr-macros",
+]
+
+[[package]]
+name = "abistr-macros"
+version = "0.2.0-rc1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8fb0f08069dac4bea393d14e4178e88172739e2d3abfca31e6a1d550684d37a0"
+
+[[package]]
 name = "win32_security_playground"
 version = "0.0.0-git"
 dependencies = [
+ "abistr",
  "winapi",
 ]
 
