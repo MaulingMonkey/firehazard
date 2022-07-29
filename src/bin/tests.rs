@@ -9,6 +9,13 @@ fn main() {
     let t = t.clone();
 
     macro_rules! dbg { ($expr:expr) => { println!("{}:{} {} = {:?}", file!(), line!(), stringify!($expr), $expr) }; }
+    macro_rules! dbgl { ($expr:expr) => {{
+        println!("{}:{} {} = [", file!(), line!(), stringify!($expr));
+        for e in $expr {
+            println!("    {:?},", e);
+        }
+        println!("]");
+    }}}
 
     // https://docs.rs/winapi/latest/src/winapi/shared/winerror.rs.html
     dbg!(ERROR_INVALID_PARAMETER);      // 87
@@ -18,8 +25,8 @@ fn main() {
 
     // https://docs.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-token_information_class
     dbg!(t.get_token_user());
-    dbg!(t.get_token_groups());
-    dbg!(t.get_token_privileges());
+    dbgl!(t.get_token_groups().unwrap().groups());
+    dbgl!(t.get_token_privileges().unwrap().privileges());
     dbg!(t.get_token_owner().map(|o| o.Owner));
     dbg!(t.get_token_primary_group().map(|pg| pg.PrimaryGroup)); // ???
     dbg!(t.get_token_default_dacl().map(|d| d.DefaultDacl));
