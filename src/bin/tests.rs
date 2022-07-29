@@ -17,12 +17,7 @@ fn main() {
     dbg!(ERROR_INCORRECT_SIZE);         // 1462
 
     // https://docs.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-token_information_class
-    let _ = t.get_token_user().map(|u| {
-        dbg!(&*u as *const winapi::um::winnt::TOKEN_USER);
-        dbg!(u.User.Attributes);
-        dbg!(u.User.Sid);
-        dbg!(u.User.Sid as usize - &*u as *const winapi::um::winnt::TOKEN_USER as usize); // 16 into 44 byte buffer, showing Sid is self-referential within the byte buffer.
-    }).map_err(|err_get_token_user| dbg!(err_get_token_user));
+    dbg!(t.get_token_user());
     dbg!(t.get_token_groups());
     dbg!(t.get_token_privileges().map(|g| g.len()));
     dbg!(t.get_token_owner().map(|o| o.Owner));

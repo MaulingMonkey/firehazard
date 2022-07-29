@@ -48,7 +48,7 @@ impl AccessToken {
     #[inline(always)] pub fn as_handle(&self) -> HANDLE { self.0 }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenUser, ...)`
-    pub fn get_token_user(&self) -> Result<impl Deref<Target = TOKEN_USER>, LastError> { unsafe { self.get_token_information_raw_header(TokenUser) } }
+    pub fn get_token_user(&self) -> Result<BoxTokenUser, LastError> { unsafe { Ok(BoxTokenUser::from_raw(self.get_token_information_raw_bytes(TokenUser)?)) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenGroups, ...)`
     pub fn get_token_groups(&self) -> Result<BoxTokenGroups, LastError> { unsafe { Ok(BoxTokenGroups::from_raw(self.get_token_information_raw_bytes(TokenGroups)?)) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenPrivileges, ...)`
@@ -380,6 +380,29 @@ impl AccessToken {
             }
         }
         Ok(R(bytes, PhantomData))
+    }
+}
+
+
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_user)\] ~ `Box<(TOKEN_USER, ..)>`
+pub struct BoxTokenUser(Box<[u8]>);
+
+impl BoxTokenUser {
+    pub unsafe fn from_raw(bytes: Box<[u8]>) -> Self {
+        assert!(bytes.len() >= size_of::<SidAndAttributes>());
+        assert!(bytes.as_ptr() as usize % align_of::<SidAndAttributes>() == 0);
+        Self(bytes)
+    }
+
+    pub fn user<'s>(&'s self) -> &'s SidAndAttributes<'s> {
+        unsafe { &*(self.0.as_ptr() as *const SidAndAttributes) }
+    }
+}
+
+impl Debug for BoxTokenUser {
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+        fmt.debug_struct("BoxTokenUser").field("user", self.user()).finish()
     }
 }
 
