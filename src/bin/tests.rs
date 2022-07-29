@@ -19,7 +19,7 @@ fn main() {
     // https://docs.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-token_information_class
     dbg!(t.get_token_user());
     dbg!(t.get_token_groups());
-    dbg!(t.get_token_privileges().map(|g| g.len()));
+    dbg!(t.get_token_privileges());
     dbg!(t.get_token_owner().map(|o| o.Owner));
     dbg!(t.get_token_primary_group().map(|pg| pg.PrimaryGroup)); // ???
     dbg!(t.get_token_default_dacl().map(|d| d.DefaultDacl));

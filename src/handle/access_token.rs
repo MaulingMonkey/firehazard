@@ -51,7 +51,7 @@ impl AccessToken {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenGroups, ...)`
     pub fn get_token_groups(&self) -> Result<BoxTokenGroups, LastError> { unsafe { Ok(BoxTokenGroups::from_raw(self.get_token_information_raw_bytes(TokenGroups)?)) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenPrivileges, ...)`
-    pub fn get_token_privileges(&self) -> Result<impl Deref<Target=[LUID_AND_ATTRIBUTES]>, LastError> { unsafe { self.get_token_information_raw_u32_headers(TokenPrivileges) } }
+    pub fn get_token_privileges(&self) -> Result<BoxTokenPrivileges, LastError> { unsafe { Ok(BoxTokenPrivileges::from_raw(self.get_token_information_raw_bytes(TokenPrivileges)?)) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenOwner, ...)`
     pub fn get_token_owner(&self) -> Result<impl Deref<Target=TOKEN_OWNER>, LastError> { unsafe { self.get_token_information_raw_header(TokenOwner) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenPrimaryGroup, ...)`
@@ -347,36 +347,6 @@ impl AccessToken {
         impl<H> Deref for R<H> {
             type Target = H;
             fn deref(&self) -> &Self::Target { unsafe { &*(self.0.as_ptr() as *const H) } }
-        }
-        Ok(R(bytes, PhantomData))
-    }
-
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\]
-    /// `GetTokenInformation(self, class, &mut result, size_of_val(&result), ...)`
-    ///
-    /// ### Safety
-    /// *   `class` might need to be a valid token information class?
-    /// *   `R` should probably be bytemuck::Zeroable or equivalent
-    unsafe fn get_token_information_raw_u32_headers<H: Copy>(&self, class: TOKEN_INFORMATION_CLASS) -> Result<impl Deref<Target = [H]>, LastError> {
-        let bytes = unsafe { self.get_token_information_raw_bytes(class)? };
-        if bytes.len() < size_of::<u32>() { return Err(LastError(ERROR_INSUFFICIENT_BUFFER)) }
-        #[inline(always)] fn len_from_bytes(bytes: &[u8]) -> usize { usize::from32(u32::from_ne_bytes([bytes[0], bytes[1], bytes[2], bytes[3]])) }
-
-        let len = len_from_bytes(&*bytes);
-        let slice_offset = size_of::<u32>().max(align_of::<H>());
-        assert!(len <= (bytes.len()-slice_offset)/size_of::<H>());
-        let h_start : *const H = bytes[slice_offset..].as_ptr().cast();
-        assert!(h_start as usize % align_of::<u32>().max(align_of::<H>()) == 0);
-
-        struct R<H>(Box<[u8]>, PhantomData<H>);
-        impl<H> Deref for R<H> {
-            type Target = [H];
-            fn deref(&self) -> &Self::Target {
-                let bytes = &*self.0;
-                let len = len_from_bytes(bytes);
-                let slice_offset = size_of::<u32>().max(align_of::<H>());
-                unsafe { std::slice::from_raw_parts(bytes[slice_offset..].as_ptr().cast(), len) }
-            }
         }
         Ok(R(bytes, PhantomData))
     }
