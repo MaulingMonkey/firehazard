@@ -1,11 +1,15 @@
 use winapi::shared::ntdef::LUID;
+use winapi::shared::winerror::{ERROR_INVALID_DATA, ERROR_INSUFFICIENT_BUFFER};
+use winapi::um::winbase::LookupPrivilegeNameA;
 use winapi::um::winnt::LUID_AND_ATTRIBUTES;
 
 use crate::From32;
+use crate::error::{LastError, get_last_error};
 
 use std::fmt::{self, Debug, Formatter};
 use std::hash::Hash;
 use std::mem::{size_of, align_of};
+use std::ptr::null_mut;
 
 
 
@@ -51,20 +55,55 @@ impl Debug for BoxTokenPrivileges {
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\] LUID_AND_ATTRIBUTES, in the context of TOKEN_PRIVILEGES specifically
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)] #[repr(C)] pub struct PrivilegeLuidAndAttributes {
-    pub luid:       Luid,
+    pub luid:       PrivilegeLuid,
     pub attributes: u32,
 }
 
 impl Debug for PrivilegeLuidAndAttributes {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-        // TODO: name luid via https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-lookupprivilegenamea
         // TODO: name attributes via https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges
-        write!(fmt, "PrivilegeLuidAndAttributes {{ luid: 0x{:016x}, attributes: 0x{:08x} }}", u64::from(self.luid), self.attributes)
+        write!(fmt, "PrivilegeLuidAndAttributes {{ luid: {:?}, attributes: 0x{:08x} }}", self.luid, self.attributes)
     }
 }
 
 const _LUID_AND_ATTRIBUTES_SIZE  : () = assert!(align_of::<LUID_AND_ATTRIBUTES>() == align_of::<PrivilegeLuidAndAttributes>());
 const _LUID_AND_ATTRIBUTES_ALIGN : () = assert!(size_of ::<LUID_AND_ATTRIBUTES>() == size_of ::<PrivilegeLuidAndAttributes>());
+
+
+
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)] #[repr(transparent)] pub struct PrivilegeLuid(pub Luid);
+
+impl Debug for PrivilegeLuid {
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+        let luid = u64::from(self.0);
+        if let Ok(name) = self.lookup_privilege_name_a() {
+            write!(fmt, "PrivilegeLuid(0x{:x} {:?})", luid, name)
+        } else {
+            write!(fmt, "PrivilegeLuid(0x{:x} ???)", luid)
+        }
+    }
+}
+
+impl PrivilegeLuid {
+    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-lookupprivilegenamea)\] LookupPrivilegeNameA
+    pub fn lookup_privilege_name_a(mut self) -> Result<String, LastError> {
+        let system_name = null_mut();
+        let luid = &mut self.0.0;
+        let mut len = 0;
+        if 0 == unsafe { LookupPrivilegeNameA(system_name, luid, null_mut(), &mut len) } {
+            match get_last_error() {
+                ERROR_INSUFFICIENT_BUFFER   => {},
+                other                       => return Err(LastError(other)),
+            }
+        }
+        let mut buf = vec![0u8; usize::from32(len)];
+        let succeeded = 0 != unsafe { LookupPrivilegeNameA(system_name, luid, buf.as_mut_ptr().cast(), &mut len) };
+        if !succeeded { return Err(LastError::get()) }
+        buf.shrink_to(usize::from32(len)); // on the off chance that len shrunk (if it grew, we would've already returned `LastError(ERROR_INSUFFICIENT_BUFFER)`)
+        assert!(buf.pop() == Some(b'\0'), "BUG: privilege name was expected to be null terminated");
+        String::from_utf8(buf).map_err(|_| LastError(ERROR_INVALID_DATA))
+    }
+}
 
 
 
