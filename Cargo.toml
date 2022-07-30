@@ -22,6 +22,8 @@ winapi.features = [
     # um
     "errhandlingapi",
     "handleapi",
+    "lsalookup",
+    "ntlsa",
     "processthreadsapi",
     "securitybaseapi",
     "winbase",
