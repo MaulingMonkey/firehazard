@@ -53,9 +53,9 @@ impl AccessToken {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenPrivileges, ...)`
     pub fn get_token_privileges(&self) -> Result<BoxTokenPrivileges, LastError> { unsafe { Ok(BoxTokenPrivileges::from_raw(self.get_token_information_raw_bytes(TokenPrivileges)?)) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenOwner, ...)`
-    pub fn get_token_owner(&self) -> Result<impl Deref<Target=TOKEN_OWNER>, LastError> { unsafe { self.get_token_information_raw_header(TokenOwner) } }
+    pub fn get_token_owner(&self) -> Result<BoxTokenOwner, LastError> { unsafe { Ok(BoxTokenOwner::from_raw(self.get_token_information_raw_bytes(TokenOwner)?)) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenPrimaryGroup, ...)`
-    pub fn get_token_primary_group(&self) -> Result<impl Deref<Target=TOKEN_PRIMARY_GROUP>, LastError> { unsafe { self.get_token_information_raw_header(TokenPrimaryGroup) } }
+    pub fn get_token_primary_group(&self) -> Result<BoxTokenPrimaryGroup, LastError> { unsafe { Ok(BoxTokenPrimaryGroup::from_raw(self.get_token_information_raw_bytes(TokenPrimaryGroup)?)) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenDefaultDacl, ...)`
     pub fn get_token_default_dacl(&self) -> Result<impl Deref<Target=TOKEN_DEFAULT_DACL>, LastError> { unsafe { self.get_token_information_raw_header(TokenDefaultDacl) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenSource, ...)`

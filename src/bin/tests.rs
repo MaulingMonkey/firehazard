@@ -27,8 +27,8 @@ fn main() {
     dbg!(t.get_token_user());
     dbgl!(t.get_token_groups().unwrap().groups());
     dbgl!(t.get_token_privileges().unwrap().privileges());
-    dbg!(t.get_token_owner().map(|o| o.Owner));
-    dbg!(t.get_token_primary_group().map(|pg| pg.PrimaryGroup)); // ???
+    dbg!(t.get_token_owner());
+    dbg!(t.get_token_primary_group());
     dbg!(t.get_token_default_dacl().map(|d| d.DefaultDacl));
     dbg!(t.get_token_source().map(|s| unsafe { std::mem::transmute::<[i8; 8], abistr::CStrBuf::<u8, 8>>(s.SourceName) }));
     dbg!(t.get_token_type());
