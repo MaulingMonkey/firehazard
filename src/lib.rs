@@ -3,6 +3,7 @@
 
 pub use boxes::*;
 mod boxes {
+    mod token_appcontainer_information; pub use token_appcontainer_information::*;
     mod token_groups_and_privileges;pub use token_groups_and_privileges::*;
     mod token_groups;               pub use token_groups::*;
     mod token_mandatory_label;      pub use token_mandatory_label::*;

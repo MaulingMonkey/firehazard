@@ -24,16 +24,18 @@ use std::ptr::null_mut;
 
 impl SidPtr<'_> {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertsidtostringsida)\] ConvertSidToStringSidA
-    pub fn to_string_sid_a(&self) -> LocalString {
+    pub fn to_string_sid_a(&self) -> Option<LocalString> {
+        if self.0.is_null() { return None }
         let mut local_string = null_mut();
         let succeeded = 0 != unsafe { ConvertSidToStringSidA(self.0.cast(), &mut local_string) };
         let local_string = unsafe { LocalString::from_raw(local_string) };
         assert!(succeeded, "ConvertSidToStringSidA");
-        local_string
+        Some(local_string)
     }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/ntsecapi/nf-ntsecapi-lsalookupsids2)\] LsaLookupSids2
-    pub fn lsa_lookup_sids2(&self) -> String {
+    pub fn lsa_lookup_sids2(&self) -> Option<String> {
+        if self.0.is_null() { return None }
         // .cast() spam notes:
         // it appears PLSA_HANDLE points to void, not LSA_HANDLE, for whatever twisted reason.
         // it appears PSID points to void, not SID, for whatever twisted reason.
@@ -66,13 +68,20 @@ impl SidPtr<'_> {
         assert!(STATUS_SUCCESS == unsafe { LsaFreeMemory(names.cast()) });
         assert!(STATUS_SUCCESS == unsafe { LsaClose(policy) });
 
-        return result;
+        return Some(result);
     }
 }
 
 impl<'a> Debug for SidPtr<'a> {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-        write!(fmt, "{} {:?}", self.to_string_sid_a(), self.lsa_lookup_sids2())
+        if self.0.is_null() { return write!(fmt, "SidPtr::NULL") }
+
+        let sid = self.to_string_sid_a().unwrap();
+        if let Some(lsa) = self.lsa_lookup_sids2() {
+            write!(fmt, "{sid} {lsa:?}")
+        } else {
+            write!(fmt, "{sid} (no LSA name)")
+        }
     }
 }
 

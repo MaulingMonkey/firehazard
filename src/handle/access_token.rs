@@ -115,7 +115,7 @@ impl AccessToken {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenCapabilities, ...)`
     pub fn get_token_capabilities(&self) -> Result<BoxTokenGroups, LastError> { unsafe { Ok(BoxTokenGroups::from_raw(self.get_token_information_raw_bytes(TokenCapabilities)?)) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenAppContainerSid, ...)`
-    pub fn get_token_app_container_sid(&self) -> Result<impl Deref<Target=TOKEN_APPCONTAINER_INFORMATION>, LastError> { unsafe { self.get_token_information_raw_header(TokenAppContainerSid) } }
+    pub fn get_token_app_container_sid(&self) -> Result<BoxTokenAppcontainerInformation, LastError> { unsafe { Ok(BoxTokenAppcontainerInformation::from_raw(self.get_token_information_raw_bytes(TokenAppContainerSid)?)) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenAppContainerNumber, ...)`
     pub fn get_token_app_container_number(&self) -> Result<u32, LastError> { unsafe { self.get_token_information_raw_fixed(TokenAppContainerNumber) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenUserClaimAttributes, ...)`

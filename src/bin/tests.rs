@@ -55,7 +55,7 @@ fn main() {
     dbg!(t.get_token_login_sid());
     dbg!(t.get_token_is_app_container());
     dbg!(t.get_token_capabilities());
-    dbg!(t.get_token_app_container_sid().map(|s| s.TokenAppContainer));
+    dbg!(t.get_token_app_container_sid());
     dbg!(t.get_token_app_container_number());
     dbg!(t.get_token_user_claim_attributes().map(|a| a.AttributeCount));
     dbg!(t.get_token_device_claim_attributes().map(|a| a.AttributeCount));
