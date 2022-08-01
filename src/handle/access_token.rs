@@ -79,7 +79,7 @@ impl AccessToken {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenSessionId, ...)`
     pub fn get_token_session_id(&self) -> Result<u32, LastError> { unsafe { self.get_token_information_raw_fixed(TokenSessionId) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenGroupsAndPrivileges, ...)`
-    pub fn get_token_groups_and_privileges(&self) -> Result<impl Deref<Target=TOKEN_GROUPS_AND_PRIVILEGES>, LastError> { unsafe { self.get_token_information_raw_header(TokenGroupsAndPrivileges) } }
+    pub fn get_token_groups_and_privileges(&self) -> Result<BoxTokenGroupsAndPrivileges, LastError> { unsafe { Ok(BoxTokenGroupsAndPrivileges::from_raw(self.get_token_information_raw_bytes(TokenGroupsAndPrivileges)?)) } }
     // RESERVED: TokenSessionReference
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenSandBoxInert, ...)`
     pub fn get_token_sandbox_inert(&self) -> Result<bool, LastError> { unsafe { self.get_token_information_raw_bool(TokenSandBoxInert) } }

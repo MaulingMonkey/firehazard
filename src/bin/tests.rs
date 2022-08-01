@@ -35,7 +35,10 @@ fn main() {
     dbg!(t.get_token_impersonation_level());
     dbg!(t.get_token_statistics().map(|s| s.GroupCount)); // several more subfields
     dbg!(t.get_token_session_id());
-    dbg!(t.get_token_groups_and_privileges().map(|gap| gap.SidCount));
+    dbgl!(t.get_token_groups_and_privileges().unwrap().sids());
+    dbgl!(t.get_token_groups_and_privileges().unwrap().restricted_sids());
+    dbgl!(t.get_token_groups_and_privileges().unwrap().privileges());
+    dbg!(t.get_token_groups_and_privileges().unwrap().authentication_id());
     dbg!(t.get_token_sandbox_inert());
     dbg!(t.get_token_origin().map(|o| unsafe { std::mem::transmute::<LUID, u64>(o.OriginatingLogonSession) }));
     dbg!(t.get_token_elevation_type());

@@ -111,7 +111,9 @@ impl PrivilegeLuid {
 #[derive(Clone, Copy)] #[repr(transparent)] pub struct Luid(LUID);
 impl Debug      for Luid { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "Luid(0x{:08x})", u64::from(*self)) } }
 impl From<u64>  for Luid { fn from(value: u64) -> Self { Self(LUID { HighPart: (value>>32) as _, LowPart: value as _ }) } }
+impl From<LUID> for Luid { fn from(value: LUID) -> Self { Self(value) } }
 impl From<Luid> for u64  { fn from(value: Luid) -> Self { (value.0.HighPart as u64) << 32 | value.0.LowPart as u64 } }
+impl From<Luid> for LUID { fn from(value: Luid) -> Self { value.0 } }
 impl PartialEq  for Luid { fn eq(&self, other: &Self) -> bool { u64::from(*self) == u64::from(*other) } }
 impl Eq         for Luid {}
 impl PartialOrd for Luid { fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> { u64::from(*self).partial_cmp(&u64::from(*other)) } }
