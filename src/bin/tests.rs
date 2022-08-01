@@ -46,7 +46,7 @@ fn main() {
     dbg!(t.get_token_access_information().map(|i| i.AppContainerNumber)); // several more subfields
     dbg!(t.get_token_virtualization_allowed());
     dbg!(t.get_token_virtualization_enabled());
-    dbg!(t.get_token_integrity_level().map(|i| i.Label.Attributes)); // Sid
+    dbg!(t.get_token_integrity_level());
     dbg!(t.get_token_ui_access());
     dbg!(t.get_token_mandatory_policy().map(|p| p.Policy));
     dbg!(t.get_token_login_sid());

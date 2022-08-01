@@ -103,7 +103,7 @@ impl AccessToken {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenVirtualizationEnabled, ...)`
     pub fn get_token_virtualization_enabled(&self) -> Result<bool, LastError> { unsafe { self.get_token_information_raw_bool(TokenVirtualizationEnabled) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenIntegrityLevel, ...)`
-    pub fn get_token_integrity_level(&self) -> Result<impl Deref<Target=TOKEN_MANDATORY_LABEL>, LastError> { unsafe { self.get_token_information_raw_header(TokenIntegrityLevel) } }
+    pub fn get_token_integrity_level(&self) -> Result<BoxTokenMandatoryLabel, LastError> { unsafe { Ok(BoxTokenMandatoryLabel::from_raw(self.get_token_information_raw_bytes(TokenIntegrityLevel)?)) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenUIAccess, ...)`
     pub fn get_token_ui_access(&self) -> Result<bool, LastError> { unsafe { self.get_token_information_raw_bool(TokenUIAccess) } }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenMandatoryPolicy, ...)`
