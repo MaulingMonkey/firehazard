@@ -1,4 +1,4 @@
-use winapi::shared::ntdef::LUID;
+use win32_security_playground::Luid;
 use winapi::shared::winerror::*;
 
 
@@ -40,7 +40,7 @@ fn main() {
     dbgl!(t.get_token_groups_and_privileges().unwrap().privileges());
     dbg!(t.get_token_groups_and_privileges().unwrap().authentication_id());
     dbg!(t.get_token_sandbox_inert());
-    dbg!(t.get_token_origin().map(|o| unsafe { std::mem::transmute::<LUID, u64>(o.OriginatingLogonSession) }));
+    dbg!(t.get_token_origin().map(|o| Luid::from(o.OriginatingLogonSession)));
     dbg!(t.get_token_elevation_type());
     dbg!(t.get_token_linked_token().map(|t| t.LinkedToken));
     dbg!(t.get_token_elevation().map(|te| te.TokenIsElevated != 0));
