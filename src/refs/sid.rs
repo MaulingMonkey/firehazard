@@ -1,18 +1,14 @@
 // https://docs.microsoft.com/en-us/windows/win32/api/ntsecapi/nf-ntsecapi-lsalookupsids
 
-use crate::From32;
-
-use abistr::CStrPtr;
+use crate::{From32, LocalString};
 
 use winapi::shared::ntstatus::STATUS_SUCCESS;
 use winapi::shared::sddl::ConvertSidToStringSidA;
 use winapi::um::lsalookup::{LSA_OBJECT_ATTRIBUTES, LSA_REFERENCED_DOMAIN_LIST, LSA_TRANSLATED_NAME};
 use winapi::um::ntlsa::*;
-use winapi::um::winbase::LocalFree;
-use winapi::um::winnt::{SID, LPSTR, SID_AND_ATTRIBUTES};
+use winapi::um::winnt::{SID, SID_AND_ATTRIBUTES};
 
-use std::borrow::Cow;
-use std::fmt::{self, Debug, Display, Formatter};
+use std::fmt::{self, Debug, Formatter};
 use std::marker::PhantomData;
 use std::mem::{align_of, size_of};
 use std::ptr::null_mut;
@@ -108,17 +104,3 @@ const _SID_AND_ATTRIBUTES_STATIC_ASSERTS : () = {
     assert!(align_of::<SID_AND_ATTRIBUTES>() == align_of::<SidAndAttributes>());
     assert!(size_of ::<SID_AND_ATTRIBUTES>() == size_of ::<SidAndAttributes>());
 };
-
-
-
-pub struct LocalString(LPSTR);
-impl LocalString {
-    pub const unsafe fn from_raw(raw: LPSTR) -> Self { Self(raw) }
-    pub fn to_string_lossy<'s>(&'s self) -> Cow<'s, str> { self.as_cstr_ptr().to_string_lossy() }
-}
-impl LocalString {
-    fn as_cstr_ptr<'s>(&'s self) -> CStrPtr<'s> { unsafe { CStrPtr::from_ptr_unbounded(self.0) } }
-}
-impl Drop       for LocalString { fn drop(&mut self) { assert!(unsafe { LocalFree(self.0.cast()) }.is_null()) } }
-impl Debug      for LocalString { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "{:?}", &*self.to_string_lossy()) } }
-impl Display    for LocalString { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "{}", self.to_string_lossy()) } }

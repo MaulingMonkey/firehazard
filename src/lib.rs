@@ -31,6 +31,7 @@ mod util {
 
 pub use values::*;
 mod values {
+    mod local_string;               pub use local_string::*;
     mod luid_and_attributes;        pub use luid_and_attributes::*;
     mod luid;                       pub use luid::*;
     mod privilege_luid;             pub use privilege_luid::*;
