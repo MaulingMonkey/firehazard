@@ -11,9 +11,9 @@ pub struct BoxTokenPrivileges(Box<[u8]>);
 impl BoxTokenPrivileges {
     pub unsafe fn from_raw(bytes: Box<[u8]>) -> Self {
         assert!(bytes.len() >= 4);
+        assert!(bytes.as_ptr() as usize % Self::PRIVILEGES_ALIGN == 0);
         let btg = Self(bytes);
         assert!(usize::from32(btg.privilege_count()) <= (btg.0.len()-Self::PRIVILEGES_OFFSET)/size_of::<PrivilegeLuidAndAttributes>());
-        assert!(btg.privileges_ptr() as usize % Self::PRIVILEGES_ALIGN == 0);
         btg
     }
 
