@@ -12,9 +12,9 @@ pub struct BoxTokenGroups(Box<[u8]>);
 impl BoxTokenGroups {
     pub unsafe fn from_raw(bytes: Box<[u8]>) -> Self {
         assert!(bytes.len() >= 4);
+        assert!(bytes.as_ptr() as usize % Self::GROUPS_ALIGN == 0);
         let btg = Self(bytes);
         assert!(usize::from32(btg.group_count()) <= (btg.0.len()-Self::GROUPS_OFFSET)/size_of::<SidAndAttributes>());
-        assert!(btg.groups_ptr() as usize % Self::GROUPS_ALIGN == 0);
         btg
     }
 
