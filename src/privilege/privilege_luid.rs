@@ -1,32 +1,40 @@
-use crate::{From32, Luid};
+use crate::*;
 use crate::error::{LastError, get_last_error};
 
 use winapi::shared::winerror::*;
 use winapi::um::winbase::{LookupPrivilegeNameA, LookupPrivilegeValueA};
+use winapi::um::winnt::LUID;
 
 use std::fmt::{self, Debug, Formatter};
 use std::ptr::null_mut;
 
 
 
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)] #[repr(transparent)] pub struct PrivilegeLuid(pub Luid);
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/secauthz/privilege-constants)\]
+/// LUID, referencing a [privilege](https://docs.microsoft.com/en-us/windows/win32/secauthz/privilege-constants#constants) such as `"SeShutdownPrivilege"`
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)] #[repr(transparent)] pub struct Luid(pub crate::Luid);
 
-impl Debug for PrivilegeLuid {
+impl From<u64>  for Luid { fn from(value: u64 ) -> Self { Self(crate::Luid::from(value)) } }
+impl From<LUID> for Luid { fn from(value: LUID) -> Self { Self(crate::Luid::from(value)) } }
+impl From<Luid> for u64  { fn from(value: Luid) -> Self { Self::from(value.0) } }
+impl From<Luid> for LUID { fn from(value: Luid) -> Self { Self::from(value.0) } }
+
+impl Debug for privilege::Luid {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         let luid = u64::from(self.0);
         if let Ok(name) = self.lookup_privilege_name_a() {
-            write!(fmt, "PrivilegeLuid(0x{:x} {:?})", luid, name)
+            write!(fmt, "privilege::Luid(0x{:x} {:?})", luid, name)
         } else {
-            write!(fmt, "PrivilegeLuid(0x{:x} ???)", luid)
+            write!(fmt, "privilege::Luid(0x{:x} ???)", luid)
         }
     }
 }
 
-impl PrivilegeLuid {
+impl privilege::Luid {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-lookupprivilegevaluea)\] LookupPrivilegeValueA
     pub fn lookup_privilege_value_a(name: impl abistr::AsCStr) -> Result<Self, LastError> {
         let name = name.as_cstr();
-        let mut luid = Luid::from(0u64);
+        let mut luid = crate::Luid::from(0u64);
         let succeeded = 0 != unsafe { LookupPrivilegeValueA(null_mut(), name, &mut luid.0) };
         if succeeded { Ok(Self(luid)) } else { Err(LastError::get()) }
     }

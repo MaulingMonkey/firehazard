@@ -2,6 +2,7 @@
 #![deny(unreachable_patterns)]
 
 #[path = "alloc/_alloc.rs"]     pub mod alloc;
+#[path = "privilege/_privilege.rs"] pub mod privilege;
 #[path = "sid/_sid.rs"]         pub mod sid;    pub use sid::funcs::*;
 
 pub use boxes::*;
@@ -33,5 +34,4 @@ mod values {
     mod local_string;               pub use local_string::*;
     mod luid_and_attributes;        pub use luid_and_attributes::*;
     mod luid;                       pub use luid::*;
-    mod privilege_luid;             pub use privilege_luid::*;
 }

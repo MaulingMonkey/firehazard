@@ -74,7 +74,7 @@ impl AccessToken {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-adjusttokenprivileges)\] `AdjustTokenPrivileges(self, FALSE, ...)`
     ///
     /// Enable only the specified privilege luids of the token.
-    pub fn adjust_privileges_enable_if(&self, mut cond: impl FnMut(PrivilegeLuid) -> bool) -> Result<(), LastError> {
+    pub fn adjust_privileges_enable_if(&self, mut cond: impl FnMut(privilege::Luid) -> bool) -> Result<(), LastError> {
         self.adjust_privileges_impl(move |p| {
             let prev = p.attributes & SE_PRIVILEGE_ENABLED;
             p.attributes = if cond(p.luid) { SE_PRIVILEGE_ENABLED } else { 0 };
@@ -85,7 +85,7 @@ impl AccessToken {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-adjusttokenprivileges)\] `AdjustTokenPrivileges(self, FALSE, ...)`
     ///
     /// Disables (but does not remove) the specified privilege luids of the token.
-    pub fn adjust_privileges_disable_if(&self, mut cond: impl FnMut(PrivilegeLuid) -> bool) -> Result<(), LastError> {
+    pub fn adjust_privileges_disable_if(&self, mut cond: impl FnMut(privilege::Luid) -> bool) -> Result<(), LastError> {
         self.adjust_privileges_impl(move |p| {
             let prev = p.attributes & SE_PRIVILEGE_ENABLED;
             p.attributes = if cond(p.luid) { 0 } else { SE_PRIVILEGE_ENABLED };
@@ -96,7 +96,7 @@ impl AccessToken {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-adjusttokenprivileges)\] `AdjustTokenPrivileges(self, FALSE, ...)`
     ///
     /// Keep only the specified privilege luids of the token.
-    pub fn adjust_privileges_retain_if(&self, mut cond: impl FnMut(PrivilegeLuid) -> bool) -> Result<(), LastError> {
+    pub fn adjust_privileges_retain_if(&self, mut cond: impl FnMut(privilege::Luid) -> bool) -> Result<(), LastError> {
         self.adjust_privileges_impl(move |p| {
             let prev = p.attributes & SE_PRIVILEGE_ENABLED;
             p.attributes = if cond(p.luid) { prev } else { SE_PRIVILEGE_REMOVED };
@@ -107,7 +107,7 @@ impl AccessToken {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-adjusttokenprivileges)\] `AdjustTokenPrivileges(self, FALSE, ...)`
     ///
     /// Remove the specified privilege luids of the token.
-    pub fn adjust_privileges_remove_if(&self, mut cond: impl FnMut(PrivilegeLuid) -> bool) -> Result<(), LastError> {
+    pub fn adjust_privileges_remove_if(&self, mut cond: impl FnMut(privilege::Luid) -> bool) -> Result<(), LastError> {
         self.adjust_privileges_impl(move |p| {
             let prev = p.attributes & SE_PRIVILEGE_ENABLED;
             p.attributes = if cond(p.luid) { SE_PRIVILEGE_REMOVED } else { prev };
@@ -116,7 +116,7 @@ impl AccessToken {
     }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-adjusttokenprivileges)\] `GetTokenInformation(self, TokenPrivileges, ...)` + `AdjustTokenPrivileges(self, ...)`
-    fn adjust_privileges_impl(&self, mut adjust_attributes: impl FnMut(&mut PrivilegeLuidAndAttributes) -> bool) -> Result<(), LastError> {
+    fn adjust_privileges_impl(&self, mut adjust_attributes: impl FnMut(&mut privilege::LuidAndAttributes) -> bool) -> Result<(), LastError> {
         let mut privileges = self.get_token_privileges()?;
         let mut changes = false;
         for privilege in privileges.privileges_mut() {
@@ -278,7 +278,7 @@ pub unsafe fn create_restricted_token(
     existing_token_handle:  &AccessToken,
     flags:                  u32,
     sids_to_disable:        Option<&[sid::AndAttributes]>,
-    privileges_to_delete:   Option<&[PrivilegeLuidAndAttributes]>,
+    privileges_to_delete:   Option<&[privilege::LuidAndAttributes]>,
     sids_to_restrict:       Option<&[sid::AndAttributes]>,
 ) -> Result<AccessToken, LastError> {
     let mut new_handle = null_mut();

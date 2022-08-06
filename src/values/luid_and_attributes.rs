@@ -5,9 +5,6 @@ use std::mem::{align_of, size_of};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\] LUID_AND_ATTRIBUTES, in the context of TOKEN_PRIVILEGES specifically
-pub type PrivilegeLuidAndAttributes = LuidAndAttributes<crate::PrivilegeLuid>;
-
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-luid_and_attributes)\] LUID_AND_ATTRIBUTES
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)] #[repr(C)] pub struct LuidAndAttributes<Luid> {
     pub luid:       Luid,

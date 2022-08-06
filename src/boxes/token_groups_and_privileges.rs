@@ -25,7 +25,7 @@ impl BoxTokenGroupsAndPrivileges {
     pub fn restricted_sids(&self) -> &[sid::AndAttributes] { unsafe { std::slice::from_raw_parts(self.header().RestrictedSids.cast(), usize::from32(self.header().RestrictedSidCount)) } }
 
     /// Privileges+0 .. Privileges+PrivilegeCount
-    pub fn privileges(&self) -> &[PrivilegeLuidAndAttributes] { unsafe { std::slice::from_raw_parts(self.header().Privileges.cast(), usize::from32(self.header().PrivilegeCount)) } }
+    pub fn privileges(&self) -> &[privilege::LuidAndAttributes] { unsafe { std::slice::from_raw_parts(self.header().Privileges.cast(), usize::from32(self.header().PrivilegeCount)) } }
 
     /// AuthenticationIds
     pub fn authentication_id(&self) -> Luid { self.header().AuthenticationId.into() }

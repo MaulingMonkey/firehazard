@@ -21,11 +21,11 @@ An access token has main states for any given privilege:
 Privileges from my machine on a fairly typical non-elevated admin user:
 ```text
 src\bin\tests.rs:29 t.get_token_privileges().unwrap().privileges() = [
-    LuidAndAttributes { luid: PrivilegeLuid(0x13 "SeShutdownPrivilege"), attributes: 0x00000000 },
-    LuidAndAttributes { luid: PrivilegeLuid(0x17 "SeChangeNotifyPrivilege"), attributes: 0x00000003 },
-    LuidAndAttributes { luid: PrivilegeLuid(0x19 "SeUndockPrivilege"), attributes: 0x00000000 },
-    LuidAndAttributes { luid: PrivilegeLuid(0x21 "SeIncreaseWorkingSetPrivilege"), attributes: 0x00000000 },
-    LuidAndAttributes { luid: PrivilegeLuid(0x22 "SeTimeZonePrivilege"), attributes: 0x00000000 },
+    LuidAndAttributes { luid: privilege::Luid(0x13 "SeShutdownPrivilege"), attributes: 0x00000000 },
+    LuidAndAttributes { luid: privilege::Luid(0x17 "SeChangeNotifyPrivilege"), attributes: 0x00000003 },
+    LuidAndAttributes { luid: privilege::Luid(0x19 "SeUndockPrivilege"), attributes: 0x00000000 },
+    LuidAndAttributes { luid: privilege::Luid(0x21 "SeIncreaseWorkingSetPrivilege"), attributes: 0x00000000 },
+    LuidAndAttributes { luid: privilege::Luid(0x22 "SeTimeZonePrivilege"), attributes: 0x00000000 },
 ]
 ```
 

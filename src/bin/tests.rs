@@ -116,6 +116,6 @@ fn attempt_shutdown() -> (u32, u32) {
 }
 
 fn discard_privileges() {
-    let se_shutdown = PrivilegeLuid::lookup_privilege_value_a(cstr!("SeShutdownPrivilege")).unwrap();
+    let se_shutdown = privilege::Luid::lookup_privilege_value_a(cstr!("SeShutdownPrivilege")).unwrap();
     open_current_process_token().adjust_privileges_remove_if(|p| p == se_shutdown).unwrap();
 }
