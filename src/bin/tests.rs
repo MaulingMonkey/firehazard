@@ -1,5 +1,8 @@
-use win32_security_playground::Luid;
+use abistr::cstr;
+use win32_security_playground::handle::open_current_process_token;
+use win32_security_playground::{Luid, PrivilegeLuid};
 use winapi::shared::winerror::*;
+use std::process::{Command, Stdio};
 
 
 
@@ -65,4 +68,19 @@ fn main() {
     dbg!(t.get_token_device_claim_attributes().map(|a| a.AttributeCount));
     dbg!(t.get_token_device_groups());
     dbg!(t.get_token_restricted_device_groups());
+
+    //assert_eq!((0, 0), attempt_shutdown()); // spammy UI dialogs in tests
+    discard_privileges();
+    assert_eq!((ERROR_ACCESS_DENIED, ERROR_ACCESS_DENIED), attempt_shutdown());
+}
+
+fn attempt_shutdown() -> (u32, u32) {
+    let start = Command::new("shutdown").args("/s /t 3600".split(' ')).stderr(Stdio::null()).status().unwrap().code().unwrap_or(-1) as _;
+    let abort = Command::new("shutdown").arg("/a").stderr(Stdio::null()).status().unwrap().code().unwrap_or(-1) as _;
+    (start, abort)
+}
+
+fn discard_privileges() {
+    let se_shutdown = PrivilegeLuid::lookup_privilege_value_a(cstr!("SeShutdownPrivilege")).unwrap();
+    open_current_process_token().adjust_privileges_remove_if(|p| p == se_shutdown).unwrap();
 }

@@ -2,7 +2,7 @@ use crate::{From32, Luid};
 use crate::error::{LastError, get_last_error};
 
 use winapi::shared::winerror::*;
-use winapi::um::winbase::LookupPrivilegeNameA;
+use winapi::um::winbase::{LookupPrivilegeNameA, LookupPrivilegeValueA};
 
 use std::fmt::{self, Debug, Formatter};
 use std::ptr::null_mut;
@@ -23,6 +23,14 @@ impl Debug for PrivilegeLuid {
 }
 
 impl PrivilegeLuid {
+    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-lookupprivilegevaluea)\] LookupPrivilegeValueA
+    pub fn lookup_privilege_value_a(name: impl abistr::AsCStr) -> Result<Self, LastError> {
+        let name = name.as_cstr();
+        let mut luid = Luid::from(0u64);
+        let succeeded = 0 != unsafe { LookupPrivilegeValueA(null_mut(), name, &mut luid.0) };
+        if succeeded { Ok(Self(luid)) } else { Err(LastError::get()) }
+    }
+
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-lookupprivilegenamea)\] LookupPrivilegeNameA
     pub fn lookup_privilege_name_a(mut self) -> Result<String, LastError> {
         let system_name = null_mut();

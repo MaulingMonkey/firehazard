@@ -11,7 +11,7 @@ Convert with:
 An access token has main states for any given privilege:
 *   `Enabled`   (e.g. `ExitWindowsEx` will succeed)
 *   `Disabled`  (e.g. `ExitWindowsEx` will fail... unless you enable the privilege first, as `shutdown /s /t 0` does.  This is a guard against accidents, not malicious code!)
-*   `Removed`   (e.g. `ExitWindowsEx` will fail, and the process can't re-enable the privilege, so even `shutdown /s /t 0` should fail? maybe?)
+*   `Removed`   (e.g. `ExitWindowsEx` will fail, and the process can't re-enable the privilege, so even `shutdown /s /t 0` should fail.)
 *   <https://superuser.com/questions/1254253/how-am-i-able-to-shutdown-the-system-when-i-dont-have-seshutdownprivilege>
 
 

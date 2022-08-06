@@ -6,10 +6,11 @@ Access tokens are referenced by `HANDLE`.  This is conceptually similar to a `Bo
 *   The `Box` doesn't actually contain a raw pointer - instead, it contains a (generational?) index into some (OS-owned?) table.
 *   The `Arc` is completely hidden away from the end user... and shared among processes?
 *   The `NtAccessToken` is completely hidden away from the end user... and shared among processes?
+*   `NtAccessToken` has interior mutability.
 
 ## Functions: Lifetime
 *   `CloseHandle`:      Equivalent to `drop(Box::from_raw(...))`.
-*   `OpenProcessToken`: Usually successful
+*   `OpenProcessToken`: Usually successful.  Roughly equivalent to `Box::new(Arc::clone(PROCESS_TOKEN))`: calling multiple times returns different handles that reference the same process token.
 *   `OpenThreadToken`:  Usually fails with `GetLastError() == ERROR_NO_TOKEN` (only succeeds if thread has switched tokens?)
 *   `DuplicateHandle`:  Shallow clone ala ``Box::new(Arc::clone(...))`: underlying token shares permission lists etc. with the original token handle.
 *   `DuplicateTokenEx`: Deep clone ala `Box::new(Arc::new(NtAccessToken::clone(...)))`: underlying token has a new permission list that can be modified independently of the original token handle.
