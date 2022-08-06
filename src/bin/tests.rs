@@ -2,6 +2,7 @@ use abistr::cstr;
 use win32_security_playground::handle::open_current_process_token;
 use win32_security_playground::{Luid, PrivilegeLuid};
 use winapi::shared::winerror::*;
+use winapi::um::winnt::SE_GROUP_LOGON_ID;
 use std::process::{Command, Stdio};
 
 
@@ -24,10 +25,35 @@ fn main() {
     }}}
 
     // https://docs.rs/winapi/latest/src/winapi/shared/winerror.rs.html
+    dbg!(ERROR_BAD_LENGTH);             // 24
     dbg!(ERROR_INVALID_PARAMETER);      // 87
     dbg!(ERROR_INSUFFICIENT_BUFFER);    // 122
     dbg!(ERROR_NO_TOKEN);               // 1008
     dbg!(ERROR_INCORRECT_SIZE);         // 1462
+
+
+
+    let privileges = t.get_token_privileges().unwrap();
+
+    let groups      = t.get_token_groups().unwrap();
+    let groups      = groups.groups();
+    let to_disable  = groups.iter().copied().filter(|g| g.attributes & SE_GROUP_LOGON_ID == 0).collect::<Vec<_>>();
+    //let mut to_restrict = groups.iter().copied().filter(|g| g.attributes & SE_GROUP_LOGON_ID != 0).collect::<Vec<_>>();
+    //to_restrict.iter_mut().for_each(|g| g.attributes = 0);
+    let to_restrict = Vec::new(); // TODO: add null sid
+
+    let restricted = unsafe { create_restricted_token(&t, 0, Some(&to_disable[..]), Some(privileges.privileges()), Some(&to_restrict[..])) }.unwrap();
+
+    // TOKEN_MANDATORY_LABEL => SID_AND_ATTRIBUTES => ...
+    // assert!(0 != unsafe { SetTokenInformation(restricted.as_handle(), TokenIntegrityLevel, (&0u32) as *const _ as *mut _, 4) }, "{:?}", LastError::get());
+
+    let restricted_groups_and_privileges = restricted.get_token_groups_and_privileges().unwrap();
+    dbg!(restricted.get_token_has_restrictions());
+    dbgl!(restricted_groups_and_privileges.sids());
+    dbgl!(restricted_groups_and_privileges.restricted_sids());
+    dbgl!(restricted_groups_and_privileges.privileges());
+
+
 
     // https://docs.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-token_information_class
     dbg!(t.get_token_user());

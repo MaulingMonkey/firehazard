@@ -16,7 +16,7 @@ use std::ptr::null_mut;
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\] ~ PSID
-#[repr(transparent)] pub struct SidPtr<'a>(*mut SID, PhantomData<&'a SID>);
+#[derive(Clone, Copy)] #[repr(transparent)] pub struct SidPtr<'a>(*mut SID, PhantomData<&'a SID>);
 
 impl SidPtr<'_> {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertsidtostringsida)\] ConvertSidToStringSidA
@@ -84,7 +84,7 @@ impl<'a> Debug for SidPtr<'a> {
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid_and_attributes)\] SID_AND_ATTRIBUTES
-#[repr(C)] pub struct SidAndAttributes<'a> {
+#[repr(C)] #[derive(Clone, Copy)] pub struct SidAndAttributes<'a> {
     pub sid:        SidPtr<'a>,
     pub attributes: u32,
 }

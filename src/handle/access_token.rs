@@ -1,11 +1,12 @@
 use crate::*;
 use crate::error::{get_last_error, LastError};
+use crate::refs::SidAndAttributes;
 
 use winapi::shared::winerror::*;
 
 use winapi::um::handleapi::{DuplicateHandle, CloseHandle};
 use winapi::um::processthreadsapi::{GetCurrentProcess, OpenProcessToken, OpenThreadToken, GetCurrentThread};
-use winapi::um::securitybaseapi::{IsTokenRestricted, RevertToSelf, GetTokenInformation, AdjustTokenPrivileges, DuplicateTokenEx};
+use winapi::um::securitybaseapi::{IsTokenRestricted, RevertToSelf, GetTokenInformation, AdjustTokenPrivileges, DuplicateTokenEx, CreateRestrictedToken};
 use winapi::um::winnt::*;
 
 use std::convert::Infallible;
@@ -267,6 +268,34 @@ impl From<&AccessToken> for HANDLE {
 }
 
 
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-createrestrictedtoken)\]
+/// CreateRestrictedToken
+///
+/// ### Safety
+/// *   `flags` might need to be valid?
+/// *   excessive slice lengths might cause buffer overflows?
+pub unsafe fn create_restricted_token(
+    existing_token_handle:  &AccessToken,
+    flags:                  u32,
+    sids_to_disable:        Option<&[SidAndAttributes]>,
+    privileges_to_delete:   Option<&[PrivilegeLuidAndAttributes]>,
+    sids_to_restrict:       Option<&[SidAndAttributes]>,
+) -> Result<AccessToken, LastError> {
+    let mut new_handle = null_mut();
+    let succeeded = 0 != unsafe { CreateRestrictedToken(
+        existing_token_handle.as_handle(),
+        flags,
+        u32::try_from(sids_to_disable.map_or(0, |s| s.len())).map_err(|_| LastError(ERROR_INVALID_PARAMETER))?,
+        sids_to_disable.map_or(null_mut(), |s| s.as_ptr() as *mut _),
+        u32::try_from(privileges_to_delete.map_or(0, |s| s.len())).map_err(|_| LastError(ERROR_INVALID_PARAMETER))?,
+        privileges_to_delete.map_or(null_mut(), |s| s.as_ptr() as *mut _),
+        u32::try_from(sids_to_restrict.map_or(0, |s| s.len())).map_err(|_| LastError(ERROR_INVALID_PARAMETER))?,
+        sids_to_restrict.map_or(null_mut(), |s| s.as_ptr() as *mut _),
+        &mut new_handle
+    )};
+    if succeeded { Ok(unsafe { AccessToken::from_raw(new_handle) }) } else { Err(LastError::get()) }
+}
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocesstoken)\] OpenProcessToken(GetCurrentProcess(), TOKEN_ALL_ACCESS, ...)
 ///
