@@ -50,7 +50,7 @@ impl<'s, D: SidDeallocator> From<&'s Sid<D>> for SidPtr<'s> {
 impl<D: SidDeallocator> Sid<D> {
     /// ### Safety
     /// *   `sid` should be a valid [`LocalAlloc`](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-localalloc)ed buffer containing a valid [`SID`](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid).
-    /// *   `sid` should not be [`LocalFree`](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-localfree)ed by anything else as [`Sid::from_raw`] takes ownership.
+    /// *   `sid` should not be [`LocalFree`](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-localfree)ed by anything else as [`Sid::from_raw_unchecked`] takes ownership.
     /// *   As an exception to the above, `sid` may be null if you do nothing but drop the resulting [`Sid`]
     pub unsafe fn from_raw_unchecked(sid: *mut SID) -> Self { Self(sid, PhantomData) }
 }
