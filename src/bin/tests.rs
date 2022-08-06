@@ -6,7 +6,10 @@ use winapi::shared::winerror::*;
 fn main() {
     use win32_security_playground::handle::*;
     let t = open_current_process_token();
-    let t = t.clone();
+    let t2 = t.clone();
+    assert!(t.as_handle() != t2.as_handle());
+    t2.adjust_privileges_disable_if(|_| true).unwrap();
+    t2.adjust_privileges_remove_if(|_| true).unwrap();
 
     macro_rules! dbg { ($expr:expr) => { println!("{}:{} {} = {:?}", file!(), line!(), stringify!($expr), $expr) }; }
     macro_rules! dbgl { ($expr:expr) => {{
@@ -27,6 +30,7 @@ fn main() {
     dbg!(t.get_token_user());
     dbgl!(t.get_token_groups().unwrap().groups());
     dbgl!(t.get_token_privileges().unwrap().privileges());
+    dbgl!(t2.get_token_privileges().unwrap().privileges());
     dbg!(t.get_token_owner());
     dbg!(t.get_token_primary_group());
     dbg!(t.get_token_default_dacl().map(|d| d.DefaultDacl));
