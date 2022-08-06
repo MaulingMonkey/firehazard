@@ -1,9 +1,11 @@
-// https://docs.microsoft.com/en-us/windows/win32/api/ntsecapi/nf-ntsecapi-lsalookupsids
-
+use crate::error::LastError;
 use crate::{From32, LocalString};
 
+use abistr::{AsCStr, TryIntoAsCStr};
+
 use winapi::shared::ntstatus::STATUS_SUCCESS;
-use winapi::shared::sddl::ConvertSidToStringSidA;
+use winapi::shared::sddl::{ConvertSidToStringSidA, ConvertStringSidToSidW, ConvertStringSidToSidA};
+use winapi::shared::winerror::{ERROR_INVALID_PARAMETER, ERROR_INVALID_SID};
 use winapi::um::lsalookup::{LSA_OBJECT_ATTRIBUTES, LSA_REFERENCED_DOMAIN_LIST, LSA_TRANSLATED_NAME};
 use winapi::um::ntlsa::*;
 use winapi::um::winnt::{SID, SID_AND_ATTRIBUTES};
@@ -15,8 +17,73 @@ use std::ptr::null_mut;
 
 
 
+pub struct LocalFree;
+pub struct FreeSid;
+
+pub unsafe trait SidDeallocator             { unsafe fn free(sid: *mut SID); }
+unsafe impl SidDeallocator for LocalFree    { unsafe fn free(sid: *mut SID) { assert!(unsafe { winapi::um::winbase::LocalFree(sid.cast()) }.is_null()) } }
+unsafe impl SidDeallocator for FreeSid      { unsafe fn free(sid: *mut SID) { assert!(unsafe { winapi::um::securitybaseapi::FreeSid(sid.cast()) }.is_null()) } }
+
+
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\] ~ Box<(SID, ???), LocalAllocFree>
+#[repr(transparent)] pub struct Sid<D: SidDeallocator>(*mut SID, PhantomData<D>);
+
+impl<D: SidDeallocator> Drop for Sid<D> {
+    fn drop(&mut self) {
+        unsafe { D::free(self.0) }
+    }
+}
+
+impl<D: SidDeallocator> Debug for Sid<D> {
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+        Debug::fmt(&SidPtr(self.0, PhantomData), fmt)
+    }
+}
+
+impl<'s, D: SidDeallocator> From<&'s Sid<D>> for SidPtr<'s> {
+    fn from(sid: &'s Sid<D>) -> Self {
+        Self(sid.0, PhantomData)
+    }
+}
+
+impl<D: SidDeallocator> Sid<D> {
+    /// ### Safety
+    /// *   `sid` should be a valid [`LocalAlloc`](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-localalloc)ed buffer containing a valid [`SID`](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid).
+    /// *   `sid` should not be [`LocalFree`](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-localfree)ed by anything else as [`Sid::from_raw`] takes ownership.
+    /// *   As an exception to the above, `sid` may be null if you do nothing but drop the resulting [`Sid`]
+    pub unsafe fn from_raw_unchecked(sid: *mut SID) -> Self { Self(sid, PhantomData) }
+}
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertstringsidtosida)\] ConvertStringSidToSidA
+pub fn convert_string_sid_to_sid_a(s: impl TryIntoAsCStr) -> Result<Sid<LocalFree>, LastError> {
+    let s = s.try_into().map_err(|_| LastError(ERROR_INVALID_PARAMETER))?;
+    let mut sid = null_mut();
+    let success = 0 != unsafe { ConvertStringSidToSidA(s.as_cstr(), &mut sid) };
+    let sid = unsafe { Sid::from_raw_unchecked(sid.cast()) };
+
+    if !success             { Err(LastError::get()) }
+    else if sid.0.is_null() { Err(LastError(ERROR_INVALID_SID)) }
+    else                    { Ok(sid) }
+}
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertstringsidtosidw)\] ConvertStringSidToSidW
+pub fn convert_string_sid_to_sid_w(s: impl TryIntoAsCStr<u16>) -> Result<Sid<LocalFree>, LastError> {
+    let s = s.try_into().map_err(|_| LastError(ERROR_INVALID_PARAMETER))?;
+    let mut sid = null_mut();
+    let success = 0 != unsafe { ConvertStringSidToSidW(s.as_cstr(), &mut sid) };
+    let sid = unsafe { Sid::from_raw_unchecked(sid.cast()) };
+
+    if !success             { Err(LastError::get()) }
+    else if sid.0.is_null() { Err(LastError(ERROR_INVALID_SID)) }
+    else                    { Ok(sid) }
+}
+
+
+
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\] ~ PSID
 #[derive(Clone, Copy)] #[repr(transparent)] pub struct SidPtr<'a>(*mut SID, PhantomData<&'a SID>);
+// TODO: consider merging SidPtr<'a> into Sid by introducing Borrower<'a> ?
 
 impl SidPtr<'_> {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertsidtostringsida)\] ConvertSidToStringSidA
@@ -87,6 +154,12 @@ impl<'a> Debug for SidPtr<'a> {
 #[repr(C)] #[derive(Clone, Copy)] pub struct SidAndAttributes<'a> {
     pub sid:        SidPtr<'a>,
     pub attributes: u32,
+}
+
+impl<'a> SidAndAttributes<'a> {
+    pub fn new(sid: impl Into<SidPtr<'a>>, attributes: u32) -> Self {
+        Self { sid: sid.into(), attributes }
+    }
 }
 
 impl Debug for SidAndAttributes<'_> {

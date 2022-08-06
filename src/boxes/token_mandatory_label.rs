@@ -1,5 +1,7 @@
 use crate::refs::SidAndAttributes;
 
+use winapi::um::winnt::TOKEN_MANDATORY_LABEL;
+
 use std::fmt::{self, Debug, Formatter};
 use std::mem::{size_of, align_of};
 
@@ -15,8 +17,14 @@ impl BoxTokenMandatoryLabel {
         Self(bytes)
     }
 
+    pub fn as_winapi(&self) -> *mut TOKEN_MANDATORY_LABEL { self.0.as_ptr() as *mut _ }
+
     pub fn label<'s>(&'s self) -> &'s SidAndAttributes<'s> {
         unsafe { &*(self.0.as_ptr() as *const SidAndAttributes) }
+    }
+
+    pub fn label_mut<'s>(&'s mut self) -> &'s mut SidAndAttributes<'s> {
+        unsafe { &mut *(self.0.as_mut_ptr() as *mut SidAndAttributes) }
     }
 }
 
