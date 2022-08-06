@@ -1,0 +1,9 @@
+*   <https://github.com/chromium/chromium/blob/main/docs/design/sandbox.md>
+*   <https://github.com/chromium/chromium/tree/main/sandbox/win/src>
+*   <https://googleprojectzero.blogspot.com/2015/05/in-console-able.html>
+*   <https://docs.microsoft.com/en-us/previous-versions/dotnet/articles/bb625963(v=msdn.10)>
+*   <https://docs.microsoft.com/en-us/previous-versions/dotnet/articles/bb625965(v=msdn.10)>
+*   <https://docs.microsoft.com/en-us/windows/win32/secauthz/sid-attributes-in-an-access-token>
+*   <https://docs.microsoft.com/en-us/windows/win32/secauthz/restricted-tokens>
+*   <https://bugs.chromium.org/p/chromium/issues/detail?id=338538>
+*   [LogonSession](https://www.microsoftpressstore.com/articles/article.aspx?p=2224373&seqNum=7)s

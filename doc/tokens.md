@@ -28,4 +28,6 @@ Access tokens are referenced by `HANDLE`.  This is conceptually similar to a `Bo
 
 ## Functions: Modification
 *   `AdjustTokenPrivileges`: Enable, disable, or remove privileges, optionally returning the previous privileges.
-*   `CreateRestrictedToken`: `DuplicateTokenEx` + `AdjustTokenPrivileges` + ...
+*   `CreateRestrictedToken`
+    *   Conceptually similar to`DuplicateTokenEx` + `AdjustTokenPrivileges` + ...
+    *   Note: `SE_GROUP_MANDATORY` cannot be cleared by `AdjustTokenPrivileges` but *can* be cleared by `CreateRestrictedToken` \[[msdn](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_groups_and_privileges)\]
