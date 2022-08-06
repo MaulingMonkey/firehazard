@@ -1,9 +1,8 @@
 use abistr::cstr;
 
+use win32_security_playground::*;
 use win32_security_playground::error::LastError;
 use win32_security_playground::handle::open_current_process_token;
-use win32_security_playground::refs::{convert_string_sid_to_sid_a, SidAndAttributes};
-use win32_security_playground::{Luid, PrivilegeLuid};
 
 use winapi::shared::winerror::*;
 use winapi::um::securitybaseapi::SetTokenInformation;
@@ -40,6 +39,7 @@ fn main() {
 
 
 
+    // TODO: consider a macro in the form: sid!("S-1-2-3-4") that can have correct syntax enforced at compile time, and maybe skip an alloc too?
     convert_string_sid_to_sid_a("XYZ").unwrap_err();
     let null_sid        = convert_string_sid_to_sid_a("S-1-0-0").unwrap();
     let untrusted_sid   = convert_string_sid_to_sid_a("S-1-16-0").unwrap();
@@ -49,11 +49,11 @@ fn main() {
     let groups      = t.get_token_groups().unwrap();
     let groups      = groups.groups();
     let to_disable  = groups.iter().copied().filter(|g| g.attributes & SE_GROUP_LOGON_ID == 0).collect::<Vec<_>>();
-    let to_restrict = vec![SidAndAttributes::new(&null_sid, 0)];
+    let to_restrict = vec![sid::AndAttributes::new(&null_sid, 0)];
 
     let restricted = unsafe { create_restricted_token(&t, 0, Some(&to_disable), Some(privileges.privileges()), Some(&to_restrict)) }.unwrap();
 
-    let integrity = SidAndAttributes::new(&untrusted_sid, 0);
+    let integrity = sid::AndAttributes::new(&untrusted_sid, 0);
     assert!(0 != unsafe { SetTokenInformation(restricted.as_handle(), TokenIntegrityLevel, (&integrity) as *const _ as *mut _, size_of_val(&integrity) as _) }, "SetTokenInformation GetLastError()={:?}", LastError::get());
 
     let restricted_groups_and_privileges = restricted.get_token_groups_and_privileges().unwrap();

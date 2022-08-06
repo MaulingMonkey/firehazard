@@ -1,4 +1,4 @@
-use crate::refs::SidPtr;
+use crate::*;
 
 use std::fmt::{self, Debug, Formatter};
 use std::mem::{size_of, align_of};
@@ -10,13 +10,13 @@ pub struct BoxTokenAppcontainerInformation(Box<[u8]>);
 
 impl BoxTokenAppcontainerInformation {
     pub unsafe fn from_raw(bytes: Box<[u8]>) -> Self {
-        assert!(bytes.len() >= size_of::<SidPtr>());
-        assert!(bytes.as_ptr() as usize % align_of::<SidPtr>() == 0);
+        assert!(bytes.len() >= size_of::<sid::Ptr>());
+        assert!(bytes.as_ptr() as usize % align_of::<sid::Ptr>() == 0);
         Self(bytes)
     }
 
-    pub fn token_app_container<'s>(&'s self) -> &'s SidPtr<'s> {
-        unsafe { &*(self.0.as_ptr() as *const SidPtr) }
+    pub fn token_app_container<'s>(&'s self) -> &'s sid::Ptr<'s> {
+        unsafe { &*(self.0.as_ptr() as *const sid::Ptr) }
     }
 }
 

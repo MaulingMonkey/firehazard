@@ -1,6 +1,9 @@
 #![forbid(unsafe_op_in_unsafe_fn)]
 #![deny(unreachable_patterns)]
 
+#[path = "alloc/_alloc.rs"]     pub mod alloc;
+#[path = "sid/_sid.rs"]         pub mod sid;    pub use sid::funcs::*;
+
 pub use boxes::*;
 mod boxes {
     mod token_appcontainer_information; pub use token_appcontainer_information::*;
@@ -18,10 +21,6 @@ pub mod error;
 pub mod handle {
     mod access_token;               pub use access_token::*;
     mod psuedo_access_token;        pub use psuedo_access_token::*;
-}
-
-pub mod refs {
-    mod sid;                        pub use sid::*;
 }
 
 pub(crate) use util::*;

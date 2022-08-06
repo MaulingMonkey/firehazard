@@ -1,6 +1,5 @@
 use crate::*;
 use crate::error::{get_last_error, LastError};
-use crate::refs::SidAndAttributes;
 
 use winapi::shared::winerror::*;
 
@@ -278,9 +277,9 @@ impl From<&AccessToken> for HANDLE {
 pub unsafe fn create_restricted_token(
     existing_token_handle:  &AccessToken,
     flags:                  u32,
-    sids_to_disable:        Option<&[SidAndAttributes]>,
+    sids_to_disable:        Option<&[sid::AndAttributes]>,
     privileges_to_delete:   Option<&[PrivilegeLuidAndAttributes]>,
-    sids_to_restrict:       Option<&[SidAndAttributes]>,
+    sids_to_restrict:       Option<&[sid::AndAttributes]>,
 ) -> Result<AccessToken, LastError> {
     let mut new_handle = null_mut();
     let succeeded = 0 != unsafe { CreateRestrictedToken(

@@ -1,4 +1,4 @@
-use crate::refs::SidAndAttributes;
+use crate::*;
 
 use std::fmt::{self, Debug, Formatter};
 use std::mem::{size_of, align_of};
@@ -10,13 +10,13 @@ pub struct BoxTokenUser(Box<[u8]>);
 
 impl BoxTokenUser {
     pub unsafe fn from_raw(bytes: Box<[u8]>) -> Self {
-        assert!(bytes.len() >= size_of::<SidAndAttributes>());
-        assert!(bytes.as_ptr() as usize % align_of::<SidAndAttributes>() == 0);
+        assert!(bytes.len() >= size_of::<sid::AndAttributes>());
+        assert!(bytes.as_ptr() as usize % align_of::<sid::AndAttributes>() == 0);
         Self(bytes)
     }
 
-    pub fn user<'s>(&'s self) -> &'s SidAndAttributes<'s> {
-        unsafe { &*(self.0.as_ptr() as *const SidAndAttributes) }
+    pub fn user<'s>(&'s self) -> &'s sid::AndAttributes<'s> {
+        unsafe { &*(self.0.as_ptr() as *const sid::AndAttributes) }
     }
 }
 

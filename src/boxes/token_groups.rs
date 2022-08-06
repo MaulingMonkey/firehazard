@@ -1,5 +1,4 @@
-use crate::From32;
-use crate::refs::SidAndAttributes;
+use crate::*;
 
 use std::fmt::{self, Debug, Formatter};
 use std::mem::{size_of, align_of};
@@ -14,7 +13,7 @@ impl BoxTokenGroups {
         assert!(bytes.len() >= 4);
         assert!(bytes.as_ptr() as usize % Self::GROUPS_ALIGN == 0);
         let btg = Self(bytes);
-        assert!(usize::from32(btg.group_count()) <= (btg.0.len()-Self::GROUPS_OFFSET)/size_of::<SidAndAttributes>());
+        assert!(usize::from32(btg.group_count()) <= (btg.0.len()-Self::GROUPS_OFFSET)/size_of::<sid::AndAttributes>());
         btg
     }
 
@@ -23,17 +22,17 @@ impl BoxTokenGroups {
         u32::from_ne_bytes([b[0], b[1], b[2], b[3]])
     }
 
-    pub fn groups    <'s>(&'s     self) -> &'s     [SidAndAttributes<'s>] { let len = self.groups_len(); unsafe { std::slice::from_raw_parts    (self.groups_ptr    (), len) } }
-    pub fn groups_mut<'s>(&'s mut self) -> &'s mut [SidAndAttributes<'s>] { let len = self.groups_len(); unsafe { std::slice::from_raw_parts_mut(self.groups_mut_ptr(), len) } }
+    pub fn groups    <'s>(&'s     self) -> &'s     [sid::AndAttributes<'s>] { let len = self.groups_len(); unsafe { std::slice::from_raw_parts    (self.groups_ptr    (), len) } }
+    pub fn groups_mut<'s>(&'s mut self) -> &'s mut [sid::AndAttributes<'s>] { let len = self.groups_len(); unsafe { std::slice::from_raw_parts_mut(self.groups_mut_ptr(), len) } }
 
     fn groups_len(&self) -> usize { usize::from32(self.group_count()) }
 
-    fn groups_ptr    <'s>(&'s     self) -> *const SidAndAttributes<'s> { self.0[Self::GROUPS_OFFSET..].as_ptr().cast() }
-    fn groups_mut_ptr<'s>(&'s mut self) -> *mut   SidAndAttributes<'s> { self.0[Self::GROUPS_OFFSET..].as_mut_ptr().cast() }
+    fn groups_ptr    <'s>(&'s     self) -> *const sid::AndAttributes<'s> { self.0[Self::GROUPS_OFFSET..].as_ptr().cast() }
+    fn groups_mut_ptr<'s>(&'s mut self) -> *mut   sid::AndAttributes<'s> { self.0[Self::GROUPS_OFFSET..].as_mut_ptr().cast() }
 
     const fn max_usize(a: usize, b: usize) -> usize { if a < b { b } else { a } }
-    const GROUPS_ALIGN  : usize = Self::max_usize(align_of::<u32>(), align_of::<SidAndAttributes>());
-    const GROUPS_OFFSET : usize = Self::max_usize(size_of ::<u32>(), align_of::<SidAndAttributes>());
+    const GROUPS_ALIGN  : usize = Self::max_usize(align_of::<u32>(), align_of::<sid::AndAttributes>());
+    const GROUPS_OFFSET : usize = Self::max_usize(size_of ::<u32>(), align_of::<sid::AndAttributes>());
 }
 
 impl Debug for BoxTokenGroups {

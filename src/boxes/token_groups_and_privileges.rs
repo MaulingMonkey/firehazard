@@ -1,5 +1,4 @@
-use crate::{From32, Luid, PrivilegeLuidAndAttributes};
-use crate::refs::SidAndAttributes;
+use crate::*;
 
 use winapi::um::winnt::TOKEN_GROUPS_AND_PRIVILEGES;
 
@@ -20,10 +19,10 @@ impl BoxTokenGroupsAndPrivileges {
     }
 
     /// Sids+0 .. Sids+SidCount
-    pub fn sids(&self) -> &[SidAndAttributes] { unsafe { std::slice::from_raw_parts(self.header().Sids.cast(), usize::from32(self.header().SidCount)) } }
+    pub fn sids(&self) -> &[sid::AndAttributes] { unsafe { std::slice::from_raw_parts(self.header().Sids.cast(), usize::from32(self.header().SidCount)) } }
 
     /// RestrictedSids+0 .. RestrictedSids+RestrictedSidCount
-    pub fn restricted_sids(&self) -> &[SidAndAttributes] { unsafe { std::slice::from_raw_parts(self.header().RestrictedSids.cast(), usize::from32(self.header().RestrictedSidCount)) } }
+    pub fn restricted_sids(&self) -> &[sid::AndAttributes] { unsafe { std::slice::from_raw_parts(self.header().RestrictedSids.cast(), usize::from32(self.header().RestrictedSidCount)) } }
 
     /// Privileges+0 .. Privileges+PrivilegeCount
     pub fn privileges(&self) -> &[PrivilegeLuidAndAttributes] { unsafe { std::slice::from_raw_parts(self.header().Privileges.cast(), usize::from32(self.header().PrivilegeCount)) } }
