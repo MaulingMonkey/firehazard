@@ -19,6 +19,7 @@ use std::fmt::{self, Debug, Formatter};
 #[derive(Clone, Copy)] #[repr(transparent)] pub struct PsuedoHandle(HANDLE);
 
 impl PsuedoHandle {
+    pub const unsafe fn from_raw(handle: HANDLE) -> Self { Self(handle) }
     pub fn as_handle(self) -> HANDLE { self.0 }
 }
 
@@ -37,24 +38,8 @@ impl From<PsuedoHandle> for HANDLE {
     fn from(token: PsuedoHandle) -> Self { token.0 }
 }
 
-
-
-// inline fns, not found in winapi, from:
-// C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um\processthreadsapi.h
-
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentprocesstoken)\] GetCurrentProcessToken
-#[inline(always)] pub const fn get_current_process_token() -> PsuedoHandle { PsuedoHandle(-4_isize as _) }
-
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentthreadtoken)\] GetCurrentThreadToken
-#[inline(always)] pub const fn get_current_thread_token() -> PsuedoHandle { PsuedoHandle(-5_isize as _) }
-
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentthreadeffectivetoken)\] GetCurrentThreadEffectiveToken
-#[inline(always)] pub const fn get_current_thread_effective_token() -> PsuedoHandle { PsuedoHandle(-6_isize as _) }
-
-
-
-#[test] fn debug() {
-    dbg!(dbg!(get_current_process_token()).clone());
-    dbg!(dbg!(get_current_thread_token()).clone());
-    dbg!(dbg!(get_current_thread_effective_token()).clone());
+#[test] fn clone_debug() {
+    use crate::*;
+    let p : PsuedoHandle = get_current_process_token();
+    let _p2 = dbg!(p.clone());
 }

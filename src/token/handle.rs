@@ -251,11 +251,6 @@ impl Clone for Handle {
     fn clone(&self) -> Self { unsafe { Self::clone_from_raw(self.0, token::ALL_ACCESS) } }
 }
 
-#[test] fn clone_debug() {
-    let p = crate::token::get_current_process_token();
-    let _p2 = dbg!(p.clone());
-}
-
 impl Drop for Handle {
     fn drop(&mut self) {
         let success = 0 != unsafe { CloseHandle(self.0) };
