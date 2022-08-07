@@ -4,8 +4,8 @@ use crate::error::{get_last_error, LastError};
 use winapi::shared::winerror::*;
 
 use winapi::um::handleapi::{DuplicateHandle, CloseHandle};
-use winapi::um::processthreadsapi::{GetCurrentProcess, OpenProcessToken, OpenThreadToken, GetCurrentThread};
-use winapi::um::securitybaseapi::{IsTokenRestricted, RevertToSelf, GetTokenInformation, AdjustTokenPrivileges, DuplicateTokenEx, CreateRestrictedToken};
+use winapi::um::processthreadsapi::GetCurrentProcess;
+use winapi::um::securitybaseapi::{GetTokenInformation, AdjustTokenPrivileges, DuplicateTokenEx};
 use winapi::um::winnt::*;
 
 use std::convert::Infallible;
@@ -264,108 +264,6 @@ impl Drop for Handle {
 
 impl From<&Handle> for HANDLE {
     fn from(token: &Handle) -> Self { token.0 }
-}
-
-
-
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-createrestrictedtoken)\]
-/// CreateRestrictedToken
-///
-/// ### Safety
-/// *   `flags` might need to be valid?
-/// *   excessive slice lengths might cause buffer overflows?
-pub unsafe fn create_restricted_token(
-    existing_token_handle:  &Handle,
-    flags:                  u32,
-    sids_to_disable:        Option<&[sid::AndAttributes]>,
-    privileges_to_delete:   Option<&[privilege::LuidAndAttributes]>,
-    sids_to_restrict:       Option<&[sid::AndAttributes]>,
-) -> Result<Handle, LastError> {
-    let mut new_handle = null_mut();
-    let succeeded = 0 != unsafe { CreateRestrictedToken(
-        existing_token_handle.as_handle(),
-        flags,
-        u32::try_from(sids_to_disable.map_or(0, |s| s.len())).map_err(|_| LastError(ERROR_INVALID_PARAMETER))?,
-        sids_to_disable.map_or(null_mut(), |s| s.as_ptr() as *mut _),
-        u32::try_from(privileges_to_delete.map_or(0, |s| s.len())).map_err(|_| LastError(ERROR_INVALID_PARAMETER))?,
-        privileges_to_delete.map_or(null_mut(), |s| s.as_ptr() as *mut _),
-        u32::try_from(sids_to_restrict.map_or(0, |s| s.len())).map_err(|_| LastError(ERROR_INVALID_PARAMETER))?,
-        sids_to_restrict.map_or(null_mut(), |s| s.as_ptr() as *mut _),
-        &mut new_handle
-    )};
-    if succeeded { Ok(unsafe { Handle::from_raw(new_handle) }) } else { Err(LastError::get()) }
-}
-
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocesstoken)\] OpenProcessToken(GetCurrentProcess(), TOKEN_ALL_ACCESS, ...)
-///
-/// ### Example
-/// ```
-/// use win32_security_playground::token::*;
-/// let token : Handle = open_current_process_token();
-/// ```
-pub fn open_current_process_token() -> Handle {
-    let process = unsafe { GetCurrentProcess() };
-    assert!(!process.is_null(), "GetCurrentProcess");
-
-    let mut h = null_mut();
-    let success = 0 != unsafe { OpenProcessToken(process, TOKEN_ALL_ACCESS, &mut h) };
-    assert!(success, "OpenProcessToken GetLastError()={}", get_last_error());
-    assert!(!h.is_null(), "OpenProcessToken");
-
-    Handle(h)
-}
-
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openthreadtoken)\] OpenThreadToken(GetCurrentThread(), TOKEN_ALL_ACCESS, ...)
-///
-/// ### Example
-/// ```
-/// use win32_security_playground::token::*;
-/// assert!(open_current_thread_token(false).is_none());
-/// // TODO: set/verify token and unwrap some
-/// ```
-///
-/// ### Returns
-/// * `None` if the current thread had no impersonation token set (e.g. OpenThreadToken failed with GetLastError() == ERROR_NO_TOKEN)
-pub fn open_current_thread_token(as_self: bool) -> Option<Handle> {
-    let thread = unsafe { GetCurrentThread() };
-    assert!(!thread.is_null(), "GetCurrentThread");
-
-    let mut h = null_mut();
-    let success = 0 != unsafe { OpenThreadToken(thread, TOKEN_ALL_ACCESS, as_self as _, &mut h) };
-    if !success {
-        match get_last_error() {
-            ERROR_NO_TOKEN  => return None,
-            gle             => panic!("OpenThreadToken GetLastError()={gle}"),
-        }
-    } else {
-        assert!(!h.is_null(), "OpenThreadToken");
-        Some(Handle(h))
-    }
-}
-
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-istokenrestricted)\] IsTokenRestricted
-///
-/// ### Example
-/// ```
-/// use win32_security_playground::token::*;
-/// let token : Handle = open_current_process_token();
-/// assert!(!is_token_restricted(&token));
-/// ```
-pub fn is_token_restricted(token: &Handle) -> bool {
-    0 != unsafe { IsTokenRestricted(token.0) }
-}
-
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-reverttoself)\] RevertToSelf
-///
-/// ### Example
-/// ```
-/// use win32_security_playground::token::*;
-/// // TODO: set/reset/verify thread token
-/// revert_to_self().unwrap();
-/// ```
-pub fn revert_to_self() -> Result<(), LastError> {
-    let success = 0 != unsafe { RevertToSelf() };
-    if success { Ok(()) } else { Err(LastError::get()) }
 }
 
 

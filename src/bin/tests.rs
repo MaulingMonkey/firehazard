@@ -2,7 +2,6 @@ use abistr::cstr;
 
 use win32_security_playground::*;
 use win32_security_playground::error::LastError;
-use win32_security_playground::token::open_current_process_token;
 
 use winapi::shared::winerror::*;
 use winapi::um::securitybaseapi::SetTokenInformation;
@@ -15,7 +14,7 @@ use std::process::{Command, Stdio};
 
 fn main() {
     use win32_security_playground::token::*;
-    let t = open_current_process_token();
+    let t = open_process_token::current_process();
     let t2 = t.clone();
     assert!(t.as_handle() != t2.as_handle());
     t2.adjust_privileges_disable_if(|_| true).unwrap();
@@ -112,5 +111,5 @@ fn attempt_shutdown() -> (u32, u32) {
 
 fn discard_privileges() {
     let se_shutdown = privilege::Luid::lookup_privilege_value_a(cstr!("SeShutdownPrivilege")).unwrap();
-    open_current_process_token().adjust_privileges_remove_if(|p| p == se_shutdown).unwrap();
+    open_process_token::current_process().adjust_privileges_remove_if(|p| p == se_shutdown).unwrap();
 }

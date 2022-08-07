@@ -4,6 +4,11 @@
 mod handle;                     pub use handle::*;
 mod psuedo_handle;              pub use psuedo_handle::*;
 
+pub use funcs::*;
 pub(crate) mod funcs {
-    #[doc(hidden)] pub fn _placeholder() {}
+    include!("funcs/create_restricted_token.rs");
+    include!("funcs/is_token_restricted.rs");
+    pub mod open_process_token;
+    pub mod open_thread_token;
+    include!("funcs/revert_to_self.rs");
 }
