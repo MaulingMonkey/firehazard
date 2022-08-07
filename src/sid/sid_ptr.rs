@@ -20,7 +20,7 @@ impl Ptr<'_> {
     /// ### Safety
     /// `sid` should be null, or point to a valid [`SID`](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)
     /// for the lifetime of the [`sid::Ptr`].
-    pub unsafe fn from_raw_unchecked(sid: *mut SID) -> Self { Self(sid, PhantomData) }
+    pub const unsafe fn from_raw_unchecked(sid: *mut SID) -> Self { Self(sid, PhantomData) }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertsidtostringsida)\] ConvertSidToStringSidA
     pub fn to_string_sid_a(&self) -> Option<LocalString> {
