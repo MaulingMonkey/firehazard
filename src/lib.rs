@@ -3,8 +3,8 @@
 
 #[path = "alloc/_alloc.rs"]     pub mod alloc;
 #[path = "privilege/_privilege.rs"] pub mod privilege;
-#[path = "sid/_sid.rs"]         pub mod sid;    pub use sid::funcs::*;
-#[path = "token/_token.rs"]     pub mod token;  pub use token::funcs::*;
+#[path = "sid/_sid.rs"]         pub mod sid;    #[doc(hidden)] pub use sid::funcs::*;
+#[path = "token/_token.rs"]     pub mod token;  #[doc(hidden)] pub use token::funcs::*;
 
 pub mod error;
 
