@@ -1,3 +1,5 @@
+//! Error handling types and functions
+
 use winapi::um::errhandlingapi::GetLastError;
 use std::fmt::{self, Debug, Formatter};
 
