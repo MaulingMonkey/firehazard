@@ -2,7 +2,7 @@ use abistr::cstr;
 
 use win32_security_playground::*;
 use win32_security_playground::error::LastError;
-use win32_security_playground::handle::open_current_process_token;
+use win32_security_playground::token::open_current_process_token;
 
 use winapi::shared::winerror::*;
 use winapi::um::securitybaseapi::SetTokenInformation;
@@ -14,7 +14,7 @@ use std::process::{Command, Stdio};
 
 
 fn main() {
-    use win32_security_playground::handle::*;
+    use win32_security_playground::token::*;
     let t = open_current_process_token();
     let t2 = t.clone();
     assert!(t.as_handle() != t2.as_handle());

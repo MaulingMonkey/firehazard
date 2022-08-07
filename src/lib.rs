@@ -4,6 +4,7 @@
 #[path = "alloc/_alloc.rs"]     pub mod alloc;
 #[path = "privilege/_privilege.rs"] pub mod privilege;
 #[path = "sid/_sid.rs"]         pub mod sid;    pub use sid::funcs::*;
+#[path = "token/_token.rs"]     pub mod token;  pub use token::funcs::*;
 
 pub use boxes::*;
 mod boxes {
@@ -18,11 +19,6 @@ mod boxes {
 }
 
 pub mod error;
-
-pub mod handle {
-    mod access_token;               pub use access_token::*;
-    mod psuedo_access_token;        pub use psuedo_access_token::*;
-}
 
 pub(crate) use util::*;
 mod util {
