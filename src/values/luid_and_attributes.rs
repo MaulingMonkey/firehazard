@@ -11,12 +11,18 @@ use std::mem::{align_of, size_of};
     pub attributes: u32,
 }
 
+impl<Luid> LuidAndAttributes<Luid> {
+    const _ALIGN    : () = assert!(align_of::<LUID_AND_ATTRIBUTES>() == align_of::<LuidAndAttributes<Luid>>());
+    const _SIZE     : () = assert!(size_of ::<LUID_AND_ATTRIBUTES>() == size_of ::<LuidAndAttributes<Luid>>());
+
+    pub fn new(luid: impl Into<Luid>, attributes: u32) -> Self {
+        Self { luid: luid.into(), attributes }
+    }
+}
+
 impl<Luid: Debug> Debug for LuidAndAttributes<Luid> {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         // TODO: name attributes via https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges
         write!(fmt, "LuidAndAttributes {{ luid: {:?}, attributes: 0x{:08x} }}", self.luid, self.attributes)
     }
 }
-
-const _LUID_AND_ATTRIBUTES_SIZE  : () = assert!(align_of::<LUID_AND_ATTRIBUTES>() == align_of::<LuidAndAttributes<crate::Luid>>());
-const _LUID_AND_ATTRIBUTES_ALIGN : () = assert!(size_of ::<LUID_AND_ATTRIBUTES>() == size_of ::<LuidAndAttributes<crate::Luid>>());
