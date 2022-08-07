@@ -39,23 +39,16 @@ fn main() {
 
 
 
-    convert_string_sid_to_sid_a("XYZ").unwrap_err();
-    convert_string_sid_to_sid_a("S-1-0-0").unwrap();
-    convert_string_sid_to_sid_a("S-1-16-0").unwrap();
-
-    let null_sid        = sid!(S-1-0-0);
-    let untrusted_sid   = sid!(S-1-16-0);
-
     let privileges = t.get_token_privileges().unwrap();
 
     let groups      = t.get_token_groups().unwrap();
     let groups      = groups.groups();
     let to_disable  = groups.iter().copied().filter(|g| g.attributes & SE_GROUP_LOGON_ID == 0).collect::<Vec<_>>();
-    let to_restrict = vec![sid::AndAttributes::new(null_sid, 0)];
+    let to_restrict = vec![sid::AndAttributes::new(sid!(S-1-0-0), 0)]; // restrict null SID
 
     let restricted = unsafe { create_restricted_token(&t, 0, Some(&to_disable), Some(privileges.privileges()), Some(&to_restrict)) }.unwrap();
 
-    let integrity = sid::AndAttributes::new(untrusted_sid, 0);
+    let integrity = sid::AndAttributes::new(sid!(S-1-16-0), 0); // untrusted integrity level
     assert!(0 != unsafe { SetTokenInformation(restricted.as_handle(), TokenIntegrityLevel, (&integrity) as *const _ as *mut _, size_of_val(&integrity) as _) }, "SetTokenInformation GetLastError()={:?}", LastError::get());
 
     let restricted_groups_and_privileges = restricted.get_token_groups_and_privileges().unwrap();
