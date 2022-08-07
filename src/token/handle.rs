@@ -1,5 +1,6 @@
 use crate::*;
 use crate::error::{get_last_error, LastError};
+use crate::token::*;
 
 use winapi::shared::winerror::*;
 
