@@ -59,12 +59,12 @@ impl Handle {
     /// ### Safety
     ///
     /// The underlying `HANDLE` should be a valid access token when called.
-    pub unsafe fn clone_from_raw(handle: HANDLE) -> Self {
+    pub unsafe fn clone_from_raw(handle: HANDLE, desired_access: AccessRights) -> Self {
         let process = unsafe { GetCurrentProcess() };
         assert!(!process.is_null(), "GetCurrentProcess");
 
         let mut new = null_mut();
-        let success = 0 != unsafe { DuplicateTokenEx(handle, TOKEN_ALL_ACCESS, null_mut(), SecurityDelegation, TokenPrimary, &mut new) };
+        let success = 0 != unsafe { DuplicateTokenEx(handle, desired_access.as_u32(), null_mut(), SecurityDelegation, TokenPrimary, &mut new) };
         assert!(success, "DuplicateTokenEx GetLastError()={}", get_last_error());
 
         Self(new)
@@ -248,7 +248,7 @@ impl Debug for Handle {
 }
 
 impl Clone for Handle {
-    fn clone(&self) -> Self { unsafe { Self::clone_from_raw(self.0) } }
+    fn clone(&self) -> Self { unsafe { Self::clone_from_raw(self.0, token::ALL_ACCESS) } }
 }
 
 #[test] fn clone_debug() {
