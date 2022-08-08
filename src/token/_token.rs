@@ -21,6 +21,7 @@ pub use funcs::*;
 pub(crate) mod funcs {
     include!("funcs/create_restricted_token.rs");
     include!("funcs/get_current_x_token.rs");
+    pub mod get_token_information;
     include!("funcs/is_token_restricted.rs");
     pub mod open_process_token;
     pub mod open_thread_token;

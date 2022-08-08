@@ -59,7 +59,7 @@ pub fn adjust_token_privileges_remove_if(token: &token::Handle, mut cond: impl F
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-adjusttokenprivileges)\] `GetTokenInformation(self, TokenPrivileges, ...)` + `AdjustTokenPrivileges(self, ...)`
 fn adjust_token_privileges_each(token: &token::Handle, mut adjust_attributes: impl FnMut(&mut privilege::LuidAndAttributes) -> bool) -> Result<(), LastError> {
-    let mut privileges = token.get_token_privileges()?;
+    let mut privileges = get_token_information::privileges(token)?;
     let mut changes = false;
     for privilege in privileges.privileges_mut() {
         changes |= adjust_attributes(privilege);

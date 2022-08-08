@@ -38,9 +38,9 @@ fn main() {
 
 
 
-    let privileges = t.get_token_privileges().unwrap();
+    let privileges = t.privileges().unwrap();
 
-    let groups      = t.get_token_groups().unwrap();
+    let groups      = t.groups().unwrap();
     let groups      = groups.groups();
     let to_disable  = groups.iter().copied().filter(|g| g.attributes & SE_GROUP_LOGON_ID == 0).collect::<Vec<_>>();
     let to_restrict = vec![sid::AndAttributes::new(sid!(S-1-0-0), 0)]; // restrict null SID
@@ -50,8 +50,8 @@ fn main() {
     let integrity = sid::AndAttributes::new(sid!(S-1-16-0), 0); // untrusted integrity level
     assert!(0 != unsafe { SetTokenInformation(restricted.as_handle(), TokenIntegrityLevel, (&integrity) as *const _ as *mut _, size_of_val(&integrity) as _) }, "SetTokenInformation GetLastError()={:?}", LastError::get());
 
-    let restricted_groups_and_privileges = restricted.get_token_groups_and_privileges().unwrap();
-    dbg!(restricted.get_token_has_restrictions());
+    let restricted_groups_and_privileges = restricted.groups_and_privileges().unwrap();
+    dbg!(restricted.has_restrictions());
     dbgl!(restricted_groups_and_privileges.sids());
     dbgl!(restricted_groups_and_privileges.restricted_sids());
     dbgl!(restricted_groups_and_privileges.privileges());
@@ -59,44 +59,44 @@ fn main() {
 
 
     // https://docs.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-token_information_class
-    dbg!(t.get_token_user());
-    dbgl!(t.get_token_groups().unwrap().groups());
-    dbgl!(t.get_token_privileges().unwrap().privileges());
-    dbgl!(t2.get_token_privileges().unwrap().privileges());
-    dbg!(t.get_token_owner());
-    dbg!(t.get_token_primary_group());
-    dbg!(t.get_token_default_dacl().map(|d| d.DefaultDacl));
-    dbg!(t.get_token_source().map(|s| unsafe { std::mem::transmute::<[i8; 8], abistr::CStrBuf::<u8, 8>>(s.SourceName) }));
-    dbg!(t.get_token_type());
-    dbg!(t.get_token_impersonation_level());
-    dbg!(t.get_token_statistics().map(|s| s.GroupCount)); // several more subfields
-    dbg!(t.get_token_session_id());
-    dbgl!(t.get_token_groups_and_privileges().unwrap().sids());
-    dbgl!(t.get_token_groups_and_privileges().unwrap().restricted_sids());
-    dbgl!(t.get_token_groups_and_privileges().unwrap().privileges());
-    dbg!(t.get_token_groups_and_privileges().unwrap().authentication_id());
-    dbg!(t.get_token_sandbox_inert());
-    dbg!(t.get_token_origin().map(|o| Luid::from(o.OriginatingLogonSession)));
-    dbg!(t.get_token_elevation_type());
-    dbg!(t.get_token_linked_token().map(|t| t.LinkedToken));
-    dbg!(t.get_token_elevation().map(|te| te.TokenIsElevated != 0));
-    dbg!(t.get_token_is_elevated());
-    dbg!(t.get_token_has_restrictions());
-    dbg!(t.get_token_access_information().map(|i| i.AppContainerNumber)); // several more subfields
-    dbg!(t.get_token_virtualization_allowed());
-    dbg!(t.get_token_virtualization_enabled());
-    dbg!(t.get_token_integrity_level());
-    dbg!(t.get_token_ui_access());
-    dbg!(t.get_token_mandatory_policy().map(|p| p.Policy));
-    dbg!(t.get_token_login_sid());
-    dbg!(t.get_token_is_app_container());
-    dbg!(t.get_token_capabilities());
-    dbg!(t.get_token_app_container_sid());
-    dbg!(t.get_token_app_container_number());
-    dbg!(t.get_token_user_claim_attributes().map(|a| a.AttributeCount));
-    dbg!(t.get_token_device_claim_attributes().map(|a| a.AttributeCount));
-    dbg!(t.get_token_device_groups());
-    dbg!(t.get_token_restricted_device_groups());
+    dbg!(t.user());
+    dbgl!(t.groups().unwrap().groups());
+    dbgl!(t.privileges().unwrap().privileges());
+    dbgl!(t2.privileges().unwrap().privileges());
+    dbg!(t.owner());
+    dbg!(t.primary_group());
+    dbg!(t.default_dacl().map(|d| d.DefaultDacl));
+    dbg!(t.source().map(|s| unsafe { std::mem::transmute::<[i8; 8], abistr::CStrBuf::<u8, 8>>(s.SourceName) }));
+    dbg!(t.ty());
+    dbg!(t.impersonation_level());
+    dbg!(t.statistics().map(|s| s.GroupCount)); // several more subfields
+    dbg!(t.session_id());
+    dbgl!(t.groups_and_privileges().unwrap().sids());
+    dbgl!(t.groups_and_privileges().unwrap().restricted_sids());
+    dbgl!(t.groups_and_privileges().unwrap().privileges());
+    dbg!(t.groups_and_privileges().unwrap().authentication_id());
+    dbg!(t.sandbox_inert());
+    dbg!(t.origin().map(|o| Luid::from(o.OriginatingLogonSession)));
+    dbg!(t.elevation_type());
+    dbg!(t.linked_token().map(|t| t.LinkedToken));
+    dbg!(t.elevation().map(|te| te.TokenIsElevated != 0));
+    dbg!(t.is_elevated());
+    dbg!(t.has_restrictions());
+    dbg!(t.access_information().map(|i| i.AppContainerNumber)); // several more subfields
+    dbg!(t.virtualization_allowed());
+    dbg!(t.virtualization_enabled());
+    dbg!(t.integrity_level());
+    dbg!(t.ui_access());
+    dbg!(t.mandatory_policy().map(|p| p.Policy));
+    dbg!(t.login_sid());
+    dbg!(t.is_app_container());
+    dbg!(t.capabilities());
+    dbg!(t.app_container_sid());
+    dbg!(t.app_container_number());
+    dbg!(t.user_claim_attributes().map(|a| a.AttributeCount));
+    dbg!(t.device_claim_attributes().map(|a| a.AttributeCount));
+    dbg!(t.device_groups());
+    dbg!(t.restricted_device_groups());
 
     //assert_eq!((0, 0), attempt_shutdown()); // spammy UI dialogs in tests
     discard_privileges();
