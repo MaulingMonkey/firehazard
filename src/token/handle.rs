@@ -4,7 +4,6 @@ use crate::token::*;
 
 use winapi::um::handleapi::{DuplicateHandle, CloseHandle};
 use winapi::um::processthreadsapi::GetCurrentProcess;
-use winapi::um::securitybaseapi::DuplicateTokenEx;
 use winapi::um::winnt::*;
 
 use std::fmt::{self, Debug, Formatter};
@@ -20,10 +19,18 @@ use std::ptr::null_mut;
 
 impl Handle {
     /// ### Safety
+    /// `handle` must be a valid access token handle.
     ///
-    /// It's possible that some code will assume the underlying `HANDLE` remains valid for the lifetime of the `Handle`.
-    /// Additionally, as this takes over ownership, the caller must ensure it does not permit another system to `CloseHandle(handle)`.
-    #[allow(dead_code)] pub(crate) unsafe fn from_raw(handle: HANDLE) -> Self { Self(handle) }
+    /// This takes over ownership of `handle` and will `CloseHandle` it on drop.
+    /// The caller must ensure no other code attempts to claim ownership over the same handle.
+    pub unsafe fn from_raw(handle: HANDLE) -> Self { Self(handle) }
+
+    /// ### Safety
+    /// `handle` must be a valid access token handle.
+    ///
+    /// This borrows ownership of `handle`.
+    /// The caller must ensure no other code attempts to release ownership over the same handle for the duration of the borrow.
+    pub unsafe fn borrow_from_raw(handle: &HANDLE) -> &Self { unsafe { std::mem::transmute(handle) } }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] `DuplicateHandle`
     ///
@@ -54,14 +61,7 @@ impl Handle {
     ///
     /// The underlying `HANDLE` should be a valid access token when called.
     pub unsafe fn clone_from_raw(handle: HANDLE, desired_access: AccessRights) -> Self {
-        let process = unsafe { GetCurrentProcess() };
-        assert!(!process.is_null(), "GetCurrentProcess");
-
-        let mut new = null_mut();
-        let success = 0 != unsafe { DuplicateTokenEx(handle, desired_access.as_u32(), null_mut(), SecurityDelegation, TokenPrimary, &mut new) };
-        assert!(success, "DuplicateTokenEx GetLastError()={}", get_last_error());
-
-        Self(new)
+        unsafe { duplicate_token_ex(Self::borrow_from_raw(&handle), desired_access, None, SecurityDelegation, TokenPrimary) }
     }
 
     #[inline(always)] pub fn as_handle(&self) -> HANDLE { self.0 }
