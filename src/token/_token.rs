@@ -26,4 +26,5 @@ pub(crate) mod funcs {
     pub mod open_process_token;
     pub mod open_thread_token;
     include!("funcs/revert_to_self.rs");
+    pub mod set_token_information;
 }

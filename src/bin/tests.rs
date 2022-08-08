@@ -1,13 +1,10 @@
 use abistr::cstr;
 
 use win32_security_playground::*;
-use win32_security_playground::error::LastError;
 
 use winapi::shared::winerror::*;
-use winapi::um::securitybaseapi::SetTokenInformation;
-use winapi::um::winnt::{SE_GROUP_LOGON_ID, TokenIntegrityLevel};
+use winapi::um::winnt::SE_GROUP_LOGON_ID;
 
-use std::mem::size_of_val;
 use std::process::{Command, Stdio};
 
 
@@ -48,7 +45,7 @@ fn main() {
     let restricted = unsafe { create_restricted_token(&t, 0, Some(&to_disable), Some(privileges.privileges()), Some(&to_restrict)) }.unwrap();
 
     let integrity = sid::AndAttributes::new(sid!(S-1-16-0), 0); // untrusted integrity level
-    assert!(0 != unsafe { SetTokenInformation(restricted.as_handle(), TokenIntegrityLevel, (&integrity) as *const _ as *mut _, size_of_val(&integrity) as _) }, "SetTokenInformation GetLastError()={:?}", LastError::get());
+    restricted.set_integrity_level(integrity).unwrap();
 
     let restricted_groups_and_privileges = restricted.groups_and_privileges().unwrap();
     dbg!(restricted.has_restrictions());
