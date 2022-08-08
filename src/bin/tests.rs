@@ -31,6 +31,7 @@ fn main() {
     dbg!(ERROR_INVALID_PARAMETER);      // 87
     dbg!(ERROR_INSUFFICIENT_BUFFER);    // 122
     dbg!(ERROR_NO_TOKEN);               // 1008
+    dbg!(ERROR_BAD_TOKEN_TYPE);         // 1349
     dbg!(ERROR_INCORRECT_SIZE);         // 1462
 
 

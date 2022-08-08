@@ -23,6 +23,8 @@ impl Debug for LastError {
 }
 
 impl From<LastError> for u32 { fn from(err: LastError) -> Self { err.0 } }
+impl PartialEq<u32> for LastError { fn eq(&self, other: &u32) -> bool { self.0 == *other } }
+impl PartialEq<LastError> for u32 { fn eq(&self, other: &LastError) -> bool { *self == other.0 } }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)\] GetLastError
 pub(crate) fn get_last_error() -> u32 {
