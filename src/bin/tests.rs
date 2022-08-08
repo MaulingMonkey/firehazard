@@ -17,8 +17,8 @@ fn main() {
     let t = open_process_token::current_process();
     let t2 = t.clone();
     assert!(t.as_handle() != t2.as_handle());
-    t2.adjust_privileges_disable_if(|_| true).unwrap();
-    t2.adjust_privileges_remove_if(|_| true).unwrap();
+    t2.privileges_disable_if(|_| true).unwrap();
+    t2.privileges_remove_if(|_| true).unwrap();
 
     macro_rules! dbg { ($expr:expr) => { println!("{}:{} {} = {:?}", file!(), line!(), stringify!($expr), $expr) }; }
     macro_rules! dbgl { ($expr:expr) => {{
@@ -111,5 +111,5 @@ fn attempt_shutdown() -> (u32, u32) {
 
 fn discard_privileges() {
     let se_shutdown = privilege::Luid::lookup_privilege_value_a(cstr!("SeShutdownPrivilege")).unwrap();
-    open_process_token::current_process().adjust_privileges_remove_if(|p| p == se_shutdown).unwrap();
+    open_process_token::current_process().privileges_remove_if(|p| p == se_shutdown).unwrap();
 }

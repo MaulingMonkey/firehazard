@@ -1,3 +1,5 @@
+#[allow(unused_imports)] use crate::*;
+
 use winapi::um::winnt::HANDLE;
 
 use std::fmt::{self, Debug, Formatter};
@@ -39,7 +41,6 @@ impl From<PsuedoHandle> for HANDLE {
 }
 
 #[test] fn clone_debug() {
-    use crate::*;
     let p : PsuedoHandle = get_current_process_token();
     let _p2 = dbg!(p.clone());
 }

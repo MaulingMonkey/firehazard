@@ -6,10 +6,9 @@ use winapi::shared::winerror::*;
 
 use winapi::um::handleapi::{DuplicateHandle, CloseHandle};
 use winapi::um::processthreadsapi::GetCurrentProcess;
-use winapi::um::securitybaseapi::{GetTokenInformation, AdjustTokenPrivileges, DuplicateTokenEx};
+use winapi::um::securitybaseapi::{GetTokenInformation, DuplicateTokenEx};
 use winapi::um::winnt::*;
 
-use std::convert::Infallible;
 use std::fmt::{self, Debug, Formatter};
 use std::marker::PhantomData;
 use std::mem::{size_of, align_of};
@@ -71,75 +70,6 @@ impl Handle {
     }
 
     #[inline(always)] pub fn as_handle(&self) -> HANDLE { self.0 }
-
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-adjusttokenprivileges)\] `AdjustTokenPrivileges(self, FALSE, ...)`
-    ///
-    /// Enable only the specified privilege luids of the token.
-    pub fn adjust_privileges_enable_if(&self, mut cond: impl FnMut(privilege::Luid) -> bool) -> Result<(), LastError> {
-        self.adjust_privileges_impl(move |p| {
-            let prev = p.attributes & SE_PRIVILEGE_ENABLED;
-            p.attributes = if cond(p.luid) { SE_PRIVILEGE_ENABLED } else { 0 };
-            p.attributes != prev
-        })
-    }
-
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-adjusttokenprivileges)\] `AdjustTokenPrivileges(self, FALSE, ...)`
-    ///
-    /// Disables (but does not remove) the specified privilege luids of the token.
-    pub fn adjust_privileges_disable_if(&self, mut cond: impl FnMut(privilege::Luid) -> bool) -> Result<(), LastError> {
-        self.adjust_privileges_impl(move |p| {
-            let prev = p.attributes & SE_PRIVILEGE_ENABLED;
-            p.attributes = if cond(p.luid) { 0 } else { SE_PRIVILEGE_ENABLED };
-            p.attributes != prev
-        })
-    }
-
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-adjusttokenprivileges)\] `AdjustTokenPrivileges(self, FALSE, ...)`
-    ///
-    /// Keep only the specified privilege luids of the token.
-    pub fn adjust_privileges_retain_if(&self, mut cond: impl FnMut(privilege::Luid) -> bool) -> Result<(), LastError> {
-        self.adjust_privileges_impl(move |p| {
-            let prev = p.attributes & SE_PRIVILEGE_ENABLED;
-            p.attributes = if cond(p.luid) { prev } else { SE_PRIVILEGE_REMOVED };
-            p.attributes != prev
-        })
-    }
-
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-adjusttokenprivileges)\] `AdjustTokenPrivileges(self, FALSE, ...)`
-    ///
-    /// Remove the specified privilege luids of the token.
-    pub fn adjust_privileges_remove_if(&self, mut cond: impl FnMut(privilege::Luid) -> bool) -> Result<(), LastError> {
-        self.adjust_privileges_impl(move |p| {
-            let prev = p.attributes & SE_PRIVILEGE_ENABLED;
-            p.attributes = if cond(p.luid) { SE_PRIVILEGE_REMOVED } else { prev };
-            p.attributes != prev
-        })
-    }
-
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-adjusttokenprivileges)\] `GetTokenInformation(self, TokenPrivileges, ...)` + `AdjustTokenPrivileges(self, ...)`
-    fn adjust_privileges_impl(&self, mut adjust_attributes: impl FnMut(&mut privilege::LuidAndAttributes) -> bool) -> Result<(), LastError> {
-        let mut privileges = self.get_token_privileges()?;
-        let mut changes = false;
-        for privilege in privileges.privileges_mut() {
-            changes |= adjust_attributes(privilege);
-        }
-        if changes {
-            unsafe { self.adjust_token_privileges(false, Some(&mut privileges), None, None)? };
-        }
-        Ok(())
-    }
-
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-adjusttokenprivileges)\] `AdjustTokenPrivileges(self, TRUE, ...)`
-    fn _adjust_privileges_disable_all(&self) -> Result<(), LastError> {
-        unsafe { self.adjust_token_privileges(true, None, None, None) }
-    }
-
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-adjusttokenprivileges)\] `AdjustTokenPrivileges(self, ...)`
-    unsafe fn adjust_token_privileges(&self, disable_all_privileges: bool, new_state: Option<&mut BoxTokenPrivileges>, _previous_state: Option<Infallible>, _return_length: Option<Infallible>) -> Result<(), LastError> {
-        let new_state = new_state.map_or(null_mut(), |s| s.as_token_privileges_mut_ptr()).cast();
-        let success = 0 != unsafe { AdjustTokenPrivileges(self.as_handle(), disable_all_privileges as _, new_state, 0, null_mut(), null_mut()) };
-        if success { Ok(()) } else { Err(LastError::get()) }
-    }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenUser, ...)`
     pub fn get_token_user(&self) -> Result<BoxTokenUser, LastError> { unsafe { Ok(BoxTokenUser::from_raw(self.get_token_information_raw_bytes(TokenUser)?)) } }
