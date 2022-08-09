@@ -59,13 +59,13 @@ pub fn sandbox_inert(token: &token::Handle) -> Result<bool, LastError> { unsafe 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenOrigin, ...)`
 pub fn origin(token: &token::Handle) -> Result<TOKEN_ORIGIN, LastError> { unsafe { raw_fixed(token, TokenOrigin) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenElevationType, ...)`
-pub fn elevation_type(token: &token::Handle) -> Result<TOKEN_ELEVATION_TYPE, LastError> { unsafe { raw_fixed(token, TokenElevationType) } }
+pub fn elevation_type(token: &token::Handle) -> Result<token::ElevationType, LastError> { unsafe { raw_fixed(token, TokenElevationType) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenLinkedToken, ...)`
 pub fn linked_token(token: &token::Handle) -> Result<TOKEN_LINKED_TOKEN, LastError> { unsafe { raw_fixed(token, TokenLinkedToken) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenElevation, ...)`
-pub fn elevation(token: &token::Handle) -> Result<TOKEN_ELEVATION, LastError> { unsafe { raw_fixed(token, TokenElevation) } }
+pub fn elevation(token: &token::Handle) -> Result<token::Elevation, LastError> { unsafe { raw_fixed(token, TokenElevation) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenElevation, ...)`
-pub fn is_elevated(token: &token::Handle) -> Result<bool, LastError> { elevation(token).map(|e| e.TokenIsElevated != 0) }
+pub fn is_elevated(token: &token::Handle) -> Result<bool, LastError> { elevation(token).map(|e| !!e.token_is_elevated) }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenHasRestrictions, ...)`
 pub fn has_restrictions(token: &token::Handle) -> Result<bool, LastError> { unsafe { raw_bool(token, TokenHasRestrictions) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenAccessInformation, ...)`
@@ -162,11 +162,11 @@ impl token::Handle {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenOrigin, ...)`
     pub fn origin(&self) -> Result<TOKEN_ORIGIN, LastError> { origin(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenElevationType, ...)`
-    pub fn elevation_type(&self) -> Result<TOKEN_ELEVATION_TYPE, LastError> { elevation_type(self) }
+    pub fn elevation_type(&self) -> Result<token::ElevationType, LastError> { elevation_type(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenLinkedToken, ...)`
     pub fn linked_token(&self) -> Result<TOKEN_LINKED_TOKEN, LastError> { linked_token(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenElevation, ...)`
-    pub fn elevation(&self) -> Result<TOKEN_ELEVATION, LastError> { elevation(self) }
+    pub fn elevation(&self) -> Result<token::Elevation, LastError> { elevation(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenElevation, ...)`
     pub fn is_elevated(&self) -> Result<bool, LastError> { is_elevated(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenHasRestrictions, ...)`

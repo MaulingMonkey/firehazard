@@ -3,6 +3,12 @@
 version = 3
 
 [[package]]
+name = "abibool"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4f44de67b8e3b858ff18eb6655966fce2ebbf073817e08edad8eb2cb7c8390cc"
+
+[[package]]
 name = "abistr"
 version = "0.2.0-rc1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -21,6 +27,7 @@ checksum = "8fb0f08069dac4bea393d14e4178e88172739e2d3abfca31e6a1d550684d37a0"
 name = "win32_security_playground"
 version = "0.0.0-git"
 dependencies = [
+ "abibool",
  "abistr",
  "winapi",
 ]

@@ -19,6 +19,8 @@ mod boxes {
 pub use values::*;
 mod values {
     mod token_access_rights;            pub use token_access_rights::*;
+    mod token_elevation_type;           pub use token_elevation_type::*;
+    mod token_elevation;                pub use token_elevation::*;
     mod token_source;                   pub use token_source::*;
     mod token_type;                     pub use token_type::*;
 }

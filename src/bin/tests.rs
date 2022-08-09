@@ -77,7 +77,7 @@ fn main() {
     dbg!(t.origin().map(|o| Luid::from(o.OriginatingLogonSession)));
     dbg!(t.elevation_type());
     dbg!(t.linked_token().map(|t| t.LinkedToken));
-    dbg!(t.elevation().map(|te| te.TokenIsElevated != 0));
+    dbg!(t.elevation());
     dbg!(t.is_elevated());
     dbg!(t.has_restrictions());
     dbg!(t.access_information().map(|i| i.AppContainerNumber)); // several more subfields
