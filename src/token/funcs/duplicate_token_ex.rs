@@ -17,7 +17,7 @@
 /// let tok : token::Handle = open_process_token::current_process();
 ///
 /// let dup : token::Handle = unsafe { duplicate_token_ex(
-///     &tok, token::ALL_ACCESS, None, SecurityDelegation, TokenPrimary
+///     &tok, token::ALL_ACCESS, None, SecurityDelegation, token::Primary
 /// )};
 ///
 /// assert_ne!(tok.as_handle(), dup.as_handle());
@@ -27,13 +27,13 @@ pub unsafe fn duplicate_token_ex(
     desired_access:         crate::token::AccessRights,
     _token_attributes:      Option<std::convert::Infallible>,
     impersonation_level:    winapi::um::winnt::SECURITY_IMPERSONATION_LEVEL,    // TODO: type wrapper?
-    token_type:             winapi::um::winnt::TOKEN_TYPE,                      // TODO: type wrapper?
+    token_type:             crate::token::Type,
 ) -> crate::token::Handle {
     use crate::error::get_last_error;
     use std::ptr::null_mut;
 
     let mut new = null_mut();
-    let success = 0 != unsafe { winapi::um::securitybaseapi::DuplicateTokenEx(token.as_handle(), desired_access.as_u32(), null_mut(), impersonation_level, token_type, &mut new) };
+    let success = 0 != unsafe { winapi::um::securitybaseapi::DuplicateTokenEx(token.as_handle(), desired_access.as_u32(), null_mut(), impersonation_level, token_type.into(), &mut new) };
     assert!(success, "DuplicateTokenEx GetLastError()={}", get_last_error());
 
     unsafe { crate::token::Handle::from_raw(new) }

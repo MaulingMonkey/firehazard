@@ -32,7 +32,7 @@ pub fn default_dacl(token: &token::Handle) -> Result<impl Deref<Target=TOKEN_DEF
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenSource, ...)`
 pub fn source(token: &token::Handle) -> Result<TOKEN_SOURCE, LastError> { unsafe { raw_fixed(token, TokenSource) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenType, ...)`
-pub fn r#type(token: &token::Handle) -> Result<TOKEN_TYPE, LastError> { unsafe { raw_fixed(token, TokenType) } }
+pub fn r#type(token: &token::Handle) -> Result<token::Type, LastError> { unsafe { raw_fixed(token, TokenType) } }
 pub use r#type as ty;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\]
@@ -137,9 +137,9 @@ impl token::Handle {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenSource, ...)`
     pub fn source(&self) -> Result<TOKEN_SOURCE, LastError> { source(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenType, ...)`
-    pub fn r#type(&self) -> Result<TOKEN_TYPE, LastError> { r#type(self) }
+    pub fn r#type(&self) -> Result<token::Type, LastError> { r#type(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenType, ...)`
-    pub fn ty(&self) -> Result<TOKEN_TYPE, LastError> { ty(self) }
+    pub fn ty(&self) -> Result<token::Type, LastError> { ty(self) }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\]
     /// `GetTokenInformation(self, TokenImpersonationLevel, ...)`

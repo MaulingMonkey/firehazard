@@ -8,7 +8,7 @@
 /// use winapi::um::winnt::{SecurityDelegation, TokenImpersonation};
 /// let token = open_process_token::current_process();
 /// let imp = unsafe { duplicate_token_ex(
-///     &token, token::ALL_ACCESS, None, SecurityDelegation, TokenImpersonation
+///     &token, token::ALL_ACCESS, None, SecurityDelegation, token::Impersonation
 /// )};
 ///
 /// set_thread_token(None, &imp).unwrap();
