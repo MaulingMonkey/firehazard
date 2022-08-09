@@ -85,7 +85,7 @@ fn main() {
     dbg!(t.virtualization_enabled());
     dbg!(t.integrity_level());
     dbg!(t.ui_access());
-    dbg!(t.mandatory_policy().map(|p| p.Policy));
+    dbg!(t.mandatory_policy());
     dbg!(t.login_sid());
     dbg!(t.is_app_container());
     dbg!(t.capabilities());

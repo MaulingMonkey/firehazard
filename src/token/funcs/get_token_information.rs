@@ -79,7 +79,7 @@ pub fn integrity_level(token: &token::Handle) -> Result<BoxTokenMandatoryLabel, 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenUIAccess, ...)`
 pub fn ui_access(token: &token::Handle) -> Result<bool, LastError> { unsafe { raw_bool(token, TokenUIAccess) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenMandatoryPolicy, ...)`
-pub fn mandatory_policy(token: &token::Handle) -> Result<TOKEN_MANDATORY_POLICY, LastError> { unsafe { raw_fixed(token, TokenMandatoryPolicy) } }
+pub fn mandatory_policy(token: &token::Handle) -> Result<token::MandatoryPolicy, LastError> { unsafe { raw_fixed(token, TokenMandatoryPolicy) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenLogonSid, ...)`
 pub fn login_sid(token: &token::Handle) -> Result<BoxTokenGroups, LastError> { unsafe { Ok(BoxTokenGroups::from_raw(raw_bytes(token, TokenLogonSid)?)) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenIsAppContainer, ...)`
@@ -182,7 +182,7 @@ impl token::Handle {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenUIAccess, ...)`
     pub fn ui_access(&self) -> Result<bool, LastError> { ui_access(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenMandatoryPolicy, ...)`
-    pub fn mandatory_policy(&self) -> Result<TOKEN_MANDATORY_POLICY, LastError> { mandatory_policy(self) }
+    pub fn mandatory_policy(&self) -> Result<token::MandatoryPolicy, LastError> { mandatory_policy(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenLogonSid, ...)`
     pub fn login_sid(&self) -> Result<BoxTokenGroups, LastError> { login_sid(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenIsAppContainer, ...)`
