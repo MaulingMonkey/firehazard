@@ -30,7 +30,7 @@ pub fn primary_group(token: &token::Handle) -> Result<BoxTokenPrimaryGroup, Last
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenDefaultDacl, ...)`
 pub fn default_dacl(token: &token::Handle) -> Result<impl Deref<Target=TOKEN_DEFAULT_DACL>, LastError> { unsafe { raw_header(token, TokenDefaultDacl) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenSource, ...)`
-pub fn source(token: &token::Handle) -> Result<TOKEN_SOURCE, LastError> { unsafe { raw_fixed(token, TokenSource) } }
+pub fn source(token: &token::Handle) -> Result<TokenSource, LastError> { unsafe { raw_fixed(token, TokenSource) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenType, ...)`
 pub fn r#type(token: &token::Handle) -> Result<token::Type, LastError> { unsafe { raw_fixed(token, TokenType) } }
 pub use r#type as ty;
@@ -135,7 +135,7 @@ impl token::Handle {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenDefaultDacl, ...)`
     pub fn default_dacl(&self) -> Result<impl Deref<Target=TOKEN_DEFAULT_DACL>, LastError> { default_dacl(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenSource, ...)`
-    pub fn source(&self) -> Result<TOKEN_SOURCE, LastError> { source(self) }
+    pub fn source(&self) -> Result<TokenSource, LastError> { source(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenType, ...)`
     pub fn r#type(&self) -> Result<token::Type, LastError> { r#type(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenType, ...)`

@@ -64,7 +64,7 @@ fn main() {
     dbg!(t.owner());
     dbg!(t.primary_group());
     dbg!(t.default_dacl().map(|d| d.DefaultDacl));
-    dbg!(t.source().map(|s| unsafe { std::mem::transmute::<[i8; 8], abistr::CStrBuf::<u8, 8>>(s.SourceName) }));
+    dbg!(t.source());
     dbg!(t.ty());
     dbg!(t.impersonation_level());
     dbg!(t.statistics().map(|s| s.GroupCount)); // several more subfields

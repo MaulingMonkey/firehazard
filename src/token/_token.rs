@@ -18,6 +18,11 @@ mod boxes {
     mod token_user;                     pub use token_user::*;
 }
 
+pub use structs::*;
+mod structs {
+    mod token_source;                   pub use token_source::*;
+}
+
 pub use funcs::*;
 pub(crate) mod funcs {
     include!("funcs/create_restricted_token.rs");
