@@ -9,19 +9,19 @@ use std::mem::{align_of, size_of};
 /// TOKEN_SOURCE
 #[derive(Clone, Copy, Debug)]
 #[repr(C)]
-pub struct TokenSource {
+pub struct Source {
     pub source_name:        CStrBuf<u8, TOKEN_SOURCE_LENGTH>,
     pub source_identifier:  Luid,
 }
 
-impl TokenSource {
-    const _ALIGN : () = assert!(align_of::<TokenSource>() == align_of::<TOKEN_SOURCE>());
-    const _SIZE  : () = assert!(size_of ::<TokenSource>() == size_of ::<TOKEN_SOURCE>());
+impl Source {
+    const _ALIGN : () = assert!(align_of::<Source>() == align_of::<TOKEN_SOURCE>());
+    const _SIZE  : () = assert!(size_of ::<Source>() == size_of ::<TOKEN_SOURCE>());
 }
 
-impl AsRef<TOKEN_SOURCE> for TokenSource { fn as_ref(&    self) -> &    TOKEN_SOURCE { unsafe { std::mem::transmute(self) } } }
-impl AsMut<TOKEN_SOURCE> for TokenSource { fn as_mut(&mut self) -> &mut TOKEN_SOURCE { unsafe { std::mem::transmute(self) } } }
-impl AsRef<TokenSource> for TOKEN_SOURCE { fn as_ref(&    self) -> &    TokenSource  { unsafe { std::mem::transmute(self) } } }
-impl AsMut<TokenSource> for TOKEN_SOURCE { fn as_mut(&mut self) -> &mut TokenSource  { unsafe { std::mem::transmute(self) } } }
-impl From<TokenSource> for TOKEN_SOURCE { fn from(ts: TokenSource ) -> Self { *ts.as_ref() } }
-impl From<TOKEN_SOURCE> for TokenSource { fn from(ts: TOKEN_SOURCE) -> Self { *ts.as_ref() } }
+impl AsRef<TOKEN_SOURCE> for Source { fn as_ref(&    self) -> &    TOKEN_SOURCE { unsafe { std::mem::transmute(self) } } }
+impl AsMut<TOKEN_SOURCE> for Source { fn as_mut(&mut self) -> &mut TOKEN_SOURCE { unsafe { std::mem::transmute(self) } } }
+impl AsRef<Source> for TOKEN_SOURCE { fn as_ref(&    self) -> &    Source  { unsafe { std::mem::transmute(self) } } }
+impl AsMut<Source> for TOKEN_SOURCE { fn as_mut(&mut self) -> &mut Source  { unsafe { std::mem::transmute(self) } } }
+impl From<Source> for TOKEN_SOURCE { fn from(e: Source ) -> Self { *e.as_ref() } }
+impl From<TOKEN_SOURCE> for Source { fn from(e: TOKEN_SOURCE) -> Self { *e.as_ref() } }
