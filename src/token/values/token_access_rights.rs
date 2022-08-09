@@ -69,7 +69,8 @@ impl BitXorAssign   for AccessRights { fn bitxor_assign(&mut self, rhs: Self) { 
 impl BitOrAssign    for AccessRights { fn bitor_assign (&mut self, rhs: Self) { self.0 |= rhs.0 } }
 
 impl Not                            for AccessRights { type Output = AccessRightsMask; fn not(self) -> Self::Output { AccessRightsMask(!self.0) } }
-impl BitAnd<AccessRightsMask>       for AccessRights { type Output = AccessRights; fn bitand(self, rhs: AccessRightsMask) -> Self::Output { Self(self.0 & rhs.0) } }
+impl BitAnd<AccessRightsMask>       for AccessRights { type Output = AccessRights; fn bitand(self, rhs: AccessRightsMask) -> AccessRights { AccessRights(self.0 & rhs.0) } }
+impl BitAnd<AccessRights>       for AccessRightsMask { type Output = AccessRights; fn bitand(self, rhs: AccessRights    ) -> AccessRights { AccessRights(self.0 & rhs.0) } }
 impl BitAndAssign<AccessRightsMask> for AccessRights { fn bitand_assign(&mut self, rhs: AccessRightsMask) { self.0 &= rhs.0 } }
 
 pub const ALL_ACCESS            : AccessRights = AccessRights(winapi::um::winnt::TOKEN_ALL_ACCESS);
