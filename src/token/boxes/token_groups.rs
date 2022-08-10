@@ -1,5 +1,7 @@
 use crate::*;
 
+use winapi::um::winnt::TOKEN_GROUPS;
+
 use std::fmt::{self, Debug, Formatter};
 use std::mem::{size_of, align_of};
 
@@ -16,6 +18,9 @@ impl BoxTokenGroups {
         assert!(usize::from32(btg.group_count()) <= (btg.0.len()-Self::GROUPS_OFFSET)/size_of::<sid::AndAttributes>());
         btg
     }
+
+    pub fn as_winapi(&self) -> *mut TOKEN_GROUPS { self.0.as_ptr() as *mut _ }
+    pub fn size_of_bytes(&self) -> usize { self.0.len() }
 
     pub fn group_count(&self) -> u32 {
         let b = &*self.0;
