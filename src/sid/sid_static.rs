@@ -11,7 +11,11 @@ use winapi::um::winnt::{SID_IDENTIFIER_AUTHORITY, SID_MAX_SUB_AUTHORITIES};
 /// # use win32_security_playground::*;
 /// let null_sid : sid::Ptr<'static>    = sid!(S-1-0-0);
 /// let untrusted_integrity_level       = sid!(S-1-16-0);
-/// let nt_administrators               = sid!(S-1-5-32-544);
+/// let nt_administrators               = sid!(S-1-5-32-544); // stable?
+///
+/// // These SIDs almost certainly aren't stable/portable
+/// let none = sid!(S-1-5-21-2440711095-4246273057-2830868914-513);
+/// let docker_users = sid!(S-1-5-21-2440711095-4246273057-2830868914-1002);
 /// ```
 ///
 /// ### Compile Error
@@ -21,7 +25,7 @@ use winapi::um::winnt::{SID_IDENTIFIER_AUTHORITY, SID_MAX_SUB_AUTHORITIES};
 /// ```
 #[macro_export] macro_rules! sid {
     (S-$rev:literal-$identifier_authority:literal$(-$sub_authority:literal)*) => {{
-        const SUB_AUTHORITIES : [u32; {[$($sub_authority),*].len()}] = [$($sub_authority),*];
+        const SUB_AUTHORITIES : [u32; {[0u32 $(,$sub_authority)*].len()-1}] = [$($sub_authority),*];
         assert!(SUB_AUTHORITIES.len() <= 15, "too many subauthorities (> SID_MAX_SUB_AUTHORITIES = 15)");
         const SID : $crate::sid::Static<{SUB_AUTHORITIES.len()}> = $crate::sid::Static::new($rev, $identifier_authority, SUB_AUTHORITIES);
         SID.as_sid_ptr()
