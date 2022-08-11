@@ -8,27 +8,27 @@ use std::marker::PhantomData;
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\] ~ Box<(SID, ???), D>
-#[repr(transparent)] pub struct Box<D: alloc::SidDeallocator>(*mut SID, PhantomData<D>);
+#[repr(transparent)] pub struct Box<D: alloc::Deallocator>(*mut SID, PhantomData<D>);
 
-impl<D: alloc::SidDeallocator> Drop for Box<D> {
+impl<D: alloc::Deallocator> Drop for Box<D> {
     fn drop(&mut self) {
         unsafe { D::free(self.0) }
     }
 }
 
-impl<D: alloc::SidDeallocator> Debug for Box<D> {
+impl<D: alloc::Deallocator> Debug for Box<D> {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         Debug::fmt(&self.as_sid_ptr(), fmt)
     }
 }
 
-impl<'s, D: alloc::SidDeallocator> From<&'s Box<D>> for sid::Ptr<'s> {
+impl<'s, D: alloc::Deallocator> From<&'s Box<D>> for sid::Ptr<'s> {
     fn from(sid: &'s Box<D>) -> Self {
         sid.as_sid_ptr()
     }
 }
 
-impl<D: alloc::SidDeallocator> Box<D> {
+impl<D: alloc::Deallocator> Box<D> {
     /// ### Safety
     /// *   `sid` should be a valid [`LocalAlloc`](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-localalloc)ed buffer containing a valid [`SID`](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid).
     /// *   `sid` should not be [`LocalFree`](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-localfree)ed by anything else as [`Box::from_raw_unchecked`] takes ownership.
