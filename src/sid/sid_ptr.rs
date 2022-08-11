@@ -4,7 +4,7 @@ use winapi::shared::ntstatus::STATUS_SUCCESS;
 use winapi::shared::sddl::{ConvertSidToStringSidA};
 use winapi::um::lsalookup::{LSA_OBJECT_ATTRIBUTES, LSA_REFERENCED_DOMAIN_LIST, LSA_TRANSLATED_NAME};
 use winapi::um::ntlsa::*;
-use winapi::um::winnt::SID;
+use winapi::um::winnt::{SID, PSID};
 
 use std::fmt::{self, Debug, Formatter};
 use std::marker::PhantomData;
@@ -21,6 +21,10 @@ impl Ptr<'_> {
     /// `sid` should be null, or point to a valid [`SID`](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)
     /// for the lifetime of the [`sid::Ptr`].
     pub const unsafe fn from_raw_unchecked(sid: *mut SID) -> Self { Self(sid, PhantomData) }
+
+    // These fns return different types!  PSID is `*mut c_void`, not `*mut SID` !
+    pub fn as_psid(self) -> PSID { self.0.cast() }
+    pub fn as_ptr_sid(self) -> *mut SID { self.0 }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertsidtostringsida)\] ConvertSidToStringSidA
     pub fn to_string_sid_a(&self) -> Option<LocalString> {
