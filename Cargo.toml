@@ -27,6 +27,7 @@ winapi.features = [
     "ntlsa",
     "processthreadsapi",
     "securitybaseapi",
+    "synchapi",
     "winbase",
     "winnt",
 ]

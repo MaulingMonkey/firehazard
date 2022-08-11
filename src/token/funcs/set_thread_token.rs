@@ -6,7 +6,7 @@
 /// use win32_security_playground::*;
 /// use winapi::shared::winerror::ERROR_BAD_TOKEN_TYPE;
 /// use winapi::um::winnt::{SecurityDelegation, TokenImpersonation};
-/// let token = open_process_token::current_process();
+/// let token = open_process_token::current_process().unwrap();
 /// let imp = unsafe { duplicate_token_ex(
 ///     &token, token::ALL_ACCESS, None, SecurityDelegation, token::Impersonation
 /// )};

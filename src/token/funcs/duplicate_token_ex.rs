@@ -14,7 +14,7 @@
 /// ```
 /// # use win32_security_playground::*;
 /// use winapi::um::winnt::{SecurityDelegation, TokenPrimary, TOKEN_ALL_ACCESS};
-/// let tok : token::Handle = open_process_token::current_process();
+/// let tok : token::Handle = open_process_token::current_process().unwrap();
 ///
 /// let dup : token::Handle = unsafe { duplicate_token_ex(
 ///     &tok, token::ALL_ACCESS, None, SecurityDelegation, token::Primary

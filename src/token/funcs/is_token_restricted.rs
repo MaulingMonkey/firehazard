@@ -3,7 +3,7 @@
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
-/// let token : token::Handle = open_process_token::current_process();
+/// let token : token::Handle = open_process_token::current_process().unwrap();
 /// assert!(!is_token_restricted(&token));
 /// ```
 pub fn is_token_restricted(token: &crate::token::Handle) -> bool {
