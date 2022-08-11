@@ -12,4 +12,5 @@ mod sid_static;                         pub use sid_static::*;
 pub use funcs::*;
 pub(crate) mod funcs {
     mod convert_string_sid_to_sid;  pub use convert_string_sid_to_sid::*;
+    include!("funcs/equal_sid.rs");
 }
