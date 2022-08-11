@@ -77,8 +77,8 @@ impl Clone for Handle {
 
 impl Drop for Handle {
     fn drop(&mut self) {
-        let success = 0 != unsafe { CloseHandle(self.0) };
-        assert!(success, "CloseHandle GetLastError()={}", get_last_error());
+        let success = self.0.is_null() || (0 != unsafe { CloseHandle(self.0) });
+        assert!(success, "CloseHandle({:?}) GetLastError()={}", self.0, get_last_error());
     }
 }
 
