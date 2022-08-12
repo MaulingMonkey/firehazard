@@ -1,5 +1,5 @@
 use crate::*;
-use crate::error::get_last_error;
+use crate::error::LastError;
 use crate::token::*;
 
 use winapi::um::handleapi::{DuplicateHandle, CloseHandle};
@@ -46,7 +46,7 @@ impl Handle {
 
         let mut new = null_mut();
         let success = 0 != unsafe { DuplicateHandle(process, handle, process, &mut new, 0, false as _, DUPLICATE_SAME_ACCESS) };
-        assert!(success, "DuplicateHandle GetLastError()={}", get_last_error());
+        assert!(success, "DuplicateHandle failed with {:?}", LastError::get());
         // N.B. handle != new - this isn't refcounting per se
 
         Self(new)
@@ -78,7 +78,7 @@ impl Clone for Handle {
 impl Drop for Handle {
     fn drop(&mut self) {
         let success = self.0.is_null() || (0 != unsafe { CloseHandle(self.0) });
-        assert!(success, "CloseHandle({:?}) GetLastError()={}", self.0, get_last_error());
+        assert!(success, "CloseHandle({:?}) failed with GetLastError()={:?}", self.0, LastError::get());
     }
 }
 
