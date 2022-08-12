@@ -3,7 +3,6 @@ use crate::error::LastError;
 use crate::token::*;
 
 use winapi::um::handleapi::{DuplicateHandle, CloseHandle};
-use winapi::um::processthreadsapi::GetCurrentProcess;
 use winapi::um::winnt::*;
 
 use std::fmt::{self, Debug, Formatter};
@@ -41,9 +40,7 @@ impl Handle {
     ///
     /// The underlying `HANDLE` should be a valid access token when called.
     pub unsafe fn shallow_clone_from_raw(handle: HANDLE) -> Self {
-        let process = unsafe { GetCurrentProcess() };
-        assert!(!process.is_null(), "GetCurrentProcess");
-
+        let process = get_current_process().as_handle();
         let mut new = null_mut();
         let success = 0 != unsafe { DuplicateHandle(process, handle, process, &mut new, 0, false as _, DUPLICATE_SAME_ACCESS) };
         assert!(success, "DuplicateHandle failed with {:?}", LastError::get());

@@ -1,7 +1,7 @@
+use crate::*;
 use crate::error::LastError;
 
 use winapi::um::handleapi::{DuplicateHandle, CloseHandle};
-use winapi::um::processthreadsapi::GetCurrentProcess;
 use winapi::um::winnt::*;
 
 use std::fmt::{self, Debug, Formatter};
@@ -29,8 +29,7 @@ impl OwnedHandle {
     /// ### Safety
     /// The underlying `HANDLE` should be a valid thread when called.
     pub unsafe fn clone_from_raw(handle: HANDLE) -> Self {
-        let process = unsafe { GetCurrentProcess() }; // Never fails
-
+        let process = get_current_process().as_handle();
         let mut new = null_mut();
         let success = 0 != unsafe { DuplicateHandle(process, handle, process, &mut new, 0, false as _, DUPLICATE_SAME_ACCESS) };
         assert!(success, "DuplicateHandle failed with {:?}", LastError::get());

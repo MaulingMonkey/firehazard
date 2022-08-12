@@ -1,5 +1,5 @@
 //! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessw)\]
-//! Process [`Handle`] and related fns
+//! Process [`OwnedHandle`] and related fns
 
 #[path = "process_funcs.rs"]
 pub(crate) mod funcs;                   pub use funcs::*;

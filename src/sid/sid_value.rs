@@ -14,7 +14,7 @@ use std::ptr::null_mut;
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\]
 /// ~ SID
 ///
-/// Should never be directly constructed - instead, allow various types to [`Deref`] into a reference to this.
+/// Should never be directly constructed - instead, allow various types to [`std::ops::Deref`] into a reference to this.
 #[repr(transparent)] pub struct Value(*mut SID);
 // DO NOT IMPLEMENT:
 // * Clone, Copy: Given `&'a Value`, lifetime of the underlying SID may be limited to `'a` - these traits would allow a copy to escape to `'static`.
