@@ -258,7 +258,7 @@ fn spam_dbg() {
     dbgl!(t2.privileges().unwrap().privileges());
     dbg!(t.owner());
     dbg!(t.primary_group());
-    dbg!(t.default_dacl().map(|d| d.DefaultDacl));
+    dbgl!(t.default_dacl().unwrap().default_dacl().aces());
     dbg!(t.source());
     dbg!(t.ty());
     dbg!(t.impersonation_level());

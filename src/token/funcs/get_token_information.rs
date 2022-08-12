@@ -28,7 +28,7 @@ pub fn owner(token: &token::Handle) -> Result<BoxTokenOwner, LastError> { unsafe
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenPrimaryGroup, ...)`
 pub fn primary_group(token: &token::Handle) -> Result<BoxTokenPrimaryGroup, LastError> { unsafe { Ok(BoxTokenPrimaryGroup::from_raw(raw_bytes(token, TokenPrimaryGroup)?)) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenDefaultDacl, ...)`
-pub fn default_dacl(token: &token::Handle) -> Result<impl Deref<Target=TOKEN_DEFAULT_DACL>, LastError> { unsafe { raw_header(token, TokenDefaultDacl) } }
+pub fn default_dacl(token: &token::Handle) -> Result<BoxTokenDefaultDacl, LastError> { unsafe { Ok(BoxTokenDefaultDacl::from_raw(raw_bytes(token, TokenDefaultDacl)?)) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenSource, ...)`
 pub fn source(token: &token::Handle) -> Result<Source, LastError> { unsafe { raw_fixed(token, TokenSource) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenType, ...)`
@@ -133,7 +133,7 @@ impl token::Handle {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenPrimaryGroup, ...)`
     pub fn primary_group(&self) -> Result<BoxTokenPrimaryGroup, LastError> { primary_group(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenDefaultDacl, ...)`
-    pub fn default_dacl(&self) -> Result<impl Deref<Target=TOKEN_DEFAULT_DACL>, LastError> { default_dacl(self) }
+    pub fn default_dacl(&self) -> Result<BoxTokenDefaultDacl, LastError> { default_dacl(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenSource, ...)`
     pub fn source(&self) -> Result<Source, LastError> { source(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenType, ...)`
