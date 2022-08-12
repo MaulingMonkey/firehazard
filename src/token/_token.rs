@@ -34,8 +34,8 @@ pub(crate) mod funcs {
     include!("funcs/get_current_x_token.rs");
     pub mod get_token_information;
     include!("funcs/is_token_restricted.rs");
-    pub mod open_process_token;
-    pub mod open_thread_token;
+    include!("funcs/open_process_token.rs");
+    include!("funcs/open_thread_token.rs");
     include!("funcs/revert_to_self.rs");
     include!("funcs/set_thread_token.rs");
     pub mod set_token_information;

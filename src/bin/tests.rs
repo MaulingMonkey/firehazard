@@ -49,7 +49,7 @@ fn default(exe: &OsStr) {
     assert_eq!(Some(0), Command::new(exe).arg("self_restrict_shutdown").status().unwrap().code());
     spam_dbg();
 
-    let t = open_process_token::current_process(token::ALL_ACCESS).unwrap();
+    let t = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
     //let t = unsafe { duplicate_token_ex(&t, token::ALL_ACCESS, None, SecurityImpersonation, token::Primary) };
 
     let privileges = t.privileges().unwrap();
@@ -211,7 +211,7 @@ fn launched_low_integrity() {
     );
 
     // lower access
-    let t = open_process_token::current_process(token::ADJUST_DEFAULT).unwrap();
+    let t = open_process_token(get_current_process(), token::ADJUST_DEFAULT).unwrap();
     t.set_integrity_level(sid::AndAttributes::new(sid!(S-1-16-0), 0)).expect("should have lowered to untrusted integrity");
     t.set_integrity_level(sid::AndAttributes::new(sid!(S-1-16-4096), 0)).expect_err("shouldn't be able to raise from untrusted integrity to low");
 
@@ -221,7 +221,7 @@ fn launched_low_integrity() {
     t.set_integrity_level(sid::AndAttributes::new(sid!(S-1-16-0), 0)).unwrap();
     drop(t); // don't leave the handle open for abuse after revert_to_self()
 
-    open_process_token::current_process(token::ADJUST_DEFAULT).expect_err("shouldn't be able to re-open the process token from untrusted integrity, or with incompatible restricted SIDs");
+    open_process_token(get_current_process(), token::ADJUST_DEFAULT).expect_err("shouldn't be able to re-open the process token from untrusted integrity, or with incompatible restricted SIDs");
 
     assert!(!std::path::Path::new(r"C:\Windows\System32\kernel32.dll").exists());
     assert!(!std::path::Path::new(r"C:\Windows\System32\cryptbase.dll").exists());
@@ -239,7 +239,7 @@ fn self_restrict_shutdown() {
 
     fn discard_privileges() {
         let se_shutdown = privilege::Luid::lookup_privilege_value_a(cstr!("SeShutdownPrivilege")).unwrap();
-        open_process_token::current_process(token::ALL_ACCESS).unwrap().privileges_remove_if(|p| p == se_shutdown).unwrap();
+        open_process_token(get_current_process(), token::ALL_ACCESS).unwrap().privileges_remove_if(|p| p == se_shutdown).unwrap();
     }
 }
 
@@ -261,9 +261,9 @@ fn attempt_shutdown() -> (u32, u32) {
 fn spam_dbg() {
     if !is_verbose() { return }
 
-    let t = open_process_token::current_process(token::ALL_ACCESS).unwrap();
+    let t = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
     dbg!(&t);
-    dbg!(win32_security_playground::open_thread_token::current_thread(false));
+    dbg!(open_thread_token(get_current_thread(), token::ALL_ACCESS, false));
     let t2 = t.clone();
     assert!(t.as_handle() != t2.as_handle());
     t2.privileges_disable_if(|_| true).unwrap();
