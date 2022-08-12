@@ -68,7 +68,7 @@ impl Handle {
 }
 
 impl Debug for Handle {
-    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "token::Handle({:08p})", self.0) }
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "token::Handle(0x{:08x})", self.0 as usize) }
 }
 
 impl Clone for Handle {

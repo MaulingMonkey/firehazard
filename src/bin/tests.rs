@@ -49,14 +49,13 @@ fn default(exe: &OsStr) {
     assert_eq!(Some(0), Command::new(exe).arg("self_restrict_shutdown").status().unwrap().code());
     spam_dbg();
 
-    let t = open_process_token::current_process().unwrap();
+    let t = open_process_token::current_process(token::ALL_ACCESS).unwrap();
     //let t = unsafe { duplicate_token_ex(&t, token::ALL_ACCESS, None, SecurityImpersonation, token::Primary) };
 
     let privileges = t.privileges().unwrap();
     let privileges_to_remove = Some(privileges.privileges());
     //let privileges_to_remove = None;
 
-    let user = t.user().unwrap();
     let groups = t.groups().unwrap();
     let mut login_session_sids = groups.groups().iter().filter(|g| g.attributes & SE_GROUP_LOGON_ID != 0).copied();
     let logon_session_sid = login_session_sids.next().expect("login_session_sid").sid;
@@ -64,17 +63,12 @@ fn default(exe: &OsStr) {
 
     // XXX: consider using the user + all enabled/logon sids from groups for permissive_to_restrict?
     let permissive_to_restrict = vec![
-        //sid::AndAttributes::new(user.user().sid,          0), // %USERNAME%
-        sid::AndAttributes::new(sid!(S-1-1-0),              0), // Everyone
-        sid::AndAttributes::new(logon_session_sid,          0), // LogonSessionId_x_yyyyyyy
-        //sid::AndAttributes::new(sid!(S-1-0-0),            0), // NULL SIDs
+        sid::AndAttributes::new(sid!(S-1-1-0),      0), // Everyone
+        sid::AndAttributes::new(logon_session_sid,  0), // LogonSessionId_x_yyyyyyy
     ];
 
     let restrictive_to_restrict = vec![
-        sid::AndAttributes::new(user.user().sid,            0), // %USERNAME%   // TODO: eliminate the need for this when lowering the child process integrity level from low -> untrusted?
-        //sid::AndAttributes::new(sid!(S-1-1-0),            0), // Everyone
-        //sid::AndAttributes::new(sid!(S-1-5-5-0-1288468),  0), // LogonSessionId_0_1288468
-        sid::AndAttributes::new(sid!(S-1-0-0),              0), // NULL SID
+        sid::AndAttributes::new(sid!(S-1-0-0),      0), // NULL SID
     ];
 
     //  1. Create the more permissive token used to initialize DLLs and run pre-main stuff.
@@ -103,6 +97,14 @@ fn default(exe: &OsStr) {
     //let untrusted_integrity = sid::AndAttributes::new(sid!(S-1-16-0), 0);
     restricted.set_integrity_level(low_integrity).unwrap(); // going directly to untrusted seems to cause the child to exit STATUS_BAD_IMPERSONATION_LEVEL
     //let restricted = unsafe { duplicate_token_ex(&restricted, token::ALL_ACCESS, None, SecurityImpersonation, token::Primary) };
+
+    // For the child process to lower itself to untrusted integrity, in needs `token::ADJUST_DEFAULT` access
+    // under the thread's current access token (currently done before `revert_to_self()`, so `permissive`).
+    // `permissive` is currently restricted to only "Everyone" and "LogonSession_x_yyyyyyy" - the latter seems narrower, so we grant access to it.
+    let mut acl = acl::Builder::new(acl::REVISION);
+    acl.add_access_allowed_ace(acl::REVISION, token::ADJUST_DEFAULT, logon_session_sid).unwrap();
+    acl.finish().unwrap();
+    restricted.set_default_dacl(&mut acl).unwrap();
 
     let restricted_groups_and_privileges = restricted.groups_and_privileges().unwrap();
     if is_verbose() {
@@ -193,11 +195,17 @@ fn launched_low_integrity() {
     );
 
     // lower access
-    revert_to_self().expect("should have discarded our less restricted token");
-    let t = open_process_token::current_process().unwrap();
+    let t = open_process_token::current_process(token::ADJUST_DEFAULT).unwrap();
     t.set_integrity_level(sid::AndAttributes::new(sid!(S-1-16-0), 0)).expect("should have lowered to untrusted integrity");
     t.set_integrity_level(sid::AndAttributes::new(sid!(S-1-16-4096), 0)).expect_err("shouldn't be able to raise from untrusted integrity to low");
-    open_process_token::current_process().expect_err("shouldn't be able to re-open the process token from untrusted integrity");
+
+    revert_to_self().expect("should have discarded our less restricted token");
+
+    // we can still use the opened handle after revert_to_self, although we can't open new ones:
+    t.set_integrity_level(sid::AndAttributes::new(sid!(S-1-16-0), 0)).unwrap();
+    drop(t); // don't leave the handle open for abuse after revert_to_self()
+
+    open_process_token::current_process(token::ADJUST_DEFAULT).expect_err("shouldn't be able to re-open the process token from untrusted integrity, or with incompatible restricted SIDs");
 
     // Command::status() returns io::Error { kind: NotFound, message: "program not found" } w/ no raw_os_error
     assert_eq!((-1 as _, -1 as _), attempt_shutdown());
@@ -212,7 +220,7 @@ fn self_restrict_shutdown() {
 
     fn discard_privileges() {
         let se_shutdown = privilege::Luid::lookup_privilege_value_a(cstr!("SeShutdownPrivilege")).unwrap();
-        open_process_token::current_process().unwrap().privileges_remove_if(|p| p == se_shutdown).unwrap();
+        open_process_token::current_process(token::ALL_ACCESS).unwrap().privileges_remove_if(|p| p == se_shutdown).unwrap();
     }
 }
 
@@ -234,7 +242,7 @@ fn attempt_shutdown() -> (u32, u32) {
 fn spam_dbg() {
     if !is_verbose() { return }
 
-    let t = open_process_token::current_process().unwrap();
+    let t = open_process_token::current_process(token::ALL_ACCESS).unwrap();
     dbg!(&t);
     dbg!(win32_security_playground::open_thread_token::current_thread(false));
     let t2 = t.clone();

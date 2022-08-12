@@ -54,7 +54,8 @@ impl Debug for Flags {
 }
 
 impl From<()> for Flags { fn from(_: ()) -> Self { Self(0) } }
-impl From<Flags> for u8 { fn from(ar: Flags) -> Self { ar.0 } }
+impl From<Flags> for u8  { fn from(ar: Flags) -> Self { ar.0 } }
+impl From<Flags> for u32 { fn from(ar: Flags) -> Self { ar.0 as _ } }
 
 impl BitAnd         for Flags { type Output = Self; fn bitand(self, rhs: Self) -> Self::Output { Self(self.0 & rhs.0) } }
 impl BitXor         for Flags { type Output = Self; fn bitxor(self, rhs: Self) -> Self::Output { Self(self.0 ^ rhs.0) } }

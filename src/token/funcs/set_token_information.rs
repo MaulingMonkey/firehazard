@@ -1,18 +1,28 @@
 //! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\]
 //! SetTokenInformation
+//!
+//! ### Errors
+//! *   `ERROR_ACCESS_DENIED`   - if the [`token::Handle`] wasn't opened with at least [`token::ADJUST_DEFAULT`]
 
 use crate::*;
 use crate::error::LastError;
 
 use winapi::shared::winerror::ERROR_INVALID_PARAMETER;
 use winapi::um::securitybaseapi::SetTokenInformation;
-use winapi::um::winnt::{TOKEN_INFORMATION_CLASS, TokenIntegrityLevel};
+use winapi::um::winnt::*;
 
+
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\] `SetTokenInformation(self, TokenDefaultDacl, ...)`
+pub fn default_dacl<'acl>(token: &token::Handle, dacl: impl Into<acl::Ptr<'acl>>) -> Result<(), LastError> { unsafe { raw_fixed(token, TokenDefaultDacl, &TOKEN_DEFAULT_DACL { DefaultDacl: dacl.into().as_pacl() }) } }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\] `SetTokenInformation(self, TokenIntegrityLevel, ...)`
 pub fn integrity_level(token: &token::Handle, saa: sid::AndAttributes) -> Result<(), LastError> { unsafe { raw_fixed(token, TokenIntegrityLevel, &saa) } }
 
 impl token::Handle {
+    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\] `SetTokenInformation(self, TokenDefaultDacl, ...)`
+    pub fn set_default_dacl<'acl>(&self, dacl: impl Into<acl::Ptr<'acl>>) -> Result<(), LastError> { default_dacl(self, dacl) }
+
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\] `SetTokenInformation(self, TokenIntegrityLevel, ...)`
     pub fn set_integrity_level(&self, saa: sid::AndAttributes) -> Result<(), LastError> { integrity_level(self, saa) }
 }

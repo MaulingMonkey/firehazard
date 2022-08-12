@@ -21,6 +21,8 @@ impl<'a> Iter<'a> {
             ph:         PhantomData
         }
     }
+
+    pub fn as_ptr(&self) -> *mut ace::Header { self.next_ace }
 }
 
 impl<'a> Iterator for Iter<'a> {
