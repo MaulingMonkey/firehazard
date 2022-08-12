@@ -21,6 +21,7 @@ impl Debug for LastError {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         let name = match self.0 {
             ERROR_ACCESS_DENIED             => "ERROR_ACCESS_DENIED",           // 5
+            ERROR_INVALID_HANDLE            => "ERROR_INVALID_HANDLE",          // 6
             ERROR_BAD_LENGTH                => "ERROR_BAD_LENGTH",              // 24
             ERROR_INVALID_PARAMETER         => "ERROR_INVALID_PARAMETER",       // 87
             ERROR_INSUFFICIENT_BUFFER       => "ERROR_INSUFFICIENT_BUFFER",     // 122
