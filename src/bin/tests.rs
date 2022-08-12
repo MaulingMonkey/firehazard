@@ -63,16 +63,28 @@ fn default(exe: &OsStr) {
 
     // XXX: consider using the user + all enabled/logon sids from groups for permissive_to_restrict?
     let permissive_to_restrict = vec![
-        sid::AndAttributes::new(sid!(S-1-1-0),      0), // Everyone
+        // Users - required to load e.g. `C:\Windows\System32\cryptbase.dll`, which isn't in `/KnownDlls`.
+        // This in turn is required by `ADVAPI32.dll` which forwards `SystemFunction036` (`RtlGenRandom`) to it.
+        // That - at least at one point - was used to initialize Rust stdlib hash seeding for DoS attack resistance.
+        // Required in rustc 1.63.0, but not in 1.61.0 (haven't tested 1.62.0)
+        // Additionally: SeChangeNotifyPrivilege is required (hence why permissive only uses `DISABLE_MAX_PRIVILEGE`,
+        // which keeps SeChangeNotifyPrivilege, instead of `privileges_to_remove`, which removes it.)
+        sid::AndAttributes::new(sid!(S-1-5-32-545), 0), // Users
+
+        // Everyone - required to load... `/KnownDlls` ?  Not actually quite sure, and procmon isn't super helpful here.
+        sid::AndAttributes::new(sid!(S-1-1-0), 0), // Everyone
+
+        // Logon Session - not required for launch?  But I'm currently using this to allow the child
+        // process to open it's own token to lower it's integrity level from "Low" to "Untrusted".
         sid::AndAttributes::new(logon_session_sid,  0), // LogonSessionId_x_yyyyyyy
     ];
 
     let restrictive_to_restrict = vec![
-        sid::AndAttributes::new(sid!(S-1-0-0),      0), // NULL SID
+        sid::AndAttributes::new(sid!(S-1-0-0), 0), // NULL SID
     ];
 
     //  1. Create the more permissive token used to initialize DLLs and run pre-main stuff.
-    let permissive = unsafe { create_restricted_token(&t, 0, None, privileges_to_remove, Some(&permissive_to_restrict)) }.unwrap();
+    let permissive = unsafe { create_restricted_token(&t, DISABLE_MAX_PRIVILEGE, None, None, Some(&permissive_to_restrict)) }.unwrap();
     // untrusted integrity will cause `bcrypt.dll` to fail to load with 0xC0000142 / ERROR_DLL_INIT_FAILED, so launch with low integrity instead
     let low_integrity = sid::AndAttributes::new(sid!(S-1-16-4096), 0);
     permissive.set_integrity_level(low_integrity).unwrap();
@@ -102,6 +114,7 @@ fn default(exe: &OsStr) {
     // under the thread's current access token (currently done before `revert_to_self()`, so `permissive`).
     // `permissive` is currently restricted to only "Everyone" and "LogonSession_x_yyyyyyy" - the latter seems narrower, so we grant access to it.
     let mut acl = acl::Builder::new(acl::REVISION);
+    acl.add_acl(acl::REVISION, 0, restricted.default_dacl().unwrap().default_dacl()).unwrap(); // allow debuggers to attach, task managers to kill, etc.
     acl.add_access_allowed_ace(acl::REVISION, token::ADJUST_DEFAULT, logon_session_sid).unwrap();
     acl.finish().unwrap();
     restricted.set_default_dacl(&mut acl).unwrap();
@@ -185,6 +198,9 @@ fn default(exe: &OsStr) {
 }
 
 fn launched_low_integrity() {
+    assert!(std::path::Path::new(r"C:\Windows\System32\kernel32.dll").exists());
+    assert!(std::path::Path::new(r"C:\Windows\System32\cryptbase.dll").exists());
+
     let shutdown = attempt_shutdown();
     assert!( false
         || shutdown == (ERROR_ACCESS_DENIED, ERROR_ACCESS_DENIED)
@@ -206,6 +222,9 @@ fn launched_low_integrity() {
     drop(t); // don't leave the handle open for abuse after revert_to_self()
 
     open_process_token::current_process(token::ADJUST_DEFAULT).expect_err("shouldn't be able to re-open the process token from untrusted integrity, or with incompatible restricted SIDs");
+
+    assert!(!std::path::Path::new(r"C:\Windows\System32\kernel32.dll").exists());
+    assert!(!std::path::Path::new(r"C:\Windows\System32\cryptbase.dll").exists());
 
     // Command::status() returns io::Error { kind: NotFound, message: "program not found" } w/ no raw_os_error
     assert_eq!((-1 as _, -1 as _), attempt_shutdown());
