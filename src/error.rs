@@ -20,15 +20,16 @@ impl LastError {
 impl Debug for LastError {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         let name = match self.0 {
-            ERROR_ACCESS_DENIED         => "ERROR_ACCESS_DENIED",       // 5
-            ERROR_BAD_LENGTH            => "ERROR_BAD_LENGTH",          // 24
-            ERROR_INVALID_PARAMETER     => "ERROR_INVALID_PARAMETER",   // 87
-            ERROR_INSUFFICIENT_BUFFER   => "ERROR_INSUFFICIENT_BUFFER", // 122
-            ERROR_NO_TOKEN              => "ERROR_NO_TOKEN",            // 1008
-            ERROR_PRIVILEGE_NOT_HELD    => "ERROR_PRIVILEGE_NOT_HELD",  // 1314
-            ERROR_BAD_TOKEN_TYPE        => "ERROR_BAD_TOKEN_TYPE",      // 1349
-            ERROR_INCORRECT_SIZE        => "ERROR_INCORRECT_SIZE",      // 1462
-            _                           => "ERROR_???",
+            ERROR_ACCESS_DENIED             => "ERROR_ACCESS_DENIED",           // 5
+            ERROR_BAD_LENGTH                => "ERROR_BAD_LENGTH",              // 24
+            ERROR_INVALID_PARAMETER         => "ERROR_INVALID_PARAMETER",       // 87
+            ERROR_INSUFFICIENT_BUFFER       => "ERROR_INSUFFICIENT_BUFFER",     // 122
+            ERROR_NO_TOKEN                  => "ERROR_NO_TOKEN",                // 1008
+            ERROR_PRIVILEGE_NOT_HELD        => "ERROR_PRIVILEGE_NOT_HELD",      // 1314
+            ERROR_ALLOTTED_SPACE_EXCEEDED   => "ERROR_ALLOTTED_SPACE_EXCEEDED", // 1344
+            ERROR_BAD_TOKEN_TYPE            => "ERROR_BAD_TOKEN_TYPE",          // 1349
+            ERROR_INCORRECT_SIZE            => "ERROR_INCORRECT_SIZE",          // 1462
+            _                               => "ERROR_???",
         };
         write!(fmt, "LastError({} {name})", self.0)
     }
