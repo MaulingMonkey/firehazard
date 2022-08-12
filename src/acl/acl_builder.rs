@@ -6,7 +6,6 @@ use winapi::shared::winerror::{ERROR_INVALID_HANDLE, ERROR_ALLOTTED_SPACE_EXCEED
 use winapi::um::securitybaseapi::*;
 use winapi::um::winnt::ACL;
 
-use std::mem::size_of;
 use std::ptr::null_mut;
 
 /// `WORD` sizes etc. limit the size to `0xFFFF`.
@@ -146,9 +145,9 @@ impl Builder {
     /// `AddAce` an entire Acl
     pub fn add_acl(&mut self, ace_revision: acl::Revision, starting_ace_index: u32, acl: acl::Ptr) -> Result<&mut Self, LastError> {
         if acl.as_pacl().is_null() { return Err(LastError(ERROR_INVALID_PARAMETER)); }
-        let size = acl.get_acl_size_information().AclBytesInUse - (size_of::<ace::Header>() as u32);
+        let size : u16 = acl.aces().map(|a| a.header().size).sum();
         let ptr = acl.aces().as_ptr().cast();
-        let success = 0 != unsafe { AddAce(self.as_winapi(), ace_revision.into(), starting_ace_index, ptr, size) };
+        let success = 0 != unsafe { AddAce(self.as_winapi(), ace_revision.into(), starting_ace_index, ptr, size.into()) };
         if success { Ok(self) } else { Err(LastError::get()) }
     }
 

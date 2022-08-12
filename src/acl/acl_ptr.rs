@@ -50,7 +50,7 @@ impl Ptr<'_> {
     unsafe fn get_acl_information<T>(&self, class: u32) -> T {
         let mut info = unsafe { std::mem::zeroed::<T>() };
         let success = 0 != unsafe { GetAclInformation(self.0, &mut info as *mut _ as *mut _, std::mem::size_of::<T>() as _, class) };
-        assert!(success, "GetAclInformation failed with GetLastError()={:?}", LastError::get());
+        assert!(success, "GetAclInformation failed with {:?}", LastError::get());
         info
     }
 }

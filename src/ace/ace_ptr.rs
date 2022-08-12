@@ -19,6 +19,8 @@ impl Ptr<'_> {
     /// ### Safety
     /// `ace_header` should be null, or point to a valid [`ACE_HEADER`](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header) for the lifetime `'a` given [`ace::Ptr<'a>`].
     pub unsafe fn from_raw(ace: *mut ace::Header) -> Option<Self> { if ace.is_null() { None } else { Some(Self(ace, PhantomData)) } }
+
+    pub fn header(&self) -> &ace::Header { unsafe { &*self.0 } }
 }
 
 impl Debug for Ptr<'_> {
