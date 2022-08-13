@@ -7,7 +7,7 @@ use winapi::shared::minwindef::FALSE;
 use winapi::shared::ntstatus::STATUS_ACCESS_DENIED;
 use winapi::shared::winerror::*;
 
-use winapi::um::processthreadsapi::{STARTUPINFOW, PROCESS_INFORMATION, GetExitCodeProcess, SetThreadToken, ResumeThread, CreateProcessAsUserW};
+use winapi::um::processthreadsapi::{STARTUPINFOW, PROCESS_INFORMATION, GetExitCodeProcess, CreateProcessAsUserW};
 use winapi::um::synchapi::WaitForSingleObject;
 use winapi::um::winbase::*;
 use winapi::um::winnt::*;
@@ -172,9 +172,9 @@ fn default(exe: &OsStr) {
     let process_info = unsafe { process::Information::from_raw(process_info) };
 
     // temporarilly allow the child process's main thread to have more permissions to initialize DLLs etc.s
-    assert!(FALSE != unsafe { SetThreadToken(&mut process_info.thread.as_handle(), permissive.as_handle()) }, "SetThreadToken: {:?}", LastError::get());
+    set_thread_token(&process_info.thread, &permissive).unwrap();
     // restricted.set_integrity_level(sid::AndAttributes::new(sid!(S-1-16-0), 0)).unwrap(); // won't effect the running process integrity level (copies the token?)
-    assert!(!0 != unsafe { ResumeThread(process_info.thread.as_handle()) });
+    resume_thread(&process_info.thread).unwrap();
 
     assert!(WAIT_OBJECT_0 == unsafe { WaitForSingleObject(process_info.process.as_handle(), INFINITE ) });
 

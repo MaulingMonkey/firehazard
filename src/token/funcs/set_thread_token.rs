@@ -11,23 +11,21 @@
 ///     &token, token::ALL_ACCESS, None, SecurityDelegation, token::Impersonation
 /// )};
 ///
-/// set_thread_token(None, &imp).unwrap();
-/// set_thread_token(None, None).unwrap();
+/// set_thread_token(None,                  &imp).unwrap();
+/// set_thread_token(get_current_thread(),  &imp).unwrap();
+/// set_thread_token(None,                  None).unwrap();
+/// set_thread_token(get_current_thread(),  None).unwrap();
 /// assert_eq!(ERROR_BAD_TOKEN_TYPE, set_thread_token(None, &token).unwrap_err());
 /// ```
 ///
 /// ### Errors
 /// *   `ERROR_BAD_TOKEN_TYPE`  if `token` is a primary token instead of an impersonation token
-pub fn set_thread_token<'t>(thread: impl Into<Option<std::convert::Infallible>>, token: impl Into<Option<&'t crate::token::Handle>>) -> Result<(), crate::error::LastError> {
+pub fn set_thread_token<'t>(thread: impl crate::thread::AsHandleOrNone, token: impl Into<Option<&'t crate::token::Handle>>) -> Result<(), crate::error::LastError> {
     use winapi::um::processthreadsapi::SetThreadToken;
     use std::ptr::null_mut;
 
-    // TODO: accept real thread handles
-    //use std::os::windows::io::AsRawHandle;
-    //let mut thread = thread.map(|t| t.as_raw_handle().cast());
-    //let thread = thread.as_mut().map_or(null_mut(), |t| t);
-    let _ = thread.into();
-    let thread = null_mut();
+    let mut thread = thread.as_handle_or_none();
+    let thread = thread.as_mut().map_or(null_mut(), |t| t);
 
     let token = token.into();
     let token = token.map_or(null_mut(), |t| t.as_handle());
