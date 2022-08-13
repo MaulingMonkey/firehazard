@@ -46,7 +46,7 @@ impl Value {
         object_attributes.Length = std::mem::size_of_val(&object_attributes) as _;
         let desired_access = POLICY_LOOKUP_NAMES;
         let mut policy = null_mut();
-        assert!(STATUS_SUCCESS == unsafe { LsaOpenPolicy(system_name, &mut object_attributes, desired_access, &mut policy) });
+        if STATUS_SUCCESS != unsafe { LsaOpenPolicy(system_name, &mut object_attributes, desired_access, &mut policy) } { return None }
         let policy = policy.cast(); // PSID -> *mut SID
 
         let lookup_options = LSA_LOOKUP_DISALLOW_CONNECTED_ACCOUNT_INTERNET_SID; // consider also: LSA_LOOKUP_PREFER_INTERNET_NAMES ?
@@ -81,7 +81,7 @@ impl Debug for Value {
         if let Some(lsa) = self.lsa_lookup_sids2() {
             write!(fmt, "{sid} {lsa:?}")
         } else {
-            write!(fmt, "{sid} (no LSA name)")
+            write!(fmt, "{sid}")
         }
     }
 }
