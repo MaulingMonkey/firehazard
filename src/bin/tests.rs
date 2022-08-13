@@ -1,9 +1,6 @@
 use win32_security_playground::*;
 
-use abistr::{cstr, cstr16};
-
-use winapi::shared::ntstatus::STATUS_ACCESS_DENIED;
-use winapi::shared::winerror::*;
+use abistr::cstr16;
 
 use winapi::um::processthreadsapi::STARTUPINFOW;
 use winapi::um::winbase::*;
@@ -12,12 +9,9 @@ use winapi::um::winnt::*;
 use std::ffi::OsStr;
 use std::mem::size_of_val;
 use std::os::windows::prelude::OsStrExt;
-use std::process::{Command, Stdio};
 use std::ptr::null_mut;
 
 
-
-fn is_verbose() -> bool { std::env::var_os("VERBOSE").is_some() }
 
 fn main() {
     let mut args = std::env::args_os();
@@ -27,23 +21,11 @@ fn main() {
     match &*command.to_string_lossy() {
         "" | "default"              => default(&exe),
         "launched_low_integrity"    => launched_low_integrity(),
-        "self_restrict_shutdown"    => self_restrict_shutdown(),
         command                     => panic!("unrecognized command {command:?}"),
     }
 }
 
-macro_rules! dbg { ($expr:expr) => { println!("{}:{} {} = {:?}", file!(), line!(), stringify!($expr), $expr) }; }
-macro_rules! dbgl { ($expr:expr) => {{
-    println!("{}:{} {} = [", file!(), line!(), stringify!($expr));
-    for e in $expr {
-        println!("    {:?},", e);
-    }
-    println!("]");
-}}}
-
 fn default(exe: &OsStr) {
-    assert_eq!(Some(0), Command::new(exe).arg("self_restrict_shutdown").status().unwrap().code());
-
     let t = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
     //let t = unsafe { duplicate_token_ex(&t, token::ALL_ACCESS, None, SecurityImpersonation, token::Primary) };
 
@@ -114,14 +96,6 @@ fn default(exe: &OsStr) {
     acl.finish().unwrap();
     restricted.set_default_dacl(&mut acl).unwrap();
 
-    let restricted_groups_and_privileges = restricted.groups_and_privileges().unwrap();
-    if is_verbose() {
-        dbg!(restricted.has_restrictions());
-        dbgl!(restricted_groups_and_privileges.sids());
-        dbgl!(restricted_groups_and_privileges.restricted_sids());
-        dbgl!(restricted_groups_and_privileges.privileges());
-    }
-
 
 
     // "The maximum length of this string is 32K characters."
@@ -187,18 +161,8 @@ fn launched_low_integrity() {
     assert!(std::path::Path::new(r"C:\Windows\System32\kernel32.dll").exists());
     assert!(std::path::Path::new(r"C:\Windows\System32\cryptbase.dll").exists());
 
-    let shutdown = attempt_shutdown();
-    assert!( false
-        || shutdown == (ERROR_ACCESS_DENIED, ERROR_ACCESS_DENIED)
-        || shutdown == (STATUS_ACCESS_DENIED as _, STATUS_ACCESS_DENIED as _)
-        || shutdown == (-1 as _, -1 as _)
-        ,
-        "shutdown: {shutdown:?}"
-    );
-
     // lower access
     let t = open_process_token(get_current_process(), token::ADJUST_DEFAULT | token::QUERY).unwrap();
-    dbg!(t.integrity_level());
     t.set_integrity_level(sid::AndAttributes::new(sid!(S-1-16-0), 0)).expect("should have lowered to untrusted integrity");
     t.set_integrity_level(sid::AndAttributes::new(sid!(S-1-16-4096), 0)).expect_err("shouldn't be able to raise from untrusted integrity to low");
 
@@ -212,35 +176,4 @@ fn launched_low_integrity() {
 
     assert!(!std::path::Path::new(r"C:\Windows\System32\kernel32.dll").exists());
     assert!(!std::path::Path::new(r"C:\Windows\System32\cryptbase.dll").exists());
-
-    // Command::status() returns io::Error { kind: NotFound, message: "program not found" } w/ no raw_os_error
-    assert_eq!((-1 as _, -1 as _), attempt_shutdown());
-}
-
-fn self_restrict_shutdown() {
-    if is_verbose() { assert_eq!((0, 0), attempt_shutdown()); } // spammy UI dialogs in tests
-    discard_privileges();
-    assert_eq!((ERROR_ACCESS_DENIED, ERROR_ACCESS_DENIED), attempt_shutdown());
-    revert_to_self().unwrap();
-    assert_eq!((ERROR_ACCESS_DENIED, ERROR_ACCESS_DENIED), attempt_shutdown());
-
-    fn discard_privileges() {
-        let se_shutdown = privilege::Luid::lookup_privilege_value_a(cstr!("SeShutdownPrivilege")).unwrap();
-        open_process_token(get_current_process(), token::ALL_ACCESS).unwrap().privileges_remove_if(|p| p == se_shutdown).unwrap();
-    }
-}
-
-fn attempt_shutdown() -> (u32, u32) {
-    fn cmd(s: &str) -> u32 {
-        let (exe, args) = s.split_once(' ').unwrap_or((s, ""));
-        let status = match Command::new(exe).args(args.split(' ')).stderr(Stdio::null()).status() {
-            Err(e) => return e.raw_os_error().unwrap_or(-1) as _,
-            Ok(s) => s,
-        };
-        status.code().unwrap_or(-2) as _
-    }
-
-    let start = cmd("shutdown /s /t 3600");
-    let abort = cmd("shutdown /a");
-    (start, abort)
 }
