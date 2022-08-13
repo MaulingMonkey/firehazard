@@ -3,8 +3,11 @@
 
 #[path = "process_funcs.rs"]
 pub(crate) mod funcs;                   pub use funcs::*;
+mod process_information;                pub use process_information::*;
 mod process_owned_handle;               pub use process_owned_handle::*;
 mod process_psuedo_handle;              pub use process_psuedo_handle::*;
+
+pub type Id = u32;
 
 /// [`OwnedHandle`] | [`PsuedoHandle`]
 pub unsafe trait AsHandle               { fn as_handle(&self) -> winapi::shared::ntdef::HANDLE; }

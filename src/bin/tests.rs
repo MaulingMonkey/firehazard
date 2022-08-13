@@ -7,7 +7,6 @@ use winapi::shared::minwindef::FALSE;
 use winapi::shared::ntstatus::STATUS_ACCESS_DENIED;
 use winapi::shared::winerror::*;
 
-use winapi::um::handleapi::CloseHandle;
 use winapi::um::processthreadsapi::{STARTUPINFOW, PROCESS_INFORMATION, GetExitCodeProcess, SetThreadToken, ResumeThread, CreateProcessAsUserW};
 use winapi::um::synchapi::WaitForSingleObject;
 use winapi::um::winbase::*;
@@ -170,19 +169,17 @@ fn default(exe: &OsStr) {
         &mut startup_info,
         &mut process_info
     )}, "CreateProcessAsUserW {:?}", LastError::get());
+    let process_info = unsafe { process::Information::from_raw(process_info) };
 
     // temporarilly allow the child process's main thread to have more permissions to initialize DLLs etc.s
-    assert!(FALSE != unsafe { SetThreadToken(&mut process_info.hThread, permissive.as_handle()) }, "SetThreadToken: {:?}", LastError::get());
+    assert!(FALSE != unsafe { SetThreadToken(&mut process_info.thread.as_handle(), permissive.as_handle()) }, "SetThreadToken: {:?}", LastError::get());
     // restricted.set_integrity_level(sid::AndAttributes::new(sid!(S-1-16-0), 0)).unwrap(); // won't effect the running process integrity level (copies the token?)
-    assert!(!0 != unsafe { ResumeThread(process_info.hThread) });
+    assert!(!0 != unsafe { ResumeThread(process_info.thread.as_handle()) });
 
-    assert!(WAIT_OBJECT_0 == unsafe { WaitForSingleObject(process_info.hProcess, INFINITE ) });
+    assert!(WAIT_OBJECT_0 == unsafe { WaitForSingleObject(process_info.process.as_handle(), INFINITE ) });
 
     let mut exit_code = 0;
-    assert!(FALSE != unsafe { GetExitCodeProcess(process_info.hProcess, &mut exit_code) });
-
-    assert!(FALSE != unsafe { CloseHandle(process_info.hThread) });
-    assert!(FALSE != unsafe { CloseHandle(process_info.hProcess) });
+    assert!(FALSE != unsafe { GetExitCodeProcess(process_info.process.as_handle(), &mut exit_code) });
 
     if exit_code != 0 {
         use winapi::shared::ntstatus::*;

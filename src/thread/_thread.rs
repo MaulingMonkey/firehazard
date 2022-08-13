@@ -6,6 +6,8 @@ pub(crate) mod funcs;                   pub use funcs::*;
 mod thread_owned_handle;                pub use thread_owned_handle::*;
 mod thread_psuedo_handle;               pub use thread_psuedo_handle::*;
 
+pub type Id = u32;
+
 /// [`OwnedHandle`] | [`PsuedoHandle`]
 pub unsafe trait AsHandle               { fn as_handle(&self) -> winapi::shared::ntdef::HANDLE; }
 unsafe impl AsHandle for OwnedHandle    { fn as_handle(&self) -> winapi::shared::ntdef::HANDLE { Self::as_handle(self) } }
