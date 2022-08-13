@@ -2,12 +2,11 @@ use win32_security_playground::*;
 
 use abistr::{cstr, cstr16};
 
-use win32_security_playground::error::LastError;
 use winapi::shared::minwindef::FALSE;
 use winapi::shared::ntstatus::STATUS_ACCESS_DENIED;
 use winapi::shared::winerror::*;
 
-use winapi::um::processthreadsapi::{STARTUPINFOW, PROCESS_INFORMATION, GetExitCodeProcess, CreateProcessAsUserW};
+use winapi::um::processthreadsapi::{STARTUPINFOW, GetExitCodeProcess};
 use winapi::um::synchapi::WaitForSingleObject;
 use winapi::um::winbase::*;
 use winapi::um::winnt::*;
@@ -155,21 +154,18 @@ fn default(exe: &OsStr) {
     };
     startup_info.cb = size_of_val(&startup_info) as u32;
 
-    let mut process_info = unsafe { std::mem::zeroed::<PROCESS_INFORMATION>() };
-    assert!(0 != unsafe { CreateProcessAsUserW(
-        restricted.as_handle(),
-        exe.encode_wide().chain(Some(0)).collect::<Vec<_>>().as_ptr(),
-        command_line.buffer_mut().as_mut_ptr(),
-        null_mut(), // process security attributes
-        null_mut(), // thread security attributes
-        false as _, // inherit inheriable handles
+    let process_info = unsafe { create_process_as_user_w(
+        &restricted,
+        &*exe.to_string_lossy(), // XXX: simplify if/when abistr gets OsStr support: https://github.com/MaulingMonkey/abistr/issues/9
+        Some(command_line.buffer_mut()),
+        None, // process security attributes
+        None, // thread security attributes
+        false, // inherit inheriable handles
         creation_flags,
-        null_mut(), // environment
-        null_mut(), // working dir
-        &mut startup_info,
-        &mut process_info
-    )}, "CreateProcessAsUserW {:?}", LastError::get());
-    let process_info = unsafe { process::Information::from_raw(process_info) };
+        None, // environment
+        (), // working dir
+        &startup_info,
+    )}.expect("CreateProcessAsUserW");
 
     // temporarilly allow the child process's main thread to have more permissions to initialize DLLs etc.s
     set_thread_token(&process_info.thread, &permissive).unwrap();

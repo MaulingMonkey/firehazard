@@ -11,7 +11,8 @@ readme                      = "Readme.md"
 
 [dependencies]
 abibool                     = "0.5.2"
-abistr                      = "0.2.0-rc1"
+abistr.version              = "0.2.0-rc1"
+abistr.features             = ["widestring-0-4"] # &str -> TryIntoAsOptCStr<u16>
 
 [target.'cfg(windows)'.dependencies]
 winapi.version = "0.3"
