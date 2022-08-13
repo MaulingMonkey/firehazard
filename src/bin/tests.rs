@@ -110,7 +110,7 @@ fn default(exe: &OsStr) {
     // `permissive` is currently restricted to only "Everyone" and "LogonSession_x_yyyyyyy" - the latter seems narrower, so we grant access to it.
     let mut acl = acl::Builder::new(acl::REVISION);
     acl.add_acl(acl::REVISION, 0, restricted.default_dacl().unwrap().default_dacl()).unwrap(); // allow debuggers to attach, task managers to kill, etc.
-    acl.add_access_allowed_ace(acl::REVISION, token::ADJUST_DEFAULT, logon_session_sid).unwrap();
+    acl.add_access_allowed_ace(acl::REVISION, token::ADJUST_DEFAULT | token::QUERY, logon_session_sid).unwrap();
     acl.finish().unwrap();
     restricted.set_default_dacl(&mut acl).unwrap();
 
@@ -166,7 +166,7 @@ fn default(exe: &OsStr) {
 
     // temporarilly allow the child process's main thread to have more permissions to initialize DLLs etc.s
     set_thread_token(&process_info.thread, &permissive).unwrap();
-    // restricted.set_integrity_level(sid::AndAttributes::new(sid!(S-1-16-0), 0)).unwrap(); // won't effect the running process integrity level (copies the token?)
+    open_process_token(&process_info.process, token::ADJUST_DEFAULT).unwrap().set_integrity_level(sid::AndAttributes::new(sid!(S-1-16-0), 0)).unwrap(); // lower to untrusted integrity
     resume_thread(&process_info.thread).unwrap();
 
     let exit_code = wait_for_process(process_info.process).unwrap();
@@ -197,7 +197,8 @@ fn launched_low_integrity() {
     );
 
     // lower access
-    let t = open_process_token(get_current_process(), token::ADJUST_DEFAULT).unwrap();
+    let t = open_process_token(get_current_process(), token::ADJUST_DEFAULT | token::QUERY).unwrap();
+    dbg!(t.integrity_level());
     t.set_integrity_level(sid::AndAttributes::new(sid!(S-1-16-0), 0)).expect("should have lowered to untrusted integrity");
     t.set_integrity_level(sid::AndAttributes::new(sid!(S-1-16-4096), 0)).expect_err("shouldn't be able to raise from untrusted integrity to low");
 
