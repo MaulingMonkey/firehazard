@@ -1,0 +1,17 @@
+# https://rust-lang.github.io/rustup/overrides.html#the-toolchain-file
+
+[toolchain]
+
+# upgrading to 1.63.0 broke my sandboxing shenannigans by:
+# * (re-)introducing SystemFunction036 / RtlGenRandom (for anti-DoS hashmap seed gen?)
+# * causing C:\Windows\System32\cryptbase.dll to be loaded, which isn't in /KnownDlls
+# * which is occasionally loaded by a worker thread instead of the main thread
+# * which doesn't have my temporarilly elevated main thread permissions
+# * which explodes STATUS_DLL_NOT_FOUND before I even hit my executable's entry point
+# I think I need to have my parent process listen for CREATE_THREAD_DEBUG_EVENT and muck with thread privileges too :3
+# That in turn means I need the parent to coordinate with the child (I could abuse OutputDebugString for v1 / proof-of-concept?)
+#
+# I was on 1.61.0 before, 1.62.0 is untested.
+channel = "1.61.0"
+
+profile = "minimal"
