@@ -2,12 +2,10 @@ use win32_security_playground::*;
 
 use abistr::{cstr, cstr16};
 
-use winapi::shared::minwindef::FALSE;
 use winapi::shared::ntstatus::STATUS_ACCESS_DENIED;
 use winapi::shared::winerror::*;
 
-use winapi::um::processthreadsapi::{STARTUPINFOW, GetExitCodeProcess};
-use winapi::um::synchapi::WaitForSingleObject;
+use winapi::um::processthreadsapi::STARTUPINFOW;
 use winapi::um::winbase::*;
 use winapi::um::winnt::*;
 
@@ -171,11 +169,7 @@ fn default(exe: &OsStr) {
     // restricted.set_integrity_level(sid::AndAttributes::new(sid!(S-1-16-0), 0)).unwrap(); // won't effect the running process integrity level (copies the token?)
     resume_thread(&process_info.thread).unwrap();
 
-    assert!(WAIT_OBJECT_0 == unsafe { WaitForSingleObject(process_info.process.as_handle(), INFINITE ) });
-
-    let mut exit_code = 0;
-    assert!(FALSE != unsafe { GetExitCodeProcess(process_info.process.as_handle(), &mut exit_code) });
-
+    let exit_code = wait_for_process(process_info.process).unwrap();
     if exit_code != 0 {
         use winapi::shared::ntstatus::*;
         let friendly = match exit_code as _ {

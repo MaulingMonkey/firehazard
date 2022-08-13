@@ -2,8 +2,11 @@ use crate::error::LastError;
 use crate::process;
 
 use abistr::{TryIntoAsOptCStr, AsOptCStr};
-use winapi::shared::winerror::ERROR_INVALID_PARAMETER;
+
+use winapi::shared::winerror::*;
 use winapi::um::processthreadsapi::*;
+use winapi::um::synchapi::WaitForSingleObject;
+use winapi::um::winbase::*;
 
 use std::convert::Infallible;
 use std::mem::zeroed;
@@ -73,3 +76,49 @@ fn _create_process_with_token_w() -> Result<process::Information, LastError> { u
 pub fn get_current_process() -> process::PsuedoHandle { unsafe { process::PsuedoHandle::from_raw_unchecked(GetCurrentProcess()) } }
 
 // get/set process afinity masks, etc.
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodeprocess)\] GetExitCodeProcess
+///
+/// ### Returns
+/// *   `Ok(STILL_ACTIVE)` / `Ok(STATUS_PENDING)`   if `process` is still running
+/// *   `Ok(0)`                                     if `process` exited "successfully"
+/// *   `Ok(exit_code)`                             if `process` exited otherwise
+/// *   `Err(...)`                                  if `process` lacks appropriate querying permissions?
+/// *   `Err(...)`                                  if `process` is an invalid handle?
+pub fn get_exit_code_process(process: impl process::AsHandle) -> Result<u32, LastError> {
+    let mut exit_code = 0;
+    let success = 0 != unsafe { GetExitCodeProcess(process.as_handle(), &mut exit_code) };
+    if success { Ok(exit_code) } else { Err(LastError::get()) }
+}
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] `WaitForSingleObject(process, 0) == WAIT_TIMEOUT`
+pub fn is_process_running(process: impl process::AsHandle) -> bool {
+    WAIT_TIMEOUT == unsafe { WaitForSingleObject(process.as_handle(), 0) }
+}
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] `WaitForSingleObject(process, INFINITE)` + `GetExitCodeProcess`
+pub fn wait_for_process(process: impl process::AsHandle) -> Result<u32, LastError> {
+    match unsafe { WaitForSingleObject(process.as_handle(), INFINITE) } {
+        WAIT_OBJECT_0       => {},
+        WAIT_ABANDONED_0    => return Err(LastError(ERROR_ABANDONED_WAIT_0)),   // shouldn't happen as `process` isn't a mutex, right?
+        WAIT_TIMEOUT        => return Err(LastError(ERROR_ABANDONED_WAIT_63)),  // shouldn't happen - hopefully the `63` hints that something is funky?
+        WAIT_FAILED         => return Err(LastError::get()),
+        _                   => return Err(LastError(ERROR_ABANDONED_WAIT_63)),  // shouldn't happen - hopefully the `63` hints that something is funky?
+    }
+    get_exit_code_process(process)
+}
+
+#[test] fn test_wait_exit() {
+    use winapi::um::minwinbase::STILL_ACTIVE;
+    use std::process::*;
+    let child : Child = Command::new("cmd").args("/C ping localhost -n 2 && exit /B 3".split(' ')).stdout(Stdio::null()).spawn().unwrap();
+    let child = process::OwnedHandle::from(child);
+
+    assert!(is_process_running(&child));
+    assert_eq!(STILL_ACTIVE, get_exit_code_process(&child).unwrap());
+
+    assert_eq!(3, wait_for_process(&child).unwrap());
+
+    assert!(!is_process_running(&child));
+    assert_eq!(3, get_exit_code_process(&child).unwrap());
+}
