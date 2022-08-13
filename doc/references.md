@@ -7,3 +7,4 @@
 *   <https://docs.microsoft.com/en-us/windows/win32/secauthz/restricted-tokens>
 *   <https://bugs.chromium.org/p/chromium/issues/detail?id=338538>
 *   [LogonSession](https://www.microsoftpressstore.com/articles/article.aspx?p=2224373&seqNum=7)s
+*   <https://github.com/mtth-bfft/win32k-mitigation>
