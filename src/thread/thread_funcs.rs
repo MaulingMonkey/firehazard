@@ -1,7 +1,10 @@
 use crate::error::LastError;
 use crate::thread;
 
+use winapi::shared::winerror::*;
 use winapi::um::processthreadsapi::*;
+use winapi::um::synchapi::WaitForSingleObject;
+use winapi::um::winbase::*;
 
 
 
@@ -14,3 +17,52 @@ pub fn resume_thread(thread: &thread::OwnedHandle) -> Result<u32, LastError> { l
 #[allow(dead_code)]
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-suspendthread)\] SuspendThread
 pub(crate) fn suspend_thread(thread: &thread::OwnedHandle) -> Result<u32, LastError> { let r = unsafe { SuspendThread(thread.as_handle()) }; if r as i32 != -1 { Ok(r) } else { Err(LastError::get()) } }
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodethread)\] GetExitCodeThread
+///
+/// ### Returns
+/// *   `Ok(STILL_ACTIVE)` / `Ok(STATUS_PENDING)`   if `thread` is still running
+/// *   `Ok(0)`                                     if `thread` exited "successfully"
+/// *   `Ok(exit_code)`                             if `thread` exited otherwise
+/// *   `Err(...)`                                  if `thread` lacks appropriate querying permissions?
+/// *   `Err(...)`                                  if `thread` is an invalid handle?
+pub fn get_exit_code_thread(thread: impl thread::AsHandle) -> Result<u32, LastError> {
+    let mut exit_code = 0;
+    let success = 0 != unsafe { GetExitCodeThread(thread.as_handle(), &mut exit_code) };
+    if success { Ok(exit_code) } else { Err(LastError::get()) }
+}
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] `WaitForSingleObject(thread, 0) == WAIT_TIMEOUT`
+pub fn is_thread_running(thread: impl thread::AsHandle) -> bool {
+    WAIT_TIMEOUT == unsafe { WaitForSingleObject(thread.as_handle(), 0) }
+}
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] `WaitForSingleObject(thread, INFINITE)` + `GetExitCodeThread`
+pub fn wait_for_thread(thread: impl thread::AsHandle) -> Result<u32, LastError> {
+    match unsafe { WaitForSingleObject(thread.as_handle(), INFINITE) } {
+        WAIT_OBJECT_0       => {},
+        WAIT_ABANDONED_0    => return Err(LastError(ERROR_ABANDONED_WAIT_0)),   // shouldn't happen as `thread` isn't a mutex, right?
+        WAIT_TIMEOUT        => return Err(LastError(ERROR_ABANDONED_WAIT_63)),  // shouldn't happen - hopefully the `63` hints that something is funky?
+        WAIT_FAILED         => return Err(LastError::get()),
+        _                   => return Err(LastError(ERROR_ABANDONED_WAIT_63)),  // shouldn't happen - hopefully the `63` hints that something is funky?
+    }
+    get_exit_code_thread(thread)
+}
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitthread)\] `ExitThread`
+pub fn exit_thread(exit_code: u32) { unsafe { ExitThread(exit_code) } }
+
+#[test] fn test_wait_exit() {
+    use winapi::um::minwinbase::STILL_ACTIVE;
+    use std::thread::*;
+    let child = spawn(|| { sleep(std::time::Duration::from_millis(500)); exit_thread(3); });
+    let child = thread::OwnedHandle::from(child);
+
+    assert!(is_thread_running(&child));
+    assert_eq!(STILL_ACTIVE, get_exit_code_thread(&child).unwrap());
+
+    assert_eq!(3, wait_for_thread(&child).unwrap());
+
+    assert!(!is_thread_running(&child));
+    assert_eq!(3, get_exit_code_thread(&child).unwrap());
+}
