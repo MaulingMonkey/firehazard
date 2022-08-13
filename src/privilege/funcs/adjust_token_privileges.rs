@@ -104,3 +104,10 @@ unsafe fn adjust_token_privileges(token: &token::Handle, disable_all_privileges:
     let success = 0 != unsafe { AdjustTokenPrivileges(token.as_handle(), disable_all_privileges as _, new_state, 0, null_mut(), null_mut()) };
     if success { Ok(()) } else { Err(LastError::get()) }
 }
+
+#[test] fn test() {
+    let t = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
+    let t = t.clone();
+    t.privileges_disable_if(|_| true).unwrap();
+    t.privileges_remove_if(|_| true).unwrap();
+}
