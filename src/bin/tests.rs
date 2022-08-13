@@ -262,15 +262,6 @@ fn spam_dbg() {
     t2.privileges_disable_if(|_| true).unwrap();
     t2.privileges_remove_if(|_| true).unwrap();
 
-    // https://docs.rs/winapi/latest/src/winapi/shared/winerror.rs.html
-    dbg!(ERROR_BAD_LENGTH);             // 24
-    dbg!(ERROR_INVALID_PARAMETER);      // 87
-    dbg!(ERROR_INSUFFICIENT_BUFFER);    // 122
-    dbg!(ERROR_NO_TOKEN);               // 1008
-    dbg!(ERROR_PRIVILEGE_NOT_HELD);     // 1314
-    dbg!(ERROR_BAD_TOKEN_TYPE);         // 1349
-    dbg!(ERROR_INCORRECT_SIZE);         // 1462
-
     // https://docs.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-token_information_class
     dbg!(t.user());
     dbgl!(t.groups().unwrap().groups());
