@@ -12,6 +12,6 @@
 # That in turn means I need the parent to coordinate with the child (I could abuse OutputDebugString for v1 / proof-of-concept?)
 #
 # I was on 1.61.0 before, 1.62.0 is untested.
-channel = "1.61.0"
+channel = "1.63.0"
 
 profile = "minimal"
