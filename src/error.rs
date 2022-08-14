@@ -1,5 +1,6 @@
 //! Error handling types and functions
 
+use winapi::shared::ntstatus::*;
 use winapi::shared::winerror::*;
 use winapi::um::errhandlingapi::GetLastError;
 use std::fmt::{self, Debug, Formatter};
@@ -8,18 +9,18 @@ use std::fmt::{self, Debug, Formatter};
 
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)]
-pub struct LastError(pub(crate) u32);
+pub struct Error(pub(crate) u32);
+#[doc(hidden)] pub use Error as LastError; // temporary legacy fallback
 
-impl LastError {
+impl Error {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)\] GetLastError
     pub fn get() -> Self { Self(get_last_error()) }
 
     pub fn as_u32(self) -> u32 { self.0 }
-}
 
-impl Debug for LastError {
-    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-        let name = match self.0 {
+    pub fn friendly(self) -> &'static str {
+        match self.0 {
+            NO_ERROR                        => "NO_ERROR",                      // 0
             ERROR_ACCESS_DENIED             => "ERROR_ACCESS_DENIED",           // 5
             ERROR_INVALID_HANDLE            => "ERROR_INVALID_HANDLE",          // 6
             ERROR_BAD_LENGTH                => "ERROR_BAD_LENGTH",              // 24
@@ -30,15 +31,32 @@ impl Debug for LastError {
             ERROR_ALLOTTED_SPACE_EXCEEDED   => "ERROR_ALLOTTED_SPACE_EXCEEDED", // 1344
             ERROR_BAD_TOKEN_TYPE            => "ERROR_BAD_TOKEN_TYPE",          // 1349
             ERROR_INCORRECT_SIZE            => "ERROR_INCORRECT_SIZE",          // 1462
-            _                               => "ERROR_???",
-        };
-        write!(fmt, "LastError({} {name})", self.0)
+            c if c & 0xC000_0000 != 0xC000_0000 => "ERROR_???",
+            _                               => match self.0 as _ {
+                STATUS_ACCESS_DENIED            => "STATUS_ACCESS_DENIED",              // 0xC0000022
+                STATUS_BAD_IMPERSONATION_LEVEL  => "STATUS_BAD_IMPERSONATION_LEVEL",    // 0xC00000A5
+                STATUS_DLL_NOT_FOUND            => "STATUS_DLL_NOT_FOUND",              // 0xC0000135
+                STATUS_DLL_INIT_FAILED          => "STATUS_DLL_INIT_FAILED",            // 0xC0000142
+                _                               => "STATUS_???",                        // 0xC???????
+            },
+        }
     }
 }
 
-impl From<LastError> for u32 { fn from(err: LastError) -> Self { err.0 } }
-impl PartialEq<u32> for LastError { fn eq(&self, other: &u32) -> bool { self.0 == *other } }
-impl PartialEq<LastError> for u32 { fn eq(&self, other: &LastError) -> bool { *self == other.0 } }
+impl Debug for Error {
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+        write!(fmt, "Error({} {})", self.0, self.friendly())
+    }
+}
+
+impl From<Error> for i32 { fn from(err: Error) -> Self { err.0 as _ } }
+impl From<Error> for u32 { fn from(err: Error) -> Self { err.0 as _ } }
+impl From<i32> for Error { fn from(err: i32      ) -> Self { Self(err as _) } }
+impl From<u32> for Error { fn from(err: u32      ) -> Self { Self(err as _) } }
+impl PartialEq<i32> for Error { fn eq(&self, other: &i32) -> bool { *self == Error::from(*other) } }
+impl PartialEq<u32> for Error { fn eq(&self, other: &u32) -> bool { *self == Error::from(*other) } }
+impl PartialEq<Error> for i32 { fn eq(&self, other: &Error) -> bool { Error::from(*self) == *other } }
+impl PartialEq<Error> for u32 { fn eq(&self, other: &Error) -> bool { Error::from(*self) == *other } }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)\] GetLastError
 pub(crate) fn get_last_error() -> u32 {

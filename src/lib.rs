@@ -10,7 +10,7 @@
 #[path = "thread/_thread.rs"]   pub mod thread; #[doc(hidden)] pub use thread::funcs::*;
 #[path = "token/_token.rs"]     pub mod token;  #[doc(hidden)] pub use token::funcs::*;
 
-pub mod error;
+pub mod error;                  #[doc(hidden)] pub use error::*;
 
 pub(crate) use util::*;
 mod util {
