@@ -4,6 +4,7 @@ use winapi::shared::ntstatus::STATUS_SUCCESS;
 use winapi::shared::sddl::{ConvertSidToStringSidA};
 use winapi::um::lsalookup::{LSA_OBJECT_ATTRIBUTES, LSA_REFERENCED_DOMAIN_LIST, LSA_TRANSLATED_NAME};
 use winapi::um::ntlsa::*;
+use winapi::um::securitybaseapi::EqualSid;
 use winapi::um::winnt::{SID, PSID};
 
 use std::fmt::{self, Debug, Formatter};
@@ -72,6 +73,11 @@ impl Value {
         return Some(result);
     }
 }
+
+impl PartialEq  for Value { fn eq(&self, other: &Self) -> bool { 0 != unsafe { EqualSid(self.as_psid(), other.as_psid()) } } }
+impl Eq         for Value {}
+// TODO: {,Partial}Ord
+// TODO: Hash
 
 impl Debug for Value {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
