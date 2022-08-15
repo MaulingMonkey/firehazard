@@ -14,9 +14,8 @@ pub fn get_current_thread() -> thread::PsuedoHandle { unsafe { thread::PsuedoHan
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-resumethread)\] ResumeThread
 pub fn resume_thread(thread: &thread::OwnedHandle) -> Result<u32, LastError> { let r = unsafe { ResumeThread(thread.as_handle()) }; if r as i32 != -1 { Ok(r) } else { Err(LastError::get()) } }
 
-#[allow(dead_code)]
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-suspendthread)\] SuspendThread
-pub(crate) fn suspend_thread(thread: &thread::OwnedHandle) -> Result<u32, LastError> { let r = unsafe { SuspendThread(thread.as_handle()) }; if r as i32 != -1 { Ok(r) } else { Err(LastError::get()) } }
+pub fn suspend_thread(thread: &thread::OwnedHandle) -> Result<u32, LastError> { let r = unsafe { SuspendThread(thread.as_handle()) }; if r as i32 != -1 { Ok(r) } else { Err(LastError::get()) } }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodethread)\] GetExitCodeThread
 ///

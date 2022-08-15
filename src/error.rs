@@ -25,6 +25,7 @@ impl Error {
             ERROR_INVALID_HANDLE            => "ERROR_INVALID_HANDLE",          // 6
             ERROR_BAD_LENGTH                => "ERROR_BAD_LENGTH",              // 24
             ERROR_INVALID_PARAMETER         => "ERROR_INVALID_PARAMETER",       // 87
+            ERROR_EXCL_SEM_ALREADY_OWNED    => "ERROR_EXCL_SEM_ALREADY_OWNED",  // 101
             ERROR_INSUFFICIENT_BUFFER       => "ERROR_INSUFFICIENT_BUFFER",     // 122
             ERROR_NO_TOKEN                  => "ERROR_NO_TOKEN",                // 1008
             ERROR_PRIVILEGE_NOT_HELD        => "ERROR_PRIVILEGE_NOT_HELD",      // 1314

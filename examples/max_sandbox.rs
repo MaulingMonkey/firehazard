@@ -2,13 +2,22 @@ use win32_security_playground::*;
 
 use abistr::cstr;
 
+use winapi::shared::minwindef::FALSE;
+use winapi::um::debugapi::*;
+use winapi::um::handleapi::DuplicateHandle;
+use winapi::um::memoryapi::ReadProcessMemory;
+use winapi::um::minwinbase::*;
 use winapi::um::processthreadsapi::STARTUPINFOW;
 use winapi::um::winbase::*;
-use winapi::um::winnt::SecurityImpersonation;
+use winapi::um::winnt::*;
 
+use std::collections::HashMap;
 use std::collections::HashSet;
+use std::ffi::OsString;
+use std::mem::zeroed;
 use std::os::windows::prelude::*;
 use std::path::PathBuf;
+use std::ptr::null_mut;
 
 #[allow(dead_code)] // individual trust levels
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)] #[repr(u8)] enum Integrity { Untrusted, Low, Medium, High, System }
@@ -82,17 +91,25 @@ impl Target {
                     integrity:  Integrity::Low,
                     privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
                     enabled:    vec![user, users, everyone, session],
-                    restricted: Some(vec![user, users, everyone, session, null]),
+                    restricted: Some(vec![user, users, everyone, session]),
                     .. Default::default()
                 },
                 lockdown: TokenSettings {
-                    // TODO: much if this can be lowered on rustc 1.61.0 but not 1.63.0
-                    // partially because of threads?
-                    // delay lockdown until debug string?
-                    integrity:  Integrity::Low,
-                    privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
-                    enabled:    vec![user, users, everyone, session],
-                    restricted: Some(vec![user, users, everyone, session, null]),
+                    // `BCryptGenRandom` is unreliable unless the process token has `user` or `session` available.
+                    // Specifically, the second call to it can fail with GetLastError()==ERROR_ACCESS_DENIED, even with
+                    // identical params - due to `RegisterReopenWait` / `ReopenSystemPreferredRngCallback` failing.
+                    // ```
+                    // thread 'main' panicked at 'couldn't generate random bytes with preferred RNG: Os { code: 5, kind: PermissionDenied, message: "Access is denied." }'
+                    // ```
+                    // In rust 1.61.0, this is kinda fine, since `std::sys::windows::rand::hashmap_random_keys` only calls it once... per thread, which is less fine.
+                    // In rust 1.63.0, this is broken, since `hashmap_random_keys` calls it once to check if it should use it, then again to actually use it.
+                    // In rust ~nightly, this is fine, since `RtlGenRandom` will be used as a fallback whenever it fails thanks to this simplification PR:
+                    // <https://github.com/rust-lang/rust/commit/46673bb08ffa22f21287349d966d875038e41b37>
+                    // <https://github.com/rust-lang/rust/blob/1.61.0/library/std/src/sys/windows/rand.rs#L18>
+                    // <https://github.com/rust-lang/rust/blob/1.63.0/library/std/src/sys/windows/rand.rs#L16>
+                    // <https://github.com/rust-lang/rust/blob/2fbc08e2ce64dee45a29cb6133da6b32366268aa/library/std/src/sys/windows/rand.rs#L16>
+                    enabled:    vec![session],
+                    restricted: Some(vec![session]),
                     .. Default::default()
                 },
             },
@@ -136,13 +153,127 @@ fn run(target: Target) {
     let permissive = unsafe { duplicate_token_ex(&permissive, token::ALL_ACCESS, None, SecurityImpersonation, token::Impersonation) }; // primary -> impersonation token
 
     let mut command_line = abistr::CStrBuf::<u16, 32768>::from_truncate(&target.exe.as_os_str().encode_wide().chain(Some(0)).collect::<Vec<_>>());
-    let mut si = STARTUPINFOW { lpDesktop: std::ptr::null_mut(), dwFlags: STARTF_UNTRUSTEDSOURCE, .. unsafe { std::mem::zeroed() } };
+    let mut si = STARTUPINFOW { lpDesktop: null_mut(), dwFlags: STARTF_UNTRUSTEDSOURCE, .. unsafe { zeroed() } };
     si.cb = std::mem::size_of_val(&si) as u32;
-    let pi = unsafe { create_process_as_user_w(&restricted, (), Some(command_line.buffer_mut()), None, None, false, CREATE_SEPARATE_WOW_VDM | CREATE_SUSPENDED, None, (), &si)}.unwrap();
+    let pi = unsafe { create_process_as_user_w(&restricted, (), Some(command_line.buffer_mut()), None, None, false, DEBUG_PROCESS | CREATE_SEPARATE_WOW_VDM | CREATE_SUSPENDED, None, (), &si)}.unwrap();
     set_thread_token(&pi.thread, &permissive).unwrap();
     resume_thread(&pi.thread).unwrap();
-    // XXX: wait for dlls to be initialized before doing this
-    //open_process_token(&pi.process, token::ADJUST_DEFAULT).unwrap().set_integrity_level(sid::AndAttributes::new(target.lockdown.integrity.sid(), 0)).unwrap();
+
+    let mut sandboxed = false;
+    let mut threads = HashMap::<thread::Id, thread::OwnedHandle>::new();
+    loop {
+        let mut event = unsafe { zeroed() };
+        assert!(FALSE != unsafe { WaitForDebugEventEx(&mut event, INFINITE) });
+        let DEBUG_EVENT { dwDebugEventCode, dwProcessId, dwThreadId, u } = event;
+        let dbg_continue = move || assert!(FALSE != unsafe { ContinueDebugEvent(dwProcessId, dwThreadId, DBG_CONTINUE) });
+        let dbg_exception_not_handled = move || assert!(FALSE != unsafe { ContinueDebugEvent(dwProcessId, dwThreadId, DBG_EXCEPTION_NOT_HANDLED) });
+        match dwDebugEventCode {
+            EXCEPTION_DEBUG_EVENT => {
+                let event = unsafe { u.Exception() };
+                let code = event.ExceptionRecord.ExceptionCode;
+                let ty = match code {
+                    EXCEPTION_ACCESS_VIOLATION      => "EXCEPTION_ACCESS_VIOLATION",
+                    EXCEPTION_BREAKPOINT            => "EXCEPTION_BREAKPOINT",
+                    EXCEPTION_DATATYPE_MISALIGNMENT => "EXCEPTION_DATATYPE_MISALIGNMENT",
+                    EXCEPTION_SINGLE_STEP           => "EXCEPTION_SINGLE_STEP",
+                    DBG_CONTROL_C                   => "DBG_CONTROL_C",
+                    // Ref: https://docs.microsoft.com/en-us/troubleshoot/developer/visualstudio/cpp/libraries/fatal-error-thread-exit-fls-callback
+                    0xE06D7363                      => "Microsoft C++ Exception",
+                    //0x8007045A                      => "ERROR_DLL_INIT_FAILED",
+                    _                               => "???",
+                };
+                eprintln!("[{dwProcessId}:{dwThreadId}] exception: {ty} ({code})");
+                dbg_exception_not_handled();
+            },
+            CREATE_THREAD_DEBUG_EVENT => {
+                let event = unsafe { u.CreateThread() };
+                eprintln!("[{dwProcessId}:{dwThreadId}] thread created");
+                let mut thread = event.hThread;
+
+                let process = get_current_process().as_handle();
+                assert!(FALSE != unsafe { DuplicateHandle(process, thread, process, &mut thread, GENERIC_ALL, false as _, 0) });
+                let thread = unsafe { thread::OwnedHandle::clone_from_raw(thread) };
+
+                set_thread_token(&thread, &permissive).unwrap();
+                let _prev_thread = threads.insert(dwThreadId, thread);
+                debug_assert!(_prev_thread.is_none());
+                dbg_continue();
+            },
+            CREATE_PROCESS_DEBUG_EVENT => {
+                let _event = unsafe { u.CreateProcessInfo() };
+                eprintln!("[{dwProcessId}:{dwThreadId}] process created");
+                dbg_continue();
+            },
+            EXIT_THREAD_DEBUG_EVENT => {
+                let _event = unsafe { u.ExitThread() };
+                eprintln!("[{dwProcessId}:{dwThreadId}] thread exited with code: {}", _event.dwExitCode);
+                let _thread = threads.remove(&dwThreadId);
+                debug_assert!(_thread.is_some());
+                dbg_continue();
+            },
+            EXIT_PROCESS_DEBUG_EVENT => {
+                let _event = unsafe { u.ExitProcess() };
+                eprintln!("[{dwProcessId}:{dwThreadId}] process exited with code: {}", _event.dwExitCode);
+                dbg_continue();
+                break;
+            },
+            LOAD_DLL_DEBUG_EVENT => {
+                let _event = unsafe { u.LoadDll() };
+                eprintln!("[{dwProcessId}:{dwThreadId}] dll loaded");
+                dbg_continue();
+            },
+            UNLOAD_DLL_DEBUG_EVENT  => {
+                let _event = unsafe { u.UnloadDll() };
+                eprintln!("[{dwProcessId}:{dwThreadId}] dll unloaded");
+                dbg_continue();
+            },
+            OUTPUT_DEBUG_STRING_EVENT => {
+                let event = unsafe { u.DebugString() };
+                let bytes = usize::from(event.nDebugStringLength);
+                let wide1;
+                let wide2;
+                let narrow1;
+                let narrow = if event.fUnicode != 0 {
+                    // Unicode
+                    let mut buffer = vec![0u16; (bytes+1)/2];
+                    assert!(FALSE != unsafe { ReadProcessMemory(pi.process.as_handle(), event.lpDebugStringData.cast(), buffer.as_mut_ptr().cast(), bytes, null_mut()) });
+                    let nul = buffer.iter().position(|ch| *ch == 0).unwrap_or(buffer.len());
+                    wide1 = buffer;
+                    wide2 = OsString::from_wide(wide1.split_at(nul).0);
+                    wide2.to_string_lossy()
+                } else {
+                    let mut buffer = vec![0u8; bytes];
+                    assert!(FALSE != unsafe { ReadProcessMemory(pi.process.as_handle(), event.lpDebugStringData.cast(), buffer.as_mut_ptr().cast(), bytes, null_mut()) });
+                    let nul = buffer.iter().position(|ch| *ch == 0).unwrap_or(buffer.len());
+                    narrow1 = buffer;
+                    String::from_utf8_lossy(narrow1.split_at(nul).0)
+                };
+                eprintln!("[{dwProcessId}:{dwThreadId}] debug string: {:?}", &*narrow);
+                if narrow == "sandbox" {
+                    for thread in threads.values() { suspend_thread(thread).unwrap(); }
+                    assert!(FALSE != unsafe { DebugActiveProcessStop(pi.process_id) });
+                    // XXX: This seems to cause the child process to die with 101 / ERROR_EXCL_SEM_ALREADY_OWNED ?
+                    //open_process_token(&pi.process, token::ADJUST_DEFAULT).unwrap().set_integrity_level(sid::AndAttributes::new(target.lockdown.integrity.sid(), 0)).unwrap();
+                    for thread in threads.values() { set_thread_token(thread, None).unwrap(); }
+                    for thread in threads.values() { resume_thread(thread).unwrap(); }
+                    threads.clear();
+                    sandboxed = true;
+                    eprintln!("[{dwProcessId}:{dwThreadId}] sandboxed");
+                    break;
+                } else {
+                    dbg_continue();
+                }
+            },
+            RIP_EVENT => {
+                let _event = unsafe { u.RipInfo() };
+                eprintln!("[{dwProcessId}:{dwThreadId}] rip event: {{ dwError: {}, dwType: {} }}", _event.dwError, _event.dwType);
+                dbg_continue();
+            },
+            _ => {},
+        }
+    }
+
+    assert!(sandboxed, "process was never sandboxed");
 
     let exit = wait_for_process(pi.process).unwrap();
     assert!(exit == 0, "exit code: 0x{exit:08x} {}", LastError::from(exit).friendly());

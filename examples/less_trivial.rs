@@ -7,4 +7,8 @@ fn main() {
     //  2. initializing dlls    (can fail to finish DllMain)
     //  3. executing dlls       (can fail on bellow line due to internal access denied panic)
     dbg!(std::collections::HashMap::<u32, u32>::new());
+    sandbox();
+    dbg!(std::collections::HashMap::<u32, u32>::new());
 }
+
+fn sandbox() { unsafe { winapi::um::debugapi::OutputDebugStringA("sandbox\0".as_ptr().cast()) } }

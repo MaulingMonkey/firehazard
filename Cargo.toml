@@ -18,13 +18,16 @@ abistr.features             = ["widestring-0-4"] # &str -> TryIntoAsOptCStr<u16>
 winapi.version = "0.3"
 winapi.features = [
     # shared
+    "bcrypt",
     "sddl",
     "winerror",
 
     # um
+    "debugapi",
     "errhandlingapi",
     "handleapi",
     "lsalookup",
+    "memoryapi",
     "ntlsa",
     "processthreadsapi",
     "securitybaseapi",
