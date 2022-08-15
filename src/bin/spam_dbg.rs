@@ -41,7 +41,7 @@ fn main() {
     dbg!(t.integrity_level());
     dbg!(t.ui_access());
     dbg!(t.mandatory_policy());
-    dbg!(t.login_sid());
+    dbg!(t.logon_sid());
     dbg!(t.is_app_container());
     dbg!(t.capabilities());
     dbg!(t.app_container_sid());

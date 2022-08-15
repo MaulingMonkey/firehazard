@@ -62,7 +62,7 @@ impl Target {
         let sandbox_process_token = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
         let all         = Box::leak(Box::new(sandbox_process_token.groups_and_privileges().unwrap())).sids().iter().map(|s| s.sid).collect::<Vec<_>>();
         let user        = Box::leak(Box::new(sandbox_process_token.user().unwrap())).user().sid;
-        let session     = Box::leak(Box::new(sandbox_process_token.login_sid().unwrap())).groups().iter().next().unwrap().sid;
+        let session     = Box::leak(Box::new(sandbox_process_token.logon_sid().unwrap())).groups().iter().next().unwrap().sid;
         let users       = sid!(S-1-5-32-545);
         let everyone    = sid!(S-1-1-0);
         let null        = sid!(S-1-0-0);

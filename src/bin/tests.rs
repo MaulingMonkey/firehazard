@@ -34,9 +34,9 @@ fn default(exe: &OsStr) {
     //let privileges_to_remove = None;
 
     let groups = t.groups().unwrap();
-    let mut login_session_sids = groups.groups().iter().filter(|g| g.attributes & SE_GROUP_LOGON_ID != 0).copied();
-    let logon_session_sid = login_session_sids.next().expect("login_session_sid").sid;
-    assert!(login_session_sids.next().is_none(), "multiple login session SIDs?");
+    let mut logon_session_sids = groups.groups().iter().filter(|g| g.attributes & SE_GROUP_LOGON_ID != 0).copied();
+    let logon_session_sid = logon_session_sids.next().expect("logon_session_sid").sid;
+    assert!(logon_session_sids.next().is_none(), "multiple logon session SIDs?");
 
     // XXX: consider using the user + all enabled/logon sids from groups for permissive_to_restrict?
     let permissive_to_restrict = vec![
