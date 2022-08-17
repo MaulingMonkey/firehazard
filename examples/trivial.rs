@@ -2,6 +2,9 @@
 #![cfg_attr(nightly, no_std)]
 #![cfg_attr(nightly, no_main)]
 
+use abistr::*;
+use win32_security_playground::output_debug_string_a;
+
 #[cfg(not(nightly))] fn main() { sandbox() }
 
 #[cfg(nightly)] mod nightly {
@@ -13,6 +16,6 @@
 }
 
 fn sandbox() {
-    unsafe { winapi::um::debugapi::OutputDebugStringA("sandbox\0".as_ptr().cast()) }
+    output_debug_string_a(cstr!("sandbox"));
     #[cfg(not(nightly))] std::thread::sleep(std::time::Duration::from_secs(1));
 }

@@ -11,8 +11,7 @@ use winapi::um::processthreadsapi::STARTUPINFOW;
 use winapi::um::winbase::*;
 use winapi::um::winnt::*;
 
-use std::collections::HashMap;
-use std::collections::HashSet;
+use std::collections::*;
 use std::ffi::OsString;
 use std::mem::zeroed;
 use std::os::windows::prelude::*;
@@ -162,11 +161,9 @@ fn run(target: Target) {
     let mut sandboxed = false;
     let mut threads = HashMap::<thread::Id, thread::OwnedHandle>::new();
     loop {
-        let mut event = unsafe { zeroed() };
-        assert!(FALSE != unsafe { WaitForDebugEventEx(&mut event, INFINITE) });
-        let DEBUG_EVENT { dwDebugEventCode, dwProcessId, dwThreadId, u } = event;
-        let dbg_continue = move || assert!(FALSE != unsafe { ContinueDebugEvent(dwProcessId, dwThreadId, DBG_CONTINUE) });
-        let dbg_exception_not_handled = move || assert!(FALSE != unsafe { ContinueDebugEvent(dwProcessId, dwThreadId, DBG_EXCEPTION_NOT_HANDLED) });
+        let DEBUG_EVENT { dwDebugEventCode, dwProcessId, dwThreadId, u } = wait_for_debug_event_ex(None).unwrap();
+        let dbg_continue                = move || continue_debug_event(dwProcessId, dwThreadId, DBG_CONTINUE).unwrap();
+        let dbg_exception_not_handled   = move || continue_debug_event(dwProcessId, dwThreadId, DBG_EXCEPTION_NOT_HANDLED).unwrap();
         match dwDebugEventCode {
             EXCEPTION_DEBUG_EVENT => {
                 let event = unsafe { u.Exception() };
@@ -251,7 +248,7 @@ fn run(target: Target) {
                 eprintln!("[{dwProcessId}:{dwThreadId}] debug string: {:?}", &*narrow);
                 if narrow == "sandbox" {
                     for thread in threads.values() { suspend_thread(thread).unwrap(); }
-                    assert!(FALSE != unsafe { DebugActiveProcessStop(pi.process_id) });
+                    debug_active_process_stop(pi.process_id).unwrap();
                     // XXX: This seems to cause the child process to die with 101 / ERROR_EXCL_SEM_ALREADY_OWNED ?
                     //open_process_token(&pi.process, token::ADJUST_DEFAULT).unwrap().set_integrity_level(sid::AndAttributes::new(target.lockdown.integrity.sid(), 0)).unwrap();
                     for thread in threads.values() { set_thread_token(thread, None).unwrap(); }

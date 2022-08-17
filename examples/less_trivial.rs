@@ -1,3 +1,6 @@
+use abistr::*;
+use win32_security_playground::output_debug_string_a;
+
 fn main() {
     // Pulls in for DoS resistant hash seeding:
     //  BCryptGenRandom                     (bcrypt.dll)
@@ -12,6 +15,6 @@ fn main() {
 }
 
 fn sandbox() {
-    unsafe { winapi::um::debugapi::OutputDebugStringA("sandbox\0".as_ptr().cast()) }
+    output_debug_string_a(cstr!("sandbox"));
     std::thread::sleep(std::time::Duration::from_secs(1));
 }

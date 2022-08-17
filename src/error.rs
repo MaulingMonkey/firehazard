@@ -15,6 +15,7 @@ pub struct Error(pub(crate) u32);
 impl Error {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)\] GetLastError
     pub fn get() -> Self { Self(get_last_error()) }
+    pub(crate) fn get_if(error: bool) -> Result<(), Self> { if !error { Ok(()) } else { Err(Self::get()) } }
 
     pub fn as_u32(self) -> u32 { self.0 }
 

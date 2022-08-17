@@ -4,6 +4,7 @@
 #[path = "ace/_ace.rs"]         pub mod ace;    //#[doc(hidden)] pub use ace::funcs::*;
 #[path = "acl/_acl.rs"]         pub mod acl;    //#[doc(hidden)] pub use acl::funcs::*;
 #[path = "alloc/_alloc.rs"]     pub mod alloc;
+#[path = "debug/_debug.rs"]     pub mod debug;  #[doc(hidden)] pub use debug::funcs::*;
 #[path = "privilege/_privilege.rs"] pub mod privilege;  #[doc(hidden)] pub use privilege::funcs::*;
 #[path = "process/_process.rs"] pub mod process; #[doc(hidden)] pub use process::funcs::*;
 #[path = "sid/_sid.rs"]         pub mod sid;    #[doc(hidden)] pub use sid::funcs::*;
