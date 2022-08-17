@@ -11,4 +11,7 @@ fn main() {
     dbg!(std::collections::HashMap::<u32, u32>::new());
 }
 
-fn sandbox() { unsafe { winapi::um::debugapi::OutputDebugStringA("sandbox\0".as_ptr().cast()) } }
+fn sandbox() {
+    unsafe { winapi::um::debugapi::OutputDebugStringA("sandbox\0".as_ptr().cast()) }
+    std::thread::sleep(std::time::Duration::from_secs(1));
+}
