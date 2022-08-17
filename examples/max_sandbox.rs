@@ -48,8 +48,13 @@ impl Default for TokenSettings {
     }
 }
 
+#[derive(Default)] struct Allow {
+    pub same_desktop:   bool,
+}
+
 struct Target {
     pub exe:            PathBuf,
+    pub allow:          Allow,
     pub spawn:          TokenSettings, // Used to initialize non-delayed DLLs, pre-main code
     pub lockdown:       TokenSettings, // Eventual lockdown settings
 }
@@ -72,7 +77,8 @@ impl Target {
         vec![
             Target {
                 exe: dir.join("trivial.exe"),
-                spawn:  TokenSettings {
+                allow: Allow::default(),
+                spawn: TokenSettings {
                     // Minimal permissions to access e.g. `/KnownDlls` / `kernel32.dll` for init
                     privileges: [se_change_notify_privilege].into_iter().collect(),
                     enabled:    vec![everyone],
@@ -85,7 +91,8 @@ impl Target {
             },
             Target {
                 exe: dir.join("less_trivial.exe"),
-                spawn:  TokenSettings {
+                allow: Allow::default(),
+                spawn: TokenSettings {
                     integrity:  Integrity::Low,
                     privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
                     enabled:    vec![user, users, everyone, session],
@@ -116,12 +123,21 @@ impl Target {
 }
 
 fn main() {
+    let context = Context {
+        main_desktop:   get_thread_desktop(get_current_thread_id()).unwrap(),
+        alt_desktop:    create_desktop_a(cstr!("max_sandbox_desktop"), (), None, 0, GENERIC_ALL, None).unwrap(),
+    };
     for target in Target::list() {
-        run(target);
+        run(&context, target);
     }
 }
 
-fn run(target: Target) {
+struct Context {
+    main_desktop:   desktop::OwnedHandle,
+    alt_desktop:    desktop::OwnedHandle,
+}
+
+fn run(context: &Context, target: Target) {
     assert!(target.spawn.integrity >= target.lockdown.integrity, "target.lockdown.integrity cannot be more permissive than spawn integrity");
 
     let sandbox_process_token = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
@@ -150,10 +166,14 @@ fn run(target: Target) {
     restricted.set_integrity_level(sid::AndAttributes::new(target.spawn.integrity.sid(), 0)).unwrap(); // lower child token to target.lockdown.integrity post-spawn
     let permissive = unsafe { duplicate_token_ex(&permissive, token::ALL_ACCESS, None, SecurityImpersonation, token::Impersonation) }; // primary -> impersonation token
 
+    let desktop = if target.allow.same_desktop { &context.main_desktop } else { &context.alt_desktop };
     let mut command_line = abistr::CStrBuf::<u16, 32768>::from_truncate(&target.exe.as_os_str().encode_wide().chain(Some(0)).collect::<Vec<_>>());
     let mut si = STARTUPINFOW { lpDesktop: null_mut(), dwFlags: STARTF_UNTRUSTEDSOURCE, .. unsafe { zeroed() } };
     si.cb = std::mem::size_of_val(&si) as u32;
-    let pi = unsafe { create_process_as_user_w(&restricted, (), Some(command_line.buffer_mut()), None, None, false, DEBUG_PROCESS | CREATE_SEPARATE_WOW_VDM | CREATE_SUSPENDED, None, (), &si)}.unwrap();
+    let pi = with_thread_desktop(desktop, || unsafe { create_process_as_user_w(
+        &restricted, (), Some(command_line.buffer_mut()), None, None, false,
+        DEBUG_PROCESS | CREATE_SEPARATE_WOW_VDM | CREATE_SUSPENDED, None, (), &si
+    ).unwrap() }).unwrap();
     set_thread_token(&pi.thread, &permissive).unwrap();
     resume_thread(&pi.thread).unwrap();
 
