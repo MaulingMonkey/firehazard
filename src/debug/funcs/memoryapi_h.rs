@@ -8,6 +8,8 @@ use std::mem::{MaybeUninit, size_of_val, size_of};
 
 
 
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-readprocessmemory)\]
+/// ReadProcessMemory
 pub fn read_process_memory<'a, T>(
     process:        &process::OwnedHandle,
     base_address:   *const T,
