@@ -75,8 +75,14 @@ unsafe extern "system" fn fwd_enum_window_stations_w<F: FnMut(CStrPtr<u16>) -> R
     }
 }
 
-// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getprocesswindowstation
-// GetProcessWindowStation: "Do not close the handle returned by this function." (psuedo-handle?)
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getprocesswindowstation)
+/// GetProcessWindowStation
+pub fn get_process_window_station() -> Result<winsta::OwnedHandle, LastError> {
+    // "Do not close the handle returned by this function." - so we return a closeable clone instead
+    let winsta = unsafe { GetProcessWindowStation() };
+    LastError::get_if(winsta.is_null())?;
+    Ok(unsafe { winsta::OwnedHandle::clone_from_raw(winsta) })
+}
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openwindowstationa)\]
 /// OpenWindowStationA

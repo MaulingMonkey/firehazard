@@ -94,8 +94,14 @@ unsafe extern "system" fn fwd_enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(
 // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdesktopwindows
 // EnumDesktopWindows
 
-// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getprocesswindowstation
-// GetProcessDesktop: "Do not close the handle returned by this function." (psuedo-handle?)
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getthreaddesktop)\]
+/// GetThreadDesktop
+pub fn get_thread_desktop(thread_id: thread::Id) -> Result<desktop::OwnedHandle, LastError> {
+    // "You do not need to call the CloseDesktop function to close the returned handle." - so we return a closeable clone instead
+    let desktop = unsafe { GetThreadDesktop(thread_id) };
+    LastError::get_if(desktop.is_null())?;
+    Ok(unsafe { desktop::OwnedHandle::clone_from_raw(desktop) })
+}
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openwindowstationa)\]
 /// OpenDesktopA
