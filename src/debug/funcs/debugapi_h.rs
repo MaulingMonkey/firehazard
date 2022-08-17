@@ -1,10 +1,10 @@
 use crate::*;
+use crate::debug::DebugEvent;
 
 use abistr::AsCStr;
 
 use winapi::shared::minwindef::FALSE;
 use winapi::um::debugapi::*;
-use winapi::um::minwinbase::DEBUG_EVENT;
 use winapi::um::winbase::INFINITE;
 
 use std::mem::zeroed;
@@ -64,18 +64,18 @@ pub fn output_debug_string_w(output_string: impl AsCStr<u16>) {
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-waitfordebugevent)\]
 /// WaitForDebugEvent
-pub fn wait_for_debug_event(timeout: impl Into<Option<Duration>>) -> Result<DEBUG_EVENT, LastError> {
+pub fn wait_for_debug_event(timeout: impl Into<Option<Duration>>) -> Result<DebugEvent, LastError> {
     let timeout_ms = timeout.into().map_or(INFINITE, |d| u32::try_from(d.as_millis()).unwrap_or(INFINITE).max(INFINITE-1));
     let mut de = unsafe { zeroed() };
     LastError::get_if(FALSE == unsafe { WaitForDebugEvent(&mut de, timeout_ms) })?;
-    Ok(de)
+    Ok(unsafe { DebugEvent::from_raw(de) })
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-waitfordebugeventex)\]
 /// WaitForDebugEventEx
-pub fn wait_for_debug_event_ex(timeout: impl Into<Option<Duration>>) -> Result<DEBUG_EVENT, LastError> {
+pub fn wait_for_debug_event_ex(timeout: impl Into<Option<Duration>>) -> Result<DebugEvent, LastError> {
     let timeout_ms = timeout.into().map_or(INFINITE, |d| u32::try_from(d.as_millis()).unwrap_or(INFINITE).max(INFINITE-1));
     let mut de = unsafe { zeroed() };
     LastError::get_if(FALSE == unsafe { WaitForDebugEventEx(&mut de, timeout_ms) })?;
-    Ok(de)
+    Ok(unsafe { DebugEvent::from_raw(de) })
 }

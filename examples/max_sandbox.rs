@@ -3,7 +3,6 @@ use win32_security_playground::*;
 use abistr::cstr;
 
 use winapi::shared::minwindef::FALSE;
-use winapi::um::debugapi::*;
 use winapi::um::handleapi::DuplicateHandle;
 use winapi::um::memoryapi::ReadProcessMemory;
 use winapi::um::minwinbase::*;
@@ -161,12 +160,13 @@ fn run(target: Target) {
     let mut sandboxed = false;
     let mut threads = HashMap::<thread::Id, thread::OwnedHandle>::new();
     loop {
-        let DEBUG_EVENT { dwDebugEventCode, dwProcessId, dwThreadId, u } = wait_for_debug_event_ex(None).unwrap();
+        let event = wait_for_debug_event_ex(None).unwrap();
+        let DEBUG_EVENT { dwProcessId, dwThreadId, .. } = *event;
         let dbg_continue                = move || continue_debug_event(dwProcessId, dwThreadId, DBG_CONTINUE).unwrap();
         let dbg_exception_not_handled   = move || continue_debug_event(dwProcessId, dwThreadId, DBG_EXCEPTION_NOT_HANDLED).unwrap();
-        match dwDebugEventCode {
-            EXCEPTION_DEBUG_EVENT => {
-                let event = unsafe { u.Exception() };
+        use debug::DebugEventU::*;
+        match event.u() {
+            Exception(event) => {
                 let code = event.ExceptionRecord.ExceptionCode;
                 let ty = match code {
                     EXCEPTION_ACCESS_VIOLATION      => "EXCEPTION_ACCESS_VIOLATION",
@@ -182,8 +182,7 @@ fn run(target: Target) {
                 eprintln!("[{dwProcessId}:{dwThreadId}] exception: {ty} ({code})");
                 dbg_exception_not_handled();
             },
-            CREATE_THREAD_DEBUG_EVENT => {
-                let event = unsafe { u.CreateThread() };
+            CreateThread(event) => {
                 eprintln!("[{dwProcessId}:{dwThreadId}] thread created");
                 let mut thread = event.hThread;
 
@@ -196,36 +195,30 @@ fn run(target: Target) {
                 debug_assert!(_prev_thread.is_none());
                 dbg_continue();
             },
-            CREATE_PROCESS_DEBUG_EVENT => {
-                let _event = unsafe { u.CreateProcessInfo() };
+            CreateProcess(_event) => {
                 eprintln!("[{dwProcessId}:{dwThreadId}] process created");
                 dbg_continue();
             },
-            EXIT_THREAD_DEBUG_EVENT => {
-                let _event = unsafe { u.ExitThread() };
+            ExitThread(_event) => {
                 eprintln!("[{dwProcessId}:{dwThreadId}] thread exited with code: {}", _event.dwExitCode);
                 let _thread = threads.remove(&dwThreadId);
                 debug_assert!(_thread.is_some());
                 dbg_continue();
             },
-            EXIT_PROCESS_DEBUG_EVENT => {
-                let _event = unsafe { u.ExitProcess() };
+            ExitProcess(_event) => {
                 eprintln!("[{dwProcessId}:{dwThreadId}] process exited with code: {}", _event.dwExitCode);
                 dbg_continue();
                 break;
             },
-            LOAD_DLL_DEBUG_EVENT => {
-                let _event = unsafe { u.LoadDll() };
+            LoadDll(_event) => {
                 eprintln!("[{dwProcessId}:{dwThreadId}] dll loaded");
                 dbg_continue();
             },
-            UNLOAD_DLL_DEBUG_EVENT  => {
-                let _event = unsafe { u.UnloadDll() };
+            UnloadDll(_event)  => {
                 eprintln!("[{dwProcessId}:{dwThreadId}] dll unloaded");
                 dbg_continue();
             },
-            OUTPUT_DEBUG_STRING_EVENT => {
-                let event = unsafe { u.DebugString() };
+            DebugString(event) => {
                 let bytes = usize::from(event.nDebugStringLength);
                 let wide1;
                 let wide2;
@@ -261,8 +254,7 @@ fn run(target: Target) {
                     dbg_continue();
                 }
             },
-            RIP_EVENT => {
-                let _event = unsafe { u.RipInfo() };
+            Rip(_event) => {
                 eprintln!("[{dwProcessId}:{dwThreadId}] rip event: {{ dwError: {}, dwType: {} }}", _event.dwError, _event.dwType);
                 dbg_continue();
             },
