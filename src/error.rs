@@ -28,6 +28,7 @@ impl Error {
             ERROR_INVALID_PARAMETER         => "ERROR_INVALID_PARAMETER",       // 87
             ERROR_EXCL_SEM_ALREADY_OWNED    => "ERROR_EXCL_SEM_ALREADY_OWNED",  // 101
             ERROR_INSUFFICIENT_BUFFER       => "ERROR_INSUFFICIENT_BUFFER",     // 122
+            ERROR_BUSY                      => "ERROR_BUSY",                    // 170
             ERROR_NO_TOKEN                  => "ERROR_NO_TOKEN",                // 1008
             ERROR_PRIVILEGE_NOT_HELD        => "ERROR_PRIVILEGE_NOT_HELD",      // 1314
             ERROR_ALLOTTED_SPACE_EXCEEDED   => "ERROR_ALLOTTED_SPACE_EXCEEDED", // 1344
