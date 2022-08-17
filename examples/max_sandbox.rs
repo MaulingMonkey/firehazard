@@ -4,7 +4,6 @@ use abistr::cstr;
 
 use winapi::shared::minwindef::FALSE;
 use winapi::um::handleapi::DuplicateHandle;
-use winapi::um::memoryapi::ReadProcessMemory;
 use winapi::um::minwinbase::*;
 use winapi::um::processthreadsapi::STARTUPINFOW;
 use winapi::um::winbase::*;
@@ -12,6 +11,7 @@ use winapi::um::winnt::*;
 
 use std::collections::*;
 use std::ffi::OsString;
+use std::mem::MaybeUninit;
 use std::mem::zeroed;
 use std::os::windows::prelude::*;
 use std::path::PathBuf;
@@ -220,23 +220,21 @@ fn run(target: Target) {
             },
             DebugString(event) => {
                 let bytes = usize::from(event.nDebugStringLength);
-                let wide1;
-                let wide2;
-                let narrow1;
+                let mut buffer_wide;
+                let mut buffer_narrow;
+                let buffer_osstring;
                 let narrow = if event.fUnicode != 0 {
                     // Unicode
-                    let mut buffer = vec![0u16; (bytes+1)/2];
-                    assert!(FALSE != unsafe { ReadProcessMemory(pi.process.as_handle(), event.lpDebugStringData.cast(), buffer.as_mut_ptr().cast(), bytes, null_mut()) });
+                    buffer_wide = vec![MaybeUninit::<u16>::uninit(); (bytes+1)/2];
+                    let buffer = read_process_memory(&pi.process, event.lpDebugStringData.cast(), &mut buffer_wide[..]).unwrap();
                     let nul = buffer.iter().position(|ch| *ch == 0).unwrap_or(buffer.len());
-                    wide1 = buffer;
-                    wide2 = OsString::from_wide(wide1.split_at(nul).0);
-                    wide2.to_string_lossy()
+                    buffer_osstring = OsString::from_wide(buffer.split_at(nul).0);
+                    buffer_osstring.to_string_lossy()
                 } else {
-                    let mut buffer = vec![0u8; bytes];
-                    assert!(FALSE != unsafe { ReadProcessMemory(pi.process.as_handle(), event.lpDebugStringData.cast(), buffer.as_mut_ptr().cast(), bytes, null_mut()) });
+                    buffer_narrow = vec![MaybeUninit::<u8>::uninit(); bytes];
+                    let buffer = read_process_memory(&pi.process, event.lpDebugStringData.cast(), &mut buffer_narrow[..]).unwrap();
                     let nul = buffer.iter().position(|ch| *ch == 0).unwrap_or(buffer.len());
-                    narrow1 = buffer;
-                    String::from_utf8_lossy(narrow1.split_at(nul).0)
+                    String::from_utf8_lossy(buffer.split_at(nul).0)
                 };
                 eprintln!("[{dwProcessId}:{dwThreadId}] debug string: {:?}", &*narrow);
                 if narrow == "sandbox" {
