@@ -1,10 +1,12 @@
 use crate::*;
 use crate::error::LastError;
+use crate::thread::Handle;
 
 use winapi::um::handleapi::{DuplicateHandle, CloseHandle};
 use winapi::um::winnt::*;
 
 use std::fmt::{self, Debug, Formatter};
+use std::ops::Deref;
 use std::os::windows::io::IntoRawHandle;
 use std::ptr::null_mut;
 use std::thread::JoinHandle;
@@ -39,13 +41,13 @@ impl OwnedHandle {
 
         Self(new)
     }
-
-    pub fn as_handle(&self) -> HANDLE { self.0 }
 }
 
+impl AsRef<Handle>  for OwnedHandle { fn as_ref(&self) -> &Handle { unsafe { std::mem::transmute(self) } } }
 impl AsRef<HANDLE>  for OwnedHandle { fn as_ref(&self) -> &HANDLE { &self.0 } }
 impl Clone          for OwnedHandle { fn clone(&self) -> Self { unsafe { Self::clone_from_raw(self.0) } } }
 impl Debug          for OwnedHandle { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "thread::OwnedHandle(0x{:08x})", self.0 as usize) } }
+impl Deref          for OwnedHandle { type Target = Handle; fn deref(&self) -> &Self::Target { self.as_ref() } }
 impl Drop           for OwnedHandle { fn drop(&mut self) { assert!(self.0.is_null() || (0 != unsafe { CloseHandle(self.0) }), "CloseHandle({:?}) failed with GetLastError()={:?}", self.0, LastError::get()); } }
 impl<T> From<JoinHandle<T>> for OwnedHandle { fn from(jh: JoinHandle<T>) -> Self { unsafe { Self::from_raw_unchecked(jh.into_raw_handle().cast()) } } }
 

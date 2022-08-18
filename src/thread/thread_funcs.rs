@@ -28,20 +28,20 @@ pub fn suspend_thread(thread: &thread::OwnedHandle) -> Result<u32, LastError> { 
 /// *   `Ok(exit_code)`                             if `thread` exited otherwise
 /// *   `Err(...)`                                  if `thread` lacks appropriate querying permissions?
 /// *   `Err(...)`                                  if `thread` is an invalid handle?
-pub fn get_exit_code_thread(thread: impl thread::AsHandle) -> Result<u32, LastError> {
+pub fn get_exit_code_thread(thread: impl AsRef<thread::Handle>) -> Result<u32, LastError> {
     let mut exit_code = 0;
-    let success = 0 != unsafe { GetExitCodeThread(thread.as_handle(), &mut exit_code) };
+    let success = 0 != unsafe { GetExitCodeThread(thread.as_ref().as_handle(), &mut exit_code) };
     if success { Ok(exit_code) } else { Err(LastError::get()) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] `WaitForSingleObject(thread, 0) == WAIT_TIMEOUT`
-pub fn is_thread_running(thread: impl thread::AsHandle) -> bool {
-    WAIT_TIMEOUT == unsafe { WaitForSingleObject(thread.as_handle(), 0) }
+pub fn is_thread_running(thread: impl AsRef<thread::Handle>) -> bool {
+    WAIT_TIMEOUT == unsafe { WaitForSingleObject(thread.as_ref().as_handle(), 0) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] `WaitForSingleObject(thread, INFINITE)` + `GetExitCodeThread`
-pub fn wait_for_thread(thread: impl thread::AsHandle) -> Result<u32, LastError> {
-    match unsafe { WaitForSingleObject(thread.as_handle(), INFINITE) } {
+pub fn wait_for_thread(thread: impl AsRef<thread::Handle>) -> Result<u32, LastError> {
+    match unsafe { WaitForSingleObject(thread.as_ref().as_handle(), INFINITE) } {
         WAIT_OBJECT_0       => {},
         WAIT_ABANDONED_0    => return Err(LastError(ERROR_ABANDONED_WAIT_0)),   // shouldn't happen as `thread` isn't a mutex, right?
         WAIT_TIMEOUT        => return Err(LastError(ERROR_ABANDONED_WAIT_63)),  // shouldn't happen - hopefully the `63` hints that something is funky?
