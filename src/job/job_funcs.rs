@@ -15,8 +15,8 @@ use std::ptr::null_mut;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-assignprocesstojobobject)\]
 /// AssignProcessToJobObject
-pub fn assign_process_to_job_object(job: &job::OwnedHandle, process: &process::OwnedHandle) -> Result<(), LastError> {
-    LastError::get_if(FALSE == unsafe { AssignProcessToJobObject(job.as_handle(), process.as_handle()) })
+pub fn assign_process_to_job_object(job: &job::OwnedHandle, process: impl AsRef<process::Handle>) -> Result<(), LastError> {
+    LastError::get_if(FALSE == unsafe { AssignProcessToJobObject(job.as_handle(), process.as_ref().as_handle()) })
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createjobobjecta)\]
@@ -45,9 +45,9 @@ pub fn create_job_object_w(job_attributes: Option<std::convert::Infallible>, nam
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi/nf-jobapi-isprocessinjob)\]
 /// IsProcessInJob
-pub fn is_process_in_job(process: &process::OwnedHandle, job: Option<&job::OwnedHandle>) -> Result<bool, LastError> {
+pub fn is_process_in_job(process: impl AsRef<process::Handle>, job: Option<&job::OwnedHandle>) -> Result<bool, LastError> {
     let mut r = 0;
-    LastError::get_if(FALSE == unsafe { IsProcessInJob(process.as_handle(), job.map_or(null_mut(), |j| j.as_handle()), &mut r) })?;
+    LastError::get_if(FALSE == unsafe { IsProcessInJob(process.as_ref().as_handle(), job.map_or(null_mut(), |j| j.as_handle()), &mut r) })?;
     Ok(r != FALSE)
 }
 

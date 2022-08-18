@@ -14,9 +14,9 @@ use std::time::Duration;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-checkremotedebuggerpresent)\]
 /// CheckRemoteDebuggerPresent
-pub fn check_remote_debugger_present(process: &process::OwnedHandle) -> Result<bool, LastError> {
+pub fn check_remote_debugger_present(process: impl AsRef<process::Handle>) -> Result<bool, LastError> {
     let mut result = 0;
-    LastError::get_if(FALSE == unsafe { CheckRemoteDebuggerPresent(process.as_handle(), &mut result) })?;
+    LastError::get_if(FALSE == unsafe { CheckRemoteDebuggerPresent(process.as_ref().as_handle(), &mut result) })?;
     Ok(result != FALSE)
 }
 

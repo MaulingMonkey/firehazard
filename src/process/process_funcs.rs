@@ -88,20 +88,20 @@ pub fn get_current_process_id() -> process::Id { unsafe { GetCurrentProcessId() 
 /// *   `Ok(exit_code)`                             if `process` exited otherwise
 /// *   `Err(...)`                                  if `process` lacks appropriate querying permissions?
 /// *   `Err(...)`                                  if `process` is an invalid handle?
-pub fn get_exit_code_process(process: impl process::AsHandle) -> Result<u32, LastError> {
+pub fn get_exit_code_process(process: impl AsRef<process::Handle>) -> Result<u32, LastError> {
     let mut exit_code = 0;
-    let success = 0 != unsafe { GetExitCodeProcess(process.as_handle(), &mut exit_code) };
+    let success = 0 != unsafe { GetExitCodeProcess(process.as_ref().as_handle(), &mut exit_code) };
     if success { Ok(exit_code) } else { Err(LastError::get()) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] `WaitForSingleObject(process, 0) == WAIT_TIMEOUT`
-pub fn is_process_running(process: impl process::AsHandle) -> bool {
-    WAIT_TIMEOUT == unsafe { WaitForSingleObject(process.as_handle(), 0) }
+pub fn is_process_running(process: impl AsRef<process::Handle>) -> bool {
+    WAIT_TIMEOUT == unsafe { WaitForSingleObject(process.as_ref().as_handle(), 0) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] `WaitForSingleObject(process, INFINITE)` + `GetExitCodeProcess`
-pub fn wait_for_process(process: impl process::AsHandle) -> Result<u32, LastError> {
-    match unsafe { WaitForSingleObject(process.as_handle(), INFINITE) } {
+pub fn wait_for_process(process: impl AsRef<process::Handle>) -> Result<u32, LastError> {
+    match unsafe { WaitForSingleObject(process.as_ref().as_handle(), INFINITE) } {
         WAIT_OBJECT_0       => {},
         WAIT_ABANDONED_0    => return Err(LastError(ERROR_ABANDONED_WAIT_0)),   // shouldn't happen as `process` isn't a mutex, right?
         WAIT_TIMEOUT        => return Err(LastError(ERROR_ABANDONED_WAIT_63)),  // shouldn't happen - hopefully the `63` hints that something is funky?

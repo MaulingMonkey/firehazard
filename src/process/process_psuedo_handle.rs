@@ -1,6 +1,9 @@
+use crate::process::Handle;
+
 use winapi::um::winnt::*;
 
 use std::fmt::{self, Debug, Formatter};
+use std::ops::Deref;
 
 
 
@@ -19,7 +22,9 @@ impl PsuedoHandle {
     pub fn as_handle(&self) -> HANDLE { self.0 }
 }
 
+impl AsRef<Handle>  for PsuedoHandle { fn as_ref(&self) -> &Handle { unsafe { std::mem::transmute(self) } } }
 impl AsRef<HANDLE>  for PsuedoHandle { fn as_ref(&self) -> &HANDLE { &self.0 } }
 impl Debug          for PsuedoHandle { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "process::PsuedoHandle(0x{:08x})", self.0 as usize) } }
+impl Deref          for PsuedoHandle { type Target = Handle; fn deref(&self) -> &Self::Target { unsafe { std::mem::transmute(self) } } }
 
 impl From<PsuedoHandle>  for HANDLE { fn from(process: PsuedoHandle) -> Self { process.0 } }
