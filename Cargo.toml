@@ -27,6 +27,8 @@ winapi.features = [
     "errhandlingapi",
     "handleapi",
     "heapapi",
+    "jobapi",
+    "jobapi2",
     "lsalookup",
     "memoryapi",
     "ntlsa",
