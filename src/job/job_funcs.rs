@@ -129,8 +129,30 @@ pub fn open_job_object_w(desired_access: u32, inherit_handle: bool, name: impl T
 // \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryioratecontrolinformationjobobject)\]
 // QueryIoRateControlInformationJobObject
 
-// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
-// SetInformationJobObject
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
+/// SetInformationJobObject
+///
+/// ### Example
+/// ```
+/// # use win32_security_playground::*;
+/// # use winapi::shared::winerror::*;
+/// # use winapi::um::winnt::*;
+/// let mut job = create_job_object_w(None, ()).unwrap();
+///
+/// assert_eq!(ERROR_INVALID_PARAMETER, set_information_job_object(&mut job, JOBOBJECT_BASIC_UI_RESTRICTIONS { UIRestrictionsClass: !0 }).unwrap_err());
+///
+/// set_information_job_object(&mut job, JOBOBJECT_BASIC_UI_RESTRICTIONS { UIRestrictionsClass: 0
+///     | JOB_OBJECT_UILIMIT_DESKTOP
+///     | JOB_OBJECT_UILIMIT_DISPLAYSETTINGS
+///     | JOB_OBJECT_UILIMIT_EXITWINDOWS
+///     | JOB_OBJECT_UILIMIT_GLOBALATOMS
+///     | JOB_OBJECT_UILIMIT_HANDLES
+///     | JOB_OBJECT_UILIMIT_READCLIPBOARD
+///     | JOB_OBJECT_UILIMIT_SYSTEMPARAMETERS
+///     | JOB_OBJECT_UILIMIT_WRITECLIPBOARD
+/// }).unwrap();
+/// ```
+pub fn set_information_job_object(job: &mut job::OwnedHandle, information: impl job::SetInformation) -> Result<(), LastError> { information.set_on(job) }
 
 // "Starting with Windows 10, version 1607, this function is no longer supported."
 // \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setioratecontrolinformationjobobject)\]
@@ -142,7 +164,6 @@ pub fn open_job_object_w(desired_access: u32, inherit_handle: bool, name: impl T
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
-/// # use abistr::*;
 /// # use winapi::um::winnt::GENERIC_ALL;
 /// let job = create_job_object_w(None, ()).unwrap();
 /// terminate_job_object(&job, 0).unwrap();
