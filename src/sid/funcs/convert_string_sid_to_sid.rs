@@ -1,5 +1,4 @@
 use crate::*;
-use crate::error::LastError;
 use crate::sid::Box as SidBox;
 
 use abistr::{AsCStr, TryIntoAsCStr};
@@ -25,14 +24,11 @@ use std::ptr::null_mut;
 ///
 /// ### See Also
 /// *   [sid!] for compile-time validated error-free [`sid::Ptr`]s.
-pub fn convert_string_sid_to_sid_a(s: impl TryIntoAsCStr) -> Result<SidBox<alloc::LocalAllocFree>, LastError> {
-    let s = s.try_into().map_err(|_| LastError(ERROR_INVALID_PARAMETER))?;
+pub fn convert_string_sid_to_sid_a(s: impl TryIntoAsCStr) -> Result<SidBox<alloc::LocalAllocFree>, Error> {
+    let s = s.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let mut sid = null_mut();
-    let success = 0 != unsafe { ConvertStringSidToSidA(s.as_cstr(), &mut sid) };
-    let sid = unsafe { SidBox::from_raw(sid.cast()) };
-
-    if !success { Err(LastError::get()) }
-    else        { sid.ok_or(LastError(ERROR_INVALID_SID)) }
+    Error::get_last_if(0 == unsafe { ConvertStringSidToSidA(s.as_cstr(), &mut sid) })?;
+    unsafe { SidBox::from_raw(sid.cast()) }.ok_or(Error(ERROR_INVALID_SID))
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertstringsidtosidw)\]
@@ -49,12 +45,9 @@ pub fn convert_string_sid_to_sid_a(s: impl TryIntoAsCStr) -> Result<SidBox<alloc
 ///
 /// ### See Also
 /// *   [sid!] for compile-time validated error-free [`sid::Ptr`]s.
-pub fn convert_string_sid_to_sid_w(s: impl TryIntoAsCStr<u16>) -> Result<SidBox<alloc::LocalAllocFree>, LastError> {
-    let s = s.try_into().map_err(|_| LastError(ERROR_INVALID_PARAMETER))?;
+pub fn convert_string_sid_to_sid_w(s: impl TryIntoAsCStr<u16>) -> Result<SidBox<alloc::LocalAllocFree>, Error> {
+    let s = s.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let mut sid = null_mut();
-    let success = 0 != unsafe { ConvertStringSidToSidW(s.as_cstr(), &mut sid) };
-    let sid = unsafe { SidBox::from_raw(sid.cast()) };
-
-    if !success { Err(LastError::get()) }
-    else        { sid.ok_or(LastError(ERROR_INVALID_SID)) }
+    Error::get_last_if(0 == unsafe { ConvertStringSidToSidW(s.as_cstr(), &mut sid) })?;
+    unsafe { SidBox::from_raw(sid.cast()) }.ok_or(Error(ERROR_INVALID_SID))
 }

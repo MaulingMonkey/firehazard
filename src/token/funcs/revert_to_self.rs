@@ -19,7 +19,6 @@
 /// revert_to_self().expect("wasn't impersonating, should succeed anyways");
 /// open_thread_token(get_current_thread(), token::ALL_ACCESS, true).expect_err("reverted token, shouldn't have been able to open_thread_token");
 /// ```
-pub fn revert_to_self() -> Result<(), crate::error::LastError> {
-    let success = 0 != unsafe { winapi::um::securitybaseapi::RevertToSelf() };
-    if success { Ok(()) } else { Err(crate::error::LastError::get()) }
+pub fn revert_to_self() -> Result<(), crate::Error> {
+    crate::Error::get_last_if(0 == unsafe { winapi::um::securitybaseapi::RevertToSelf() })
 }

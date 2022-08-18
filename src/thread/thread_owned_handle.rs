@@ -1,5 +1,4 @@
 use crate::*;
-use crate::error::LastError;
 use crate::thread::Handle;
 
 use winapi::um::handleapi::{DuplicateHandle, CloseHandle};
@@ -36,7 +35,7 @@ impl OwnedHandle {
         let process = get_current_process().as_handle();
         let mut new = null_mut();
         let success = 0 != unsafe { DuplicateHandle(process, handle, process, &mut new, 0, false as _, DUPLICATE_SAME_ACCESS) };
-        assert!(success, "DuplicateHandle failed with {:?}", LastError::get());
+        assert!(success, "DuplicateHandle failed with {:?}", Error::get_last());
         // N.B. handle != new - this isn't refcounting per se
 
         Self(new)
@@ -48,7 +47,7 @@ impl AsRef<HANDLE>  for OwnedHandle { fn as_ref(&self) -> &HANDLE { &self.0 } }
 impl Clone          for OwnedHandle { fn clone(&self) -> Self { unsafe { Self::clone_from_raw(self.0) } } }
 impl Debug          for OwnedHandle { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "thread::OwnedHandle(0x{:08x})", self.0 as usize) } }
 impl Deref          for OwnedHandle { type Target = Handle; fn deref(&self) -> &Self::Target { self.as_ref() } }
-impl Drop           for OwnedHandle { fn drop(&mut self) { assert!(self.0.is_null() || (0 != unsafe { CloseHandle(self.0) }), "CloseHandle({:?}) failed with GetLastError()={:?}", self.0, LastError::get()); } }
+impl Drop           for OwnedHandle { fn drop(&mut self) { assert!(self.0.is_null() || (0 != unsafe { CloseHandle(self.0) }), "CloseHandle({:?}) failed with GetLastError()={:?}", self.0, Error::get_last()); } }
 impl<T> From<JoinHandle<T>> for OwnedHandle { fn from(jh: JoinHandle<T>) -> Self { unsafe { Self::from_raw_unchecked(jh.into_raw_handle().cast()) } } }
 
 impl From<&OwnedHandle>  for HANDLE { fn from(thread: &OwnedHandle) -> Self { thread.0 } }

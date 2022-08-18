@@ -28,12 +28,12 @@ pub fn create_desktop_a(
     flags:          u32,                                // TODO: type
     desired_access: u32,                                // TODO: type
     _sa:            Option<std::convert::Infallible>,   // TODO: type
-) -> Result<desktop::OwnedHandle, LastError> {
-    let desktop = desktop.try_into().map_err(|_| LastError(ERROR_INVALID_PARAMETER))?;
-    let device = device.try_into().map_err(|_| LastError(ERROR_INVALID_PARAMETER))?;
+) -> Result<desktop::OwnedHandle, Error> {
+    let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
+    let device = device.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let _ = devmode; let devmode = null_mut();
     let handle = unsafe { CreateDesktopA(desktop.as_cstr(), device.as_opt_cstr(), devmode, flags, desired_access, null_mut()) };
-    LastError::get_if(handle.is_null())?;
+    Error::get_last_if(handle.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
 }
 
@@ -55,12 +55,12 @@ pub fn create_desktop_w(
     flags:          u32,                                // TODO: type
     desired_access: u32,                                // TODO: type
     _sa:            Option<std::convert::Infallible>,   // TODO: type
-) -> Result<desktop::OwnedHandle, LastError> {
-    let desktop = desktop.try_into().map_err(|_| LastError(ERROR_INVALID_PARAMETER))?;
-    let device = device.try_into().map_err(|_| LastError(ERROR_INVALID_PARAMETER))?;
+) -> Result<desktop::OwnedHandle, Error> {
+    let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
+    let device = device.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let _ = devmode; let devmode = null_mut();
     let handle = unsafe { CreateDesktopW(desktop.as_cstr(), device.as_opt_cstr(), devmode, flags, desired_access, null_mut()) };
-    LastError::get_if(handle.is_null())?;
+    Error::get_last_if(handle.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
 }
 
@@ -94,15 +94,15 @@ pub fn create_desktop_w(
 /// However, in my testing (Windows 10.0.19043.1889), this appears to be a lie: if the parameter is NULL, this enumerates
 /// *window stations* instead of enumerating *desktops of said window station*.  As such, I've made `winsta` a non-optional
 /// type in this function.
-pub fn enum_desktops_a<F: FnMut(CStrPtr) -> Result<(), LastError>>(
+pub fn enum_desktops_a<F: FnMut(CStrPtr) -> Result<(), Error>>(
     winsta:         &winsta::OwnedHandle,
     mut enum_func:  F,
-) -> Result<(), LastError> {
+) -> Result<(), Error> {
     let enum_func : *mut F = &mut enum_func;
-    LastError::get_if(FALSE == unsafe { EnumDesktopsA(winsta.as_handle(), Some(fwd_enum_desktops_a::<F>), enum_func as LPARAM) })
+    Error::get_last_if(FALSE == unsafe { EnumDesktopsA(winsta.as_handle(), Some(fwd_enum_desktops_a::<F>), enum_func as LPARAM) })
 }
 
-unsafe extern "system" fn fwd_enum_desktops_a<F: FnMut(CStrPtr) -> Result<(), LastError>>(desktop: *mut c_char, param: LPARAM) -> BOOL {
+unsafe extern "system" fn fwd_enum_desktops_a<F: FnMut(CStrPtr) -> Result<(), Error>>(desktop: *mut c_char, param: LPARAM) -> BOOL {
     let desktop = unsafe { CStrPtr::from_ptr_unbounded(desktop) };
     let f = unsafe { &mut *(param as *mut F) };
     match f(desktop) {
@@ -139,15 +139,15 @@ unsafe extern "system" fn fwd_enum_desktops_a<F: FnMut(CStrPtr) -> Result<(), La
 /// However, in my testing (Windows 10.0.19043.1889), this appears to be a lie: if the parameter is NULL, this enumerates
 /// *window stations* instead of enumerating *desktops of said window station*.  As such, I've made `winsta` a non-optional
 /// type in this function.
-pub fn enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(), LastError>>(
+pub fn enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(), Error>>(
     winsta:         &winsta::OwnedHandle,
     mut enum_func:  F,
-) -> Result<(), LastError> {
+) -> Result<(), Error> {
     let enum_func : *mut F = &mut enum_func;
-    LastError::get_if(FALSE == unsafe { EnumDesktopsW(winsta.as_handle(), Some(fwd_enum_desktops_w::<F>), enum_func as LPARAM) })
+    Error::get_last_if(FALSE == unsafe { EnumDesktopsW(winsta.as_handle(), Some(fwd_enum_desktops_w::<F>), enum_func as LPARAM) })
 }
 
-unsafe extern "system" fn fwd_enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(), LastError>>(desktop: *mut u16, param: LPARAM) -> BOOL {
+unsafe extern "system" fn fwd_enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(), Error>>(desktop: *mut u16, param: LPARAM) -> BOOL {
     let desktop = unsafe { CStrPtr::<u16>::from_ptr_unbounded(desktop) };
     let f = unsafe { &mut *(param as *mut F) };
     match f(desktop) {
@@ -176,9 +176,9 @@ unsafe extern "system" fn fwd_enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(
 /// >   You do not need to call the CloseDesktop function to close the returned handle.
 ///
 /// A borrowed handle is super awkward here, so this function returns a *duplicated* handle that can be closed instead.
-pub fn get_thread_desktop(thread_id: thread::Id) -> Result<desktop::OwnedHandle, LastError> {
+pub fn get_thread_desktop(thread_id: thread::Id) -> Result<desktop::OwnedHandle, Error> {
     let desktop = unsafe { GetThreadDesktop(thread_id) };
-    LastError::get_if(desktop.is_null())?;
+    Error::get_last_if(desktop.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::clone_from_raw(desktop) })
 }
 
@@ -197,10 +197,10 @@ pub fn open_desktop_a(
     flags:          u32,    // TODO: type
     inherit:        bool,
     desired_access: u32,    // TODO: type
-) -> Result<desktop::OwnedHandle, LastError> {
-    let desktop = desktop.try_into().map_err(|_| LastError(ERROR_INVALID_PARAMETER))?;
+) -> Result<desktop::OwnedHandle, Error> {
+    let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let handle = unsafe { OpenDesktopA(desktop.as_cstr(), flags, inherit as _, desired_access) };
-    LastError::get_if(handle.is_null())?;
+    Error::get_last_if(handle.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
 }
 
@@ -219,10 +219,10 @@ pub fn open_desktop_w(
     flags:          u32,    // TODO: type
     inherit:        bool,
     desired_access: u32,    // TODO: type
-) -> Result<desktop::OwnedHandle, LastError> {
-    let desktop = desktop.try_into().map_err(|_| LastError(ERROR_INVALID_PARAMETER))?;
+) -> Result<desktop::OwnedHandle, Error> {
+    let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let handle = unsafe { OpenDesktopW(desktop.as_cstr(), flags, inherit as _, desired_access) };
-    LastError::get_if(handle.is_null())?;
+    Error::get_last_if(handle.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
 }
 
@@ -239,9 +239,9 @@ pub fn open_input_desktop(
     flags:          u32,    // TODO: type
     inherit:        bool,
     desired_access: u32,    // TODO: type
-) -> Result<desktop::OwnedHandle, LastError> {
+) -> Result<desktop::OwnedHandle, Error> {
     let handle = unsafe { OpenInputDesktop(flags, inherit as _, desired_access) };
-    LastError::get_if(handle.is_null())?;
+    Error::get_last_if(handle.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
 }
 
@@ -284,12 +284,12 @@ pub fn open_input_desktop(
 ///
 /// *   By strictly enforcing LIFO stacking order / borrowing for the thread's desktops, [`with_thread_desktop`] avoids the
 ///     awkward ownership issues of `'static` lifetimes that would be involved with directly exposing SetThreadDesktop.
-pub fn with_thread_desktop<R>(desktop: &desktop::OwnedHandle, f: impl FnOnce()->R) -> Result<R, LastError> {
+pub fn with_thread_desktop<R>(desktop: &desktop::OwnedHandle, f: impl FnOnce()->R) -> Result<R, Error> {
     let thread = get_current_thread_id();
     let original = unsafe { GetThreadDesktop(thread) };
     let desktop = desktop.as_handle();
-    LastError::get_if(original.is_null())?;
-    LastError::get_if(FALSE == unsafe { SetThreadDesktop(desktop) })?;
+    Error::get_last_if(original.is_null())?;
+    Error::get_last_if(FALSE == unsafe { SetThreadDesktop(desktop) })?;
 
     struct RestoreDesktopOnDrop(HDESK);
     impl Drop for RestoreDesktopOnDrop { fn drop(&mut self) { if !self.0.is_null() { assert_eq!(FALSE, unsafe { SetThreadDesktop(self.0) }) } } }
@@ -299,6 +299,6 @@ pub fn with_thread_desktop<R>(desktop: &desktop::OwnedHandle, f: impl FnOnce()->
 
     debug_assert_eq!(desktop, unsafe { GetThreadDesktop(thread) });
     std::mem::forget(restore); // manually restore for error codes:
-    LastError::get_if(FALSE == unsafe { SetThreadDesktop(original) })?;
+    Error::get_last_if(FALSE == unsafe { SetThreadDesktop(original) })?;
     Ok(r)
 }

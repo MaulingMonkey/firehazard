@@ -14,11 +14,11 @@ pub fn read_process_memory<'a, T>(
     process:        impl AsRef<process::Handle>,
     base_address:   *const T,
     buffer:         &'a mut [MaybeUninit<T>],
-) -> Result<&'a [T], LastError> {
+) -> Result<&'a [T], Error> {
     let size = size_of_val(buffer);
     let mut read = 0;
-    LastError::get_if(FALSE == unsafe { ReadProcessMemory(process.as_ref().as_handle(), base_address.cast(), buffer.as_mut_ptr().cast(), size, &mut read) })?;
-    if read > size { return Err(LastError(ERROR_BUFFER_OVERFLOW)) }
+    Error::get_last_if(FALSE == unsafe { ReadProcessMemory(process.as_ref().as_handle(), base_address.cast(), buffer.as_mut_ptr().cast(), size, &mut read) })?;
+    if read > size { return Err(Error(ERROR_BUFFER_OVERFLOW)) }
     let n = read/size_of::<T>();
     Ok(unsafe { slice_assume_init_ref(&buffer[..n]) })
 }

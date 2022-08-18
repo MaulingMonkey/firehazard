@@ -7,15 +7,17 @@ use std::fmt::{self, Debug, Formatter};
 
 
 
+pub(crate) trait ResultErrorExt<R>             { fn unerr(self, err: u32, remap: R) -> Self; }
+impl<R> ResultErrorExt<R> for Result<R, Error> { fn unerr(self, err: u32, remap: R) -> Self { match self { Err(e) if e == err => Ok(remap), r => r } } }
+
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)]
 pub struct Error(pub(crate) u32);
-#[doc(hidden)] pub use Error as LastError; // temporary legacy fallback
 
 impl Error {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)\] GetLastError
-    pub fn get() -> Self { Self(get_last_error()) }
-    pub(crate) fn get_if(error: bool) -> Result<(), Self> { if !error { Ok(()) } else { Err(Self::get()) } }
+    pub fn get_last() -> Self { Self(get_last_error()) }
+    pub(crate) fn get_last_if(error: bool) -> Result<(), Self> { if !error { Ok(()) } else { Err(Self::get_last()) } }
 
     pub fn as_u32(self) -> u32 { self.0 }
 

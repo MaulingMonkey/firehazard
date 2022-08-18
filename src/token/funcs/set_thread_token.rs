@@ -20,7 +20,7 @@
 ///
 /// ### Errors
 /// *   `ERROR_BAD_TOKEN_TYPE`  if `token` is a primary token instead of an impersonation token
-pub fn set_thread_token<'t>(thread: impl crate::thread::AsHandleOrNone, token: impl Into<Option<&'t crate::token::Handle>>) -> Result<(), crate::error::LastError> {
+pub fn set_thread_token<'t>(thread: impl crate::thread::AsHandleOrNone, token: impl Into<Option<&'t crate::token::Handle>>) -> Result<(), crate::Error> {
     use winapi::um::processthreadsapi::SetThreadToken;
     use std::ptr::null_mut;
 
@@ -30,7 +30,5 @@ pub fn set_thread_token<'t>(thread: impl crate::thread::AsHandleOrNone, token: i
     let token = token.into();
     let token = token.map_or(null_mut(), |t| t.as_handle());
 
-    let success = 0 != unsafe { SetThreadToken(thread, token) };
-
-    if success { Ok(()) } else { Err(crate::error::LastError::get()) }
+    crate::Error::get_last_if(0 == unsafe { SetThreadToken(thread, token) })
 }

@@ -283,5 +283,5 @@ fn run(context: &Context, target: Target) {
     assert!(sandboxed, "process was never sandboxed");
 
     let exit = wait_for_process(pi.process).unwrap();
-    assert!(exit == 0, "exit code: 0x{exit:08x} {}", LastError::from(exit).friendly());
+    assert!(exit == 0, "exit code: 0x{exit:08x} {}", Error::from(exit).friendly());
 }

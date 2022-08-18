@@ -1,5 +1,4 @@
-use crate::error::LastError;
-use crate::process;
+use crate::*;
 
 use abistr::{TryIntoAsOptCStr, AsOptCStr};
 
@@ -15,13 +14,13 @@ use std::ptr::{null_mut, null};
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa)\] CreateProcessA
-fn _create_process_a() -> Result<process::Information, LastError> { unimplemented!() }
+fn _create_process_a() -> Result<process::Information, Error> { unimplemented!() }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessw)\] CreateProcessW
-fn _create_process_w() -> Result<process::Information, LastError> { unimplemented!() }
+fn _create_process_w() -> Result<process::Information, Error> { unimplemented!() }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasusera)\] CreateProcessAsUserA
-fn _create_process_as_user_a() -> Result<process::Information, LastError> { unimplemented!() }
+fn _create_process_as_user_a() -> Result<process::Information, Error> { unimplemented!() }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasuserw)\] CreateProcessAsUserW
 ///
@@ -42,35 +41,35 @@ pub unsafe fn create_process_as_user_w(
     environment:            Option<&[u16]>,             // TODO: type to reduce validation needs (expected to be NUL separated, 2xNUL terminated: "key=value\0key=value\0\0")
     current_directory:      impl TryIntoAsOptCStr<u16>,
     startup_info:           &STARTUPINFOW,              // TODO: type via trait (could be STARTUPINFOW, STARTUPINFOEXW, etc.)
-) -> Result<process::Information, LastError> {
-    if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(LastError(ERROR_INVALID_PARAMETER)) } // must be NUL terminated
-    if !environment.unwrap_or(&[0, 0]).ends_with(&[0, 0])           { return Err(LastError(ERROR_INVALID_PARAMETER)) } // must be 2xNUL terminated
+) -> Result<process::Information, Error> {
+    if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(ERROR_INVALID_PARAMETER)) } // must be NUL terminated
+    if !environment.unwrap_or(&[0, 0]).ends_with(&[0, 0])           { return Err(Error(ERROR_INVALID_PARAMETER)) } // must be 2xNUL terminated
     let startup_info : *const STARTUPINFOW = startup_info;
     let mut process_information = unsafe { zeroed() };
 
     fn map_inconv<T>(_: Option<Infallible>) -> Option<T> { None }
 
-    let success = 0 != unsafe { CreateProcessAsUserW(
+    Error::get_last_if(0 == unsafe { CreateProcessAsUserW(
         token.as_handle(),
-        application_name.try_into().map_err(|_| LastError(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
+        application_name.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
         command_line.as_mut().map_or(null_mut(), |c| c.as_mut_ptr()),
         map_inconv(process_attributes).map_or(null_mut(), |a| a),
         map_inconv(thread_attributes).map_or(null_mut(), |a| a),
         inherit_handles as _,
         creation_flags,
         environment.map_or(null(), |e| e.as_ptr()) as *mut _,
-        current_directory.try_into().map_err(|_| LastError(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
+        current_directory.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
         startup_info as *mut _,
         &mut process_information
-    )};
-    if success { Ok(unsafe { process::Information::from_raw(process_information) }) } else { Err(LastError::get()) }
+    )})?;
+    Ok(unsafe { process::Information::from_raw(process_information) })
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createprocesswithlogonw)\] CreateProcessWithLogonW
-fn _create_process_with_logon_w() -> Result<process::Information, LastError> { unimplemented!() }
+fn _create_process_with_logon_w() -> Result<process::Information, Error> { unimplemented!() }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createprocesswithtokenw)\] CreateProcessWithTokenW
-fn _create_process_with_token_w() -> Result<process::Information, LastError> { unimplemented!() }
+fn _create_process_with_token_w() -> Result<process::Information, Error> { unimplemented!() }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentprocess)\] GetCurrentProcess
 pub fn get_current_process() -> process::PsuedoHandle { unsafe { process::PsuedoHandle::from_raw_unchecked(GetCurrentProcess()) } }
@@ -88,10 +87,10 @@ pub fn get_current_process_id() -> process::Id { unsafe { GetCurrentProcessId() 
 /// *   `Ok(exit_code)`                             if `process` exited otherwise
 /// *   `Err(...)`                                  if `process` lacks appropriate querying permissions?
 /// *   `Err(...)`                                  if `process` is an invalid handle?
-pub fn get_exit_code_process(process: impl AsRef<process::Handle>) -> Result<u32, LastError> {
+pub fn get_exit_code_process(process: impl AsRef<process::Handle>) -> Result<u32, Error> {
     let mut exit_code = 0;
-    let success = 0 != unsafe { GetExitCodeProcess(process.as_ref().as_handle(), &mut exit_code) };
-    if success { Ok(exit_code) } else { Err(LastError::get()) }
+    Error::get_last_if(0 == unsafe { GetExitCodeProcess(process.as_ref().as_handle(), &mut exit_code) })?;
+    Ok(exit_code)
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] `WaitForSingleObject(process, 0) == WAIT_TIMEOUT`
@@ -100,13 +99,13 @@ pub fn is_process_running(process: impl AsRef<process::Handle>) -> bool {
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] `WaitForSingleObject(process, INFINITE)` + `GetExitCodeProcess`
-pub fn wait_for_process(process: impl AsRef<process::Handle>) -> Result<u32, LastError> {
+pub fn wait_for_process(process: impl AsRef<process::Handle>) -> Result<u32, Error> {
     match unsafe { WaitForSingleObject(process.as_ref().as_handle(), INFINITE) } {
         WAIT_OBJECT_0       => {},
-        WAIT_ABANDONED_0    => return Err(LastError(ERROR_ABANDONED_WAIT_0)),   // shouldn't happen as `process` isn't a mutex, right?
-        WAIT_TIMEOUT        => return Err(LastError(ERROR_ABANDONED_WAIT_63)),  // shouldn't happen - hopefully the `63` hints that something is funky?
-        WAIT_FAILED         => return Err(LastError::get()),
-        _                   => return Err(LastError(ERROR_ABANDONED_WAIT_63)),  // shouldn't happen - hopefully the `63` hints that something is funky?
+        WAIT_ABANDONED_0    => return Err(Error(ERROR_ABANDONED_WAIT_0)),   // shouldn't happen as `process` isn't a mutex, right?
+        WAIT_TIMEOUT        => return Err(Error(ERROR_ABANDONED_WAIT_63)),  // shouldn't happen - hopefully the `63` hints that something is funky?
+        WAIT_FAILED         => return Err(Error::get_last()),
+        _                   => return Err(Error(ERROR_ABANDONED_WAIT_63)),  // shouldn't happen - hopefully the `63` hints that something is funky?
     }
     get_exit_code_process(process)
 }
