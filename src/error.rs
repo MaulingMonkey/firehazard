@@ -25,6 +25,7 @@ impl Error {
             ERROR_ACCESS_DENIED             => "ERROR_ACCESS_DENIED",           // 5
             ERROR_INVALID_HANDLE            => "ERROR_INVALID_HANDLE",          // 6
             ERROR_BAD_LENGTH                => "ERROR_BAD_LENGTH",              // 24
+            ERROR_NOT_SUPPORTED             => "ERROR_NOT_SUPPORTED",           // 50
             ERROR_INVALID_PARAMETER         => "ERROR_INVALID_PARAMETER",       // 87
             ERROR_EXCL_SEM_ALREADY_OWNED    => "ERROR_EXCL_SEM_ALREADY_OWNED",  // 101
             ERROR_INSUFFICIENT_BUFFER       => "ERROR_INSUFFICIENT_BUFFER",     // 122
