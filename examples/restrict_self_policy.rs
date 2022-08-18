@@ -2,6 +2,8 @@ use win32_security_playground::*;
 use winapi::um::winnt::*;
 
 fn main() {
+    heap_enable_termination_on_corruption().unwrap();
+
     let mut policy = PROCESS_MITIGATION_ASLR_POLICY { Flags: 0 };
     policy.set_DisallowStrippedImages(1);
     policy.set_EnableBottomUpRandomization(1);

@@ -25,5 +25,6 @@ unsafe impl IntoPolicy for PROCESS_MITIGATION_IMAGE_LOAD_POLICY                 
 
 pub use funcs::*;
 pub(crate) mod funcs {
+    include!("funcs/heap_enable_termination_on_corruption.rs");
     include!("funcs/set_process_mitigation_policy.rs");
 }
