@@ -121,8 +121,18 @@ pub fn open_job_object_w(desired_access: u32, inherit_handle: bool, name: impl T
     Ok(unsafe { job::OwnedHandle::from_raw_unchecked(h) })
 }
 
-// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
-// QueryInformationJobObject
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
+/// QueryInformationJobObject
+///
+/// ### Example
+/// ```
+/// # use win32_security_playground::*;
+/// # use winapi::shared::winerror::*;
+/// # use winapi::um::winnt::*;
+/// let job = create_job_object_w(None, ()).unwrap();
+/// let restrictions : JOBOBJECT_BASIC_UI_RESTRICTIONS = query_information_job_object(&job).unwrap();
+/// ```
+pub fn query_information_job_object<Info: job::QueryInformation>(job: &job::OwnedHandle) -> Result<Info, Error> { Info::query_from(job) }
 
 // "Starting with Windows 10, version 1607, this function is no longer supported."
 // \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryioratecontrolinformationjobobject)\]
