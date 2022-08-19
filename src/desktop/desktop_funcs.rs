@@ -292,13 +292,13 @@ pub fn with_thread_desktop<R>(desktop: &desktop::OwnedHandle, f: impl FnOnce()->
     Error::get_last_if(FALSE == unsafe { SetThreadDesktop(desktop) })?;
 
     struct RestoreDesktopOnDrop(HDESK);
-    impl Drop for RestoreDesktopOnDrop { fn drop(&mut self) { if !self.0.is_null() { assert_eq!(FALSE, unsafe { SetThreadDesktop(self.0) }) } } }
-    let restore = RestoreDesktopOnDrop(original);
+    impl Drop for RestoreDesktopOnDrop { fn drop(&mut self) { assert_eq!(FALSE, unsafe { SetThreadDesktop(self.0) }) } }
+    let restore_desktop = RestoreDesktopOnDrop(original);
 
     let r = f();
 
     debug_assert_eq!(desktop, unsafe { GetThreadDesktop(thread) });
-    std::mem::forget(restore); // manually restore for error codes:
+    std::mem::forget(restore_desktop); // manually restore for error codes:
     Error::get_last_if(FALSE == unsafe { SetThreadDesktop(original) })?;
     Ok(r)
 }
