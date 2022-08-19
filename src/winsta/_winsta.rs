@@ -1,6 +1,7 @@
 //! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/winstation/window-stations)\]
 //! Window Station APIs
 
+mod winsta_access_rights;               pub use winsta_access_rights::*;
 mod winsta_owned_handle;                pub use winsta_owned_handle::*;
 
 pub use funcs::*;
