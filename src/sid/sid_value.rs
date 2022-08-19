@@ -26,11 +26,11 @@ impl Value {
     pub fn as_ptr_sid(&self) -> *mut SID { self.0 }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertsidtostringsida)\] ConvertSidToStringSidA
-    pub fn to_string_sid_a(&self) -> Option<LocalString> {
+    pub fn to_string_sid_a(&self) -> Option<alloc::CString<alloc::LocalAllocFree>> {
         if self.0.is_null() { return None }
         let mut local_string = null_mut();
         let succeeded = 0 != unsafe { ConvertSidToStringSidA(self.0.cast(), &mut local_string) };
-        let local_string = unsafe { LocalString::from_raw(local_string) };
+        let local_string = unsafe { alloc::CString::from_raw(local_string) };
         assert!(succeeded, "ConvertSidToStringSidA");
         Some(local_string)
     }

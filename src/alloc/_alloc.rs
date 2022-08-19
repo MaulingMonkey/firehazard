@@ -1,5 +1,7 @@
 //! Allocators, deallocators, etc.
 
+mod cstring;                    pub use cstring::*;
+
 
 
 /// [`LocalAlloc`](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-localalloc) /
