@@ -1,6 +1,7 @@
 #![forbid(unsafe_op_in_unsafe_fn)]
 #![deny(unreachable_patterns)]
 
+#[path = "access/_access.rs"]   pub mod access; //#[doc(hidden)] pub use access::constants::*;
 #[path = "ace/_ace.rs"]         pub mod ace;    //#[doc(hidden)] pub use ace::funcs::*;
 #[path = "acl/_acl.rs"]         pub mod acl;    //#[doc(hidden)] pub use acl::funcs::*;
 #[path = "alloc/_alloc.rs"]     pub mod alloc;
@@ -16,7 +17,6 @@
 #[path = "token/_token.rs"]     pub mod token;  #[doc(hidden)] pub use token::funcs::*;
 #[path = "winsta/_winsta.rs"]   pub mod winsta;  #[doc(hidden)] pub use winsta::funcs::*;
 
-pub mod access;
 pub mod error;                  #[doc(hidden)] pub use error::*;
 
 pub(crate) use util::*;

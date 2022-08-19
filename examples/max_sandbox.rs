@@ -125,7 +125,7 @@ impl Target {
 fn main() {
     let context = Context {
         main_desktop:   get_thread_desktop(get_current_thread_id()).unwrap(),
-        alt_desktop:    create_desktop_a(cstr!("max_sandbox_desktop"), (), None, 0, GENERIC_ALL, None).unwrap(),
+        alt_desktop:    create_desktop_a(cstr!("max_sandbox_desktop"), (), None, 0, access::GENERIC_ALL, None).unwrap(),
     };
     for target in Target::list() {
         run(&context, target);
@@ -207,7 +207,7 @@ fn run(context: &Context, target: Target) {
                 let mut thread = event.hThread;
 
                 let process = get_current_process().as_handle();
-                assert!(FALSE != unsafe { DuplicateHandle(process, thread, process, &mut thread, GENERIC_ALL, false as _, 0) });
+                assert!(FALSE != unsafe { DuplicateHandle(process, thread, process, &mut thread, access::GENERIC_ALL.into(), false as _, 0) });
                 let thread = unsafe { thread::OwnedHandle::clone_from_raw(thread) };
 
                 set_thread_token(&thread, &permissive).unwrap();

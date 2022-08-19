@@ -15,9 +15,9 @@ use std::ptr::null_mut;
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
+/// # use win32_security_playground::access::*;
 /// # use abistr::cstr;
 /// # use winapi::shared::winerror::*;
-/// # use winapi::um::winnt::GENERIC_ALL;
 /// # use winapi::um::winuser::CWF_CREATE_ONLY;
 /// assert_eq!(ERROR_ACCESS_DENIED, create_window_station_a(cstr!("WinSta0"), CWF_CREATE_ONLY, GENERIC_ALL, None).unwrap_err());
 /// let winsta = create_window_station_a((), 0, GENERIC_ALL, None).unwrap();
@@ -25,11 +25,11 @@ use std::ptr::null_mut;
 pub fn create_window_station_a(
     winsta:         impl TryIntoAsOptCStr,
     flags:          u32,                                            // TODO: type
-    desired_access: u32,                                            // TODO: type
+    desired_access: impl Into<access::Mask>,
     _sa:            impl Into<Option<std::convert::Infallible>>,    // TODO: type
 ) -> Result<winsta::OwnedHandle, Error> {
     let winsta = winsta.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let handle = unsafe { CreateWindowStationA(winsta.as_opt_cstr(), flags, desired_access, null_mut()) };
+    let handle = unsafe { CreateWindowStationA(winsta.as_opt_cstr(), flags, desired_access.into().into(), null_mut()) };
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { winsta::OwnedHandle::from_raw_unchecked(handle) })
 }
@@ -40,9 +40,9 @@ pub fn create_window_station_a(
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
+/// # use win32_security_playground::access::*;
 /// # use abistr::cstr16;
 /// # use winapi::shared::winerror::*;
-/// # use winapi::um::winnt::GENERIC_ALL;
 /// # use winapi::um::winuser::CWF_CREATE_ONLY;
 /// assert_eq!(ERROR_ACCESS_DENIED, create_window_station_w(cstr16!("WinSta0"), CWF_CREATE_ONLY, GENERIC_ALL, None).unwrap_err());
 /// let winsta = create_window_station_w((), 0, GENERIC_ALL, None).unwrap();
@@ -50,11 +50,11 @@ pub fn create_window_station_a(
 pub fn create_window_station_w(
     winsta:         impl TryIntoAsOptCStr<u16>,
     flags:          u32,                                            // TODO: type
-    desired_access: u32,                                            // TODO: type
+    desired_access: impl Into<access::Mask>,
     _sa:            impl Into<Option<std::convert::Infallible>>,    // TODO: type
 ) -> Result<winsta::OwnedHandle, Error> {
     let winsta = winsta.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let handle = unsafe { CreateWindowStationW(winsta.as_opt_cstr(), flags, desired_access, null_mut()) };
+    let handle = unsafe { CreateWindowStationW(winsta.as_opt_cstr(), flags, desired_access.into().into(), null_mut()) };
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { winsta::OwnedHandle::from_raw_unchecked(handle) })
 }
@@ -160,17 +160,17 @@ pub fn get_process_window_station() -> Result<winsta::OwnedHandle, Error> {
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
+/// # use win32_security_playground::access::*;
 /// # use abistr::cstr;
-/// # use winapi::um::winnt::GENERIC_ALL;
 /// let winsta0 = open_window_station_a(cstr!("WinSta0"), false, GENERIC_ALL).unwrap();
 /// ```
 pub fn open_window_station_a(
     winsta:         impl TryIntoAsCStr,
     inherit:        bool,
-    desired_access: u32,                                            // TODO: type
+    desired_access: impl Into<access::Mask>,
 ) -> Result<winsta::OwnedHandle, Error> {
     let winsta = winsta.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let handle = unsafe { OpenWindowStationA(winsta.as_cstr(), inherit as _, desired_access) };
+    let handle = unsafe { OpenWindowStationA(winsta.as_cstr(), inherit as _, desired_access.into().into()) };
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { winsta::OwnedHandle::from_raw_unchecked(handle) })
 }
@@ -181,17 +181,17 @@ pub fn open_window_station_a(
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
+/// # use win32_security_playground::access::*;
 /// # use abistr::cstr16;
-/// # use winapi::um::winnt::GENERIC_ALL;
 /// let winsta0 = open_window_station_w(cstr16!("WinSta0"), false, GENERIC_ALL).unwrap();
 /// ```
 pub fn open_window_station_w(
     winsta:         impl TryIntoAsCStr<u16>,
     inherit:        bool,
-    desired_access: u32,                                            // TODO: type
+    desired_access: impl Into<access::Mask>,
 ) -> Result<winsta::OwnedHandle, Error> {
     let winsta = winsta.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let handle = unsafe { OpenWindowStationW(winsta.as_cstr(), inherit as _, desired_access) };
+    let handle = unsafe { OpenWindowStationW(winsta.as_cstr(), inherit as _, desired_access.into().into()) };
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { winsta::OwnedHandle::from_raw_unchecked(handle) })
 }

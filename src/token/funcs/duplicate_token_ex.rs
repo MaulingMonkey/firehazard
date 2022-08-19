@@ -24,7 +24,7 @@
 /// ```
 pub unsafe fn duplicate_token_ex(
     token:                  &crate::token::OwnedHandle,
-    desired_access:         crate::token::AccessRights,
+    desired_access:         impl Into<crate::token::AccessRights>,
     _token_attributes:      Option<std::convert::Infallible>,
     impersonation_level:    winapi::um::winnt::SECURITY_IMPERSONATION_LEVEL,    // TODO: type wrapper?
     token_type:             crate::token::Type,
@@ -33,7 +33,7 @@ pub unsafe fn duplicate_token_ex(
     use std::ptr::null_mut;
 
     let mut new = null_mut();
-    let success = 0 != unsafe { winapi::um::securitybaseapi::DuplicateTokenEx(token.as_handle(), desired_access.as_u32(), null_mut(), impersonation_level, token_type.into(), &mut new) };
+    let success = 0 != unsafe { winapi::um::securitybaseapi::DuplicateTokenEx(token.as_handle(), desired_access.into().into(), null_mut(), impersonation_level, token_type.into(), &mut new) };
     assert!(success, "DuplicateTokenEx GetLastError()={}", get_last_error());
 
     unsafe { crate::token::OwnedHandle::from_raw(new) }

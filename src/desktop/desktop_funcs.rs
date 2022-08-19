@@ -16,8 +16,8 @@ use std::ptr::null_mut;
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
+/// # use win32_security_playground::access::*;
 /// # use abistr::cstr;
-/// # use winapi::um::winnt::GENERIC_ALL;
 /// let desktop = create_desktop_a(cstr!("PlaygroundDesktop"), (), None, 0, GENERIC_ALL, None).unwrap();
 /// # let desktop = create_desktop_a(cstr!("PlaygroundDesktop"), (), None, 0, GENERIC_ALL, None).unwrap();
 /// ```
@@ -26,13 +26,13 @@ pub fn create_desktop_a(
     device:         impl TryIntoAsOptCStr,
     devmode:        Option<std::convert::Infallible>,
     flags:          u32,                                // TODO: type
-    desired_access: u32,                                // TODO: type
+    desired_access: impl Into<access::Mask>,
     _sa:            Option<std::convert::Infallible>,   // TODO: type
 ) -> Result<desktop::OwnedHandle, Error> {
     let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let device = device.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let _ = devmode; let devmode = null_mut();
-    let handle = unsafe { CreateDesktopA(desktop.as_cstr(), device.as_opt_cstr(), devmode, flags, desired_access, null_mut()) };
+    let handle = unsafe { CreateDesktopA(desktop.as_cstr(), device.as_opt_cstr(), devmode, flags, desired_access.into().into(), null_mut()) };
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
 }
@@ -43,8 +43,8 @@ pub fn create_desktop_a(
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
+/// # use win32_security_playground::access::*;
 /// # use abistr::cstr16;
-/// # use winapi::um::winnt::GENERIC_ALL;
 /// let desktop = create_desktop_w(cstr16!("PlaygroundDesktop"), (), None, 0, GENERIC_ALL, None).unwrap();
 /// # let desktop = create_desktop_w(cstr16!("PlaygroundDesktop"), (), None, 0, GENERIC_ALL, None).unwrap();
 /// ```
@@ -53,13 +53,13 @@ pub fn create_desktop_w(
     device:         impl TryIntoAsOptCStr<u16>,
     devmode:        Option<std::convert::Infallible>,
     flags:          u32,                                // TODO: type
-    desired_access: u32,                                // TODO: type
+    desired_access: impl Into<access::Mask>,
     _sa:            Option<std::convert::Infallible>,   // TODO: type
 ) -> Result<desktop::OwnedHandle, Error> {
     let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let device = device.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let _ = devmode; let devmode = null_mut();
-    let handle = unsafe { CreateDesktopW(desktop.as_cstr(), device.as_opt_cstr(), devmode, flags, desired_access, null_mut()) };
+    let handle = unsafe { CreateDesktopW(desktop.as_cstr(), device.as_opt_cstr(), devmode, flags, desired_access.into().into(), null_mut()) };
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
 }
@@ -188,18 +188,18 @@ pub fn get_thread_desktop(thread_id: thread::Id) -> Result<desktop::OwnedHandle,
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
+/// # use win32_security_playground::access::*;
 /// # use abistr::cstr;
-/// # use winapi::um::winnt::GENERIC_ALL;
 /// let desktop = open_desktop_a(cstr!("Default"), 0, false, GENERIC_ALL).unwrap();
 /// ```
 pub fn open_desktop_a(
     desktop:        impl TryIntoAsCStr,
     flags:          u32,    // TODO: type
     inherit:        bool,
-    desired_access: u32,    // TODO: type
+    desired_access: impl Into<access::Mask>,
 ) -> Result<desktop::OwnedHandle, Error> {
     let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let handle = unsafe { OpenDesktopA(desktop.as_cstr(), flags, inherit as _, desired_access) };
+    let handle = unsafe { OpenDesktopA(desktop.as_cstr(), flags, inherit as _, desired_access.into().into()) };
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
 }
@@ -210,18 +210,18 @@ pub fn open_desktop_a(
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
+/// # use win32_security_playground::access::*;
 /// # use abistr::cstr16;
-/// # use winapi::um::winnt::GENERIC_ALL;
 /// let desktop = open_desktop_w(cstr16!("Default"), 0, false, GENERIC_ALL).unwrap();
 /// ```
 pub fn open_desktop_w(
     desktop:        impl TryIntoAsCStr<u16>,
     flags:          u32,    // TODO: type
     inherit:        bool,
-    desired_access: u32,    // TODO: type
+    desired_access: impl Into<access::Mask>,
 ) -> Result<desktop::OwnedHandle, Error> {
     let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let handle = unsafe { OpenDesktopW(desktop.as_cstr(), flags, inherit as _, desired_access) };
+    let handle = unsafe { OpenDesktopW(desktop.as_cstr(), flags, inherit as _, desired_access.into().into()) };
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
 }
@@ -232,15 +232,15 @@ pub fn open_desktop_w(
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
-/// # use winapi::um::winnt::GENERIC_ALL;
+/// # use win32_security_playground::access::*;
 /// let desktop = open_input_desktop(0, false, GENERIC_ALL).unwrap();
 /// ```
 pub fn open_input_desktop(
     flags:          u32,    // TODO: type
     inherit:        bool,
-    desired_access: u32,    // TODO: type
+    desired_access: impl Into<access::Mask>,
 ) -> Result<desktop::OwnedHandle, Error> {
-    let handle = unsafe { OpenInputDesktop(flags, inherit as _, desired_access) };
+    let handle = unsafe { OpenInputDesktop(flags, inherit as _, desired_access.into().into()) };
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
 }
@@ -251,8 +251,8 @@ pub fn open_input_desktop(
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
+/// # use win32_security_playground::access::*;
 /// # use abistr::cstr;
-/// # use winapi::um::winnt::GENERIC_ALL;
 /// # use winapi::um::winuser::*;
 /// let temp1 = create_desktop_a(cstr!("wtd.temp1"), (), None, 0, GENERIC_ALL, None).unwrap();
 /// let temp2 = create_desktop_a(cstr!("wtd.temp2"), (), None, 0, GENERIC_ALL, None).unwrap();

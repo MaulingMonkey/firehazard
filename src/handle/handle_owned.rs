@@ -56,7 +56,7 @@ impl Owned {
     pub unsafe fn clone_from_raw(handle: HANDLE) -> Self {
         let handle = unsafe { Self::borrow_from_raw_unchecked(&handle) };
         let process = get_current_process();
-        duplicate_handle(&process, handle, &*process, 0, false, DUPLICATE_SAME_ACCESS).expect("DuplicateHandle failed")
+        duplicate_handle(&process, handle, &*process, (), false, DUPLICATE_SAME_ACCESS).expect("DuplicateHandle failed")
     }
 }
 

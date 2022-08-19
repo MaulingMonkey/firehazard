@@ -30,7 +30,7 @@ pub fn duplicate_handle<'t>(
     source_process: &process::Handle,
     source:         &handle::Owned,
     target_process: impl Into<Option<&'t process::Handle>>,
-    desired_access: u32,                                    // TODO: type
+    desired_access: impl Into<access::Mask>,
     inherit_handle: bool,
     options:        u32,                                    // TODO: type
 ) -> Result<handle::Owned, Error> {
@@ -40,7 +40,7 @@ pub fn duplicate_handle<'t>(
         source.as_handle(),
         target_process.into().map_or(null_mut(), |h| h.as_handle()),
         &mut target,
-        desired_access,
+        desired_access.into().into(),
         inherit_handle as _,
         options,
     )})?;

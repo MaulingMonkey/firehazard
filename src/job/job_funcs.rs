@@ -89,15 +89,15 @@ pub fn is_process_in_job(process: impl AsRef<process::Handle>, job: Option<&job:
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
+/// # use win32_security_playground::access::*;
 /// # use abistr::*;
-/// # use winapi::um::winnt::GENERIC_ALL;
 /// let job1 = create_job_object_a(None, cstr!("Local/win32_security_playground/tests/open_job_object_w")).unwrap();
 /// let job2 = open_job_object_a(GENERIC_ALL, false, cstr!("Local/win32_security_playground/tests/open_job_object_w")).unwrap();
 /// let err  = open_job_object_a(GENERIC_ALL, false, cstr!("Local/nope")).unwrap_err();
 /// ```
-pub fn open_job_object_a(desired_access: u32, inherit_handle: bool, name: impl TryIntoAsCStr) -> Result<job::OwnedHandle, Error> {
+pub fn open_job_object_a(desired_access: impl Into<access::Mask>, inherit_handle: bool, name: impl TryIntoAsCStr) -> Result<job::OwnedHandle, Error> {
     let name = name.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let h = unsafe { OpenJobObjectA(desired_access, inherit_handle as _, name.as_cstr()) };
+    let h = unsafe { OpenJobObjectA(desired_access.into().into(), inherit_handle as _, name.as_cstr()) };
     Error::get_last_if(h.is_null())?;
     Ok(unsafe { job::OwnedHandle::from_raw_unchecked(h) })
 }
@@ -108,15 +108,15 @@ pub fn open_job_object_a(desired_access: u32, inherit_handle: bool, name: impl T
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
+/// # use win32_security_playground::access::*;
 /// # use abistr::*;
-/// # use winapi::um::winnt::GENERIC_ALL;
 /// let job1 = create_job_object_w(None, cstr16!("Local/win32_security_playground/tests/open_job_object_a")).unwrap();
 /// let job2 = open_job_object_w(GENERIC_ALL, false, cstr16!("Local/win32_security_playground/tests/open_job_object_a")).unwrap();
 /// let err  = open_job_object_w(GENERIC_ALL, false, cstr16!("Local/nope")).unwrap_err();
 /// ```
-pub fn open_job_object_w(desired_access: u32, inherit_handle: bool, name: impl TryIntoAsCStr<u16>) -> Result<job::OwnedHandle, Error> {
+pub fn open_job_object_w(desired_access: impl Into<access::Mask>, inherit_handle: bool, name: impl TryIntoAsCStr<u16>) -> Result<job::OwnedHandle, Error> {
     let name = name.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let h = unsafe { OpenJobObjectW(desired_access, inherit_handle as _, name.as_cstr()) };
+    let h = unsafe { OpenJobObjectW(desired_access.into().into(), inherit_handle as _, name.as_cstr()) };
     Error::get_last_if(h.is_null())?;
     Ok(unsafe { job::OwnedHandle::from_raw_unchecked(h) })
 }
