@@ -6,25 +6,26 @@
     * [ ] Low box token?
     * [ ] Less Privileged App Container (LPAC)
 * [ ] Job object lockdown
-* [ ] Alternative desktop object
+* [X] Alternative desktop object
 * [ ] Alternative console object?
 * [ ] Process mitigation policies
-    * [ ] ASLR
-        * [ ] Basic
-        * [ ] Bottom-up?
-        * [ ] High-entropy
-    * [ ] Heap corruption terminate
-    * [ ] Strict handle checks
-    * [ ] ProcessSystemCallDisablePolicy
-    * [ ] ProcessExtensionPointDisablePolicy
-    * [ ] ProcessFontDisablePolicy
-    * [ ] ProcessSignaturePolicy
-    * [ ] ProcessImageLoadPolicy
+    * [ ] Apply to max_sandbox
+    * [X] ASLR
+    * [X] Heap corruption terminate
+    * [X] Strict handle checks
+    * [X] ProcessSystemCallDisablePolicy
+    * [X] ProcessExtensionPointDisablePolicy
+    * [X] ProcessFontDisablePolicy
+    * [X] ProcessSignaturePolicy
+    * [X] ProcessImageLoadPolicy
     * [ ] Control Flow Guard
     * [ ] CET Shadow Stack
+* [ ] SYSTEM_MANDATORY_LABEL_NO_WRITE_UP \| SYSTEM_MANDATORY_LABEL_NO_READ_UP \| SYSTEM_MANDATORY_LABEL_NO_EXECUTE_UP
 * [ ] `HANDLE` auditing
     * [ ] [GetProcessHandleCount](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocesshandlecount)
     * [ ] [NtQuerySystemInformation](https://docs.microsoft.com/en-us/windows/win32/api/winternl/nf-winternl-ntquerysysteminformation)(SystemHandleInformation, ...)
+* [ ] [Private object namespaces](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createprivatenamespacea) for e.g. jobs?
+* [ ] Scrub environment
 
 <https://github.com/chromium/chromium/blob/main/docs/design/sandbox.md>
 

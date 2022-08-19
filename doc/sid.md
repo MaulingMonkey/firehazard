@@ -28,6 +28,7 @@ A security identifier (SID) is a unique value of variable length used to identif
 
 | SID | Desc |
 | --- | ---- |
+| S-1-15-3-*                                                                                            | [All Capability SIDs](https://docs.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers#examples-of-registry-keys-taken-from-windows-10-version-1909-64-bit-enterprise-edition)
 | S-1-15-3-1024-3424233489-972189580-2057154623-747635277-1604371224-316187997-3786583170-1043257646    | [Chrome Installer SID](https://chromium.googlesource.com/chromium/src/+/refs/heads/main/chrome/installer/setup/install_worker.cc#75)
 | S-1-15-3-1024-2302894289-466761758-1166120688-1039016420-2430351297-4240214049-4028510897-3317428798  | [Chrome Installer SID](https://chromium.googlesource.com/chromium/src/+/refs/heads/main/chrome/installer/setup/install_worker.cc#75)
 
@@ -45,3 +46,6 @@ A security identifier (SID) is a unique value of variable length used to identif
 *   [Security Identifiers](https://docs.microsoft.com/en-us/windows/win32/secauthz/security-identifiers)
 *   [SID structure (winnt.h)](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)
 *   [Well-known SIDs](https://docs.microsoft.com/en-us/windows/win32/secauthz/well-known-sids)
+*   [Capability SIDs](https://docs.microsoft.com/en-us/windows-server/identity/ad-ds/manage/understand-security-identifiers#capability-sids)
+*   [DeriveCapabilitySidsFromName](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-derivecapabilitysidsfromname)
+*   [Privexec#11: Request: Manually Add Capability SIDs](https://github.com/M2Team/Privexec/issues/11)
