@@ -13,6 +13,10 @@ use std::ops::*;
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Mask(pub(super) u32);
 
+impl MaskMask {
+    pub fn as_u32(self) -> u32 { self.0 }
+}
+
 impl Mask {
     /// ### Safety
     /// *   Some APIs might theoretically assume access rights are a valid?
