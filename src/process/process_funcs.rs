@@ -28,7 +28,7 @@ fn _create_process_as_user_a() -> Result<process::Information, Error> { unimplem
 /// *   `creation_flags`    Is unvalidated as heck
 /// *   `startup_info`      Is unvalidated as heck
 pub unsafe fn create_process_as_user_w(
-    token:                  &crate::token::Handle,
+    token:                  &crate::token::OwnedHandle,
     application_name:       impl TryIntoAsOptCStr<u16>,
     // "The Unicode version of this function, CreateProcessAsUserW, can modify the contents of this string.
     // Therefore, this parameter cannot be a pointer to read-only memory (such as a const variable or a literal string).

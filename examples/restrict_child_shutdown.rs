@@ -30,7 +30,7 @@ fn main() {
     assert!(matches!(r, Ok(ERROR_ACCESS_DENIED)), "`shutdown /s /t 3600` succeeded despite trying to throw away `SeShutdownPrivilege`: {r:?}");
 }
 
-fn shutdown_as_user(args: &str, token: &token::Handle) -> Result<u32, Error> {
+fn shutdown_as_user(args: &str, token: &token::OwnedHandle) -> Result<u32, Error> {
     let mut args = format!("shutdown {args}\0").encode_utf16().collect::<Vec<_>>();
     let si = STARTUPINFOW { cb: std::mem::size_of::<STARTUPINFOW>() as _, .. unsafe { std::mem::zeroed() } };
     let cmd = unsafe { create_process_as_user_w(token, (), Some(&mut args[..]), None, None, false, DETACHED_PROCESS, None, (), &si)}?;

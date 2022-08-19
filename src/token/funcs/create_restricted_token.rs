@@ -5,12 +5,12 @@
 /// *   `flags` might need to be valid?
 /// *   excessive slice lengths might cause buffer overflows?
 pub unsafe fn create_restricted_token(
-    existing_token_handle:  &crate::token::Handle,
+    existing_token_handle:  &crate::token::OwnedHandle,
     flags:                  u32,
     sids_to_disable:        Option<&[crate::sid::AndAttributes]>,
     privileges_to_delete:   Option<&[crate::privilege::LuidAndAttributes]>,
     sids_to_restrict:       Option<&[crate::sid::AndAttributes]>,
-) -> Result<crate::token::Handle, crate::Error> {
+) -> Result<crate::token::OwnedHandle, crate::Error> {
     use crate::*;
     use winapi::shared::winerror::*;
     use std::ptr::*;
@@ -27,5 +27,5 @@ pub unsafe fn create_restricted_token(
         sids_to_restrict.map_or(null_mut(), |s| s.as_ptr() as *mut _),
         &mut new_handle
     )})?;
-    Ok(unsafe { token::Handle::from_raw(new_handle) })
+    Ok(unsafe { token::OwnedHandle::from_raw(new_handle) })
 }

@@ -9,13 +9,11 @@ use std::ptr::null_mut;
 
 
 
-/// An Access Token HANDLE belonging to the current process.
-///
-/// ### References
-/// *   <https://docs.microsoft.com/en-us/windows/win32/secauthz/access-tokens>
-#[repr(transparent)] pub struct Handle(HANDLE);
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/secauthz/access-tokens)\]
+/// `HANDLE` to an Access Token
+#[repr(transparent)] pub struct OwnedHandle(HANDLE);
 
-impl Handle {
+impl token::OwnedHandle {
     /// ### Safety
     /// `handle` must be a valid access token handle.
     ///
@@ -63,21 +61,9 @@ impl Handle {
     #[inline(always)] pub fn as_handle(&self) -> HANDLE { self.0 }
 }
 
-impl Debug for Handle {
-    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "token::Handle(0x{:08x})", self.0 as usize) }
-}
+impl AsRef<HANDLE>  for OwnedHandle { fn as_ref(&self) -> &HANDLE { &self.0 } }
+impl Clone          for OwnedHandle { fn clone(&self) -> Self { unsafe { Self::clone_from_raw(self.0, token::ALL_ACCESS) } } }
+impl Debug          for OwnedHandle { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "token::OwnedHandle(0x{:08x})", self.0 as usize) } }
+impl Drop           for OwnedHandle { fn drop(&mut self) { assert!(self.0.is_null() || (0 != unsafe { CloseHandle(self.0) }), "CloseHandle({:?}) failed with GetLastError()={:?}", self.0, Error::get_last()); } }
 
-impl Clone for Handle {
-    fn clone(&self) -> Self { unsafe { Self::clone_from_raw(self.0, token::ALL_ACCESS) } }
-}
-
-impl Drop for Handle {
-    fn drop(&mut self) {
-        let success = self.0.is_null() || (0 != unsafe { CloseHandle(self.0) });
-        assert!(success, "CloseHandle({:?}) failed with GetLastError()={:?}", self.0, Error::get_last());
-    }
-}
-
-impl From<&Handle> for HANDLE {
-    fn from(token: &Handle) -> Self { token.0 }
-}
+impl From<&OwnedHandle> for HANDLE { fn from(token: &OwnedHandle) -> Self { token.0 } }

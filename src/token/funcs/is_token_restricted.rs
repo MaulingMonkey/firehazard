@@ -3,9 +3,9 @@
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
-/// let token : token::Handle = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
+/// let token : token::OwnedHandle = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
 /// assert!(!is_token_restricted(&token));
 /// ```
-pub fn is_token_restricted(token: &crate::token::Handle) -> bool {
+pub fn is_token_restricted(token: &crate::token::OwnedHandle) -> bool {
     0 != unsafe { winapi::um::securitybaseapi::IsTokenRestricted(token.as_handle()) }
 }
