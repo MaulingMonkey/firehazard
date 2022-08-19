@@ -18,8 +18,5 @@ use std::mem::{align_of, size_of};
     pub flags:  ace::Flags,
     pub size:   u16,
 }
-
-impl Header {
-    const _ALIGN : () = assert!(align_of::<ACE_HEADER>() <= align_of::<ace::Header>());
-    const _SIZE  : () = assert!(size_of ::<ACE_HEADER>() == size_of ::<ace::Header>());
-}
+const _ALIGN : () = assert!(align_of::<ACE_HEADER>() <= align_of::<ace::Header>());
+const _SIZE  : () = assert!(size_of ::<ACE_HEADER>() == size_of ::<ace::Header>());

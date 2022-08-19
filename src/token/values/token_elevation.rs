@@ -11,11 +11,8 @@ use std::mem::{align_of, size_of};
 pub struct Elevation {
     pub token_is_elevated:  bool32,
 }
-
-impl Elevation {
-    const _ALIGN : () = assert!(align_of::<Elevation>() == align_of::<TOKEN_ELEVATION>());
-    const _SIZE  : () = assert!(size_of ::<Elevation>() == size_of ::<TOKEN_ELEVATION>());
-}
+const _ALIGN : () = assert!(align_of::<Elevation>() == align_of::<TOKEN_ELEVATION>());
+const _SIZE  : () = assert!(size_of ::<Elevation>() == size_of ::<TOKEN_ELEVATION>());
 
 impl AsRef<TOKEN_ELEVATION> for Elevation { fn as_ref(&    self) -> &    TOKEN_ELEVATION { unsafe { std::mem::transmute(self) } } }
 impl AsMut<TOKEN_ELEVATION> for Elevation { fn as_mut(&mut self) -> &mut TOKEN_ELEVATION { unsafe { std::mem::transmute(self) } } }
