@@ -6,3 +6,31 @@ mod winsta_owned_handle;                pub use winsta_owned_handle::*;
 
 pub use funcs::*;
 #[path = "winsta_funcs.rs"] pub(crate) mod funcs;
+
+
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowstationa)\]
+/// CreateWindowStationA Flags
+#[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(transparent)] pub struct CreateWindowFlags(u32);
+
+pub const CWF_CREATE_ONLY : CreateWindowFlags = CreateWindowFlags(winapi::um::winuser::CWF_CREATE_ONLY);
+impl CreateWindowFlags {
+    pub const NONE          : Self = Self(0);
+    pub const CREATE_ONLY   : Self = Self(winapi::um::winuser::CWF_CREATE_ONLY);
+}
+
+impl From<Option<std::convert::Infallible>> for CreateWindowFlags   { fn from(_: Option<std::convert::Infallible>   ) -> Self { Self(0) } }
+impl From<()>                               for CreateWindowFlags   { fn from(_: ()                                 ) -> Self { Self(0) } }
+impl From<CreateWindowFlags>                for u32                 { fn from(cwf: CreateWindowFlags                ) -> Self { cwf.0 } }
+
+impl std::fmt::Debug for CreateWindowFlags {
+    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+        let friendly = match *self {
+            Self::NONE          => "0",
+            Self::CREATE_ONLY   => "CWF_CREATE_ONLY",
+            _                   => "CWF_???",
+        };
+        write!(fmt, "{friendly}")
+    }
+}
