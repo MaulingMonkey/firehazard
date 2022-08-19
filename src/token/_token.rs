@@ -1,7 +1,7 @@
 //! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/secauthz/access-tokens)\]
 //! Access token handle types and related functions
 
-mod token_handle;                       pub use token_handle::*;
+mod token_owned_handle;                 pub use token_owned_handle::*;
 mod token_psuedo_handle;                pub use token_psuedo_handle::*;
 
 pub use boxes::*;
