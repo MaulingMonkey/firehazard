@@ -2,7 +2,10 @@ use crate::*;
 
 use abistr::{TryIntoAsOptCStr, AsOptCStr};
 
+use winapi::shared::minwindef::{BOOL, LPVOID, DWORD};
+use winapi::shared::ntdef::{LPCSTR, LPSTR, HANDLE};
 use winapi::shared::winerror::*;
+use winapi::um::minwinbase::LPSECURITY_ATTRIBUTES;
 use winapi::um::processthreadsapi::*;
 use winapi::um::synchapi::WaitForSingleObject;
 use winapi::um::winbase::*;
@@ -20,7 +23,56 @@ fn _create_process_a() -> Result<process::Information, Error> { unimplemented!()
 fn _create_process_w() -> Result<process::Information, Error> { unimplemented!() }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasusera)\] CreateProcessAsUserA
-fn _create_process_as_user_a() -> Result<process::Information, Error> { unimplemented!() }
+///
+/// ### Safety
+/// *   `creation_flags`    Is unvalidated as heck
+/// *   `startup_info`      Is unvalidated as heck
+pub unsafe fn create_process_as_user_a(
+    token:                  &crate::token::OwnedHandle,
+    application_name:       impl TryIntoAsOptCStr,
+    command_line:           Option<&[u8]>,
+    process_attributes:     Option<Infallible>,         // TODO: type
+    thread_attributes:      Option<Infallible>,         // TODO: type
+    inherit_handles:        bool,
+    creation_flags:         u32,                        // TODO: type
+    environment:            Option<&[u8]>,              // TODO: type to reduce validation needs (expected to be NUL separated, 2xNUL terminated: "key=value\0key=value\0\0")
+    current_directory:      impl TryIntoAsOptCStr,
+    startup_info:           &STARTUPINFOA,              // TODO: type via trait (could be STARTUPINFOW, STARTUPINFOEXW, etc.)
+) -> Result<process::Information, Error> {
+    if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(ERROR_INVALID_PARAMETER)) } // must be NUL terminated
+    if !environment.unwrap_or(&[0, 0]).ends_with(&[0, 0])           { return Err(Error(ERROR_INVALID_PARAMETER)) } // must be 2xNUL terminated
+    let startup_info : *const STARTUPINFOA = startup_info;
+    let mut process_information = unsafe { zeroed() };
+
+    extern "system" { fn CreateProcessAsUserA(
+        hToken: HANDLE,
+        lpApplicationName: LPCSTR,
+        lpCommandLine: LPSTR,
+        lpProcessAttributes: LPSECURITY_ATTRIBUTES,
+        lpThreadAttributes: LPSECURITY_ATTRIBUTES,
+        bInheritHandles: BOOL,
+        dwCreationFlags: DWORD,
+        lpEnvironment: LPVOID,
+        lpCurrentDirectory: LPCSTR,
+        lpStartupInfo: LPSTARTUPINFOA,
+        lpProcessInformation: LPPROCESS_INFORMATION,
+    ) -> BOOL;}
+
+    Error::get_last_if(0 == unsafe { CreateProcessAsUserA(
+        token.as_handle(),
+        application_name.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
+        command_line.as_ref().map_or(null(), |c| c.as_ptr()) as *mut _,
+        map_inconv(process_attributes).map_or(null_mut(), |a| a),
+        map_inconv(thread_attributes).map_or(null_mut(), |a| a),
+        inherit_handles as _,
+        creation_flags,
+        environment.map_or(null(), |e| e.as_ptr()) as *mut _,
+        current_directory.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
+        startup_info as *mut _,
+        &mut process_information
+    )})?;
+    Ok(unsafe { process::Information::from_raw(process_information) })
+}
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasuserw)\] CreateProcessAsUserW
 ///
@@ -47,8 +99,6 @@ pub unsafe fn create_process_as_user_w(
     let startup_info : *const STARTUPINFOW = startup_info;
     let mut process_information = unsafe { zeroed() };
 
-    fn map_inconv<T>(_: Option<Infallible>) -> Option<T> { None }
-
     Error::get_last_if(0 == unsafe { CreateProcessAsUserW(
         token.as_handle(),
         application_name.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
@@ -64,6 +114,8 @@ pub unsafe fn create_process_as_user_w(
     )})?;
     Ok(unsafe { process::Information::from_raw(process_information) })
 }
+
+fn map_inconv<T>(_: Option<Infallible>) -> Option<T> { None }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createprocesswithlogonw)\] CreateProcessWithLogonW
 fn _create_process_with_logon_w() -> Result<process::Information, Error> { unimplemented!() }
