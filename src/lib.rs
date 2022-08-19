@@ -23,6 +23,7 @@ pub mod error;                  #[doc(hidden)] pub use error::*;
 pub(crate) use util::*;
 mod util {
     mod bits32;                     pub(crate) use bits32::*;
+    pub fn none2null<T>(_: Option<std::convert::Infallible>) -> *mut T { std::ptr::null_mut() }
 }
 
 pub use values::*;

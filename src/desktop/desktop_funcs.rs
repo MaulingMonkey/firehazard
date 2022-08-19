@@ -6,7 +6,7 @@ use winapi::shared::windef::HDESK;
 use winapi::shared::winerror::*;
 use winapi::um::errhandlingapi::SetLastError;
 use winapi::um::winuser::*;
-use std::ptr::{null, null_mut};
+use std::ptr::null;
 
 
 
@@ -32,7 +32,7 @@ pub fn create_desktop_a(
     let handle = unsafe { CreateDesktopA(
         desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_cstr(),
         device.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
-        { let _ = devmode; null_mut() },
+        none2null(devmode),
         flags,
         desired_access.into().into(),
         sa.map_or(null(), |sa| sa) as *mut _
@@ -63,7 +63,7 @@ pub fn create_desktop_w(
     let handle = unsafe { CreateDesktopW(
         desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_cstr(),
         device.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
-        { let _ = devmode; null_mut() },
+        none2null(devmode),
         flags,
         desired_access.into().into(),
         sa.map_or(null(), |sa| sa) as *mut _

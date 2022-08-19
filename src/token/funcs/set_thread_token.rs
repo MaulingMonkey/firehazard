@@ -9,7 +9,7 @@
 /// let token = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
 /// let imp = unsafe { duplicate_token_ex(
 ///     &token, token::ALL_ACCESS, None, SecurityDelegation, token::Impersonation
-/// )};
+/// )}.unwrap();
 ///
 /// set_thread_token(None,                  &imp).unwrap();
 /// set_thread_token(get_current_thread(),  &imp).unwrap();

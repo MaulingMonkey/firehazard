@@ -65,7 +65,7 @@ fn default(exe: &OsStr) {
     // untrusted integrity will cause `bcrypt.dll` to fail to load with 0xC0000142 / ERROR_DLL_INIT_FAILED, so launch with low integrity instead
     let low_integrity = sid::AndAttributes::new(sid!(S-1-16-4096), 0);
     permissive.set_integrity_level(low_integrity).unwrap();
-    let permissive = unsafe { duplicate_token_ex(&permissive, token::ALL_ACCESS, None, SecurityImpersonation, token::Impersonation) };
+    let permissive = unsafe { duplicate_token_ex(&permissive, token::ALL_ACCESS, None, SecurityImpersonation, token::Impersonation) }.unwrap();
 
 
     //  2. Create the more restrictive token used after `RevertToSelf()`.

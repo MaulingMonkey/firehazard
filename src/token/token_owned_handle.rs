@@ -55,7 +55,7 @@ impl token::OwnedHandle {
     ///
     /// The underlying `HANDLE` should be a valid access token when called.
     pub unsafe fn clone_from_raw(handle: HANDLE, desired_access: impl Into<AccessRights>) -> Self {
-        unsafe { duplicate_token_ex(Self::borrow_from_raw(&handle), desired_access, None, SecurityDelegation, token::Type::Primary) }
+        unsafe { duplicate_token_ex(Self::borrow_from_raw(&handle), desired_access, None, SecurityDelegation, token::Type::Primary) }.unwrap()
     }
 
     #[inline(always)] pub fn as_handle(&self) -> HANDLE { self.0 }

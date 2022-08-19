@@ -6,7 +6,6 @@
 ///
 /// ### Safety
 /// *   ~~`desired_access`      might need to be valid access rights~~ (already enforced by type?)
-/// *   `token_attributes`      , if some, might need to contain a valid `SECURITY_DESCRIPTOR`
 /// *   `impersontation_level`  might need to be a valid impresonation level
 /// *   `token_type`            might need to be a valid token type
 ///
@@ -18,23 +17,28 @@
 ///
 /// let dup : token::OwnedHandle = unsafe { duplicate_token_ex(
 ///     &tok, token::ALL_ACCESS, None, SecurityDelegation, token::Primary
-/// )};
+/// )}.unwrap();
 ///
 /// assert_ne!(tok.as_handle(), dup.as_handle());
 /// ```
 pub unsafe fn duplicate_token_ex(
     token:                  &crate::token::OwnedHandle,
     desired_access:         impl Into<crate::token::AccessRights>,
-    _token_attributes:      Option<std::convert::Infallible>,
+    token_attributes:       Option<&crate::security::Attributes>,
     impersonation_level:    winapi::um::winnt::SECURITY_IMPERSONATION_LEVEL,    // TODO: type wrapper?
     token_type:             crate::token::Type,
-) -> crate::token::OwnedHandle {
-    use crate::error::get_last_error;
-    use std::ptr::null_mut;
+) -> Result<crate::token::OwnedHandle, crate::Error> {
+    use std::ptr::{null, null_mut};
 
     let mut new = null_mut();
-    let success = 0 != unsafe { winapi::um::securitybaseapi::DuplicateTokenEx(token.as_handle(), desired_access.into().into(), null_mut(), impersonation_level, token_type.into(), &mut new) };
-    assert!(success, "DuplicateTokenEx GetLastError()={}", get_last_error());
+    crate::Error::get_last_if(0 == unsafe { winapi::um::securitybaseapi::DuplicateTokenEx(
+        token.as_handle(),
+        desired_access.into().into(),
+        token_attributes.map_or(null(), |a| a) as *mut _,
+        impersonation_level,
+        token_type.into(),
+        &mut new
+    )})?;
 
-    unsafe { crate::token::OwnedHandle::from_raw(new) }
+    Ok(unsafe { crate::token::OwnedHandle::from_raw(new) })
 }

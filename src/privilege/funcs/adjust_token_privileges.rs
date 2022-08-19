@@ -100,7 +100,7 @@ fn _adjust_token_privileges_disable_all(token: &token::OwnedHandle) -> Result<()
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-adjusttokenprivileges)\] `AdjustTokenPrivileges(self, ...)`
 unsafe fn adjust_token_privileges(token: &token::OwnedHandle, disable_all_privileges: bool, new_state: Option<&mut token::BoxTokenPrivileges>, _previous_state: Option<Infallible>, _return_length: Option<Infallible>) -> Result<(), Error> {
     let new_state = new_state.map_or(null_mut(), |s| s.as_token_privileges_mut_ptr()).cast();
-    Error::get_last_if(0 == unsafe { AdjustTokenPrivileges(token.as_handle(), disable_all_privileges as _, new_state, 0, null_mut(), null_mut()) })
+    Error::get_last_if(0 == unsafe { AdjustTokenPrivileges(token.as_handle(), disable_all_privileges as _, new_state, 0, none2null(_previous_state), none2null(_return_length)) })
 }
 
 #[test] fn test() {

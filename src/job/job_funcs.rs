@@ -37,9 +37,8 @@ pub fn assign_process_to_job_object(job: &job::OwnedHandle, process: impl AsRef<
 /// let named = create_job_object_a(None, cstr!("Local/win32_security_playground/tests/create_job_object_a")).unwrap();
 /// ```
 pub fn create_job_object_a(job_attributes: Option<std::convert::Infallible>, name: impl TryIntoAsOptCStr) -> Result<job::OwnedHandle, Error> {
-    let _ = job_attributes; let job_attributes = null_mut();
     let name = name.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let h = unsafe { CreateJobObjectA(job_attributes, name.as_opt_cstr()) };
+    let h = unsafe { CreateJobObjectA(none2null(job_attributes), name.as_opt_cstr()) };
     Error::get_last_if(h.is_null())?;
     Ok(unsafe { job::OwnedHandle::from_raw_unchecked(h) })
 }
@@ -56,9 +55,8 @@ pub fn create_job_object_a(job_attributes: Option<std::convert::Infallible>, nam
 /// let named = create_job_object_w(None, cstr16!("Local/win32_security_playground/tests/create_job_object_a")).unwrap();
 /// ```
 pub fn create_job_object_w(job_attributes: Option<std::convert::Infallible>, name: impl TryIntoAsOptCStr<u16>) -> Result<job::OwnedHandle, Error> {
-    let _ = job_attributes; let job_attributes = null_mut();
     let name = name.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let h = unsafe { CreateJobObjectW(job_attributes, name.as_opt_cstr()) };
+    let h = unsafe { CreateJobObjectW(none2null(job_attributes), name.as_opt_cstr()) };
     Error::get_last_if(h.is_null())?;
     Ok(unsafe { job::OwnedHandle::from_raw_unchecked(h) })
 }
