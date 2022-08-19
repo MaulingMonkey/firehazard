@@ -6,7 +6,7 @@ use winapi::shared::windef::HDESK;
 use winapi::shared::winerror::*;
 use winapi::um::errhandlingapi::SetLastError;
 use winapi::um::winuser::*;
-use std::ptr::null_mut;
+use std::ptr::{null, null_mut};
 
 
 
@@ -27,12 +27,12 @@ pub fn create_desktop_a(
     devmode:        Option<std::convert::Infallible>,
     flags:          u32,                                // TODO: type
     desired_access: impl Into<desktop::AccessRights>,
-    _sa:            Option<std::convert::Infallible>,   // TODO: type
+    sa:             Option<&security::Attributes>,
 ) -> Result<desktop::OwnedHandle, Error> {
     let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let device = device.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let _ = devmode; let devmode = null_mut();
-    let handle = unsafe { CreateDesktopA(desktop.as_cstr(), device.as_opt_cstr(), devmode, flags, desired_access.into().into(), null_mut()) };
+    let handle = unsafe { CreateDesktopA(desktop.as_cstr(), device.as_opt_cstr(), devmode, flags, desired_access.into().into(), sa.map_or(null(), |sa| sa) as *mut _) };
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
 }
@@ -54,12 +54,12 @@ pub fn create_desktop_w(
     devmode:        Option<std::convert::Infallible>,
     flags:          u32,                                // TODO: type
     desired_access: impl Into<desktop::AccessRights>,
-    _sa:            Option<std::convert::Infallible>,   // TODO: type
+    sa:             Option<&security::Attributes>,
 ) -> Result<desktop::OwnedHandle, Error> {
     let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let device = device.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let _ = devmode; let devmode = null_mut();
-    let handle = unsafe { CreateDesktopW(desktop.as_cstr(), device.as_opt_cstr(), devmode, flags, desired_access.into().into(), null_mut()) };
+    let handle = unsafe { CreateDesktopW(desktop.as_cstr(), device.as_opt_cstr(), devmode, flags, desired_access.into().into(), sa.map_or(null(), |sa| sa) as *mut _) };
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
 }

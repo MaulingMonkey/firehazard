@@ -5,7 +5,7 @@ use winapi::shared::minwindef::{FALSE, LPARAM, BOOL, TRUE};
 use winapi::shared::winerror::*;
 use winapi::um::errhandlingapi::SetLastError;
 use winapi::um::winuser::*;
-use std::ptr::null_mut;
+use std::ptr::null;
 
 
 
@@ -24,10 +24,10 @@ pub fn create_window_station_a(
     winsta:         impl TryIntoAsOptCStr,
     flags:          impl Into<winsta::CreateWindowFlags>,
     desired_access: impl Into<winsta::AccessRights>,
-    _sa:            impl Into<Option<std::convert::Infallible>>,    // TODO: type
+    sa:             Option<&security::Attributes>,
 ) -> Result<winsta::OwnedHandle, Error> {
     let winsta = winsta.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let handle = unsafe { CreateWindowStationA(winsta.as_opt_cstr(), flags.into().into(), desired_access.into().into(), null_mut()) };
+    let handle = unsafe { CreateWindowStationA(winsta.as_opt_cstr(), flags.into().into(), desired_access.into().into(), sa.map_or(null(), |sa| sa) as *mut _) };
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { winsta::OwnedHandle::from_raw_unchecked(handle) })
 }
@@ -47,10 +47,10 @@ pub fn create_window_station_w(
     winsta:         impl TryIntoAsOptCStr<u16>,
     flags:          impl Into<winsta::CreateWindowFlags>,
     desired_access: impl Into<winsta::AccessRights>,
-    _sa:            impl Into<Option<std::convert::Infallible>>,    // TODO: type
+    sa:             Option<&security::Attributes>,
 ) -> Result<winsta::OwnedHandle, Error> {
     let winsta = winsta.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let handle = unsafe { CreateWindowStationW(winsta.as_opt_cstr(), flags.into().into(), desired_access.into().into(), null_mut()) };
+    let handle = unsafe { CreateWindowStationW(winsta.as_opt_cstr(), flags.into().into(), desired_access.into().into(), sa.map_or(null(), |sa| sa) as *mut _) };
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { winsta::OwnedHandle::from_raw_unchecked(handle) })
 }
