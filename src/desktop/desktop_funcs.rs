@@ -26,7 +26,7 @@ pub fn create_desktop_a(
     device:         impl TryIntoAsOptCStr,
     devmode:        Option<std::convert::Infallible>,
     flags:          u32,                                // TODO: type
-    desired_access: impl Into<access::Mask>,
+    desired_access: impl Into<desktop::AccessRights>,
     _sa:            Option<std::convert::Infallible>,   // TODO: type
 ) -> Result<desktop::OwnedHandle, Error> {
     let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
@@ -53,7 +53,7 @@ pub fn create_desktop_w(
     device:         impl TryIntoAsOptCStr<u16>,
     devmode:        Option<std::convert::Infallible>,
     flags:          u32,                                // TODO: type
-    desired_access: impl Into<access::Mask>,
+    desired_access: impl Into<desktop::AccessRights>,
     _sa:            Option<std::convert::Infallible>,   // TODO: type
 ) -> Result<desktop::OwnedHandle, Error> {
     let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
@@ -196,7 +196,7 @@ pub fn open_desktop_a(
     desktop:        impl TryIntoAsCStr,
     flags:          u32,    // TODO: type
     inherit:        bool,
-    desired_access: impl Into<access::Mask>,
+    desired_access: impl Into<desktop::AccessRights>,
 ) -> Result<desktop::OwnedHandle, Error> {
     let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let handle = unsafe { OpenDesktopA(desktop.as_cstr(), flags, inherit as _, desired_access.into().into()) };
@@ -218,7 +218,7 @@ pub fn open_desktop_w(
     desktop:        impl TryIntoAsCStr<u16>,
     flags:          u32,    // TODO: type
     inherit:        bool,
-    desired_access: impl Into<access::Mask>,
+    desired_access: impl Into<desktop::AccessRights>,
 ) -> Result<desktop::OwnedHandle, Error> {
     let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let handle = unsafe { OpenDesktopW(desktop.as_cstr(), flags, inherit as _, desired_access.into().into()) };
@@ -238,7 +238,7 @@ pub fn open_desktop_w(
 pub fn open_input_desktop(
     flags:          u32,    // TODO: type
     inherit:        bool,
-    desired_access: impl Into<access::Mask>,
+    desired_access: impl Into<desktop::AccessRights>,
 ) -> Result<desktop::OwnedHandle, Error> {
     let handle = unsafe { OpenInputDesktop(flags, inherit as _, desired_access.into().into()) };
     Error::get_last_if(handle.is_null())?;
