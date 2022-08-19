@@ -29,10 +29,14 @@ pub fn create_desktop_a(
     desired_access: impl Into<desktop::AccessRights>,
     sa:             Option<&security::Attributes>,
 ) -> Result<desktop::OwnedHandle, Error> {
-    let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let device = device.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let _ = devmode; let devmode = null_mut();
-    let handle = unsafe { CreateDesktopA(desktop.as_cstr(), device.as_opt_cstr(), devmode, flags, desired_access.into().into(), sa.map_or(null(), |sa| sa) as *mut _) };
+    let handle = unsafe { CreateDesktopA(
+        desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_cstr(),
+        device.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
+        { let _ = devmode; null_mut() },
+        flags,
+        desired_access.into().into(),
+        sa.map_or(null(), |sa| sa) as *mut _
+    )};
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
 }
@@ -56,10 +60,14 @@ pub fn create_desktop_w(
     desired_access: impl Into<desktop::AccessRights>,
     sa:             Option<&security::Attributes>,
 ) -> Result<desktop::OwnedHandle, Error> {
-    let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let device = device.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let _ = devmode; let devmode = null_mut();
-    let handle = unsafe { CreateDesktopW(desktop.as_cstr(), device.as_opt_cstr(), devmode, flags, desired_access.into().into(), sa.map_or(null(), |sa| sa) as *mut _) };
+    let handle = unsafe { CreateDesktopW(
+        desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_cstr(),
+        device.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
+        { let _ = devmode; null_mut() },
+        flags,
+        desired_access.into().into(),
+        sa.map_or(null(), |sa| sa) as *mut _
+    )};
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
 }
@@ -198,8 +206,12 @@ pub fn open_desktop_a(
     inherit:        bool,
     desired_access: impl Into<desktop::AccessRights>,
 ) -> Result<desktop::OwnedHandle, Error> {
-    let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let handle = unsafe { OpenDesktopA(desktop.as_cstr(), flags, inherit as _, desired_access.into().into()) };
+    let handle = unsafe { OpenDesktopA(
+        desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_cstr(),
+        flags,
+        inherit as _,
+        desired_access.into().into()
+    )};
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
 }
@@ -220,8 +232,12 @@ pub fn open_desktop_w(
     inherit:        bool,
     desired_access: impl Into<desktop::AccessRights>,
 ) -> Result<desktop::OwnedHandle, Error> {
-    let desktop = desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
-    let handle = unsafe { OpenDesktopW(desktop.as_cstr(), flags, inherit as _, desired_access.into().into()) };
+    let handle = unsafe { OpenDesktopW(
+        desktop.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_cstr(),
+        flags,
+        inherit as _,
+        desired_access.into().into()
+    )};
     Error::get_last_if(handle.is_null())?;
     Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
 }
