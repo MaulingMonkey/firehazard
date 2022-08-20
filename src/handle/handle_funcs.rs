@@ -10,7 +10,8 @@ use std::ptr::null_mut;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
 /// CloseHandle
-pub fn close_handle(object: handle::Owned) -> Result<(), Error> {
+pub fn close_handle(object: impl Into<handle::Owned>) -> Result<(), Error> {
+    let object = object.into();
     let h = object.as_handle();
     std::mem::forget(object);
     Error::get_last_if(FALSE == unsafe { CloseHandle(h) })
