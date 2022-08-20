@@ -6,6 +6,7 @@ use winapi::um::winnt::*;
 
 use std::fmt::{self, Debug, Formatter};
 use std::ops::Deref;
+use std::ptr::null_mut;
 
 
 
@@ -17,6 +18,8 @@ use std::ops::Deref;
 #[repr(transparent)] pub struct Owned(HANDLE);
 
 impl Owned {
+    pub const NULL : Self = Self(null_mut());
+
     /// ### Safety
     /// `handle` must be a valid [`CloseHandle`]able kernel object handle.
     ///

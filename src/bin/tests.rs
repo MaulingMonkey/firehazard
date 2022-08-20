@@ -2,14 +2,11 @@ use win32_security_playground::*;
 
 use abistr::cstr16;
 
-use winapi::um::processthreadsapi::STARTUPINFOW;
 use winapi::um::winbase::*;
 use winapi::um::winnt::*;
 
 use std::ffi::OsStr;
-use std::mem::size_of_val;
 use std::os::windows::prelude::OsStrExt;
-use std::ptr::null_mut;
 
 
 
@@ -115,15 +112,14 @@ fn default(exe: &OsStr) {
     // TODO: use STARTUPINFOEXW to specify thread attributes
     // https://docs.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-startupinfoexw
     // https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute
-    let mut startup_info = STARTUPINFOW {
-        lpDesktop:  null_mut(), // TODO: use a new secured desktop
-        dwFlags: 0
+    let startup_info = process::StartupInfoW {
+        desktop: None, // TODO: use a new secured desktop
+        flags: 0
             | STARTF_UNTRUSTEDSOURCE // untrusted command line
             // | STARTF_USESTDHANDLES // stdin/stdout/stderr - might require inheriting handles?
         ,
-        .. unsafe { std::mem::zeroed() }
+        .. Default::default()
     };
-    startup_info.cb = size_of_val(&startup_info) as u32;
 
     let process_info = unsafe { create_process_as_user_w(
         &restricted,

@@ -5,17 +5,14 @@ use abistr::cstr;
 use winapi::shared::minwindef::FALSE;
 use winapi::um::handleapi::DuplicateHandle;
 use winapi::um::minwinbase::*;
-use winapi::um::processthreadsapi::STARTUPINFOW;
 use winapi::um::winbase::*;
 use winapi::um::winnt::*;
 
 use std::collections::*;
 use std::ffi::OsString;
 use std::mem::MaybeUninit;
-use std::mem::zeroed;
 use std::os::windows::prelude::*;
 use std::path::PathBuf;
-use std::ptr::null_mut;
 
 #[allow(dead_code)] // individual trust levels
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)] #[repr(u8)] enum Integrity { Untrusted, Low, Medium, High, System }
@@ -168,8 +165,7 @@ fn run(context: &Context, target: Target) {
 
     let desktop = if target.allow.same_desktop { &context.main_desktop } else { &context.alt_desktop };
     let mut command_line = abistr::CStrBuf::<u16, 32768>::from_truncate(&target.exe.as_os_str().encode_wide().chain(Some(0)).collect::<Vec<_>>());
-    let mut si = STARTUPINFOW { lpDesktop: null_mut(), dwFlags: STARTF_UNTRUSTEDSOURCE, .. unsafe { zeroed() } };
-    si.cb = std::mem::size_of_val(&si) as u32;
+    let si = process::StartupInfoW { desktop: None, flags: STARTF_UNTRUSTEDSOURCE, .. Default::default() };
     let pi = with_thread_desktop(desktop, || unsafe { create_process_as_user_w(
         &restricted, (), Some(command_line.buffer_mut()), None, None, false,
         DEBUG_PROCESS | CREATE_SEPARATE_WOW_VDM | CREATE_SUSPENDED, None, (), &si

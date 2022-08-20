@@ -5,7 +5,6 @@ use win32_security_playground::*;
 use abistr::cstr;
 
 use winapi::shared::winerror::*;
-use winapi::um::processthreadsapi::STARTUPINFOW;
 use winapi::um::winbase::DETACHED_PROCESS;
 use winapi::um::winnt::DISABLE_MAX_PRIVILEGE;
 
@@ -32,7 +31,7 @@ fn main() {
 
 fn shutdown_as_user(args: &str, token: &token::OwnedHandle) -> Result<u32, Error> {
     let mut args = format!("shutdown {args}\0").encode_utf16().collect::<Vec<_>>();
-    let si = STARTUPINFOW { cb: std::mem::size_of::<STARTUPINFOW>() as _, .. unsafe { std::mem::zeroed() } };
+    let si = process::StartupInfoW::default();
     let cmd = unsafe { create_process_as_user_w(token, (), Some(&mut args[..]), None, None, false, DETACHED_PROCESS, None, (), &si)}?;
     wait_for_process(cmd.process)
 }

@@ -25,7 +25,6 @@ fn _create_process_w() -> Result<process::Information, Error> { unimplemented!()
 ///
 /// ### Safety
 /// *   `creation_flags`    Is unvalidated as heck
-/// *   `startup_info`      Is unvalidated as heck
 pub unsafe fn create_process_as_user_a(
     token:                  &crate::token::OwnedHandle,
     application_name:       impl TryIntoAsOptCStr,
@@ -36,11 +35,10 @@ pub unsafe fn create_process_as_user_a(
     creation_flags:         u32,                        // TODO: type
     environment:            Option<&[u8]>,              // TODO: type to reduce validation needs (expected to be NUL separated, 2xNUL terminated: "key=value\0key=value\0\0")
     current_directory:      impl TryIntoAsOptCStr,
-    startup_info:           &STARTUPINFOA,              // TODO: type via trait (could be STARTUPINFOW, STARTUPINFOEXW, etc.)
+    startup_info:           &impl process::AsStartupInfoA,
 ) -> Result<process::Information, Error> {
     if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(ERROR_INVALID_PARAMETER)) } // must be NUL terminated
     if !environment.unwrap_or(&[0, 0]).ends_with(&[0, 0])           { return Err(Error(ERROR_INVALID_PARAMETER)) } // must be 2xNUL terminated
-    let startup_info : *const STARTUPINFOA = startup_info;
     let mut process_information = unsafe { zeroed() };
 
     extern "system" { fn CreateProcessAsUserA(
@@ -67,7 +65,7 @@ pub unsafe fn create_process_as_user_a(
         creation_flags,
         environment.map_or(null(), |e| e.as_ptr()) as *mut _,
         current_directory.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
-        startup_info as *mut _,
+        startup_info.as_winapi()?,
         &mut process_information
     )})?;
     Ok(unsafe { process::Information::from_raw(process_information) })
@@ -77,7 +75,6 @@ pub unsafe fn create_process_as_user_a(
 ///
 /// ### Safety
 /// *   `creation_flags`    Is unvalidated as heck
-/// *   `startup_info`      Is unvalidated as heck
 pub unsafe fn create_process_as_user_w(
     token:                  &crate::token::OwnedHandle,
     application_name:       impl TryIntoAsOptCStr<u16>,
@@ -91,11 +88,10 @@ pub unsafe fn create_process_as_user_w(
     creation_flags:         u32,                        // TODO: type
     environment:            Option<&[u16]>,             // TODO: type to reduce validation needs (expected to be NUL separated, 2xNUL terminated: "key=value\0key=value\0\0")
     current_directory:      impl TryIntoAsOptCStr<u16>,
-    startup_info:           &STARTUPINFOW,              // TODO: type via trait (could be STARTUPINFOW, STARTUPINFOEXW, etc.)
+    startup_info:           &impl process::AsStartupInfoW,
 ) -> Result<process::Information, Error> {
     if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(ERROR_INVALID_PARAMETER)) } // must be NUL terminated
     if !environment.unwrap_or(&[0, 0]).ends_with(&[0, 0])           { return Err(Error(ERROR_INVALID_PARAMETER)) } // must be 2xNUL terminated
-    let startup_info : *const STARTUPINFOW = startup_info;
     let mut process_information = unsafe { zeroed() };
 
     Error::get_last_if(0 == unsafe { CreateProcessAsUserW(
@@ -108,7 +104,7 @@ pub unsafe fn create_process_as_user_w(
         creation_flags,
         environment.map_or(null(), |e| e.as_ptr()) as *mut _,
         current_directory.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
-        startup_info as *mut _,
+        startup_info.as_winapi()?,
         &mut process_information
     )})?;
     Ok(unsafe { process::Information::from_raw(process_information) })

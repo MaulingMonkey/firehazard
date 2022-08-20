@@ -7,5 +7,6 @@ mod process_handle;                     pub use process_handle::*;
 mod process_information;                pub use process_information::*;
 mod process_owned_handle;               pub use process_owned_handle::*;
 mod process_psuedo_handle;              pub use process_psuedo_handle::*;
+mod process_startup_info;               pub use process_startup_info::*;
 
 pub type Id = u32;
