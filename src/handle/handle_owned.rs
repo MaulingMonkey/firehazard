@@ -1,7 +1,7 @@
 use crate::*;
 use crate::handle::Handle;
 
-use winapi::um::handleapi::CloseHandle;
+use winapi::um::handleapi::{CloseHandle, DuplicateHandle};
 use winapi::um::winnt::*;
 
 use std::fmt::{self, Debug, Formatter};
@@ -57,9 +57,13 @@ impl Owned {
     /// ### Safety
     /// Same as [`Self::from_raw_unchecked`].
     pub unsafe fn clone_from_raw(handle: HANDLE) -> Self {
-        let handle = unsafe { Self::borrow_from_raw_unchecked(&handle) };
-        let process = get_current_process();
-        duplicate_handle(&process, handle, &*process, (), false, DUPLICATE_SAME_ACCESS).expect("DuplicateHandle failed")
+        let process = get_current_process().as_handle();
+        let mut new = null_mut();
+        let success = 0 != unsafe { DuplicateHandle(process, handle, process, &mut new, 0, false as _, DUPLICATE_SAME_ACCESS) };
+        assert!(success, "DuplicateHandle failed with {:?}", Error::get_last());
+        // N.B. handle != new - this isn't refcounting per se
+
+        Self(new)
     }
 }
 
