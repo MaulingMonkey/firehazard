@@ -4,23 +4,18 @@
 /// Deep clones the token handle, giving it it's own unique permissions list etc.
 /// that can be modified without changing the permissions of the original `token`.
 ///
-/// ### Safety
-/// *   ~~`desired_access`      might need to be valid access rights~~ (already enforced by type?)
-/// *   `impersontation_level`  might need to be a valid impresonation level
-/// *   `token_type`            might need to be a valid token type
-///
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
 /// let tok : token::OwnedHandle = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
 ///
-/// let dup : token::OwnedHandle = unsafe { duplicate_token_ex(
+/// let dup : token::OwnedHandle = duplicate_token_ex(
 ///     &tok, token::ALL_ACCESS, None, security::Delegation, token::Primary
-/// )}.unwrap();
+/// ).unwrap();
 ///
 /// assert_ne!(tok.as_handle(), dup.as_handle());
 /// ```
-pub unsafe fn duplicate_token_ex(
+pub fn duplicate_token_ex(
     token:                  &crate::token::OwnedHandle,
     desired_access:         impl Into<crate::token::AccessRights>,
     token_attributes:       Option<&crate::security::Attributes>,

@@ -6,9 +6,9 @@
 /// use win32_security_playground::*;
 /// use winapi::shared::winerror::ERROR_BAD_TOKEN_TYPE;
 /// let token = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
-/// let imp = unsafe { duplicate_token_ex(
+/// let imp = duplicate_token_ex(
 ///     &token, token::ALL_ACCESS, None, security::Delegation, token::Impersonation
-/// )}.unwrap();
+/// ).unwrap();
 ///
 /// set_thread_token(None,                  &imp).unwrap();
 /// set_thread_token(get_current_thread(),  &imp).unwrap();
