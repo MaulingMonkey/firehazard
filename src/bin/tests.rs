@@ -27,7 +27,7 @@ fn main() {
 
 fn default(exe: &OsStr) {
     let t = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
-    //let t = unsafe { duplicate_token_ex(&t, token::ALL_ACCESS, None, SecurityImpersonation, token::Primary) };
+    //let t = unsafe { duplicate_token_ex(&t, token::ALL_ACCESS, None, security::Impersonation, token::Primary) };
 
     let privileges = t.privileges().unwrap();
     let privileges_to_remove = Some(privileges.privileges());
@@ -65,7 +65,7 @@ fn default(exe: &OsStr) {
     // untrusted integrity will cause `bcrypt.dll` to fail to load with 0xC0000142 / ERROR_DLL_INIT_FAILED, so launch with low integrity instead
     let low_integrity = sid::AndAttributes::new(sid!(S-1-16-4096), 0);
     permissive.set_integrity_level(low_integrity).unwrap();
-    let permissive = unsafe { duplicate_token_ex(&permissive, token::ALL_ACCESS, None, SecurityImpersonation, token::Impersonation) }.unwrap();
+    let permissive = unsafe { duplicate_token_ex(&permissive, token::ALL_ACCESS, None, security::Impersonation, token::Impersonation) }.unwrap();
 
 
     //  2. Create the more restrictive token used after `RevertToSelf()`.
@@ -85,7 +85,7 @@ fn default(exe: &OsStr) {
     let restricted = unsafe { create_restricted_token(&t, 0, Some(&to_disable), privileges_to_remove, Some(&restrictive_to_restrict)) }.unwrap();
     //let untrusted_integrity = sid::AndAttributes::new(sid!(S-1-16-0), 0);
     restricted.set_integrity_level(low_integrity).unwrap(); // going directly to untrusted seems to cause the child to exit STATUS_BAD_IMPERSONATION_LEVEL
-    //let restricted = unsafe { duplicate_token_ex(&restricted, token::ALL_ACCESS, None, SecurityImpersonation, token::Primary) };
+    //let restricted = unsafe { duplicate_token_ex(&restricted, token::ALL_ACCESS, None, security::Impersonation, token::Primary) };
 
     // For the child process to lower itself to untrusted integrity, in needs `token::ADJUST_DEFAULT` access
     // under the thread's current access token (currently done before `revert_to_self()`, so `permissive`).

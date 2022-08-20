@@ -12,11 +12,10 @@
 /// ### Example
 /// ```
 /// # use win32_security_playground::*;
-/// use winapi::um::winnt::SecurityDelegation;
 /// let tok : token::OwnedHandle = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
 ///
 /// let dup : token::OwnedHandle = unsafe { duplicate_token_ex(
-///     &tok, token::ALL_ACCESS, None, SecurityDelegation, token::Primary
+///     &tok, token::ALL_ACCESS, None, security::Delegation, token::Primary
 /// )}.unwrap();
 ///
 /// assert_ne!(tok.as_handle(), dup.as_handle());
@@ -25,7 +24,7 @@ pub unsafe fn duplicate_token_ex(
     token:                  &crate::token::OwnedHandle,
     desired_access:         impl Into<crate::token::AccessRights>,
     token_attributes:       Option<&crate::security::Attributes>,
-    impersonation_level:    winapi::um::winnt::SECURITY_IMPERSONATION_LEVEL,    // TODO: type wrapper?
+    impersonation_level:    crate::security::ImpersonationLevel,
     token_type:             crate::token::Type,
 ) -> Result<crate::token::OwnedHandle, crate::Error> {
     use std::ptr::{null, null_mut};
@@ -35,7 +34,7 @@ pub unsafe fn duplicate_token_ex(
         token.as_handle(),
         desired_access.into().into(),
         token_attributes.map_or(null(), |a| a) as *mut _,
-        impersonation_level,
+        impersonation_level.into(),
         token_type.into(),
         &mut new
     )})?;

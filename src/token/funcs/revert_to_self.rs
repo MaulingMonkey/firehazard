@@ -4,10 +4,9 @@
 /// ```
 /// use win32_security_playground::*;
 /// use winapi::shared::winerror::ERROR_BAD_TOKEN_TYPE;
-/// use winapi::um::winnt::{SecurityDelegation, TokenImpersonation};
 /// let token = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
 /// let imp = unsafe { duplicate_token_ex(
-///     &token, token::ALL_ACCESS, None, SecurityDelegation, token::Impersonation
+///     &token, token::ALL_ACCESS, None, security::Delegation, token::Impersonation
 /// )}.unwrap();
 ///
 /// open_thread_token(get_current_thread(), token::ALL_ACCESS, true).expect_err("no token was set, shouldn't have been able to open_thread_token");

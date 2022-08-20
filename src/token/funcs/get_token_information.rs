@@ -33,17 +33,11 @@ pub fn source(token: &token::OwnedHandle) -> Result<Source, Error> { unsafe { ra
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenType, ...)`
 pub fn r#type(token: &token::OwnedHandle) -> Result<token::Type, Error> { unsafe { raw_fixed(token, TokenType) } }
 pub use r#type as ty;
-
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\]
-/// `GetTokenInformation(self, TokenImpersonationLevel, ...)`
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenImpersonationLevel, ...)`
 ///
 /// ### Errors
 /// *   `ERROR_INVALID_PARAMETER`   If `self` is a primary token instead of an impersonation token?
-pub fn impersonation_level(token: &token::OwnedHandle) -> Result<SECURITY_IMPERSONATION_LEVEL, Error> {
-    // XXX: Return Option<SECURITY_IMPERSONATION_LEVEL> instead?
-    unsafe { raw_fixed(token, TokenImpersonationLevel) }
-}
-
+pub fn impersonation_level(token: &token::OwnedHandle) -> Result<security::ImpersonationLevel, Error> { unsafe { raw_fixed(token, TokenImpersonationLevel) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenStatistics, ...)`
 pub fn statistics(token: &token::OwnedHandle) -> Result<TOKEN_STATISTICS, Error> { unsafe { raw_fixed(token, TokenStatistics) } }
 // TODO: TokenRestrictedSids
@@ -139,14 +133,11 @@ impl token::OwnedHandle {
     pub fn r#type(&self) -> Result<token::Type, Error> { r#type(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenType, ...)`
     pub fn ty(&self) -> Result<token::Type, Error> { ty(self) }
-
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\]
-    /// `GetTokenInformation(self, TokenImpersonationLevel, ...)`
+    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenImpersonationLevel, ...)`
     ///
     /// ### Errors
     /// *   `ERROR_INVALID_PARAMETER`   If `self` is a primary token instead of an impersonation token?
-    pub fn impersonation_level(&self) -> Result<SECURITY_IMPERSONATION_LEVEL, Error> { impersonation_level(self) }
-
+    pub fn impersonation_level(&self) -> Result<security::ImpersonationLevel, Error> { impersonation_level(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenStatistics, ...)`
     pub fn statistics(&self) -> Result<TOKEN_STATISTICS, Error> { statistics(self) }
     // TODO: TokenRestrictedSids
