@@ -37,13 +37,15 @@ impl Error {
             ERROR_ALLOTTED_SPACE_EXCEEDED   => "ERROR_ALLOTTED_SPACE_EXCEEDED", // 1344
             ERROR_BAD_TOKEN_TYPE            => "ERROR_BAD_TOKEN_TYPE",          // 1349
             ERROR_INCORRECT_SIZE            => "ERROR_INCORRECT_SIZE",          // 1462
-            c if c & 0xC000_0000 != 0xC000_0000 => "ERROR_???",
             _                               => match self.0 as _ {
+                E_STRING_NOT_NULL_TERMINATED    => "E_STRING_NOT_NULL_TERMINATED",      // 0x80000017
                 STATUS_ACCESS_DENIED            => "STATUS_ACCESS_DENIED",              // 0xC0000022
                 STATUS_BAD_IMPERSONATION_LEVEL  => "STATUS_BAD_IMPERSONATION_LEVEL",    // 0xC00000A5
                 STATUS_DLL_NOT_FOUND            => "STATUS_DLL_NOT_FOUND",              // 0xC0000135
                 STATUS_DLL_INIT_FAILED          => "STATUS_DLL_INIT_FAILED",            // 0xC0000142
-                _                               => "STATUS_???",                        // 0xC???????
+                _ if self.0 & 0xF000_0000 == 0x8000_0000    => "E_???",                 // 0x8???????
+                _ if self.0 & 0xF000_0000 == 0xC000_0000    => "STATUS_???",            // 0xC???????
+                _                                           => "ERROR_???",             // 0x????????
             },
         }
     }

@@ -37,7 +37,7 @@ pub fn assign_process_to_job_object(job: &job::OwnedHandle, process: impl AsRef<
 /// let named = create_job_object_a(None, cstr!("Local/win32_security_playground/tests/create_job_object_a")).unwrap();
 /// ```
 pub fn create_job_object_a(job_attributes: Option<std::convert::Infallible>, name: impl TryIntoAsOptCStr) -> Result<job::OwnedHandle, Error> {
-    let name = name.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
+    let name = name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?;
     let h = unsafe { CreateJobObjectA(none2null(job_attributes), name.as_opt_cstr()) };
     Error::get_last_if(h.is_null())?;
     Ok(unsafe { job::OwnedHandle::from_raw_unchecked(h) })
@@ -55,7 +55,7 @@ pub fn create_job_object_a(job_attributes: Option<std::convert::Infallible>, nam
 /// let named = create_job_object_w(None, cstr16!("Local/win32_security_playground/tests/create_job_object_a")).unwrap();
 /// ```
 pub fn create_job_object_w(job_attributes: Option<std::convert::Infallible>, name: impl TryIntoAsOptCStr<u16>) -> Result<job::OwnedHandle, Error> {
-    let name = name.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
+    let name = name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?;
     let h = unsafe { CreateJobObjectW(none2null(job_attributes), name.as_opt_cstr()) };
     Error::get_last_if(h.is_null())?;
     Ok(unsafe { job::OwnedHandle::from_raw_unchecked(h) })
@@ -94,7 +94,7 @@ pub fn is_process_in_job(process: impl AsRef<process::Handle>, job: Option<&job:
 /// let err  = open_job_object_a(GENERIC_ALL, false, cstr!("Local/nope")).unwrap_err();
 /// ```
 pub fn open_job_object_a(desired_access: impl Into<access::Mask>, inherit_handle: bool, name: impl TryIntoAsCStr) -> Result<job::OwnedHandle, Error> {
-    let name = name.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
+    let name = name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?;
     let h = unsafe { OpenJobObjectA(desired_access.into().into(), inherit_handle as _, name.as_cstr()) };
     Error::get_last_if(h.is_null())?;
     Ok(unsafe { job::OwnedHandle::from_raw_unchecked(h) })
@@ -113,7 +113,7 @@ pub fn open_job_object_a(desired_access: impl Into<access::Mask>, inherit_handle
 /// let err  = open_job_object_w(GENERIC_ALL, false, cstr16!("Local/nope")).unwrap_err();
 /// ```
 pub fn open_job_object_w(desired_access: impl Into<access::Mask>, inherit_handle: bool, name: impl TryIntoAsCStr<u16>) -> Result<job::OwnedHandle, Error> {
-    let name = name.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
+    let name = name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?;
     let h = unsafe { OpenJobObjectW(desired_access.into().into(), inherit_handle as _, name.as_cstr()) };
     Error::get_last_if(h.is_null())?;
     Ok(unsafe { job::OwnedHandle::from_raw_unchecked(h) })

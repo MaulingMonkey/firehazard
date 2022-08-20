@@ -2,7 +2,7 @@ use crate::*;
 
 use winapi::shared::guiddef::GUID;
 use winapi::shared::minwindef::FALSE;
-use winapi::shared::winerror::{ERROR_INVALID_HANDLE, ERROR_ALLOTTED_SPACE_EXCEEDED, ERROR_INVALID_PARAMETER};
+use winapi::shared::winerror::*;
 use winapi::um::securitybaseapi::*;
 use winapi::um::winnt::ACL;
 

@@ -37,8 +37,8 @@ pub unsafe fn create_process_as_user_a(
     current_directory:      impl TryIntoAsOptCStr,
     startup_info:           &impl process::AsStartupInfoA,
 ) -> Result<process::Information, Error> {
-    if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(ERROR_INVALID_PARAMETER)) } // must be NUL terminated
-    if !environment.unwrap_or(&[0, 0]).ends_with(&[0, 0])           { return Err(Error(ERROR_INVALID_PARAMETER)) } // must be 2xNUL terminated
+    if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be NUL terminated
+    if !environment.unwrap_or(&[0, 0]).ends_with(&[0, 0])           { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be 2xNUL terminated
     let mut process_information = unsafe { zeroed() };
 
     extern "system" { fn CreateProcessAsUserA(
@@ -57,14 +57,14 @@ pub unsafe fn create_process_as_user_a(
 
     Error::get_last_if(0 == unsafe { CreateProcessAsUserA(
         token.as_handle(),
-        application_name.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
+        application_name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
         command_line.as_ref().map_or(null(), |c| c.as_ptr()) as *mut _,
         process_attributes.map_or(null(), |a| a) as *mut _,
         thread_attributes.map_or(null(), |a| a) as *mut _,
         inherit_handles as _,
         creation_flags,
         environment.map_or(null(), |e| e.as_ptr()) as *mut _,
-        current_directory.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
+        current_directory.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
         startup_info.as_winapi()?,
         &mut process_information
     )})?;
@@ -90,20 +90,20 @@ pub unsafe fn create_process_as_user_w(
     current_directory:      impl TryIntoAsOptCStr<u16>,
     startup_info:           &impl process::AsStartupInfoW,
 ) -> Result<process::Information, Error> {
-    if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(ERROR_INVALID_PARAMETER)) } // must be NUL terminated
-    if !environment.unwrap_or(&[0, 0]).ends_with(&[0, 0])           { return Err(Error(ERROR_INVALID_PARAMETER)) } // must be 2xNUL terminated
+    if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be NUL terminated
+    if !environment.unwrap_or(&[0, 0]).ends_with(&[0, 0])           { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be 2xNUL terminated
     let mut process_information = unsafe { zeroed() };
 
     Error::get_last_if(0 == unsafe { CreateProcessAsUserW(
         token.as_handle(),
-        application_name.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
+        application_name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
         command_line.as_mut().map_or(null_mut(), |c| c.as_mut_ptr()),
         process_attributes.map_or(null(), |a| a) as *mut _,
         thread_attributes.map_or(null(), |a| a) as *mut _,
         inherit_handles as _,
         creation_flags,
         environment.map_or(null(), |e| e.as_ptr()) as *mut _,
-        current_directory.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
+        current_directory.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
         startup_info.as_winapi()?,
         &mut process_information
     )})?;

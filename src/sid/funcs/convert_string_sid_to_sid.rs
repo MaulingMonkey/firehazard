@@ -4,7 +4,7 @@ use crate::sid::Box as SidBox;
 use abistr::{AsCStr, TryIntoAsCStr};
 
 use winapi::shared::sddl::{ConvertStringSidToSidW, ConvertStringSidToSidA};
-use winapi::shared::winerror::{ERROR_INVALID_PARAMETER, ERROR_INVALID_SID};
+use winapi::shared::winerror::*;
 
 use std::ptr::null_mut;
 
@@ -25,7 +25,7 @@ use std::ptr::null_mut;
 /// ### See Also
 /// *   [sid!] for compile-time validated error-free [`sid::Ptr`]s.
 pub fn convert_string_sid_to_sid_a(s: impl TryIntoAsCStr) -> Result<SidBox<alloc::LocalAllocFree>, Error> {
-    let s = s.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
+    let s = s.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?;
     let mut sid = null_mut();
     Error::get_last_if(0 == unsafe { ConvertStringSidToSidA(s.as_cstr(), &mut sid) })?;
     unsafe { SidBox::from_raw(sid.cast()) }.ok_or(Error(ERROR_INVALID_SID))
@@ -46,7 +46,7 @@ pub fn convert_string_sid_to_sid_a(s: impl TryIntoAsCStr) -> Result<SidBox<alloc
 /// ### See Also
 /// *   [sid!] for compile-time validated error-free [`sid::Ptr`]s.
 pub fn convert_string_sid_to_sid_w(s: impl TryIntoAsCStr<u16>) -> Result<SidBox<alloc::LocalAllocFree>, Error> {
-    let s = s.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
+    let s = s.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?;
     let mut sid = null_mut();
     Error::get_last_if(0 == unsafe { ConvertStringSidToSidW(s.as_cstr(), &mut sid) })?;
     unsafe { SidBox::from_raw(sid.cast()) }.ok_or(Error(ERROR_INVALID_SID))

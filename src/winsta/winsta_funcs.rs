@@ -27,7 +27,7 @@ pub fn create_window_station_a(
     sa:             Option<&security::Attributes>,
 ) -> Result<winsta::OwnedHandle, Error> {
     let handle = unsafe { CreateWindowStationA(
-        winsta.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
+        winsta.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
         flags.into().into(),
         desired_access.into().into(),
         sa.map_or(null(), |sa| sa) as *mut _
@@ -54,7 +54,7 @@ pub fn create_window_station_w(
     sa:             Option<&security::Attributes>,
 ) -> Result<winsta::OwnedHandle, Error> {
     let handle = unsafe { CreateWindowStationW(
-        winsta.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_opt_cstr(),
+        winsta.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
         flags.into().into(),
         desired_access.into().into(),
         sa.map_or(null(), |sa| sa) as *mut _
@@ -173,7 +173,7 @@ pub fn open_window_station_a(
     desired_access: impl Into<winsta::AccessRights>,
 ) -> Result<winsta::OwnedHandle, Error> {
     let handle = unsafe { OpenWindowStationA(
-        winsta.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_cstr(),
+        winsta.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_cstr(),
         inherit as _,
         desired_access.into().into()
     )};
@@ -196,7 +196,7 @@ pub fn open_window_station_w(
     desired_access: impl Into<winsta::AccessRights>,
 ) -> Result<winsta::OwnedHandle, Error> {
     let handle = unsafe { OpenWindowStationW(
-        winsta.try_into().map_err(|_| Error(ERROR_INVALID_PARAMETER))?.as_cstr(),
+        winsta.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_cstr(),
         inherit as _,
         desired_access.into().into()
     )};
