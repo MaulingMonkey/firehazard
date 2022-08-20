@@ -8,6 +8,7 @@ use winapi::um::securitybaseapi::EqualSid;
 use winapi::um::winnt::{SID, PSID};
 
 use std::fmt::{self, Debug, Formatter};
+use std::hash::Hash;
 use std::ptr::null_mut;
 
 
@@ -24,6 +25,11 @@ impl Value {
     // These fns return different types!  PSID is `*mut c_void`, not `*mut SID` !
     pub fn as_psid(&self) -> PSID { self.0.cast() }
     pub fn as_ptr_sid(&self) -> *mut SID { self.0 }
+
+    fn revision(&self)  -> u8           { unsafe{*self.0}.Revision }
+    fn authority(&self) -> [u8; 6]      { unsafe{*self.0}.IdentifierAuthority.Value }
+    fn subauthorities(&self) -> &[u32]  { unsafe{std::slice::from_raw_parts(std::ptr::addr_of!((*self.0).SubAuthority) as *const u32, (*self.0).SubAuthorityCount.into())} }
+    fn as_tuple(&self) -> (u8, [u8; 6], &[u32]) { (self.revision(), self.authority(), self.subauthorities()) }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertsidtostringsida)\] ConvertSidToStringSidA
     pub fn to_string_sid_a(&self) -> Option<alloc::CString<alloc::LocalAllocFree>> {
@@ -76,8 +82,9 @@ impl Value {
 
 impl PartialEq  for Value { fn eq(&self, other: &Self) -> bool { 0 != unsafe { EqualSid(self.as_psid(), other.as_psid()) } } }
 impl Eq         for Value {}
-// TODO: {,Partial}Ord
-// TODO: Hash
+impl PartialOrd for Value { fn partial_cmp  (&self, other: &Self) -> Option<std::cmp::Ordering> { self.as_tuple().partial_cmp   (&other.as_tuple()) } }
+impl Ord        for Value { fn cmp          (&self, other: &Self) -> std::cmp::Ordering         { self.as_tuple().cmp           (&other.as_tuple()) } }
+impl Hash       for Value { fn hash<H: std::hash::Hasher>(&self, state: &mut H) { self.as_tuple().hash(state) } }
 
 impl Debug for Value {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
