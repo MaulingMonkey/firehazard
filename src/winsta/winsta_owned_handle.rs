@@ -43,8 +43,10 @@ impl OwnedHandle {
 }
 
 impl AsRef<HWINSTA> for OwnedHandle { fn as_ref(&self) -> &HWINSTA { &self.0 } }
+impl AsRef<handle::Owned> for OwnedHandle { fn as_ref(&self) -> &handle::Owned { unsafe { std::mem::transmute(self) } } }
 impl Clone          for OwnedHandle { fn clone(&self) -> Self { unsafe { Self::clone_from_raw(self.0) } } }
 impl Debug          for OwnedHandle { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "winsta::OwnedHandle(0x{:08x})", self.0 as usize) } }
 impl Drop           for OwnedHandle { fn drop(&mut self) { assert!(self.0.is_null() || (0 != unsafe { CloseWindowStation(self.0) }), "CloseWindowStation({:?}) failed with GetLastError()={:?}", self.0, Error::get_last()); } }
 
 impl From<&OwnedHandle>  for HWINSTA { fn from(winsta: &OwnedHandle) -> Self { winsta.0 } }
+impl From<OwnedHandle> for handle::Owned { fn from(winsta: OwnedHandle) -> Self { unsafe { std::mem::transmute(winsta) } } }
