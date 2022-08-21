@@ -1,15 +1,19 @@
-use win32_security_playground::*;
+#[cfg(feature = "std")] use win32_security_playground::*;
 
-use abistr::cstr16;
+#[cfg(feature = "std")] use abistr::cstr16;
 
-use winapi::um::winbase::*;
-use winapi::um::winnt::*;
+#[cfg(feature = "std")] use winapi::um::winbase::*;
+#[cfg(feature = "std")] use winapi::um::winnt::*;
 
-use std::ffi::OsStr;
-use std::os::windows::prelude::OsStrExt;
+#[cfg(feature = "std")] use std::ffi::OsStr;
+#[cfg(feature = "std")] use std::os::windows::prelude::OsStrExt;
 
 
 
+#[cfg(not(feature = "std"))]
+fn main() { panic!("cannot run without feature = \"std\"") }
+
+#[cfg(feature = "std")]
 fn main() {
     let mut args = std::env::args_os();
     let exe = args.next().expect("args[0] / exe");
@@ -22,6 +26,7 @@ fn main() {
     }
 }
 
+#[cfg(feature = "std")]
 fn default(exe: &OsStr) {
     let t = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
     //let t = duplicate_token_ex(&t, token::ALL_ACCESS, None, security::Impersonation, token::Primary).unwrap();
@@ -153,6 +158,7 @@ fn default(exe: &OsStr) {
     }
 }
 
+#[cfg(feature = "std")]
 fn launched_low_integrity() {
     assert!(std::path::Path::new(r"C:\Windows\System32\kernel32.dll").exists());
     assert!(std::path::Path::new(r"C:\Windows\System32\cryptbase.dll").exists());

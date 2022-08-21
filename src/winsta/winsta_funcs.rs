@@ -68,6 +68,7 @@ pub fn create_window_station_w(
 ///
 /// ### Example
 /// ```
+/// # #[cfg(feature = "std")] {
 /// # use win32_security_playground::*;
 /// let mut found_winsta0 = false;
 /// enum_window_stations_a(|winsta|{
@@ -76,6 +77,7 @@ pub fn create_window_station_w(
 ///     Ok(())
 /// }).unwrap();
 /// assert!(found_winsta0);
+/// # }
 /// ```
 ///
 /// ### Output
@@ -105,6 +107,7 @@ unsafe extern "system" fn fwd_enum_window_stations_a<F: FnMut(CStrPtr) -> Result
 ///
 /// ### Example
 /// ```
+/// # #[cfg(feature = "std")] {
 /// # use win32_security_playground::*;
 /// let mut found_winsta0 = false;
 /// enum_window_stations_w(|winsta|{
@@ -113,6 +116,7 @@ unsafe extern "system" fn fwd_enum_window_stations_a<F: FnMut(CStrPtr) -> Result
 ///     Ok(())
 /// }).unwrap();
 /// assert!(found_winsta0);
+/// # }
 /// ```
 ///
 /// ### Output

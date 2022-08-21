@@ -16,9 +16,11 @@ use core::ptr::null_mut;
 /// ### Examples
 /// ```
 /// # use win32_security_playground::*;
+/// # #[cfg(feature = "std")] {
 /// let err = convert_string_sid_to_sid_a("XYZ").unwrap_err();
 /// let sid = convert_string_sid_to_sid_a("S-1-0-0").unwrap();
 /// let sid = convert_string_sid_to_sid_a("S-1-16-0").unwrap();
+/// # }
 /// let sid = convert_string_sid_to_sid_a(abistr::cstr!("S-1-16-0")).unwrap();
 /// ```
 ///

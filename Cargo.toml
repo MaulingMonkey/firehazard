@@ -9,14 +9,28 @@ edition                     = "2021"
 license                     = "Apache-2.0 OR MIT"
 readme                      = "Readme.md"
 
+[profile.dev]
+panic                       = "abort"
+lto                         = true
+
+[profile.release]
+panic                       = "abort"
+lto                         = true
+
 [features]
 default                     = ["std"]
-std                         = []
+std                         = ["abistr/std", "abistr/widestring"]
 
 [dependencies]
-abibool                     = "0.5.2"
-abistr.version              = "0.2.0-rc1"
-abistr.features             = ["widestring-0-4"] # &str -> TryIntoAsOptCStr<u16>
+
+#abibool                     = "0.5.3"
+abibool.git                 = "https://github.com/MaulingMonkey/abibool"
+abibool.rev                 = "7998497f56ec339d1cf2ea70532d55550b2380f3"
+
+#abistr.version              = "0.2.0-rc2"
+abistr.default-features     = false
+abistr.git                  = "https://github.com/MaulingMonkey/abistr"
+abistr.rev                  = "be791b8c6f78fe2399d3f2d0549c43cbe5d74d04"
 
 [target.'cfg(windows)'.dependencies]
 winapi.version = "0.3"
