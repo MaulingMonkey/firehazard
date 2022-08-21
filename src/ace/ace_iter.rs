@@ -2,8 +2,8 @@ use crate::*;
 
 use winapi::um::winnt::*;
 
-use std::marker::PhantomData;
-use std::mem::align_of;
+use core::marker::PhantomData;
+use core::mem::align_of;
 
 
 

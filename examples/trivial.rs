@@ -17,5 +17,5 @@ use win32_security_playground::output_debug_string_a;
 
 fn sandbox() {
     output_debug_string_a(cstr!("sandbox"));
-    #[cfg(not(nightly))] std::thread::sleep(std::time::Duration::from_secs(1));
+    #[cfg(all(std, not(nightly)))] std::thread::sleep(std::time::Duration::from_secs(1));
 }

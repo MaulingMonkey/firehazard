@@ -9,6 +9,10 @@ edition                     = "2021"
 license                     = "Apache-2.0 OR MIT"
 readme                      = "Readme.md"
 
+[features]
+default                     = ["std"]
+std                         = []
+
 [dependencies]
 abibool                     = "0.5.2"
 abistr.version              = "0.2.0-rc1"

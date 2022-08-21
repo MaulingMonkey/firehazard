@@ -1,8 +1,8 @@
 use crate::*;
 use winapi::um::minwinbase::SECURITY_ATTRIBUTES;
-use std::marker::PhantomData;
-use std::mem::size_of;
-use std::ptr::null;
+use core::marker::PhantomData;
+use core::mem::size_of;
+use core::ptr::null;
 
 
 
@@ -14,7 +14,7 @@ use std::ptr::null;
     phantom:     PhantomData<security::Descriptor<'sd>>,
 }
 
-impl<'sd> Default for Attributes<'sd> { fn default() -> Self { unsafe { std::mem::zeroed() } } }
+impl<'sd> Default for Attributes<'sd> { fn default() -> Self { unsafe { core::mem::zeroed() } } }
 
 impl<'sd> Attributes<'sd> {
     pub fn new(security_descriptor: Option<&'sd security::Descriptor<'sd>>, inherit_handle: bool) -> Self {
@@ -34,7 +34,7 @@ impl<'sd> Attributes<'sd> {
 
     pub fn security_descriptor(&self) -> Option<&'sd security::Descriptor<'sd>> {
         if self.attributes.lpSecurityDescriptor.is_null() { return None }
-        Some(unsafe { std::mem::transmute(self.attributes.lpSecurityDescriptor) })
+        Some(unsafe { core::mem::transmute(self.attributes.lpSecurityDescriptor) })
     }
 
     pub fn set_security_descriptor(&mut self, sd: Option<&'sd security::Descriptor<'sd>>) {

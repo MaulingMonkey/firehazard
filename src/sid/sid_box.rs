@@ -2,9 +2,9 @@ use crate::*;
 
 use winapi::um::winnt::SID;
 
-use std::fmt::{self, Debug, Formatter};
-use std::marker::PhantomData;
-use std::ops::Deref;
+use core::fmt::{self, Debug, Formatter};
+use core::marker::PhantomData;
+use core::ops::Deref;
 
 
 
@@ -12,7 +12,7 @@ use std::ops::Deref;
 #[repr(transparent)] pub struct Box<D: alloc::Deallocator>(*mut SID, PhantomData<D>);
 
 impl<D: alloc::Deallocator> Debug for Box<D> { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { Debug::fmt(&**self, fmt) } }
-impl<D: alloc::Deallocator> Deref for Box<D> { type Target = sid::Value; fn deref(&self) -> &Self::Target { unsafe { std::mem::transmute(self) } } }
+impl<D: alloc::Deallocator> Deref for Box<D> { type Target = sid::Value; fn deref(&self) -> &Self::Target { unsafe { core::mem::transmute(self) } } }
 impl<D: alloc::Deallocator> Drop  for Box<D> { fn drop(&mut self) { unsafe { D::free(self.0) } } }
 
 impl<'s, D: alloc::Deallocator> From<&'s Box<D>> for sid::Ptr<'s> {

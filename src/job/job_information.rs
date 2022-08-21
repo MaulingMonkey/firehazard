@@ -1,4 +1,4 @@
-use std::mem::MaybeUninit;
+use core::mem::MaybeUninit;
 
 use crate::*;
 
@@ -53,7 +53,7 @@ impl SetInformation for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION_2  { fn set_on(
 /// QueryInformationJobObject
 unsafe fn query_fixed<T>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS) -> Result<T, Error> {
     let mut info = MaybeUninit::<T>::zeroed();
-    let size = u32::try_from(std::mem::size_of_val(&info)).map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
+    let size = u32::try_from(core::mem::size_of_val(&info)).map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let pinfo : *mut MaybeUninit<T> = &mut info;
     let mut ret_size = 0;
     Error::get_last_if(FALSE == unsafe { QueryInformationJobObject(job.as_handle(), class, pinfo as *mut _, size, &mut ret_size) })?;
@@ -65,7 +65,7 @@ unsafe fn query_fixed<T>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS) -> R
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
 /// SetInformationJobObject
 unsafe fn set<T: ?Sized>(job: &mut job::OwnedHandle, class: JOBOBJECTINFOCLASS, information: &T) -> Result<(), Error> {
-    let size = u32::try_from(std::mem::size_of_val(information)).map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
+    let size = u32::try_from(core::mem::size_of_val(information)).map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let info : *const T = information;
     Error::get_last_if(FALSE == unsafe { SetInformationJobObject(job.as_handle(), class, info as *mut _, size) })
 }

@@ -8,7 +8,7 @@ use winapi::um::jobapi::*;
 use winapi::um::jobapi2::*;
 use winapi::um::winbase::*;
 
-use std::ptr::null_mut;
+use core::ptr::null_mut;
 
 
 
@@ -36,7 +36,7 @@ pub fn assign_process_to_job_object(job: &job::OwnedHandle, process: impl AsRef<
 /// let anon = create_job_object_a(None, ()).unwrap();
 /// let named = create_job_object_a(None, cstr!("Local/win32_security_playground/tests/create_job_object_a")).unwrap();
 /// ```
-pub fn create_job_object_a(job_attributes: Option<std::convert::Infallible>, name: impl TryIntoAsOptCStr) -> Result<job::OwnedHandle, Error> {
+pub fn create_job_object_a(job_attributes: Option<core::convert::Infallible>, name: impl TryIntoAsOptCStr) -> Result<job::OwnedHandle, Error> {
     let name = name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?;
     let h = unsafe { CreateJobObjectA(none2null(job_attributes), name.as_opt_cstr()) };
     Error::get_last_if(h.is_null())?;
@@ -54,7 +54,7 @@ pub fn create_job_object_a(job_attributes: Option<std::convert::Infallible>, nam
 /// let anon = create_job_object_w(None, ()).unwrap();
 /// let named = create_job_object_w(None, cstr16!("Local/win32_security_playground/tests/create_job_object_a")).unwrap();
 /// ```
-pub fn create_job_object_w(job_attributes: Option<std::convert::Infallible>, name: impl TryIntoAsOptCStr<u16>) -> Result<job::OwnedHandle, Error> {
+pub fn create_job_object_w(job_attributes: Option<core::convert::Infallible>, name: impl TryIntoAsOptCStr<u16>) -> Result<job::OwnedHandle, Error> {
     let name = name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?;
     let h = unsafe { CreateJobObjectW(none2null(job_attributes), name.as_opt_cstr()) };
     Error::get_last_if(h.is_null())?;

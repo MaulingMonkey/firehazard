@@ -1,8 +1,8 @@
 use winapi::shared::ntdef::LUID;
 
-use std::fmt::{self, Debug, Formatter};
-use std::hash::Hash;
-use std::mem::{size_of, align_of};
+use core::fmt::{self, Debug, Formatter};
+use core::hash::Hash;
+use core::mem::{size_of, align_of};
 
 
 
@@ -15,8 +15,8 @@ impl From<Luid> for u64  { fn from(value: Luid) -> Self { (value.0.HighPart as u
 impl From<Luid> for LUID { fn from(value: Luid) -> Self { value.0 } }
 impl PartialEq  for Luid { fn eq(&self, other: &Self) -> bool { u64::from(*self) == u64::from(*other) } }
 impl Eq         for Luid {}
-impl PartialOrd for Luid { fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> { u64::from(*self).partial_cmp(&u64::from(*other)) } }
-impl Ord        for Luid { fn cmp(&self, other: &Self) -> std::cmp::Ordering { u64::from(*self).cmp(&u64::from(*other)) } }
-impl Hash       for Luid { fn hash<H: std::hash::Hasher>(&self, state: &mut H) { u64::from(*self).hash(state) } }
+impl PartialOrd for Luid { fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> { u64::from(*self).partial_cmp(&u64::from(*other)) } }
+impl Ord        for Luid { fn cmp(&self, other: &Self) -> core::cmp::Ordering { u64::from(*self).cmp(&u64::from(*other)) } }
+impl Hash       for Luid { fn hash<H: core::hash::Hasher>(&self, state: &mut H) { u64::from(*self).hash(state) } }
 const _LUID_SIZE  : () = assert!(size_of ::<LUID>() == size_of ::<Luid>());
 const _LUID_ALIGN : () = assert!(align_of::<LUID>() == align_of::<Luid>());

@@ -4,16 +4,16 @@ use abistr::CStrPtr;
 
 use winapi::um::winnt::LPSTR;
 
-use std::borrow::Cow;
-use std::fmt::{self, Debug, Display, Formatter};
-use std::marker::PhantomData;
+use core::fmt::{self, Debug, Display, Formatter};
+use core::marker::PhantomData;
 
 
 
 #[repr(transparent)] pub struct CString<D: alloc::Deallocator>(LPSTR, PhantomData<D>);
 impl<D: alloc::Deallocator> CString<D> {
     pub const unsafe fn from_raw(raw: LPSTR) -> Self { Self(raw, PhantomData) }
-    pub fn to_string_lossy<'s>(&'s self) -> Cow<'s, str> { self.as_cstr_ptr().to_string_lossy() }
+    #[cfg(std)] pub fn to_string_lossy<'s>(&'s self) -> std::borrow::Cow<'s, str> { self.as_cstr_ptr().to_string_lossy() }
+    #[cfg(not(std))] fn to_string_lossy<'s>(&'s self) -> &'s str { self.as_cstr_ptr().to_str().unwrap() }
 }
 impl<D: alloc::Deallocator> CString<D> {
     fn as_cstr_ptr<'s>(&'s self) -> CStrPtr<'s> { unsafe { CStrPtr::from_ptr_unbounded(self.0) } }

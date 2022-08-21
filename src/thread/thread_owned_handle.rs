@@ -4,11 +4,12 @@ use crate::thread::Handle;
 use winapi::um::handleapi::{DuplicateHandle, CloseHandle};
 use winapi::um::winnt::*;
 
-use std::fmt::{self, Debug, Formatter};
-use std::ops::Deref;
-use std::os::windows::io::IntoRawHandle;
-use std::ptr::null_mut;
-use std::thread::JoinHandle;
+#[cfg(std)] use std::os::windows::io::IntoRawHandle;
+#[cfg(std)] use std::thread::JoinHandle;
+
+use core::fmt::{self, Debug, Formatter};
+use core::ops::Deref;
+use core::ptr::null_mut;
 
 
 
@@ -42,14 +43,14 @@ impl OwnedHandle {
     }
 }
 
-impl AsRef<Handle>  for OwnedHandle { fn as_ref(&self) -> &Handle { unsafe { std::mem::transmute(self) } } }
+impl AsRef<Handle>  for OwnedHandle { fn as_ref(&self) -> &Handle { unsafe { core::mem::transmute(self) } } }
 impl AsRef<HANDLE>  for OwnedHandle { fn as_ref(&self) -> &HANDLE { &self.0 } }
-impl AsRef<handle::Owned> for OwnedHandle { fn as_ref(&self) -> &handle::Owned { unsafe { std::mem::transmute(self) } } }
+impl AsRef<handle::Owned> for OwnedHandle { fn as_ref(&self) -> &handle::Owned { unsafe { core::mem::transmute(self) } } }
 impl Clone          for OwnedHandle { fn clone(&self) -> Self { unsafe { Self::clone_from_raw(self.0) } } }
 impl Debug          for OwnedHandle { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "thread::OwnedHandle(0x{:08x})", self.0 as usize) } }
 impl Deref          for OwnedHandle { type Target = Handle; fn deref(&self) -> &Self::Target { self.as_ref() } }
 impl Drop           for OwnedHandle { fn drop(&mut self) { assert!(self.0.is_null() || (0 != unsafe { CloseHandle(self.0) }), "CloseHandle({:?}) failed with GetLastError()={:?}", self.0, Error::get_last()); } }
-impl<T> From<JoinHandle<T>> for OwnedHandle { fn from(jh: JoinHandle<T>) -> Self { unsafe { Self::from_raw_unchecked(jh.into_raw_handle().cast()) } } }
+#[cfg(std)] impl<T> From<JoinHandle<T>> for OwnedHandle { fn from(jh: JoinHandle<T>) -> Self { unsafe { Self::from_raw_unchecked(jh.into_raw_handle().cast()) } } }
 
 impl From<&OwnedHandle>  for HANDLE { fn from(thread: &OwnedHandle) -> Self { thread.0 } }
-impl From<OwnedHandle> for handle::Owned { fn from(thread: OwnedHandle) -> Self { unsafe { std::mem::transmute(thread) } } }
+impl From<OwnedHandle> for handle::Owned { fn from(thread: OwnedHandle) -> Self { unsafe { core::mem::transmute(thread) } } }

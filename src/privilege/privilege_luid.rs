@@ -1,11 +1,13 @@
+#![cfg_attr(not(std), allow(unused_imports))]
+
 use crate::*;
 
 use winapi::shared::winerror::*;
 use winapi::um::winbase::{LookupPrivilegeNameA, LookupPrivilegeValueA};
 use winapi::um::winnt::LUID;
 
-use std::fmt::{self, Debug, Formatter};
-use std::ptr::null_mut;
+use core::fmt::{self, Debug, Formatter};
+use core::ptr::null_mut;
 
 
 
@@ -39,7 +41,7 @@ impl privilege::Luid {
     }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-lookupprivilegenamea)\] LookupPrivilegeNameA
-    pub fn lookup_privilege_name_a(mut self) -> Result<String, Error> {
+    #[cfg(std)] pub fn lookup_privilege_name_a(mut self) -> Result<String, Error> {
         let system_name = null_mut();
         let luid = &mut self.0.0;
         let mut len = 0;
@@ -50,4 +52,6 @@ impl privilege::Luid {
         assert!(buf.pop() == Some(b'\0'), "BUG: privilege name was expected to be null terminated");
         String::from_utf8(buf).map_err(|_| Error(ERROR_INVALID_DATA))
     }
+
+    #[cfg(not(std))] fn lookup_privilege_name_a(mut self) -> Result<&'static str, Error> { Err(Error(ERROR_OUTOFMEMORY)) }
 }

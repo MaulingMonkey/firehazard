@@ -1,8 +1,8 @@
 use winapi::shared::ntdef::HANDLE;
 use winapi::um::minwinbase::*;
 
-use std::marker::PhantomData;
-use std::ops::Deref;
+use core::marker::PhantomData;
+use core::ops::Deref;
 
 
 

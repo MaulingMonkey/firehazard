@@ -32,7 +32,7 @@ fn main() {
     policy.set_Enable(1);
     policy.set_DisableAtlThunkEmulation(1);
     policy.Permanent = 1;
-    assert_eq!(std::mem::size_of::<usize>()==8, set_process_mitigation_policy(policy).is_err()); // ERROR_NOT_SUPPORTED - possibly because it's force-enabled on x64?
+    assert_eq!(core::mem::size_of::<usize>()==8, set_process_mitigation_policy(policy).is_err()); // ERROR_NOT_SUPPORTED - possibly because it's force-enabled on x64?
 
     let mut policy = PROCESS_MITIGATION_DYNAMIC_CODE_POLICY { Flags: 0 };
     policy.set_ProhibitDynamicCode(1);

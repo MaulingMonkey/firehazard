@@ -6,7 +6,7 @@ use abistr::{AsCStr, TryIntoAsCStr};
 use winapi::shared::sddl::{ConvertStringSidToSidW, ConvertStringSidToSidA};
 use winapi::shared::winerror::*;
 
-use std::ptr::null_mut;
+use core::ptr::null_mut;
 
 
 

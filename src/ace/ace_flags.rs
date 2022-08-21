@@ -1,5 +1,5 @@
-use std::fmt::{self, Debug, Display, Formatter};
-use std::ops::*;
+use core::fmt::{self, Debug, Display, Formatter};
+use core::ops::*;
 
 
 

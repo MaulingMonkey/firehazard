@@ -2,7 +2,7 @@
 
 use winapi::um::winnt::HANDLE;
 
-use std::fmt::{self, Debug, Formatter};
+use core::fmt::{self, Debug, Formatter};
 
 
 
@@ -40,7 +40,7 @@ impl From<PsuedoHandle> for HANDLE {
     fn from(token: PsuedoHandle) -> Self { token.0 }
 }
 
-#[test] fn clone_debug() {
+#[cfg(std)] #[test] fn clone_debug() {
     let p : PsuedoHandle = get_current_process_token();
     let _p2 = dbg!(p.clone());
 }

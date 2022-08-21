@@ -3,8 +3,8 @@ use crate::*;
 use winapi::um::securitybaseapi::GetAclInformation;
 use winapi::um::winnt::*;
 
-use std::fmt::{self, Debug, Formatter};
-use std::marker::PhantomData;
+use core::fmt::{self, Debug, Formatter};
+use core::marker::PhantomData;
 
 
 
@@ -47,8 +47,8 @@ impl Ptr<'_> {
     /// ### Safety
     /// *   `class` must be valid and must match `T`
     unsafe fn get_acl_information<T>(&self, class: u32) -> T {
-        let mut info = unsafe { std::mem::zeroed::<T>() };
-        let success = 0 != unsafe { GetAclInformation(self.0, &mut info as *mut _ as *mut _, std::mem::size_of::<T>() as _, class) };
+        let mut info = unsafe { core::mem::zeroed::<T>() };
+        let success = 0 != unsafe { GetAclInformation(self.0, &mut info as *mut _ as *mut _, core::mem::size_of::<T>() as _, class) };
         assert!(success, "GetAclInformation failed with {:?}", Error::get_last());
         info
     }

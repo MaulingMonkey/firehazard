@@ -10,8 +10,8 @@ use winapi::um::processthreadsapi::*;
 use winapi::um::synchapi::WaitForSingleObject;
 use winapi::um::winbase::*;
 
-use std::mem::zeroed;
-use std::ptr::{null_mut, null};
+use core::mem::zeroed;
+use core::ptr::{null_mut, null};
 
 
 
@@ -155,7 +155,7 @@ pub fn wait_for_process(process: impl AsRef<process::Handle>) -> Result<u32, Err
     get_exit_code_process(process)
 }
 
-#[test] fn test_wait_exit() {
+#[cfg(std)] #[test] fn test_wait_exit() {
     use winapi::um::minwinbase::STILL_ACTIVE;
     use std::process::*;
     let child : Child = Command::new("cmd").args("/C ping localhost -n 2 && exit /B 3".split(' ')).stdout(Stdio::null()).spawn().unwrap();

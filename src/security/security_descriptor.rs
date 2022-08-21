@@ -1,6 +1,6 @@
 use crate::*;
 use winapi::um::winnt::*;
-use std::marker::PhantomData;
+use core::marker::PhantomData;
 
 
 

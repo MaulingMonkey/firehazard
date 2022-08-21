@@ -1,7 +1,7 @@
 use winapi::um::winnt::LUID_AND_ATTRIBUTES;
 
-use std::fmt::{self, Debug, Formatter};
-use std::mem::{align_of, size_of};
+use core::fmt::{self, Debug, Formatter};
+use core::mem::{align_of, size_of};
 
 
 

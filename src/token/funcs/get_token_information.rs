@@ -9,10 +9,10 @@ use winapi::shared::winerror::*;
 use winapi::um::securitybaseapi::GetTokenInformation;
 use winapi::um::winnt::*;
 
-use std::marker::PhantomData;
-use std::mem::{size_of, align_of};
-use std::ops::Deref;
-use std::ptr::null_mut;
+use core::marker::PhantomData;
+use core::mem::{size_of, align_of};
+use core::ops::Deref;
+use core::ptr::null_mut;
 
 
 
@@ -257,8 +257,8 @@ unsafe fn raw_bytes(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS) 
 /// *   `ERROR_INSUFFICIENT_BUFFER` / `122` - `R` is wrong type? or merely a header for a longer blob of data?
 unsafe fn raw_fixed<R: Copy>(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS) -> Result<R, Error> {
     let mut size = 0;
-    let mut r = unsafe { std::mem::zeroed::<R>() };
-    let r_size = u32::try_from(std::mem::size_of_val(&r)).map_err(|_| Error(ERROR_INSUFFICIENT_BUFFER))?;
+    let mut r = unsafe { core::mem::zeroed::<R>() };
+    let r_size = u32::try_from(core::mem::size_of_val(&r)).map_err(|_| Error(ERROR_INSUFFICIENT_BUFFER))?;
     Error::get_last_if(0 == unsafe { GetTokenInformation(token.as_handle(), class, &mut r as *mut _ as *mut _, r_size, &mut size) })?;
     if size != r_size { return Err(Error(ERROR_INCORRECT_SIZE)) }
     Ok(r)

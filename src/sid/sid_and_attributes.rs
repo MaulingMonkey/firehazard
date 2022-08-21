@@ -2,8 +2,8 @@ use crate::*;
 
 use winapi::um::winnt::SID_AND_ATTRIBUTES;
 
-use std::fmt::{self, Debug, Formatter};
-use std::mem::{align_of, size_of};
+use core::fmt::{self, Debug, Formatter};
+use core::mem::{align_of, size_of};
 
 
 
@@ -22,7 +22,7 @@ impl<'a> sid::AndAttributes<'a> {
 }
 
 // safe wrapper type -> unsafe raw winapi type (1-way)
-impl<'a> AsRef<SID_AND_ATTRIBUTES> for sid::AndAttributes<'a> { fn as_ref(&self) -> &SID_AND_ATTRIBUTES { unsafe { std::mem::transmute(self) } } }
+impl<'a> AsRef<SID_AND_ATTRIBUTES> for sid::AndAttributes<'a> { fn as_ref(&self) -> &SID_AND_ATTRIBUTES { unsafe { core::mem::transmute(self) } } }
 impl<'a> From<sid::AndAttributes<'a>> for SID_AND_ATTRIBUTES { fn from(ts: sid::AndAttributes<'a>) -> Self { *ts.as_ref() } }
 
 impl Debug for sid::AndAttributes<'_> {

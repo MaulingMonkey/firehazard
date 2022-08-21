@@ -2,8 +2,8 @@ use crate::*;
 
 use winapi::um::winnt::TOKEN_DEFAULT_DACL;
 
-use std::fmt::{self, Debug, Formatter};
-use std::mem::{size_of, align_of};
+use core::fmt::{self, Debug, Formatter};
+use core::mem::{size_of, align_of};
 
 
 

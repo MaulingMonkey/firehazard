@@ -2,9 +2,9 @@ use crate::*;
 
 use winapi::um::winnt::SID;
 
-use std::fmt::{self, Debug, Formatter};
-use std::marker::PhantomData;
-use std::ops::Deref;
+use core::fmt::{self, Debug, Formatter};
+use core::marker::PhantomData;
+use core::ops::Deref;
 
 
 
@@ -13,7 +13,7 @@ use std::ops::Deref;
 // TODO: consider merging Ptr<'a> into Sid by introducing Borrower<'a> ?
 
 impl Debug for Ptr<'_> { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { Debug::fmt(&**self, fmt) } }
-impl Deref for Ptr<'_> { type Target = sid::Value; fn deref(&self) -> &Self::Target { unsafe { std::mem::transmute(self) } } }
+impl Deref for Ptr<'_> { type Target = sid::Value; fn deref(&self) -> &Self::Target { unsafe { core::mem::transmute(self) } } }
 
 impl Ptr<'_> {
     /// ### Safety

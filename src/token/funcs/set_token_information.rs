@@ -38,7 +38,7 @@ impl token::OwnedHandle {
 /// *   `slice` might have alignment requirements
 /// *   `slice` might be expected to contain valid pointers and other fields, depending on `class`
 unsafe fn raw_slice<E>(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS, slice: &[E]) -> Result<(), Error> {
-    let len32 = u32::try_from(std::mem::size_of_val(slice)).map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
+    let len32 = u32::try_from(core::mem::size_of_val(slice)).map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     Error::get_last_if(0 == unsafe { SetTokenInformation(token.as_handle(), class, slice.as_ptr() as *mut _, len32) })
 }
 
@@ -52,5 +52,5 @@ unsafe fn raw_slice<E>(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLAS
 /// *   `value` might have alignment requirements
 /// *   `value` might be expected to contain valid pointers and other fields, depending on `class`
 unsafe fn raw_fixed<E>(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS, value: &E) -> Result<(), Error> {
-    unsafe { raw_slice(token, class, std::slice::from_ref(value)) }
+    unsafe { raw_slice(token, class, core::slice::from_ref(value)) }
 }

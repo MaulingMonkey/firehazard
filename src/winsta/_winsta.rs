@@ -20,12 +20,12 @@ impl CreateWindowFlags {
     pub const CREATE_ONLY   : Self = Self(winapi::um::winuser::CWF_CREATE_ONLY);
 }
 
-impl From<Option<std::convert::Infallible>> for CreateWindowFlags   { fn from(_: Option<std::convert::Infallible>   ) -> Self { Self(0) } }
+impl From<Option<core::convert::Infallible>> for CreateWindowFlags  { fn from(_: Option<core::convert::Infallible>   ) -> Self { Self(0) } }
 impl From<()>                               for CreateWindowFlags   { fn from(_: ()                                 ) -> Self { Self(0) } }
 impl From<CreateWindowFlags>                for u32                 { fn from(cwf: CreateWindowFlags                ) -> Self { cwf.0 } }
 
-impl std::fmt::Debug for CreateWindowFlags {
-    fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
+impl core::fmt::Debug for CreateWindowFlags {
+    fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::fmt::Result {
         let friendly = match *self {
             Self::NONE          => "0",
             Self::CREATE_ONLY   => "CWF_CREATE_ONLY",

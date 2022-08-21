@@ -6,7 +6,7 @@ use winapi::shared::windef::HDESK;
 use winapi::shared::winerror::*;
 use winapi::um::errhandlingapi::SetLastError;
 use winapi::um::winuser::*;
-use std::ptr::null;
+use core::ptr::null;
 
 
 
@@ -24,7 +24,7 @@ use std::ptr::null;
 pub fn create_desktop_a(
     desktop:        impl TryIntoAsCStr,
     device:         impl TryIntoAsOptCStr,
-    devmode:        Option<std::convert::Infallible>,
+    devmode:        Option<core::convert::Infallible>,
     flags:          u32,                                // TODO: type
     desired_access: impl Into<desktop::AccessRights>,
     sa:             Option<&security::Attributes>,
@@ -55,7 +55,7 @@ pub fn create_desktop_a(
 pub fn create_desktop_w(
     desktop:        impl TryIntoAsCStr<u16>,
     device:         impl TryIntoAsOptCStr<u16>,
-    devmode:        Option<std::convert::Infallible>,
+    devmode:        Option<core::convert::Infallible>,
     flags:          u32,                                // TODO: type
     desired_access: impl Into<desktop::AccessRights>,
     sa:             Option<&security::Attributes>,
@@ -314,7 +314,7 @@ pub fn with_thread_desktop<R>(desktop: &desktop::OwnedHandle, f: impl FnOnce()->
     let r = f();
 
     debug_assert_eq!(desktop, unsafe { GetThreadDesktop(thread) });
-    std::mem::forget(restore_desktop); // manually restore for error codes:
+    core::mem::forget(restore_desktop); // manually restore for error codes:
     Error::get_last_if(FALSE == unsafe { SetThreadDesktop(original) })?;
     Ok(r)
 }

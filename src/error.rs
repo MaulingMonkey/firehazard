@@ -3,7 +3,8 @@
 use winapi::shared::ntstatus::*;
 use winapi::shared::winerror::*;
 use winapi::um::errhandlingapi::GetLastError;
-use std::fmt::{self, Debug, Formatter};
+
+use core::fmt::{self, Debug, Formatter};
 
 
 

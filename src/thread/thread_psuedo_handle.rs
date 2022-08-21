@@ -2,8 +2,8 @@ use crate::thread::Handle;
 
 use winapi::um::winnt::*;
 
-use std::fmt::{self, Debug, Formatter};
-use std::ops::Deref;
+use core::fmt::{self, Debug, Formatter};
+use core::ops::Deref;
 
 
 
@@ -20,7 +20,7 @@ impl PsuedoHandle {
     pub const unsafe fn from_raw_unchecked(handle: HANDLE) -> Self { Self(handle) }
 }
 
-impl AsRef<Handle>  for PsuedoHandle { fn as_ref(&self) -> &Handle { unsafe { std::mem::transmute(self) } } }
+impl AsRef<Handle>  for PsuedoHandle { fn as_ref(&self) -> &Handle { unsafe { core::mem::transmute(self) } } }
 impl AsRef<HANDLE>  for PsuedoHandle { fn as_ref(&self) -> &HANDLE { &self.0 } }
 impl Debug          for PsuedoHandle { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "thread::PsuedoHandle(0x{:08x})", self.0 as usize) } }
 impl Deref          for PsuedoHandle { type Target = Handle; fn deref(&self) -> &Self::Target { self.as_ref() } }

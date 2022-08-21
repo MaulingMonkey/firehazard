@@ -1,3 +1,5 @@
+#![cfg_attr(not(std), allow(unused_imports))]
+
 use crate::*;
 
 use winapi::shared::ntstatus::STATUS_SUCCESS;
@@ -7,16 +9,16 @@ use winapi::um::ntlsa::*;
 use winapi::um::securitybaseapi::EqualSid;
 use winapi::um::winnt::{SID, PSID};
 
-use std::fmt::{self, Debug, Formatter};
-use std::hash::Hash;
-use std::ptr::null_mut;
+use core::fmt::{self, Debug, Formatter};
+use core::hash::Hash;
+use core::ptr::null_mut;
 
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\]
 /// ~ SID
 ///
-/// Should never be directly constructed - instead, allow various types to [`std::ops::Deref`] into a reference to this.
+/// Should never be directly constructed - instead, allow various types to [`core::ops::Deref`] into a reference to this.
 #[repr(transparent)] pub struct Value(*mut SID);
 // DO NOT IMPLEMENT:
 // * Clone, Copy: Given `&'a Value`, lifetime of the underlying SID may be limited to `'a` - these traits would allow a copy to escape to `'static`.
@@ -28,7 +30,7 @@ impl Value {
 
     fn revision(&self)  -> u8           { unsafe{*self.0}.Revision }
     fn authority(&self) -> [u8; 6]      { unsafe{*self.0}.IdentifierAuthority.Value }
-    fn subauthorities(&self) -> &[u32]  { unsafe{std::slice::from_raw_parts(std::ptr::addr_of!((*self.0).SubAuthority) as *const u32, (*self.0).SubAuthorityCount.into())} }
+    fn subauthorities(&self) -> &[u32]  { unsafe{core::slice::from_raw_parts(core::ptr::addr_of!((*self.0).SubAuthority) as *const u32, (*self.0).SubAuthorityCount.into())} }
     fn as_tuple(&self) -> (u8, [u8; 6], &[u32]) { (self.revision(), self.authority(), self.subauthorities()) }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertsidtostringsida)\] ConvertSidToStringSidA
@@ -42,15 +44,15 @@ impl Value {
     }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/ntsecapi/nf-ntsecapi-lsalookupsids2)\] LsaLookupSids2
-    pub fn lsa_lookup_sids2(&self) -> Option<String> {
+    #[cfg(std)] pub fn lsa_lookup_sids2(&self) -> Option<String> {
         if self.0.is_null() { return None }
         // .cast() spam notes:
         // it appears PLSA_HANDLE points to void, not LSA_HANDLE, for whatever twisted reason.
         // it appears PSID points to void, not SID, for whatever twisted reason.
 
         let system_name = null_mut();
-        let mut object_attributes = unsafe { std::mem::zeroed::<LSA_OBJECT_ATTRIBUTES>() };
-        object_attributes.Length = std::mem::size_of_val(&object_attributes) as _;
+        let mut object_attributes = unsafe { core::mem::zeroed::<LSA_OBJECT_ATTRIBUTES>() };
+        object_attributes.Length = core::mem::size_of_val(&object_attributes) as _;
         let desired_access = POLICY_LOOKUP_NAMES;
         let mut policy = null_mut();
         if STATUS_SUCCESS != unsafe { LsaOpenPolicy(system_name, &mut object_attributes, desired_access, &mut policy) } { return None }
@@ -63,9 +65,9 @@ impl Value {
 
         let result = {
             let domains : &LSA_REFERENCED_DOMAIN_LIST = unsafe { &*domains };
-            let _domains = unsafe { std::slice::from_raw_parts(domains.Domains, usize::from32(domains.Entries)) };
+            let _domains = unsafe { core::slice::from_raw_parts(domains.Domains, usize::from32(domains.Entries)) };
             let name : &LSA_TRANSLATED_NAME = unsafe { &*names };
-            let name_name = unsafe { std::slice::from_raw_parts(name.Name.Buffer, (name.Name.Length/2).into()) }; // Length is in *bytes*, Buffer is *wchar_t* s
+            let name_name = unsafe { core::slice::from_raw_parts(name.Name.Buffer, (name.Name.Length/2).into()) }; // Length is in *bytes*, Buffer is *wchar_t* s
             //dbg!(domains.len());
             //dbg!(name.DomainIndex);
             //dbg!(name.Use);
@@ -78,13 +80,15 @@ impl Value {
 
         return Some(result);
     }
+
+    #[cfg(not(std))] fn lsa_lookup_sids2(&self) -> Option<&'static str> { None }
 }
 
 impl PartialEq  for Value { fn eq(&self, other: &Self) -> bool { 0 != unsafe { EqualSid(self.as_psid(), other.as_psid()) } } }
 impl Eq         for Value {}
-impl PartialOrd for Value { fn partial_cmp  (&self, other: &Self) -> Option<std::cmp::Ordering> { self.as_tuple().partial_cmp   (&other.as_tuple()) } }
-impl Ord        for Value { fn cmp          (&self, other: &Self) -> std::cmp::Ordering         { self.as_tuple().cmp           (&other.as_tuple()) } }
-impl Hash       for Value { fn hash<H: std::hash::Hasher>(&self, state: &mut H) { self.as_tuple().hash(state) } }
+impl PartialOrd for Value { fn partial_cmp  (&self, other: &Self) -> Option<core::cmp::Ordering> { self.as_tuple().partial_cmp   (&other.as_tuple()) } }
+impl Ord        for Value { fn cmp          (&self, other: &Self) -> core::cmp::Ordering         { self.as_tuple().cmp           (&other.as_tuple()) } }
+impl Hash       for Value { fn hash<H: core::hash::Hasher>(&self, state: &mut H) { self.as_tuple().hash(state) } }
 
 impl Debug for Value {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {

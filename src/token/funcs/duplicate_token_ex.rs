@@ -22,7 +22,7 @@ pub fn duplicate_token_ex(
     impersonation_level:    crate::security::ImpersonationLevel,
     token_type:             crate::token::Type,
 ) -> Result<crate::token::OwnedHandle, crate::Error> {
-    use std::ptr::{null, null_mut};
+    use core::ptr::{null, null_mut};
 
     let mut new = null_mut();
     crate::Error::get_last_if(0 == unsafe { winapi::um::securitybaseapi::DuplicateTokenEx(

@@ -4,9 +4,9 @@ use crate::handle::Handle;
 use winapi::um::handleapi::{CloseHandle, DuplicateHandle};
 use winapi::um::winnt::*;
 
-use std::fmt::{self, Debug, Formatter};
-use std::ops::Deref;
-use std::ptr::null_mut;
+use core::fmt::{self, Debug, Formatter};
+use core::ops::Deref;
+use core::ptr::null_mut;
 
 
 
@@ -47,7 +47,7 @@ impl Owned {
     /// ### Safety
     /// Similar to [`Self::from_raw_unchecked`] - however, ownedship is merely borrowed.
     /// The caller must ensure no other code attempts to release ownership over the same handle for the duration of the borrow.
-    pub unsafe fn borrow_from_raw_unchecked(handle: &HANDLE) -> &Self { unsafe { std::mem::transmute(handle) } }
+    pub unsafe fn borrow_from_raw_unchecked(handle: &HANDLE) -> &Self { unsafe { core::mem::transmute(handle) } }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
     /// `DuplicateHandle`
@@ -67,7 +67,7 @@ impl Owned {
     }
 }
 
-impl AsRef<Handle>  for Owned { fn as_ref(&self) -> &Handle { unsafe { std::mem::transmute(self) } } }
+impl AsRef<Handle>  for Owned { fn as_ref(&self) -> &Handle { unsafe { core::mem::transmute(self) } } }
 impl AsRef<HANDLE>  for Owned { fn as_ref(&self) -> &HANDLE { &self.0 } }
 impl Clone          for Owned { fn clone(&self) -> Self { unsafe { Self::clone_from_raw(self.0) } } }
 impl Debug          for Owned { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "handle::Owned(0x{:08x})", self.0 as usize) } }

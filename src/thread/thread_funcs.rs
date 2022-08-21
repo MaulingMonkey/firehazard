@@ -53,10 +53,10 @@ pub fn wait_for_thread(thread: impl AsRef<thread::Handle>) -> Result<u32, Error>
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitthread)\] `ExitThread`
 pub fn exit_thread(exit_code: u32) { unsafe { ExitThread(exit_code) } }
 
-#[test] fn test_wait_exit() {
+#[cfg(std)] #[test] fn test_wait_exit() {
     use winapi::um::minwinbase::STILL_ACTIVE;
     use std::thread::*;
-    let child = spawn(|| { sleep(std::time::Duration::from_millis(500)); exit_thread(3); });
+    let child = spawn(|| { sleep(core::time::Duration::from_millis(500)); exit_thread(3); });
     let child = thread::OwnedHandle::from(child);
 
     assert!(is_thread_running(&child));

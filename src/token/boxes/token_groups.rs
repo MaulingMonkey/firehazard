@@ -2,8 +2,8 @@ use crate::*;
 
 use winapi::um::winnt::TOKEN_GROUPS;
 
-use std::fmt::{self, Debug, Formatter};
-use std::mem::{size_of, align_of};
+use core::fmt::{self, Debug, Formatter};
+use core::mem::{size_of, align_of};
 
 
 
@@ -27,8 +27,8 @@ impl BoxTokenGroups {
         u32::from_ne_bytes([b[0], b[1], b[2], b[3]])
     }
 
-    pub fn groups    <'s>(&'s     self) -> &'s     [sid::AndAttributes<'s>] { let len = self.groups_len(); unsafe { std::slice::from_raw_parts    (self.groups_ptr    (), len) } }
-    pub fn groups_mut<'s>(&'s mut self) -> &'s mut [sid::AndAttributes<'s>] { let len = self.groups_len(); unsafe { std::slice::from_raw_parts_mut(self.groups_mut_ptr(), len) } }
+    pub fn groups    <'s>(&'s     self) -> &'s     [sid::AndAttributes<'s>] { let len = self.groups_len(); unsafe { core::slice::from_raw_parts    (self.groups_ptr    (), len) } }
+    pub fn groups_mut<'s>(&'s mut self) -> &'s mut [sid::AndAttributes<'s>] { let len = self.groups_len(); unsafe { core::slice::from_raw_parts_mut(self.groups_mut_ptr(), len) } }
 
     fn groups_len(&self) -> usize { usize::from32(self.group_count()) }
 

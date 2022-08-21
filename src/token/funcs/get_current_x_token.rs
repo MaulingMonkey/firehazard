@@ -12,7 +12,7 @@
 
 
 
-#[test] fn debug() {
+#[cfg(std)] #[test] fn debug() {
     dbg!(dbg!(get_current_process_token()).clone());
     dbg!(dbg!(get_current_thread_token()).clone());
     dbg!(dbg!(get_current_thread_effective_token()).clone());

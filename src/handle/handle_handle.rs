@@ -1,7 +1,7 @@
 use winapi::um::winnt::*;
 
-use std::fmt::{self, Debug, Formatter};
-#[allow(unused_imports)] use std::ops::*;
+use core::fmt::{self, Debug, Formatter};
+#[allow(unused_imports)] use core::ops::*;
 
 
 

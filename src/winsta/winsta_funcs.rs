@@ -5,7 +5,7 @@ use winapi::shared::minwindef::{FALSE, LPARAM, BOOL, TRUE};
 use winapi::shared::winerror::*;
 use winapi::um::errhandlingapi::SetLastError;
 use winapi::um::winuser::*;
-use std::ptr::null;
+use core::ptr::null;
 
 
 

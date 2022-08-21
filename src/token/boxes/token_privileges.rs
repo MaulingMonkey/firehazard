@@ -2,8 +2,8 @@ use crate::*;
 
 use winapi::um::winnt::TOKEN_PRIVILEGES;
 
-use std::fmt::{self, Debug, Formatter};
-use std::mem::{size_of, align_of, size_of_val};
+use core::fmt::{self, Debug, Formatter};
+use core::mem::{size_of, align_of, size_of_val};
 
 
 
@@ -26,8 +26,8 @@ impl BoxTokenPrivileges {
         u32::from_ne_bytes([b[0], b[1], b[2], b[3]])
     }
 
-    pub fn privileges    (&    self) -> &    [privilege::LuidAndAttributes] { unsafe { std::slice::from_raw_parts    (self.privileges_ptr    (), self.privileges_len()) } }
-    pub fn privileges_mut(&mut self) -> &mut [privilege::LuidAndAttributes] { unsafe { std::slice::from_raw_parts_mut(self.privileges_mut_ptr(), self.privileges_len()) } }
+    pub fn privileges    (&    self) -> &    [privilege::LuidAndAttributes] { unsafe { core::slice::from_raw_parts    (self.privileges_ptr    (), self.privileges_len()) } }
+    pub fn privileges_mut(&mut self) -> &mut [privilege::LuidAndAttributes] { unsafe { core::slice::from_raw_parts_mut(self.privileges_mut_ptr(), self.privileges_len()) } }
 
     pub fn as_token_privileges_mut_ptr(&mut self) -> *mut TOKEN_PRIVILEGES { self.0.as_mut_ptr().cast() }
 

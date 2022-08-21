@@ -1,6 +1,6 @@
 use crate::*;
 use winapi::um::winnt::ACE_HEADER;
-use std::mem::{align_of, size_of};
+use core::mem::{align_of, size_of};
 
 
 

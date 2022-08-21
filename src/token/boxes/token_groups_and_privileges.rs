@@ -2,8 +2,8 @@ use crate::*;
 
 use winapi::um::winnt::TOKEN_GROUPS_AND_PRIVILEGES;
 
-use std::fmt::{self, Debug, Formatter};
-use std::mem::{size_of, align_of};
+use core::fmt::{self, Debug, Formatter};
+use core::mem::{size_of, align_of};
 
 
 
@@ -19,13 +19,13 @@ impl BoxTokenGroupsAndPrivileges {
     }
 
     /// Sids+0 .. Sids+SidCount
-    pub fn sids(&self) -> &[sid::AndAttributes] { unsafe { std::slice::from_raw_parts(self.header().Sids.cast(), usize::from32(self.header().SidCount)) } }
+    pub fn sids(&self) -> &[sid::AndAttributes] { unsafe { core::slice::from_raw_parts(self.header().Sids.cast(), usize::from32(self.header().SidCount)) } }
 
     /// RestrictedSids+0 .. RestrictedSids+RestrictedSidCount
-    pub fn restricted_sids(&self) -> &[sid::AndAttributes] { unsafe { std::slice::from_raw_parts(self.header().RestrictedSids.cast(), usize::from32(self.header().RestrictedSidCount)) } }
+    pub fn restricted_sids(&self) -> &[sid::AndAttributes] { unsafe { core::slice::from_raw_parts(self.header().RestrictedSids.cast(), usize::from32(self.header().RestrictedSidCount)) } }
 
     /// Privileges+0 .. Privileges+PrivilegeCount
-    pub fn privileges(&self) -> &[privilege::LuidAndAttributes] { unsafe { std::slice::from_raw_parts(self.header().Privileges.cast(), usize::from32(self.header().PrivilegeCount)) } }
+    pub fn privileges(&self) -> &[privilege::LuidAndAttributes] { unsafe { core::slice::from_raw_parts(self.header().Privileges.cast(), usize::from32(self.header().PrivilegeCount)) } }
 
     /// AuthenticationIds
     pub fn authentication_id(&self) -> Luid { self.header().AuthenticationId.into() }

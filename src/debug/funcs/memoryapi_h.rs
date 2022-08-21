@@ -4,7 +4,7 @@ use winapi::shared::minwindef::FALSE;
 use winapi::shared::winerror::ERROR_BUFFER_OVERFLOW;
 use winapi::um::memoryapi::ReadProcessMemory;
 
-use std::mem::{MaybeUninit, size_of_val, size_of};
+use core::mem::{MaybeUninit, size_of_val, size_of};
 
 
 

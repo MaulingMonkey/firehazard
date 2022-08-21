@@ -13,7 +13,7 @@ pub unsafe fn create_restricted_token(
 ) -> Result<crate::token::OwnedHandle, crate::Error> {
     use crate::*;
     use winapi::shared::winerror::*;
-    use std::ptr::*;
+    use core::ptr::*;
 
     let mut new_handle = null_mut();
     Error::get_last_if(0 == unsafe { winapi::um::securitybaseapi::CreateRestrictedToken(

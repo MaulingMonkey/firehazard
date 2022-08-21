@@ -5,9 +5,9 @@ use winapi::shared::minwindef::FALSE;
 use winapi::um::securitybaseapi::*;
 use winapi::um::winnt::*;
 
-use std::marker::PhantomData;
-use std::mem::zeroed;
-use std::ptr::null_mut;
+use core::marker::PhantomData;
+use core::mem::zeroed;
+use core::ptr::null_mut;
 
 
 

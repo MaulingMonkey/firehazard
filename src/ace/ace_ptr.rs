@@ -3,8 +3,8 @@ use crate::*;
 use winapi::shared::guiddef::GUID;
 use winapi::um::winnt::*;
 
-use std::fmt::{self, Debug, Formatter};
-use std::marker::PhantomData;
+use core::fmt::{self, Debug, Formatter};
+use core::marker::PhantomData;
 
 
 

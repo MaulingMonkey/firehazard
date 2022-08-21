@@ -15,6 +15,6 @@ pub fn heap_enable_termination_on_corruption() -> Result<(), crate::Error> {
     use crate::error::*;
     use winapi::um::heapapi::*;
     use winapi::um::winnt::*;
-    use std::ptr::null_mut;
+    use core::ptr::null_mut;
     Error::get_last_if(0 == unsafe { HeapSetInformation(null_mut(), HeapEnableTerminationOnCorruption, null_mut(), 0) })
 }

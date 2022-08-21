@@ -11,5 +11,5 @@ pub type Id = u32;
 
 /// [`OwnedHandle`] | [`PsuedoHandle`] | [`None`]
 pub unsafe trait AsHandleOrNone                                 { fn as_handle_or_none(&self) -> Option<winapi::shared::ntdef::HANDLE>; }
-unsafe impl AsHandleOrNone for Option<std::convert::Infallible> { fn as_handle_or_none(&self) -> Option<winapi::shared::ntdef::HANDLE> { None } }
+unsafe impl AsHandleOrNone for Option<core::convert::Infallible>{ fn as_handle_or_none(&self) -> Option<winapi::shared::ntdef::HANDLE> { None } }
 unsafe impl<T: AsRef<Handle>> AsHandleOrNone for T              { fn as_handle_or_none(&self) -> Option<winapi::shared::ntdef::HANDLE> { Some(self.as_ref().as_handle()) } }

@@ -1,6 +1,6 @@
 use crate::*;
 use winapi::um::processthreadsapi::PROCESS_INFORMATION;
-use std::mem::{align_of, size_of, transmute};
+use core::mem::{align_of, size_of, transmute};
 
 
 

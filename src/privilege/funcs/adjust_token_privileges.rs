@@ -3,8 +3,8 @@ use crate::*;
 use winapi::um::securitybaseapi::AdjustTokenPrivileges;
 use winapi::um::winnt::*;
 
-use std::convert::Infallible;
-use std::ptr::null_mut;
+use core::convert::Infallible;
+use core::ptr::null_mut;
 
 
 

@@ -7,7 +7,7 @@ use winapi::shared::ntdef::HANDLE;
 use winapi::um::handleapi::*;
 use winapi::um::winnt::DUPLICATE_CLOSE_SOURCE;
 
-use std::ptr::null_mut;
+use core::ptr::null_mut;
 
 
 
@@ -27,7 +27,7 @@ use std::ptr::null_mut;
 pub fn close_handle(object: impl Into<handle::Owned>) -> Result<(), Error> {
     let object = object.into();
     let h = object.as_handle();
-    std::mem::forget(object);
+    core::mem::forget(object);
     Error::get_last_if(FALSE == unsafe { CloseHandle(h) })
 }
 

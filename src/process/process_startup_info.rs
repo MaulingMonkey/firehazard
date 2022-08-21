@@ -6,8 +6,8 @@ use winapi::shared::winerror::ERROR_INCORRECT_SIZE;
 use winapi::um::processthreadsapi::{STARTUPINFOA, STARTUPINFOW, LPPROC_THREAD_ATTRIBUTE_LIST};
 use winapi::um::winbase::{STARTUPINFOEXA, STARTUPINFOEXW};
 
-use std::mem::{align_of, size_of, transmute};
-use std::ptr::null_mut;
+use core::mem::{align_of, size_of, transmute};
+use core::ptr::null_mut;
 
 
 

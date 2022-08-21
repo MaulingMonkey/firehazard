@@ -6,7 +6,7 @@ use winapi::shared::winerror::*;
 use winapi::um::securitybaseapi::*;
 use winapi::um::winnt::ACL;
 
-use std::ptr::null_mut;
+use core::ptr::null_mut;
 
 /// `WORD` sizes etc. limit the size to `0xFFFF`.
 /// However, InitializeAcl will fail with `0xFFFF`, since the end isn't DWORD aligned.
