@@ -2,6 +2,7 @@
 //! GetTokenInformation
 
 use crate::*;
+use crate::alloc::*;
 use crate::token::*;
 
 use winapi::shared::winerror::*;
@@ -9,8 +10,7 @@ use winapi::shared::winerror::*;
 use winapi::um::securitybaseapi::GetTokenInformation;
 use winapi::um::winnt::*;
 
-use core::marker::PhantomData;
-use core::mem::{size_of, align_of};
+use core::mem::zeroed;
 use core::ops::Deref;
 use core::ptr::null_mut;
 
@@ -236,10 +236,10 @@ unsafe fn raw_len(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS) ->
 ///
 /// ### Safety
 /// *   `class` might need to be a valid token information class?
-unsafe fn raw_bytes(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS) -> Result<Box<[u8]>, Error> {
+unsafe fn raw_bytes<T>(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS) -> Result<CBoxSized<T>, Error> {
     let mut size = 0;
     let r_size = unsafe { raw_len(token, class)? };
-    let mut result = Box::<[u8]>::from(vec![0u8; usize::from32(r_size)]);
+    let mut result = CBoxSized::<T>::new_oversized(unsafe{zeroed()}, usize::from32(r_size));
     Error::get_last_if(0 == unsafe { GetTokenInformation(token.as_handle(), class, result.as_mut_ptr().cast(), r_size, &mut size) })?;
     if size != r_size { return Err(Error(ERROR_INCORRECT_SIZE)) }
     Ok(result)
@@ -293,14 +293,6 @@ unsafe fn raw_bool(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS) -
 /// *   `class` might need to be a valid token information class?
 /// *   `R` should probably be bytemuck::Zeroable or equivalent
 unsafe fn raw_header<H: Copy>(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS) -> Result<impl Deref<Target = H>, Error> {
-    let bytes = unsafe { raw_bytes(token, class)? };
-    if bytes.len() < size_of::<H>() { return Err(Error(ERROR_INSUFFICIENT_BUFFER)) }
-    assert_eq!(0, (bytes.as_ptr() as usize) % align_of::<H>());
-
-    struct R<H>(Box<[u8]>, PhantomData<H>);
-    impl<H> Deref for R<H> {
-        type Target = H;
-        fn deref(&self) -> &Self::Target { unsafe { &*(self.0.as_ptr() as *const H) } }
-    }
-    Ok(R(bytes, PhantomData))
+    let cbs = unsafe { raw_bytes::<H>(token, class)? };
+    Ok(CBox::from(cbs))
 }

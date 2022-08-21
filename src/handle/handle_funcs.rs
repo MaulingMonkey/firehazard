@@ -16,6 +16,7 @@ use core::ptr::null_mut;
 ///
 /// ### Example
 /// ```
+/// # #[cfg(std)] {
 /// # use win32_security_playground::*;
 /// # use winapi::shared::winerror::*;
 /// let thread : thread::OwnedHandle = std::thread::spawn(||{}).into();
@@ -23,6 +24,7 @@ use core::ptr::null_mut;
 /// let _ : ()    = close_handle( thread ).unwrap();
 /// let e : Error = close_handle(dangling).unwrap_err();
 /// assert_eq!(ERROR_INVALID_HANDLE, e);
+/// # }
 /// ```
 pub fn close_handle(object: impl Into<handle::Owned>) -> Result<(), Error> {
     let object = object.into();
@@ -78,12 +80,14 @@ pub fn duplicate_handle<'t>(
 ///
 /// ### Example
 /// ```
+/// # #[cfg(std)] {
 /// # use win32_security_playground::*;
 /// # use winapi::shared::winerror::*;
 /// let thread : thread::OwnedHandle = std::thread::spawn(||{}).into();
 /// let info = get_handle_information(&thread).unwrap();
 /// assert_eq!(info, 0);
 /// close_handle(thread).unwrap();
+/// # }
 /// ```
 pub fn get_handle_information(object: impl AsRef<handle::Owned>) ->  Result<u32, Error> { // TODO: type
     let mut flags = 0;
@@ -96,12 +100,14 @@ pub fn get_handle_information(object: impl AsRef<handle::Owned>) ->  Result<u32,
 ///
 /// ### Example
 /// ```
+/// # #[cfg(std)] {
 /// # use win32_security_playground::*;
 /// # use winapi::shared::winerror::*;
 /// let thread : thread::OwnedHandle = std::thread::spawn(||{}).into();
 /// let info = get_handle_information(&thread).unwrap();
 /// set_handle_information(&thread, !0, info).unwrap();
 /// close_handle(thread).unwrap();
+/// # }
 /// ```
 pub fn set_handle_information(object: impl AsRef<handle::Owned>, mask: u32, flags: u32) -> Result<(), Error> { // TODO: type
     Error::get_last_if(FALSE == unsafe { SetHandleInformation(object.as_ref().as_handle(), mask, flags) })

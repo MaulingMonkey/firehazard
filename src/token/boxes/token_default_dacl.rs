@@ -1,21 +1,20 @@
 use crate::*;
+use crate::alloc::*;
 
 use winapi::um::winnt::TOKEN_DEFAULT_DACL;
 
 use core::fmt::{self, Debug, Formatter};
-use core::mem::{size_of, align_of};
 
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_default_dacl)\]
 /// ~ `Box<(TOKEN_DEFAULT_DACL, ..)>`
-pub struct BoxTokenDefaultDacl(Box<[u8]>);
+pub struct BoxTokenDefaultDacl(CBox<TOKEN_DEFAULT_DACL>);
 
 impl BoxTokenDefaultDacl {
-    pub unsafe fn from_raw(bytes: Box<[u8]>) -> Self {
-        assert!(bytes.len() >= size_of::<TOKEN_DEFAULT_DACL>());
-        assert!(bytes.as_ptr() as usize % align_of::<TOKEN_DEFAULT_DACL>() == 0);
-        Self(bytes)
+    pub unsafe fn from_raw(bytes: CBoxSized<TOKEN_DEFAULT_DACL>) -> Self {
+        // TODO: validate acl length
+        Self(bytes.into())
     }
 
     pub fn default_dacl<'s>(&'s self) -> acl::Ptr<'s> {

@@ -1,21 +1,19 @@
 use crate::*;
+use crate::alloc::*;
 
 use winapi::um::winnt::TOKEN_GROUPS_AND_PRIVILEGES;
 
 use core::fmt::{self, Debug, Formatter};
-use core::mem::{size_of, align_of};
 
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_groups_and_privileges)\] ~ `Box<(TOKEN_GROUPS_AND_PRIVILEGES, ..)>`
-pub struct BoxTokenGroupsAndPrivileges(Box<[u8]>);
+pub struct BoxTokenGroupsAndPrivileges(CBox<TOKEN_GROUPS_AND_PRIVILEGES>);
 
 impl BoxTokenGroupsAndPrivileges {
-    pub unsafe fn from_raw(bytes: Box<[u8]>) -> Self {
-        assert!(bytes.len() >= size_of::<TOKEN_GROUPS_AND_PRIVILEGES>());
-        assert!(bytes.as_ptr() as usize % align_of::<TOKEN_GROUPS_AND_PRIVILEGES>() == 0);
-        let btg = Self(bytes);
-        btg
+    pub unsafe fn from_raw(cbs: CBoxSized<TOKEN_GROUPS_AND_PRIVILEGES>) -> Self {
+        // TODO: validate fields
+        Self(cbs.into())
     }
 
     /// Sids+0 .. Sids+SidCount

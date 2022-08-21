@@ -1,20 +1,19 @@
 use crate::*;
+use crate::alloc::*;
 
 use winapi::um::winnt::TOKEN_MANDATORY_LABEL;
 
 use core::fmt::{self, Debug, Formatter};
-use core::mem::{size_of, align_of};
 
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_mandatory_label)\] ~ `Box<(TOKEN_MANDATORY_LABEL, ..)>`
-pub struct BoxTokenMandatoryLabel(Box<[u8]>);
+pub struct BoxTokenMandatoryLabel(CBox<TOKEN_MANDATORY_LABEL>);
 
 impl BoxTokenMandatoryLabel {
-    pub unsafe fn from_raw(bytes: Box<[u8]>) -> Self {
-        assert!(bytes.len() >= size_of::<sid::AndAttributes>());
-        assert!(bytes.as_ptr() as usize % align_of::<sid::AndAttributes>() == 0);
-        Self(bytes)
+    pub unsafe fn from_raw(cbs: CBoxSized<TOKEN_MANDATORY_LABEL>) -> Self {
+        // TODO: validate
+        Self(cbs.into())
     }
 
     pub fn as_winapi(&self) -> *mut TOKEN_MANDATORY_LABEL { self.0.as_ptr() as *mut _ }

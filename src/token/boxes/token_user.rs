@@ -1,18 +1,19 @@
 use crate::*;
+use crate::alloc::*;
+
+use winapi::um::winnt::TOKEN_USER;
 
 use core::fmt::{self, Debug, Formatter};
-use core::mem::{size_of, align_of};
 
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_user)\] ~ `Box<(TOKEN_USER, ..)>`
-pub struct BoxTokenUser(Box<[u8]>);
+pub struct BoxTokenUser(CBox<TOKEN_USER>);
 
 impl BoxTokenUser {
-    pub unsafe fn from_raw(bytes: Box<[u8]>) -> Self {
-        assert!(bytes.len() >= size_of::<sid::AndAttributes>());
-        assert!(bytes.as_ptr() as usize % align_of::<sid::AndAttributes>() == 0);
-        Self(bytes)
+    pub unsafe fn from_raw(cbs: CBoxSized<TOKEN_USER>) -> Self {
+        // TODO: validate
+        Self(cbs.into())
     }
 
     pub fn user<'s>(&'s self) -> &'s sid::AndAttributes<'s> {

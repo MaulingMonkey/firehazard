@@ -53,5 +53,5 @@ impl privilege::Luid {
         String::from_utf8(buf).map_err(|_| Error(ERROR_INVALID_DATA))
     }
 
-    #[cfg(not(std))] fn lookup_privilege_name_a(mut self) -> Result<&'static str, Error> { Err(Error(ERROR_OUTOFMEMORY)) }
+    #[cfg(not(std))] fn lookup_privilege_name_a(self) -> Result<&'static str, Error> { Err(Error(ERROR_OUTOFMEMORY)) }
 }
