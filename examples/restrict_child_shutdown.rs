@@ -6,7 +6,6 @@ use abistr::cstr;
 
 use winapi::shared::winerror::*;
 use winapi::um::winbase::DETACHED_PROCESS;
-use winapi::um::winnt::DISABLE_MAX_PRIVILEGE;
 
 fn main() {
     // Allowed by initial permissive token
@@ -16,14 +15,14 @@ fn main() {
     assert!(matches!(r, Ok(0)), "initial `shutdown /s /t 3600` failed: {r:?}");
 
     // Denied by DISABLE_MAX_PRIVILEGE
-    let restrictive = unsafe { create_restricted_token(&permissive, DISABLE_MAX_PRIVILEGE, None, None, None) }.unwrap();
+    let restrictive = create_restricted_token(&permissive, token::DISABLE_MAX_PRIVILEGE, None, None, None).unwrap();
     let r = shutdown_as_user("/s /t 3600", &restrictive);
     let _ = shutdown_as_user("/a", &restrictive);
     assert!(matches!(r, Ok(ERROR_ACCESS_DENIED)), "`shutdown /s /t 3600` succeeded despite trying to throw away `SeShutdownPrivilege`: {r:?}");
 
     // Denied by explicitly removing SeShutdownPrivilege
     let se_shutdown = privilege::Luid::lookup_privilege_value_a(cstr!("SeShutdownPrivilege")).unwrap();
-    let restrictive = unsafe { create_restricted_token(&permissive, 0, None, Some(&[privilege::LuidAndAttributes::new(se_shutdown, 0)]), None) }.unwrap();
+    let restrictive = create_restricted_token(&permissive, None, None, Some(&[privilege::LuidAndAttributes::new(se_shutdown, 0)]), None).unwrap();
     let r = shutdown_as_user("/s /t 3600", &restrictive);
     let _ = shutdown_as_user("/a", &restrictive);
     assert!(matches!(r, Ok(ERROR_ACCESS_DENIED)), "`shutdown /s /t 3600` succeeded despite trying to throw away `SeShutdownPrivilege`: {r:?}");

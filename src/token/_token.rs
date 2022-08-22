@@ -23,6 +23,7 @@ mod values {
     mod token_elevation_type;           pub use token_elevation_type::*;
     mod token_elevation;                pub use token_elevation::*;
     mod token_mandatory_policy;         pub use token_mandatory_policy::*;
+    mod token_restricted_flags;         pub use token_restricted_flags::*;
     mod token_source;                   pub use token_source::*;
     mod token_type;                     pub use token_type::*;
 }

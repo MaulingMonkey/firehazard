@@ -1,12 +1,8 @@
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-createrestrictedtoken)\]
 /// CreateRestrictedToken
-///
-/// ### Safety
-/// *   `flags` might need to be valid?
-/// *   excessive slice lengths might cause buffer overflows?
-pub unsafe fn create_restricted_token(
+pub fn create_restricted_token(
     existing_token_handle:  &crate::token::OwnedHandle,
-    flags:                  u32,
+    flags:                  impl Into<crate::token::RestrictedFlags>,
     sids_to_disable:        Option<&[crate::sid::AndAttributes]>,
     privileges_to_delete:   Option<&[crate::privilege::LuidAndAttributes]>,
     sids_to_restrict:       Option<&[crate::sid::AndAttributes]>,
@@ -18,7 +14,7 @@ pub unsafe fn create_restricted_token(
     let mut new_handle = null_mut();
     Error::get_last_if(0 == unsafe { winapi::um::securitybaseapi::CreateRestrictedToken(
         existing_token_handle.as_handle(),
-        flags,
+        flags.into().into(),
         u32::try_from(sids_to_disable.map_or(0, |s| s.len())).map_err(|_| Error(ERROR_INVALID_PARAMETER))?,
         sids_to_disable.map_or(null_mut(), |s| s.as_ptr() as *mut _),
         u32::try_from(privileges_to_delete.map_or(0, |s| s.len())).map_err(|_| Error(ERROR_INVALID_PARAMETER))?,
@@ -32,12 +28,9 @@ pub unsafe fn create_restricted_token(
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-createrestrictedtoken)\]
 /// [create_restricted_token] + [get_token_information::groups_and_privileges]
-///
-/// ### Safety
-/// *   `flags` might need to be valid?
-pub unsafe fn create_restricted_token_filter(
+pub fn create_restricted_token_filter(
     existing_token_handle:  &crate::token::OwnedHandle,
-    flags:                  u32,
+    flags:                  impl Into<crate::token::RestrictedFlags>,
     sids_to_disable:        impl FnMut(&crate::sid::AndAttributes           ) -> bool,
     privileges_to_delete:   impl FnMut(&crate::privilege::LuidAndAttributes ) -> bool,
     sids_to_restrict:       Option<&[crate::sid::AndAttributes]>,
@@ -50,5 +43,5 @@ pub unsafe fn create_restricted_token_filter(
     let sids_to_disable         = &gap.sids()[..sids];
     let privileges_to_delete    = &gap.privileges()[..privs];
 
-    unsafe { create_restricted_token(existing_token_handle, flags, Some(sids_to_disable), Some(privileges_to_delete), sids_to_restrict) }
+    create_restricted_token(existing_token_handle, flags, Some(sids_to_disable), Some(privileges_to_delete), sids_to_restrict)
 }

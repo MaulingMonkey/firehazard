@@ -141,21 +141,21 @@ fn run(context: &Context, target: Target) {
     let gap = sandbox_process_token.groups_and_privileges().unwrap();
     let all_group_sids = gap.sids().iter().map(|g| g.sid).collect::<Vec<_>>();
 
-    let permissive = unsafe { create_restricted_token_filter(
+    let permissive = create_restricted_token_filter(
         &sandbox_process_token,
-        0,
+        None,
         |saa| !target.spawn.enabled.iter().any(|e| *saa.sid == **e),
         |p| !target.spawn.privileges.contains(&p.luid),
         Some(&target.spawn.restricted.as_ref().unwrap_or(&all_group_sids).iter().copied().map(|r| sid::AndAttributes::new(r, 0)).collect::<Vec<_>>()[..]),
-    )}.unwrap();
+    ).unwrap();
 
-    let restricted = unsafe { create_restricted_token_filter(
+    let restricted = create_restricted_token_filter(
         &sandbox_process_token,
-        0,
+        None,
         |saa| !target.lockdown.enabled.iter().any(|e| *saa.sid == **e),
         |p| !target.lockdown.privileges.contains(&p.luid),
         Some(&target.lockdown.restricted.as_ref().unwrap_or(&all_group_sids).iter().copied().map(|r| sid::AndAttributes::new(r, 0)).collect::<Vec<_>>()[..]),
-    )}.unwrap();
+    ).unwrap();
 
     permissive.set_integrity_level(sid::AndAttributes::new(target.spawn.integrity.sid(), 0)).unwrap();
     restricted.set_integrity_level(sid::AndAttributes::new(target.spawn.integrity.sid(), 0)).unwrap(); // lower child token to target.lockdown.integrity post-spawn

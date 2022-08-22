@@ -3,7 +3,6 @@
 #[cfg(feature = "std")] use abistr::cstr16;
 
 #[cfg(feature = "std")] use winapi::um::winbase::*;
-#[cfg(feature = "std")] use winapi::um::winnt::*;
 
 #[cfg(feature = "std")] use std::ffi::OsStr;
 #[cfg(feature = "std")] use std::os::windows::prelude::OsStrExt;
@@ -36,7 +35,7 @@ fn default(exe: &OsStr) {
     //let privileges_to_remove = None;
 
     let groups = t.groups().unwrap();
-    let mut logon_session_sids = groups.groups().iter().filter(|g| g.attributes & SE_GROUP_LOGON_ID != 0).copied();
+    let mut logon_session_sids = groups.groups().iter().filter(|g| g.attributes & winapi::um::winnt::SE_GROUP_LOGON_ID != 0).copied();
     let logon_session_sid = logon_session_sids.next().expect("logon_session_sid").sid;
     assert!(logon_session_sids.next().is_none(), "multiple logon session SIDs?");
 
@@ -63,7 +62,7 @@ fn default(exe: &OsStr) {
     ];
 
     //  1. Create the more permissive token used to initialize DLLs and run pre-main stuff.
-    let permissive = unsafe { create_restricted_token(&t, DISABLE_MAX_PRIVILEGE, None, None, Some(&permissive_to_restrict)) }.unwrap();
+    let permissive = create_restricted_token(&t, token::DISABLE_MAX_PRIVILEGE, None, None, Some(&permissive_to_restrict)).unwrap();
     // untrusted integrity will cause `bcrypt.dll` to fail to load with 0xC0000142 / ERROR_DLL_INIT_FAILED, so launch with low integrity instead
     let low_integrity = sid::AndAttributes::new(sid!(S-1-16-4096), 0);
     permissive.set_integrity_level(low_integrity).unwrap();
@@ -84,7 +83,7 @@ fn default(exe: &OsStr) {
         || (crt_dynamic && equal_sid(g.sid, sid!(S-1-5-32-545)))    // Users
     )).collect::<Vec<_>>();
 
-    let restricted = unsafe { create_restricted_token(&t, 0, Some(&to_disable), privileges_to_remove, Some(&restrictive_to_restrict)) }.unwrap();
+    let restricted = create_restricted_token(&t, None, Some(&to_disable), privileges_to_remove, Some(&restrictive_to_restrict)).unwrap();
     //let untrusted_integrity = sid::AndAttributes::new(sid!(S-1-16-0), 0);
     restricted.set_integrity_level(low_integrity).unwrap(); // going directly to untrusted seems to cause the child to exit STATUS_BAD_IMPERSONATION_LEVEL
     //let restricted = duplicate_token_ex(&restricted, token::ALL_ACCESS, None, security::Impersonation, token::Primary).unwrap();
