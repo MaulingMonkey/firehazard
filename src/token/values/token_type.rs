@@ -24,9 +24,11 @@ impl Type {
     pub const Impersonation : Type = Type(TokenImpersonation);
 }
 
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-duplicatetokenex)\]
 /// TokenPrimary
 pub const Primary       : Type = Type(TokenPrimary);
 
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-duplicatetokenex)\]
 /// TokenImpersonation
 pub const Impersonation : Type = Type(TokenImpersonation);
 
