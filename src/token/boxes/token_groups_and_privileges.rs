@@ -16,19 +16,28 @@ impl BoxTokenGroupsAndPrivileges {
         Self(cbs.into())
     }
 
-    /// Sids+0 .. Sids+SidCount
-    pub fn sids(&self) -> &[sid::AndAttributes] { unsafe { core::slice::from_raw_parts(self.header().Sids.cast(), usize::from32(self.header().SidCount)) } }
+    /// Sids[.. SidCount]
+    pub fn sids    (&    self) -> &    [sid::AndAttributes] { unsafe { core::slice::from_raw_parts    (self.header().Sids.cast(), usize::from32(self.header().SidCount)) } }
+    /// Sids[.. SidCount]
+    pub fn sids_mut(&mut self) -> &mut [sid::AndAttributes] { unsafe { core::slice::from_raw_parts_mut(self.header().Sids.cast(), usize::from32(self.header().SidCount)) } }
 
-    /// RestrictedSids+0 .. RestrictedSids+RestrictedSidCount
-    pub fn restricted_sids(&self) -> &[sid::AndAttributes] { unsafe { core::slice::from_raw_parts(self.header().RestrictedSids.cast(), usize::from32(self.header().RestrictedSidCount)) } }
+    /// RestrictedSids[.. RestrictedSidCount]
+    pub fn restricted_sids    (&    self) -> &    [sid::AndAttributes] { unsafe { core::slice::from_raw_parts    (self.header().RestrictedSids.cast(), usize::from32(self.header().RestrictedSidCount)) } }
+    /// RestrictedSids[.. RestrictedSidCount]
+    pub fn restricted_sids_mut(&mut self) -> &mut [sid::AndAttributes] { unsafe { core::slice::from_raw_parts_mut(self.header().RestrictedSids.cast(), usize::from32(self.header().RestrictedSidCount)) } }
 
-    /// Privileges+0 .. Privileges+PrivilegeCount
-    pub fn privileges(&self) -> &[privilege::LuidAndAttributes] { unsafe { core::slice::from_raw_parts(self.header().Privileges.cast(), usize::from32(self.header().PrivilegeCount)) } }
+    /// Privileges[.. PrivilegeCount]
+    pub fn privileges    (&    self) -> &    [privilege::LuidAndAttributes] { unsafe { core::slice::from_raw_parts    (self.header().Privileges.cast(), usize::from32(self.header().PrivilegeCount)) } }
+    /// Privileges[.. PrivilegeCount]
+    pub fn privileges_mut(&mut self) -> &mut [privilege::LuidAndAttributes] { unsafe { core::slice::from_raw_parts_mut(self.header().Privileges.cast(), usize::from32(self.header().PrivilegeCount)) } }
 
-    /// AuthenticationIds
+    /// AuthenticationId
     pub fn authentication_id(&self) -> Luid { self.header().AuthenticationId.into() }
+    /// AuthenticationId
+    pub fn set_authentication_id(&mut self, luid: impl Into<Luid>) { self.header_mut().AuthenticationId = luid.into().into(); }
 
-    fn header(&self) -> &TOKEN_GROUPS_AND_PRIVILEGES { unsafe { &*self.0.as_ptr().cast() } }
+    fn header    (&    self) -> &    TOKEN_GROUPS_AND_PRIVILEGES { &    *self.0 }
+    fn header_mut(&mut self) -> &mut TOKEN_GROUPS_AND_PRIVILEGES { &mut *self.0 }
 }
 
 impl Debug for BoxTokenGroupsAndPrivileges {
