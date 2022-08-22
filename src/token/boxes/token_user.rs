@@ -16,8 +16,9 @@ impl BoxTokenUser {
         Self(cbs.into())
     }
 
+    /// User
     pub fn user<'s>(&'s self) -> &'s sid::AndAttributes<'s> {
-        unsafe { &*(self.0.as_ptr() as *const sid::AndAttributes) }
+        unsafe { &*(&self.0.User as *const _ as *const sid::AndAttributes) }
     }
 }
 

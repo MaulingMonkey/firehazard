@@ -16,13 +16,14 @@ impl BoxTokenPrimaryGroup {
         Self(cbs.into())
     }
 
-    pub fn primary_group<'s>(&'s self) -> &'s sid::Ptr<'s> {
-        unsafe { &*(self.0.as_ptr() as *const sid::Ptr) }
+    /// PrimaryGroup
+    pub fn primary_group<'s>(&'s self) -> sid::Ptr<'s> {
+        unsafe { sid::Ptr::from_raw_unchecked(self.0.PrimaryGroup.cast()) }
     }
 }
 
 impl Debug for BoxTokenPrimaryGroup {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-        fmt.debug_struct("BoxTokenPrimaryGroup").field("primary_group", self.primary_group()).finish()
+        fmt.debug_struct("BoxTokenPrimaryGroup").field("primary_group", &self.primary_group()).finish()
     }
 }

@@ -16,13 +16,14 @@ impl BoxTokenOwner {
         Self(cbs.into())
     }
 
-    pub fn owner<'s>(&'s self) -> &'s sid::Ptr<'s> {
-        unsafe { &*(self.0.as_ptr() as *const sid::Ptr) }
+    /// Owner
+    pub fn owner<'s>(&'s self) -> sid::Ptr<'s> {
+        unsafe { sid::Ptr::from_raw_unchecked(self.0.Owner.cast()) }
     }
 }
 
 impl Debug for BoxTokenOwner {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-        fmt.debug_struct("BoxTokenOwner").field("owner", self.owner()).finish()
+        fmt.debug_struct("BoxTokenOwner").field("owner", &self.owner()).finish()
     }
 }

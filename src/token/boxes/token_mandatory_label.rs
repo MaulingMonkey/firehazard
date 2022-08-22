@@ -19,11 +19,11 @@ impl BoxTokenMandatoryLabel {
     pub fn as_winapi(&self) -> *mut TOKEN_MANDATORY_LABEL { self.0.as_ptr() as *mut _ }
 
     pub fn label<'s>(&'s self) -> &'s sid::AndAttributes<'s> {
-        unsafe { &*(self.0.as_ptr() as *const sid::AndAttributes) }
+        unsafe { &*(&self.0.Label as *const _ as *const sid::AndAttributes) }
     }
 
     pub fn label_mut<'s>(&'s mut self) -> &'s mut sid::AndAttributes<'s> {
-        unsafe { &mut *(self.0.as_mut_ptr() as *mut sid::AndAttributes) }
+        unsafe { &mut *(&mut self.0.Label as *mut _ as *mut sid::AndAttributes) }
     }
 }
 

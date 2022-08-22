@@ -17,8 +17,9 @@ impl BoxTokenDefaultDacl {
         Self(bytes.into())
     }
 
+    /// DefaultDacl
     pub fn default_dacl<'s>(&'s self) -> acl::Ptr<'s> {
-        unsafe { acl::Ptr::from_raw_unchecked((*(self.0.as_ptr() as *const TOKEN_DEFAULT_DACL)).DefaultDacl) }
+        unsafe { acl::Ptr::from_raw_unchecked(self.0.DefaultDacl) }
     }
 }
 

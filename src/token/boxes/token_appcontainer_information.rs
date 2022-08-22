@@ -16,13 +16,14 @@ impl BoxTokenAppcontainerInformation {
         Self(cbs.into())
     }
 
-    pub fn token_app_container<'s>(&'s self) -> &'s sid::Ptr<'s> {
-        unsafe { &*(self.0.as_ptr() as *const sid::Ptr) }
+    /// TokenAppContainer
+    pub fn token_app_container<'s>(&'s self) -> sid::Ptr<'s> {
+        unsafe { sid::Ptr::from_raw_unchecked(self.0.TokenAppContainer.cast()) }
     }
 }
 
 impl Debug for BoxTokenAppcontainerInformation {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-        fmt.debug_struct("BoxTokenAppcontainerInformation").field("token_app_container", self.token_app_container()).finish()
+        fmt.debug_struct("BoxTokenAppcontainerInformation").field("token_app_container", &self.token_app_container()).finish()
     }
 }
