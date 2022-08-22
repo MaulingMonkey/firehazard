@@ -1,4 +1,4 @@
-use win32_security_playground::*;
+use sandbox::windows::ffi::*;
 
 use abistr::cstr;
 

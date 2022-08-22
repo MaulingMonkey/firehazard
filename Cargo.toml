@@ -22,10 +22,10 @@ lto                         = true
 
 [features]
 default                     = ["std"]
-std                         = ["sandbox-windows/std"]
+std                         = ["sandbox/std"]
 
 [dependencies]
-sandbox-windows.path        = "crates/sandbox-windows"
+sandbox.path                = "crates/sandbox"
 
 #abistr.version              = "0.2.0-rc2"
 abistr.default-features     = false

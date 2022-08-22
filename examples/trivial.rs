@@ -2,7 +2,7 @@
 #![cfg_attr(nightly, no_std)]
 #![cfg_attr(nightly, no_main)]
 
-use win32_security_playground::*;
+use sandbox::windows::ffi::*;
 use abistr::*;
 
 #[cfg(not(nightly))] fn main() { run() }

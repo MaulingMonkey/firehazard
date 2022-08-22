@@ -1,4 +1,4 @@
-#[cfg(feature = "std")] use win32_security_playground::*;
+#[cfg(feature = "std")] use sandbox::windows::ffi::*;
 
 #[cfg(feature = "std")] use abistr::cstr16;
 

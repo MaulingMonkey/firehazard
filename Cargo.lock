@@ -23,6 +23,13 @@ version = "0.0.0-git"
 source = "git+https://github.com/MaulingMonkey/abistr?rev=be791b8c6f78fe2399d3f2d0549c43cbe5d74d04#be791b8c6f78fe2399d3f2d0549c43cbe5d74d04"
 
 [[package]]
+name = "sandbox"
+version = "0.0.0-git"
+dependencies = [
+ "sandbox-windows",
+]
+
+[[package]]
 name = "sandbox-windows"
 version = "0.0.0-git"
 dependencies = [
@@ -49,7 +56,7 @@ name = "win32_security_playground"
 version = "0.0.0-git"
 dependencies = [
  "abistr",
- "sandbox-windows",
+ "sandbox",
  "winapi",
 ]
 

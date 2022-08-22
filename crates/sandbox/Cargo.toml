@@ -1,0 +1,16 @@
+# https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[package]
+name                        = "sandbox"
+version                     = "0.0.0-git"
+publish                     = false
+authors                     = ["MaulingMonkey <git@maulingmonkey.com>"]
+edition                     = "2021"
+license                     = "Apache-2.0 OR MIT"
+#readme                      = "Readme.md"
+
+[features]
+std                         = ["sandbox-windows/std"]
+
+[dependencies]
+sandbox-windows.path        = "../sandbox-windows"
