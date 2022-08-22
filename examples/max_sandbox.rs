@@ -166,7 +166,7 @@ fn run(context: &Context, target: Target) {
     let si = process::StartupInfoW { desktop: None, flags: STARTF_UNTRUSTEDSOURCE, .. Default::default() };
     let pi = with_thread_desktop(desktop, || create_process_as_user_w(
         &restricted, (), Some(unsafe { command_line.buffer_mut() }), None, None, false,
-        process::DEBUG_PROCESS | process::CREATE_SEPARATE_WOW_VDM | process::CREATE_SUSPENDED, None, (), &si
+        process::DEBUG_PROCESS | process::CREATE_SEPARATE_WOW_VDM | process::CREATE_SUSPENDED, Some(&[0,0][..]), (), &si
     ).unwrap()).unwrap();
     set_thread_token(&pi.thread, &permissive).unwrap();
     resume_thread(&pi.thread).unwrap();
