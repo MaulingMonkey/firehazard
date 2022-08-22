@@ -2,7 +2,7 @@
 
 #[cfg(feature = "std")] use abistr::cstr16;
 
-#[cfg(feature = "std")] use winapi::um::winbase::*;
+#[cfg(feature = "std")] use winapi::um::winbase::STARTF_UNTRUSTEDSOURCE;
 
 #[cfg(feature = "std")] use std::ffi::OsStr;
 #[cfg(feature = "std")] use std::os::windows::prelude::OsStrExt;
@@ -104,13 +104,13 @@ fn default(exe: &OsStr) {
     // let exe = OsStr::new(r"C:\local\minimal\main.exe");
     let mut command_line = abistr::CStrBuf::<u16, 32768>::from_truncate(&exe.encode_wide().chain(cstr16!(" launched_low_integrity").to_units_with_nul().iter().copied()).collect::<Vec<_>>());
 
-    let creation_flags = 0
+    let creation_flags = process::CreationFlags::default()
         // | CREATE_DEFAULT_ERROR_MODE // hard errors? consider setting the local thread's error mode instead for finer control?
         //| DETACHED_PROCESS // | CREATE_NEW_CONSOLE | CREATE_NO_WINDOW // TODO: use one of these to secure console access?
         // | CREATE_PRESERVE_CODE_AUTHZ_LEVEL
         // | CREATE_SECURE_PROCESS // TODO: use to secure process more?
-        | CREATE_SEPARATE_WOW_VDM // secure 16-bit nonsense
-        | CREATE_SUSPENDED
+        | process::CREATE_SEPARATE_WOW_VDM // secure 16-bit nonsense
+        | process::CREATE_SUSPENDED
         ;
 
     // TODO: use STARTUPINFOEXW to specify thread attributes
@@ -125,10 +125,10 @@ fn default(exe: &OsStr) {
         .. Default::default()
     };
 
-    let process_info = unsafe { create_process_as_user_w(
+    let process_info = create_process_as_user_w(
         &restricted,
         &*exe.to_string_lossy(), // XXX: simplify if/when abistr gets OsStr support: https://github.com/MaulingMonkey/abistr/issues/9
-        Some(command_line.buffer_mut()),
+        Some(unsafe { command_line.buffer_mut() }),
         None, // process security attributes
         None, // thread security attributes
         false, // inherit inheriable handles
@@ -136,7 +136,7 @@ fn default(exe: &OsStr) {
         None, // environment
         (), // working dir
         &startup_info,
-    )}.expect("CreateProcessAsUserW");
+    ).expect("CreateProcessAsUserW");
 
     // temporarilly allow the child process's main thread to have more permissions to initialize DLLs etc.s
     set_thread_token(&process_info.thread, &permissive).unwrap();

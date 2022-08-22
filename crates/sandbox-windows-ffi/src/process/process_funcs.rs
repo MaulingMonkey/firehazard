@@ -22,17 +22,14 @@ fn _create_process_a() -> Result<process::Information, Error> { unimplemented!()
 fn _create_process_w() -> Result<process::Information, Error> { unimplemented!() }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasusera)\] CreateProcessAsUserA
-///
-/// ### Safety
-/// *   `creation_flags`    Is unvalidated as heck
-pub unsafe fn create_process_as_user_a(
+pub fn create_process_as_user_a(
     token:                  &crate::token::OwnedHandle,
     application_name:       impl TryIntoAsOptCStr,
     command_line:           Option<&[u8]>,
     process_attributes:     Option<&security::Attributes>,
     thread_attributes:      Option<&security::Attributes>,
     inherit_handles:        bool,
-    creation_flags:         u32,                        // TODO: type
+    creation_flags:         impl Into<process::CreationFlags>,
     environment:            Option<&[u8]>,              // TODO: type to reduce validation needs (expected to be NUL separated, 2xNUL terminated: "key=value\0key=value\0\0")
     current_directory:      impl TryIntoAsOptCStr,
     startup_info:           &impl process::AsStartupInfoA,
@@ -62,7 +59,7 @@ pub unsafe fn create_process_as_user_a(
         process_attributes.map_or(null(), |a| a) as *mut _,
         thread_attributes.map_or(null(), |a| a) as *mut _,
         inherit_handles as _,
-        creation_flags,
+        creation_flags.into().into(),
         environment.map_or(null(), |e| e.as_ptr()) as *mut _,
         current_directory.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
         startup_info.as_winapi()?,
@@ -72,10 +69,7 @@ pub unsafe fn create_process_as_user_a(
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasuserw)\] CreateProcessAsUserW
-///
-/// ### Safety
-/// *   `creation_flags`    Is unvalidated as heck
-pub unsafe fn create_process_as_user_w(
+pub fn create_process_as_user_w(
     token:                  &crate::token::OwnedHandle,
     application_name:       impl TryIntoAsOptCStr<u16>,
     // "The Unicode version of this function, CreateProcessAsUserW, can modify the contents of this string.
@@ -85,7 +79,7 @@ pub unsafe fn create_process_as_user_w(
     process_attributes:     Option<&security::Attributes>,
     thread_attributes:      Option<&security::Attributes>,
     inherit_handles:        bool,
-    creation_flags:         u32,                        // TODO: type
+    creation_flags:         impl Into<process::CreationFlags>,
     environment:            Option<&[u16]>,             // TODO: type to reduce validation needs (expected to be NUL separated, 2xNUL terminated: "key=value\0key=value\0\0")
     current_directory:      impl TryIntoAsOptCStr<u16>,
     startup_info:           &impl process::AsStartupInfoW,
@@ -101,7 +95,7 @@ pub unsafe fn create_process_as_user_w(
         process_attributes.map_or(null(), |a| a) as *mut _,
         thread_attributes.map_or(null(), |a| a) as *mut _,
         inherit_handles as _,
-        creation_flags,
+        creation_flags.into().into(),
         environment.map_or(null(), |e| e.as_ptr()) as *mut _,
         current_directory.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
         startup_info.as_winapi()?,

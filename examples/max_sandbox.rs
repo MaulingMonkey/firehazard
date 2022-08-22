@@ -164,10 +164,10 @@ fn run(context: &Context, target: Target) {
     let desktop = if target.allow.same_desktop { &context.main_desktop } else { &context.alt_desktop };
     let mut command_line = abistr::CStrBuf::<u16, 32768>::from_truncate(&target.exe.as_os_str().encode_wide().chain(Some(0)).collect::<Vec<_>>());
     let si = process::StartupInfoW { desktop: None, flags: STARTF_UNTRUSTEDSOURCE, .. Default::default() };
-    let pi = with_thread_desktop(desktop, || unsafe { create_process_as_user_w(
-        &restricted, (), Some(command_line.buffer_mut()), None, None, false,
-        DEBUG_PROCESS | CREATE_SEPARATE_WOW_VDM | CREATE_SUSPENDED, None, (), &si
-    ).unwrap() }).unwrap();
+    let pi = with_thread_desktop(desktop, || create_process_as_user_w(
+        &restricted, (), Some(unsafe { command_line.buffer_mut() }), None, None, false,
+        process::DEBUG_PROCESS | process::CREATE_SEPARATE_WOW_VDM | process::CREATE_SUSPENDED, None, (), &si
+    ).unwrap()).unwrap();
     set_thread_token(&pi.thread, &permissive).unwrap();
     resume_thread(&pi.thread).unwrap();
 

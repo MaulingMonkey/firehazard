@@ -5,7 +5,6 @@ use sandbox::windows::ffi::*;
 use abistr::cstr;
 
 use winapi::shared::winerror::*;
-use winapi::um::winbase::DETACHED_PROCESS;
 
 fn main() {
     // Allowed by initial permissive token
@@ -31,6 +30,6 @@ fn main() {
 fn shutdown_as_user(args: &str, token: &token::OwnedHandle) -> Result<u32, Error> {
     let mut args = format!("shutdown {args}\0").encode_utf16().collect::<Vec<_>>();
     let si = process::StartupInfoW::default();
-    let cmd = unsafe { create_process_as_user_w(token, (), Some(&mut args[..]), None, None, false, DETACHED_PROCESS, None, (), &si)}?;
+    let cmd = create_process_as_user_w(token, (), Some(&mut args[..]), None, None, false, process::DETACHED_PROCESS, None, (), &si)?;
     wait_for_process(cmd.process)
 }

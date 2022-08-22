@@ -3,6 +3,7 @@
 
 #[path = "process_funcs.rs"]
 pub(crate) mod funcs;                   pub use funcs::*;
+mod process_creation_flags;             pub use process_creation_flags::*;
 mod process_handle;                     pub use process_handle::*;
 mod process_information;                pub use process_information::*;
 mod process_owned_handle;               pub use process_owned_handle::*;
