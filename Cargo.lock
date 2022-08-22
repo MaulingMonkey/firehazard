@@ -4,8 +4,9 @@ version = 3
 
 [[package]]
 name = "abibool"
-version = "0.0.0-git"
-source = "git+https://github.com/MaulingMonkey/abibool?rev=7998497f56ec339d1cf2ea70532d55550b2380f3#7998497f56ec339d1cf2ea70532d55550b2380f3"
+version = "0.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0bd30f59e066010fda3421085177545205e1fd063de54700e9c7a6ceffad2e5e"
 
 [[package]]
 name = "abistr"

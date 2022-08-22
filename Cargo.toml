@@ -23,9 +23,9 @@ std                         = ["abistr/std", "abistr/widestring"]
 
 [dependencies]
 
-#abibool                     = "0.5.3"
-abibool.git                 = "https://github.com/MaulingMonkey/abibool"
-abibool.rev                 = "7998497f56ec339d1cf2ea70532d55550b2380f3"
+abibool                     = "0.5.3"
+#abibool.git                 = "https://github.com/MaulingMonkey/abibool"
+#abibool.rev                 = "7998497f56ec339d1cf2ea70532d55550b2380f3"
 
 #abistr.version              = "0.2.0-rc2"
 abistr.default-features     = false
