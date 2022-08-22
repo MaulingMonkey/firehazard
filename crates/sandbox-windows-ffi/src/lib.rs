@@ -21,7 +21,7 @@
 #[path = "token/_token.rs"]             pub mod token;          #[doc(hidden)] pub use token::funcs::*;
 #[path = "winsta/_winsta.rs"]           pub mod winsta;         #[doc(hidden)] pub use winsta::funcs::*;
 
-pub mod error;                  #[doc(hidden)] pub use error::*;
+mod error;                              pub use error::*;
 
 pub(crate) use util::*;
 mod util {
