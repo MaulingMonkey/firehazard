@@ -4,8 +4,16 @@
 ::cargo +nightly build --no-default-features --example trivial
 ::@if ERRORLEVEL 1 goto :die
 
-cargo +nightly build --release --no-default-features --example trivial
-@if ERRORLEVEL 1 goto :die
+@cargo +nightly --version >NUL 2>NUL || goto :skip-nightly
+    cargo +nightly build --release --no-default-features --example trivial
+    @if ERRORLEVEL 1 goto :die
+
+    @setlocal
+    @call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat" >NUL
+    @echo on
+    @dumpbin /NOLOGO /IMPORTS target\release\examples\trivial.exe
+    @endlocal
+:skip-nightly
 
 cargo test
 @if ERRORLEVEL 1 goto :die
