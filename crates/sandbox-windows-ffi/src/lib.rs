@@ -1,3 +1,5 @@
+//! [Microsoft Windows](https://en.wikipedia.org/wiki/Microsoft_Windows) specific lower level sandboxing + support APIs
+
 #![cfg_attr(not(std), no_std)]
 #![forbid(unsafe_op_in_unsafe_fn)]
 #![deny(unreachable_patterns)]

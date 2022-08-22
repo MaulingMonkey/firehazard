@@ -138,12 +138,13 @@ pub fn get_exit_code_process(process: impl AsRef<process::Handle>) -> Result<u32
     Ok(exit_code)
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] `WaitForSingleObject(process, 0) == WAIT_TIMEOUT`
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(process, 0) == WAIT_TIMEOUT
 pub fn is_process_running(process: impl AsRef<process::Handle>) -> bool {
     WAIT_TIMEOUT == unsafe { WaitForSingleObject(process.as_ref().as_handle(), 0) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] `WaitForSingleObject(process, INFINITE)` + `GetExitCodeProcess`
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(process, INFINITE) +<br>
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodeprocess)\] GetExitCodeProcess
 pub fn wait_for_process(process: impl AsRef<process::Handle>) -> Result<u32, Error> {
     match unsafe { WaitForSingleObject(process.as_ref().as_handle(), INFINITE) } {
         WAIT_OBJECT_0       => {},

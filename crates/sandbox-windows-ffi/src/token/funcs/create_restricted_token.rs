@@ -26,8 +26,8 @@ pub fn create_restricted_token(
     Ok(unsafe { token::OwnedHandle::from_raw(new_handle) })
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-createrestrictedtoken)\]
-/// [create_restricted_token] + [get_token_information::groups_and_privileges]
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] GetTokenInformation(self, TokenGroupsAndPrivileges, ...) +<br>
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-createrestrictedtoken)\] CreateRestrictedToken
 pub fn create_restricted_token_filter(
     existing_token_handle:  &crate::token::OwnedHandle,
     flags:                  impl Into<crate::token::RestrictedFlags>,

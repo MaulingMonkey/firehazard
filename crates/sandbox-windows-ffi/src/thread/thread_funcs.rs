@@ -33,12 +33,13 @@ pub fn get_exit_code_thread(thread: impl AsRef<thread::Handle>) -> Result<u32, E
     Ok(exit_code)
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] `WaitForSingleObject(thread, 0) == WAIT_TIMEOUT`
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(thread, 0) == WAIT_TIMEOUT
 pub fn is_thread_running(thread: impl AsRef<thread::Handle>) -> bool {
     WAIT_TIMEOUT == unsafe { WaitForSingleObject(thread.as_ref().as_handle(), 0) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] `WaitForSingleObject(thread, INFINITE)` + `GetExitCodeThread`
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(thread, INFINITE) +<br>
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodethread)\] GetExitCodeThread
 pub fn wait_for_thread(thread: impl AsRef<thread::Handle>) -> Result<u32, Error> {
     match unsafe { WaitForSingleObject(thread.as_ref().as_handle(), INFINITE) } {
         WAIT_OBJECT_0       => {},
@@ -50,7 +51,7 @@ pub fn wait_for_thread(thread: impl AsRef<thread::Handle>) -> Result<u32, Error>
     get_exit_code_thread(thread)
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitthread)\] `ExitThread`
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitthread)\] ExitThread
 pub fn exit_thread(exit_code: u32) { unsafe { ExitThread(exit_code) } }
 
 #[cfg(std)] #[test] fn test_wait_exit() {
