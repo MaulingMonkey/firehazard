@@ -2,7 +2,7 @@
 ///
 /// ### Example
 /// ```
-/// # use win32_security_playground::*;
+/// # use sandbox_windows_ffi::*;
 /// let token : token::OwnedHandle = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
 /// ```
 ///

@@ -2,7 +2,7 @@
 ///
 /// ### Example
 /// ```
-/// # use win32_security_playground::*;
+/// # use sandbox_windows_ffi::*;
 /// # use winapi::shared::winerror::*;
 /// assert_eq!(open_thread_token(get_current_thread(), token::ALL_ACCESS, false).unwrap_err(), ERROR_NO_TOKEN);
 /// // TODO: set/verify token and unwrap some

@@ -5,7 +5,7 @@
 ///
 /// ### Example
 /// ```
-/// # use win32_security_playground::*;
+/// # use sandbox_windows_ffi::*;
 /// heap_enable_termination_on_corruption().unwrap();
 /// ```
 ///

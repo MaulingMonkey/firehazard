@@ -15,7 +15,7 @@
     @endlocal
 :skip-nightly
 
-cargo test
+cargo test --workspace
 @if ERRORLEVEL 1 goto :die
 
 cargo build --examples

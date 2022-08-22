@@ -17,7 +17,7 @@ use core::ptr::null_mut;
 /// ### Example
 /// ```
 /// # #[cfg(std)] {
-/// # use win32_security_playground::*;
+/// # use sandbox_windows_ffi::*;
 /// # use winapi::shared::winerror::*;
 /// let thread : thread::OwnedHandle = std::thread::spawn(||{}).into();
 /// let dangling = unsafe { thread::OwnedHandle::from_raw_unchecked(thread.as_handle()) };
@@ -81,7 +81,7 @@ pub fn duplicate_handle<'t>(
 /// ### Example
 /// ```
 /// # #[cfg(std)] {
-/// # use win32_security_playground::*;
+/// # use sandbox_windows_ffi::*;
 /// # use winapi::shared::winerror::*;
 /// let thread : thread::OwnedHandle = std::thread::spawn(||{}).into();
 /// let info = get_handle_information(&thread).unwrap();
@@ -101,7 +101,7 @@ pub fn get_handle_information(object: impl AsRef<handle::Owned>) ->  Result<u32,
 /// ### Example
 /// ```
 /// # #[cfg(std)] {
-/// # use win32_security_playground::*;
+/// # use sandbox_windows_ffi::*;
 /// # use winapi::shared::winerror::*;
 /// let thread : thread::OwnedHandle = std::thread::spawn(||{}).into();
 /// let info = get_handle_information(&thread).unwrap();

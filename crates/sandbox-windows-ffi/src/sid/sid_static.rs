@@ -8,7 +8,7 @@ use winapi::um::winnt::{SID_IDENTIFIER_AUTHORITY, SID_MAX_SUB_AUTHORITIES};
 ///
 /// ### Examples
 /// ```
-/// # use win32_security_playground::*;
+/// # use sandbox_windows_ffi::*;
 /// let null_sid : sid::Ptr<'static>    = sid!(S-1-0-0);
 /// let untrusted_integrity_level       = sid!(S-1-16-0);
 /// let nt_administrators               = sid!(S-1-5-32-544); // stable?
@@ -20,7 +20,7 @@ use winapi::um::winnt::{SID_IDENTIFIER_AUTHORITY, SID_MAX_SUB_AUTHORITIES};
 ///
 /// ### Compile Error
 /// ```no_compile
-/// # use win32_security_playground::*;
+/// # use sandbox_windows_ffi::*;
 /// let too_many_subauthorities = sid!(S-1-1-1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16);
 /// ```
 #[macro_export] macro_rules! sid {

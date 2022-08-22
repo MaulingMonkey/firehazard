@@ -15,8 +15,8 @@ use core::ptr::null;
 ///
 /// ### Example
 /// ```
-/// # use win32_security_playground::*;
-/// # use win32_security_playground::access::*;
+/// # use sandbox_windows_ffi::*;
+/// # use sandbox_windows_ffi::access::*;
 /// # use abistr::cstr;
 /// let desktop = create_desktop_a(cstr!("PlaygroundDesktop"), (), None, 0, GENERIC_ALL, None).unwrap();
 /// # let desktop = create_desktop_a(cstr!("PlaygroundDesktop"), (), None, 0, GENERIC_ALL, None).unwrap();
@@ -46,8 +46,8 @@ pub fn create_desktop_a(
 ///
 /// ### Example
 /// ```
-/// # use win32_security_playground::*;
-/// # use win32_security_playground::access::*;
+/// # use sandbox_windows_ffi::*;
+/// # use sandbox_windows_ffi::access::*;
 /// # use abistr::cstr16;
 /// let desktop = create_desktop_w(cstr16!("PlaygroundDesktop"), (), None, 0, GENERIC_ALL, None).unwrap();
 /// # let desktop = create_desktop_w(cstr16!("PlaygroundDesktop"), (), None, 0, GENERIC_ALL, None).unwrap();
@@ -82,7 +82,7 @@ pub fn create_desktop_w(
 ///
 /// ### Example
 /// ```
-/// # use win32_security_playground::*;
+/// # use sandbox_windows_ffi::*;
 /// let winsta = get_process_window_station().unwrap();
 /// enum_desktops_a(&winsta, |desktop| {
 ///     println!("{desktop:?}");
@@ -127,7 +127,7 @@ unsafe extern "system" fn fwd_enum_desktops_a<F: FnMut(CStrPtr) -> Result<(), Er
 ///
 /// ### Example
 /// ```
-/// # use win32_security_playground::*;
+/// # use sandbox_windows_ffi::*;
 /// let winsta = get_process_window_station().unwrap();
 /// enum_desktops_w(&winsta, |desktop| {
 ///     println!("{desktop:?}");
@@ -175,7 +175,7 @@ unsafe extern "system" fn fwd_enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(
 ///
 /// ### Example
 /// ```
-/// # use win32_security_playground::*;
+/// # use sandbox_windows_ffi::*;
 /// let desktop = get_thread_desktop(get_current_thread_id()).unwrap();
 /// ```
 ///
@@ -195,8 +195,8 @@ pub fn get_thread_desktop(thread_id: thread::Id) -> Result<desktop::OwnedHandle,
 ///
 /// ### Example
 /// ```
-/// # use win32_security_playground::*;
-/// # use win32_security_playground::access::*;
+/// # use sandbox_windows_ffi::*;
+/// # use sandbox_windows_ffi::access::*;
 /// # use abistr::cstr;
 /// let desktop = open_desktop_a(cstr!("Default"), 0, false, GENERIC_ALL).unwrap();
 /// ```
@@ -221,8 +221,8 @@ pub fn open_desktop_a(
 ///
 /// ### Example
 /// ```
-/// # use win32_security_playground::*;
-/// # use win32_security_playground::access::*;
+/// # use sandbox_windows_ffi::*;
+/// # use sandbox_windows_ffi::access::*;
 /// # use abistr::cstr16;
 /// let desktop = open_desktop_w(cstr16!("Default"), 0, false, GENERIC_ALL).unwrap();
 /// ```
@@ -247,8 +247,8 @@ pub fn open_desktop_w(
 ///
 /// ### Example
 /// ```
-/// # use win32_security_playground::*;
-/// # use win32_security_playground::access::*;
+/// # use sandbox_windows_ffi::*;
+/// # use sandbox_windows_ffi::access::*;
 /// let desktop = open_input_desktop(0, false, GENERIC_ALL).unwrap();
 /// ```
 pub fn open_input_desktop(
@@ -266,8 +266,8 @@ pub fn open_input_desktop(
 ///
 /// ### Example
 /// ```
-/// # use win32_security_playground::*;
-/// # use win32_security_playground::access::*;
+/// # use sandbox_windows_ffi::*;
+/// # use sandbox_windows_ffi::access::*;
 /// # use abistr::cstr;
 /// # use winapi::um::winuser::*;
 /// let temp1 = create_desktop_a(cstr!("wtd.temp1"), (), None, 0, GENERIC_ALL, None).unwrap();

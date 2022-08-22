@@ -1,31 +1,22 @@
 # https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[workspace]
-members                     = ["crates/*"]
-
 [package]
-name                        = "win32_security_playground"
+name                        = "sandbox-windows-ffi"
 version                     = "0.0.0-git"
 publish                     = false
 authors                     = ["MaulingMonkey <git@maulingmonkey.com>"]
 edition                     = "2021"
 license                     = "Apache-2.0 OR MIT"
-readme                      = "Readme.md"
-
-[profile.dev]
-panic                       = "abort"
-lto                         = true
-
-[profile.release]
-panic                       = "abort"
-lto                         = true
+#readme                      = "Readme.md"
 
 [features]
-default                     = ["std"]
-std                         = ["sandbox-windows/std"]
+std                         = ["abistr/std", "abistr/widestring"]
 
 [dependencies]
-sandbox-windows.path        = "crates/sandbox-windows"
+
+abibool                     = "0.5.3"
+#abibool.git                 = "https://github.com/MaulingMonkey/abibool"
+#abibool.rev                 = "7998497f56ec339d1cf2ea70532d55550b2380f3"
 
 #abistr.version              = "0.2.0-rc2"
 abistr.default-features     = false
@@ -35,6 +26,25 @@ abistr.rev                  = "be791b8c6f78fe2399d3f2d0549c43cbe5d74d04"
 [target.'cfg(windows)'.dependencies]
 winapi.version = "0.3"
 winapi.features = [
+    # shared
+    "bcrypt",
+    "sddl",
+    "winerror",
+
     # um
+    "debugapi",
+    "errhandlingapi",
+    "handleapi",
+    "heapapi",
+    "jobapi",
+    "jobapi2",
+    "lsalookup",
+    "memoryapi",
+    "ntlsa",
+    "processthreadsapi",
+    "securitybaseapi",
     "synchapi",
+    "winbase",
+    "winnt",
+    "winuser",
 ]
