@@ -29,3 +29,26 @@ pub unsafe fn create_restricted_token(
     )})?;
     Ok(unsafe { token::OwnedHandle::from_raw(new_handle) })
 }
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-createrestrictedtoken)\]
+/// [create_restricted_token] + [get_token_information::groups_and_privileges]
+///
+/// ### Safety
+/// *   `flags` might need to be valid?
+pub unsafe fn create_restricted_token_filter(
+    existing_token_handle:  &crate::token::OwnedHandle,
+    flags:                  u32,
+    sids_to_disable:        impl FnMut(&crate::sid::AndAttributes           ) -> bool,
+    privileges_to_delete:   impl FnMut(&crate::privilege::LuidAndAttributes ) -> bool,
+    sids_to_restrict:       Option<&[crate::sid::AndAttributes]>,
+) -> Result<crate::token::OwnedHandle, crate::Error> {
+    use crate::*;
+
+    let mut gap = existing_token_handle.groups_and_privileges()?;
+    let sids  = partition::in_place_unstable(gap.sids_mut(), sids_to_disable);
+    let privs = partition::in_place_unstable(gap.privileges_mut(), privileges_to_delete);
+    let sids_to_disable         = &gap.sids()[..sids];
+    let privileges_to_delete    = &gap.privileges()[..privs];
+
+    unsafe { create_restricted_token(existing_token_handle, flags, Some(sids_to_disable), Some(privileges_to_delete), sids_to_restrict) }
+}

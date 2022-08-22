@@ -141,21 +141,19 @@ fn run(context: &Context, target: Target) {
     let gap = sandbox_process_token.groups_and_privileges().unwrap();
     let all_group_sids = gap.sids().iter().map(|g| g.sid).collect::<Vec<_>>();
 
-    let disable     = gap.sids().iter().copied().filter(|saa| !target.spawn.enabled.iter().copied().any(|e| *saa.sid == *e)).collect::<Vec<_>>();
-    let permissive = unsafe { create_restricted_token(
+    let permissive = unsafe { create_restricted_token_filter(
         &sandbox_process_token,
         0,
-        Some(&disable[..]),
-        Some(&gap.privileges().iter().copied().filter(|p| !target.spawn.privileges.contains(&p.luid)).collect::<Vec<_>>()[..]),
+        |saa| !target.spawn.enabled.iter().any(|e| *saa.sid == **e),
+        |p| !target.spawn.privileges.contains(&p.luid),
         Some(&target.spawn.restricted.as_ref().unwrap_or(&all_group_sids).iter().copied().map(|r| sid::AndAttributes::new(r, 0)).collect::<Vec<_>>()[..]),
     )}.unwrap();
 
-    let disable = gap.sids().iter().copied().filter(|saa| !target.lockdown.enabled.iter().copied().any(|e| *saa.sid == *e)).collect::<Vec<_>>();
-    let restricted = unsafe { create_restricted_token(
+    let restricted = unsafe { create_restricted_token_filter(
         &sandbox_process_token,
         0,
-        Some(&disable[..]),
-        Some(&gap.privileges().iter().copied().filter(|p| !target.lockdown.privileges.contains(&p.luid)).collect::<Vec<_>>()[..]),
+        |saa| !target.lockdown.enabled.iter().any(|e| *saa.sid == **e),
+        |p| !target.lockdown.privileges.contains(&p.luid),
         Some(&target.lockdown.restricted.as_ref().unwrap_or(&all_group_sids).iter().copied().map(|r| sid::AndAttributes::new(r, 0)).collect::<Vec<_>>()[..]),
     )}.unwrap();
 

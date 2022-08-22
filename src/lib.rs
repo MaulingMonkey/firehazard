@@ -24,6 +24,7 @@ pub mod error;                  #[doc(hidden)] pub use error::*;
 pub(crate) use util::*;
 mod util {
     mod bits32;                     pub(crate) use bits32::*;
+    pub(crate) mod partition;
     pub fn none2null<T>(_: Option<core::convert::Infallible>) -> *mut T { core::ptr::null_mut() }
 }
 
