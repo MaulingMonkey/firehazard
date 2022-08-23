@@ -20,7 +20,7 @@ fn main() {
     let mut policy = PROCESS_MITIGATION_CHILD_PROCESS_POLICY { Flags: 0 };
     policy.set_NoChildProcessCreation(1);
     policy.set_AllowSecureProcessCreation(0);
-    let _ = policy; // XXX: no enum
+    set_process_mitigation_policy(policy).unwrap();
 
     let mut policy = PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY { Flags: 0 };
     policy.set_EnableControlFlowGuard(1);   // "This field cannot be changed via SetProcessMitigationPolicy."
@@ -61,7 +61,7 @@ fn main() {
     policy.set_EnableRopCallerCheck(1);
     policy.set_EnableRopSimExec(1);
     policy.set_EnableRopStackPivot(1);
-    let _ = policy; // XXX: no enum
+    //set_process_mitigation_policy(policy).unwrap(); // ERROR_INVALID_PARAMETER no matter the flags set
 
     let mut policy = PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY { Flags: 0 };
     policy.set_HandleExceptionsPermanentlyEnabled(1);
@@ -73,11 +73,14 @@ fn main() {
     set_process_mitigation_policy(policy).unwrap();
 
     let mut policy = PROCESS_MITIGATION_SYSTEM_CALL_FILTER_POLICY { Flags: 0 };
-    policy.set_FilterId(1);
-    let _ = policy; // XXX: "This structure is not supported."
+    policy.set_FilterId(0);
+    set_process_mitigation_policy(policy).unwrap(); // XXX: "This structure is not supported."
 
     // TODO:
-    //set_process_mitigation_policy::redirection_trust(&policy).unwrap();
-    //set_process_mitigation_policy::side_channel_isolation(&policy).unwrap();
-    //set_process_mitigation_policy::user_shadow_stack(&policy).unwrap();
+    // PROCESS_MITIGATION_OPTIONS_MASK
+    // PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY
+    // PROCESS_MITIGATION_USER_SHADOW_STACK_POLICY
+    // PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY
+    // PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY
+    // PROCESS_MITIGATION_SEHO_POLICY
 }
