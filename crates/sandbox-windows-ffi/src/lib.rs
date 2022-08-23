@@ -12,6 +12,7 @@
 #[path = "desktop/_desktop.rs"]         pub mod desktop;        #[doc(hidden)] pub use desktop::funcs::*;
 #[path = "handle/_handle.rs"]           pub mod handle;         #[doc(hidden)] pub use handle::funcs::*;
 #[path = "job/_job.rs"]                 pub mod job;            #[doc(hidden)] pub use job::funcs::*;
+#[path = "misc/_misc.rs"]               mod misc;               #[doc(hidden)] pub use misc::funcs::*;
 #[path = "policy/_policy.rs"]           pub mod policy;         #[doc(hidden)] pub use policy::funcs::*;
 #[path = "privilege/_privilege.rs"]     pub mod privilege;      #[doc(hidden)] pub use privilege::funcs::*;
 #[path = "process/_process.rs"]         pub mod process;        #[doc(hidden)] pub use process::funcs::*;

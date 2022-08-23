@@ -19,6 +19,3 @@ fn run() {
     output_debug_string_a(cstr!("sandbox"));
     sleep_ms(1_000);
 }
-
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-sleep)\] Sleep
-fn sleep_ms(ms: u32) { unsafe { winapi::um::synchapi::Sleep(ms) } }
