@@ -11,4 +11,5 @@ pub type LuidAndAttributes = crate::LuidAndAttributes<crate::privilege::Luid>;
 pub use funcs::*;
 pub(crate) mod funcs {
     mod adjust_token_privileges;        pub use adjust_token_privileges::*;
+    mod lookup_privilege;               pub use lookup_privilege::*;
 }

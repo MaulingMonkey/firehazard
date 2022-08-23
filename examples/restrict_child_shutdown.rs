@@ -20,7 +20,7 @@ fn main() {
     assert!(matches!(r, Ok(ERROR_ACCESS_DENIED)), "`shutdown /s /t 3600` succeeded despite trying to throw away `SeShutdownPrivilege`: {r:?}");
 
     // Denied by explicitly removing SeShutdownPrivilege
-    let se_shutdown = privilege::Luid::lookup_privilege_value_a(cstr!("SeShutdownPrivilege")).unwrap();
+    let se_shutdown = lookup_privilege_value_a(cstr!("SeShutdownPrivilege")).unwrap();
     let restrictive = create_restricted_token(&permissive, None, None, Some(&[privilege::LuidAndAttributes::new(se_shutdown, 0)]), None).unwrap();
     let r = shutdown_as_user("/s /t 3600", &restrictive);
     let _ = shutdown_as_user("/a", &restrictive);

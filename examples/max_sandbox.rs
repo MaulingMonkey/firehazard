@@ -70,7 +70,7 @@ impl Target {
         let self_exe = std::path::PathBuf::from(std::env::args_os().next().expect("args[0] / exe"));
         let dir = self_exe.parent().unwrap();
 
-        let se_change_notify_privilege = privilege::Luid::lookup_privilege_value_a(cstr!("SeChangeNotifyPrivilege")).unwrap();
+        let se_change_notify_privilege = lookup_privilege_value_a(cstr!("SeChangeNotifyPrivilege")).unwrap();
         vec![
             Target {
                 exe: dir.join("trivial.exe"),
