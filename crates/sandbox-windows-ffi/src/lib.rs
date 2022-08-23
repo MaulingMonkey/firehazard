@@ -4,6 +4,9 @@
 #![forbid(unsafe_op_in_unsafe_fn)]
 #![deny(unreachable_patterns)]
 
+#[doc(hidden)] pub extern crate abistr;
+#[doc(hidden)] pub extern crate winapi;
+
 #[path = "access/_access.rs"]           pub mod access;         //#[doc(hidden)] pub use access::constants::*;
 #[path = "ace/_ace.rs"]                 pub mod ace;            //#[doc(hidden)] pub use ace::funcs::*;
 #[path = "acl/_acl.rs"]                 pub mod acl;            //#[doc(hidden)] pub use acl::funcs::*;
