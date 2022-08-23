@@ -163,7 +163,61 @@ fn run(context: &Context, target: Target) {
 
     let desktop = if target.allow.same_desktop { &context.main_desktop } else { &context.alt_desktop };
     let mut command_line = abistr::CStrBuf::<u16, 32768>::from_truncate(&target.exe.as_os_str().encode_wide().chain(Some(0)).collect::<Vec<_>>());
-    let si = process::StartupInfoW { desktop: None, flags: STARTF_UNTRUSTEDSOURCE, .. Default::default() };
+
+    let mut attribute_list = process::ThreadAttributeList::new();
+
+    let policy1 = 0u64
+        | process::creation::mitigation_policy::DEP_ENABLE
+        //| process::creation::mitigation_policy::DEP_ATL_THUNK_ENABLE
+        | process::creation::mitigation_policy::SEHOP_ENABLE
+        | process::creation::mitigation_policy::force_relocate_images::ALWAYS_ON_REQ_RELOCS
+        | process::creation::mitigation_policy::heap_terminate::ALWAYS_ON
+        | process::creation::mitigation_policy::bottom_up_aslr::ALWAYS_ON
+        | process::creation::mitigation_policy::high_entropy_aslr::ALWAYS_ON
+        | process::creation::mitigation_policy::strict_handle_checks::ALWAYS_ON
+        | process::creation::mitigation_policy::win32k_system_call_disable::ALWAYS_ON
+        | process::creation::mitigation_policy::extension_point_disable::ALWAYS_ON
+        | process::creation::mitigation_policy::prohibit_dynamic_code::ALWAYS_ON
+        | process::creation::mitigation_policy::control_flow_guard::ALWAYS_ON               // Redundant?
+        | process::creation::mitigation_policy::control_flow_guard::EXPORT_SUPPRESSION
+        | process::creation::mitigation_policy::block_non_microsoft_binaries::ALWAYS_ON     // Redundant?
+        | process::creation::mitigation_policy::block_non_microsoft_binaries::ALLOW_STORE   // ?
+        | process::creation::mitigation_policy::font_disable::ALWAYS_ON
+        | process::creation::mitigation_policy::image_load_no_remote::ALWAYS_ON
+        | process::creation::mitigation_policy::image_load_no_low_label::ALWAYS_ON
+        | process::creation::mitigation_policy::image_load_prefer_system32::ALWAYS_ON
+        // TODO: look for more?
+        ;
+
+    let policy2 = 0u64
+        | process::creation::mitigation_policy2::allow_downgrade_dynamic_code_policy::ALWAYS_OFF
+        | process::creation::mitigation_policy2::strict_control_flow_guard::ALWAYS_ON
+        | process::creation::mitigation_policy2::restrict_indirect_branch_prediction::ALWAYS_ON
+        | process::creation::mitigation_policy2::speculative_store_bypass_disable::ALWAYS_ON
+        | process::creation::mitigation_policy2::cet_user_shadow_stacks::ALWAYS_ON      // Redundant
+        | process::creation::mitigation_policy2::cet_user_shadow_stacks::STRICT_MODE
+        | process::creation::mitigation_policy2::user_cet_set_context_ip_validation::ALWAYS_ON
+        | process::creation::mitigation_policy2::block_non_cet_binaries::ALWAYS_ON
+        | process::creation::mitigation_policy2::cet_dynamic_apis_out_of_proc_only::ALWAYS_ON
+        // TODO: look for more
+        ;
+
+    let policy = [policy1, policy2];
+    attribute_list.update(process::ThreadAttributeRef::mitigation_policy_dword64_2(&policy)).unwrap();
+
+    let policy = process::creation::child_process::RESTRICTED;
+    attribute_list.update(process::ThreadAttributeRef::child_process_policy(&policy)).unwrap();
+
+    let policy = process::creation::desktop_app_breakaway::ENABLE_PROCESS_TREE;
+    attribute_list.update(process::ThreadAttributeRef::desktop_app_policy(&policy)).unwrap();
+
+    // TODO: look for more attributes
+
+    let mut si = process::StartupInfoExW::default();
+    si.startup_info.desktop = None; // TODO
+    si.startup_info.flags   = STARTF_UNTRUSTEDSOURCE;
+    si.attribute_list       = Some(attribute_list);
+
     let pi = with_thread_desktop(desktop, || create_process_as_user_w(
         &restricted, (), Some(unsafe { command_line.buffer_mut() }), None, None, false,
         process::DEBUG_PROCESS | process::CREATE_SEPARATE_WOW_VDM | process::CREATE_SUSPENDED, Some(&[0,0][..]), (), &si

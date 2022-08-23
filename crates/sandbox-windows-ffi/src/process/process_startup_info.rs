@@ -3,11 +3,10 @@ use crate::*;
 use abistr::CStrNonNull;
 
 use winapi::shared::winerror::ERROR_INCORRECT_SIZE;
-use winapi::um::processthreadsapi::{STARTUPINFOA, STARTUPINFOW, LPPROC_THREAD_ATTRIBUTE_LIST};
+use winapi::um::processthreadsapi::{STARTUPINFOA, STARTUPINFOW};
 use winapi::um::winbase::{STARTUPINFOEXA, STARTUPINFOEXW};
 
 use core::mem::{align_of, size_of, transmute};
-use core::ptr::null_mut;
 
 
 
@@ -62,9 +61,9 @@ pub type StartupInfoExW<'s> = StartupInfoEx<'s, u16>;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-startupinfoexa)\]
 /// STARTUPINFOEX
-#[derive(Clone, Debug)] #[repr(C)] pub struct StartupInfoEx<'s, U: abistr::Unit> where U::CChar : Clone {
+#[derive(Debug)] #[repr(C)] pub struct StartupInfoEx<'s, U: abistr::Unit> where U::CChar : Clone {
     pub startup_info:   StartupInfo<'s, U>,
-    attribute_list:     LPPROC_THREAD_ATTRIBUTE_LIST, // XXX
+    pub attribute_list: Option<process::ThreadAttributeList<'s>>, // XXX: some borrowing option might be nicer, would re-enable Clone
 }
 
 const _A_ALIGN : () = assert!(align_of::<process::StartupInfoA>() == align_of::<STARTUPINFOA>());
@@ -134,7 +133,7 @@ impl<'s, U: abistr::Unit> Default for StartupInfoEx<'s, U> where U::CChar : Clon
                 cb: size_of::<Self>() as _,
                 .. Default::default()
             },
-            attribute_list: null_mut(),
+            attribute_list: None,
         }
     }
 }
