@@ -15,6 +15,9 @@
     @endlocal
 :skip-nightly
 
+cargo test --features std --workspace
+@if ERRORLEVEL 1 goto :die
+
 cargo test --workspace
 @if ERRORLEVEL 1 goto :die
 
