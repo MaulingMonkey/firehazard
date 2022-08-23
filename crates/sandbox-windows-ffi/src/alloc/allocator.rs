@@ -11,6 +11,7 @@ use winapi::um::winnt::HEAP_ZERO_MEMORY;
 
 use core::alloc::Layout;
 use core::mem::align_of;
+use core::ptr::NonNull;
 
 
 
@@ -36,37 +37,35 @@ unsafe impl Deallocator for FreeSid                 { unsafe fn free<T>(mem: *mu
 
 /// Allocates memory
 pub unsafe trait Allocator : Deallocator {
-    fn try_alloc       <T>(layout: Layout) -> Result<*mut T, Error>;
-    fn try_alloc_zeroed<T>(layout: Layout) -> Result<*mut T, Error>;
+    fn try_alloc       <T>(layout: Layout) -> Result<NonNull<T>, Error>;
+    fn try_alloc_zeroed<T>(layout: Layout) -> Result<NonNull<T>, Error>;
 }
 
 unsafe impl Allocator for ProcessHeapAllocFree {
-    fn try_alloc       <T>(layout: Layout) -> Result<*mut T, Error> { Self::try_alloc_impl(layout, 0                ) }
-    fn try_alloc_zeroed<T>(layout: Layout) -> Result<*mut T, Error> { Self::try_alloc_impl(layout, HEAP_ZERO_MEMORY ) }
+    fn try_alloc       <T>(layout: Layout) -> Result<NonNull<T>, Error> { Self::try_alloc_impl(layout, 0                ) }
+    fn try_alloc_zeroed<T>(layout: Layout) -> Result<NonNull<T>, Error> { Self::try_alloc_impl(layout, HEAP_ZERO_MEMORY ) }
 }
 
 unsafe impl Allocator for LocalAllocFree {
-    fn try_alloc       <T>(layout: Layout) -> Result<*mut T, Error> { Self::try_alloc_impl(layout, 0                ) }
-    fn try_alloc_zeroed<T>(layout: Layout) -> Result<*mut T, Error> { Self::try_alloc_impl(layout, LMEM_ZEROINIT    ) }
+    fn try_alloc       <T>(layout: Layout) -> Result<NonNull<T>, Error> { Self::try_alloc_impl(layout, 0                ) }
+    fn try_alloc_zeroed<T>(layout: Layout) -> Result<NonNull<T>, Error> { Self::try_alloc_impl(layout, LMEM_ZEROINIT    ) }
 }
 
 impl ProcessHeapAllocFree {
-    fn try_alloc_impl<T>(layout: Layout, flags: u32) -> Result<*mut T, Error> {
+    fn try_alloc_impl<T>(layout: Layout, flags: u32) -> Result<NonNull<T>, Error> {
         let layout = layout.align_to(align_of::<T>()).map_err(|_| Error(ERROR_OFFSET_ALIGNMENT_VIOLATION))?;
         if layout.align() > MEMORY_ALLOCATION_ALIGNMENT { return Err(Error(ERROR_OFFSET_ALIGNMENT_VIOLATION)) }
         let heap = unsafe { GetProcessHeap() };
         let alloc = unsafe { HeapAlloc(heap, flags, layout.size().max(1)) };
-        Error::get_last_if(alloc.is_null())?;
-        Ok(alloc.cast())
+        NonNull::new(alloc.cast()).ok_or_else(|| Error::get_last())
     }
 }
 
 impl LocalAllocFree {
-    fn try_alloc_impl<T>(layout: Layout, flags: u32) -> Result<*mut T, Error> {
+    fn try_alloc_impl<T>(layout: Layout, flags: u32) -> Result<NonNull<T>, Error> {
         let layout = layout.align_to(align_of::<T>()).map_err(|_| Error(ERROR_OFFSET_ALIGNMENT_VIOLATION))?;
         if layout.align() > MEMORY_ALLOCATION_ALIGNMENT { return Err(Error(ERROR_OFFSET_ALIGNMENT_VIOLATION)) }
         let alloc = unsafe { LocalAlloc(flags, layout.size().max(1)) };
-        Error::get_last_if(alloc.is_null())?;
-        Ok(alloc.cast())
+        NonNull::new(alloc.cast()).ok_or_else(|| Error::get_last())
     }
 }
