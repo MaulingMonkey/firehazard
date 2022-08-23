@@ -2,6 +2,7 @@
 
 use crate::*;
 
+use winapi::shared::winerror::*;
 use winapi::shared::ntstatus::STATUS_SUCCESS;
 use winapi::um::lsalookup::{LSA_OBJECT_ATTRIBUTES, LSA_REFERENCED_DOMAIN_LIST, LSA_TRANSLATED_NAME};
 use winapi::um::ntlsa::*;
@@ -29,12 +30,13 @@ impl Value {
 
     fn revision(&self)  -> u8           { unsafe{*self.0}.Revision }
     fn authority(&self) -> [u8; 6]      { unsafe{*self.0}.IdentifierAuthority.Value }
+    fn authority_u64(&self) -> u64      { let [a,b,c,d,e,f] = self.authority(); u64::from_be_bytes([0,0,a,b,c,d,e,f]) }
     fn subauthorities(&self) -> &[u32]  { unsafe{core::slice::from_raw_parts(core::ptr::addr_of!((*self.0).SubAuthority) as *const u32, (*self.0).SubAuthorityCount.into())} }
     fn as_tuple(&self) -> (u8, [u8; 6], &[u32]) { (self.revision(), self.authority(), self.subauthorities()) }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/ntsecapi/nf-ntsecapi-lsalookupsids2)\] LsaLookupSids2
-    #[cfg(std)] pub fn lsa_lookup_sids2(&self) -> Option<String> {
-        if self.0.is_null() { return None }
+    #[cfg(std)] pub fn lsa_lookup_sids2(&self) -> Result<String, Error> {
+        if self.0.is_null() { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) }
         // .cast() spam notes:
         // it appears PLSA_HANDLE points to void, not LSA_HANDLE, for whatever twisted reason.
         // it appears PSID points to void, not SID, for whatever twisted reason.
@@ -44,13 +46,18 @@ impl Value {
         object_attributes.Length = core::mem::size_of_val(&object_attributes) as _;
         let desired_access = POLICY_LOOKUP_NAMES;
         let mut policy = null_mut();
-        if STATUS_SUCCESS != unsafe { LsaOpenPolicy(system_name, &mut object_attributes, desired_access, &mut policy) } { return None }
+        let ntstatus = unsafe { LsaOpenPolicy(system_name, &mut object_attributes, desired_access, &mut policy) };
+        if ntstatus != STATUS_SUCCESS { return Err(Error(ntstatus as _)) }
         let policy = policy.cast(); // PSID -> *mut SID
 
         let lookup_options = LSA_LOOKUP_DISALLOW_CONNECTED_ACCOUNT_INTERNET_SID; // consider also: LSA_LOOKUP_PREFER_INTERNET_NAMES ?
         let mut domains = null_mut();
         let mut names = null_mut();
-        assert!(STATUS_SUCCESS == unsafe { LsaLookupSids2(policy, lookup_options, 1, [self.0.cast()].as_mut_ptr(), &mut domains, &mut names) });
+        let ntstatus = unsafe { LsaLookupSids2(policy, lookup_options, 1, [self.0.cast()].as_mut_ptr(), &mut domains, &mut names) };
+        if ntstatus != STATUS_SUCCESS {
+            assert_eq!(STATUS_SUCCESS, unsafe { LsaClose(policy) });
+            return Err(Error(ntstatus as _));
+        }
 
         let result = {
             let domains : &LSA_REFERENCED_DOMAIN_LIST = unsafe { &*domains };
@@ -63,14 +70,14 @@ impl Value {
             String::from_utf16_lossy(name_name)
         };
 
-        assert!(STATUS_SUCCESS == unsafe { LsaFreeMemory(domains.cast()) });
-        assert!(STATUS_SUCCESS == unsafe { LsaFreeMemory(names.cast()) });
-        assert!(STATUS_SUCCESS == unsafe { LsaClose(policy) });
+        assert_eq!(STATUS_SUCCESS, unsafe { LsaFreeMemory(domains.cast()) });
+        assert_eq!(STATUS_SUCCESS, unsafe { LsaFreeMemory(names.cast()) });
+        assert_eq!(STATUS_SUCCESS, unsafe { LsaClose(policy) });
 
-        return Some(result);
+        Ok(result)
     }
 
-    #[cfg(not(std))] fn lsa_lookup_sids2(&self) -> Option<&'static str> { None }
+    #[cfg(not(std))] fn lsa_lookup_sids2(&self) -> Result<&'static str, Error> { Err(Error(ERROR_CALL_NOT_IMPLEMENTED)) }
 }
 
 impl PartialEq  for Value { fn eq(&self, other: &Self) -> bool { 0 != unsafe { EqualSid(self.as_psid(), other.as_psid()) } } }
@@ -82,12 +89,13 @@ impl Hash       for Value { fn hash<H: core::hash::Hasher>(&self, state: &mut H)
 impl Debug for Value {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         if self.0.is_null() { return write!(fmt, "NULL") }
-
-        let sid = convert_sid_to_string_sid_a(self).unwrap();
-        if let Some(lsa) = self.lsa_lookup_sids2() {
-            write!(fmt, "{sid} {lsa:?}")
-        } else {
-            write!(fmt, "{sid}")
-        }
+        write!(fmt, "S-{}-{}", self.revision(), self.authority_u64())?;
+        for sa in self.subauthorities().iter().copied() { write!(fmt, "-{sa}")?; }
+        if let Ok(lsa) = self.lsa_lookup_sids2() { write!(fmt, " {lsa:?}")?; }
+        Ok(())
     }
+}
+
+#[cfg(std)] #[test] fn debug_fmt() {
+    assert_eq!("S-1-2-3-4-5-6-7", format!("{:?}", sid!(S-1-2-3-4-5-6-7)));
 }
