@@ -3,7 +3,6 @@
 use crate::*;
 
 use winapi::shared::ntstatus::STATUS_SUCCESS;
-use winapi::shared::sddl::{ConvertSidToStringSidA};
 use winapi::um::lsalookup::{LSA_OBJECT_ATTRIBUTES, LSA_REFERENCED_DOMAIN_LIST, LSA_TRANSLATED_NAME};
 use winapi::um::ntlsa::*;
 use winapi::um::securitybaseapi::EqualSid;
@@ -32,16 +31,6 @@ impl Value {
     fn authority(&self) -> [u8; 6]      { unsafe{*self.0}.IdentifierAuthority.Value }
     fn subauthorities(&self) -> &[u32]  { unsafe{core::slice::from_raw_parts(core::ptr::addr_of!((*self.0).SubAuthority) as *const u32, (*self.0).SubAuthorityCount.into())} }
     fn as_tuple(&self) -> (u8, [u8; 6], &[u32]) { (self.revision(), self.authority(), self.subauthorities()) }
-
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertsidtostringsida)\] ConvertSidToStringSidA
-    pub fn to_string_sid_a(&self) -> Option<alloc::CString<alloc::LocalAllocFree>> {
-        if self.0.is_null() { return None }
-        let mut local_string = null_mut();
-        let succeeded = 0 != unsafe { ConvertSidToStringSidA(self.0.cast(), &mut local_string) };
-        let local_string = unsafe { alloc::CString::from_raw(local_string) };
-        assert!(succeeded, "ConvertSidToStringSidA");
-        Some(local_string)
-    }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/ntsecapi/nf-ntsecapi-lsalookupsids2)\] LsaLookupSids2
     #[cfg(std)] pub fn lsa_lookup_sids2(&self) -> Option<String> {
@@ -94,7 +83,7 @@ impl Debug for Value {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         if self.0.is_null() { return write!(fmt, "NULL") }
 
-        let sid = self.to_string_sid_a().unwrap();
+        let sid = convert_sid_to_string_sid_a(self).unwrap();
         if let Some(lsa) = self.lsa_lookup_sids2() {
             write!(fmt, "{sid} {lsa:?}")
         } else {
