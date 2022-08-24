@@ -43,6 +43,7 @@ impl Error {
             ERROR_BAD_TOKEN_TYPE            => "ERROR_BAD_TOKEN_TYPE",          // 1349
             ERROR_INCORRECT_SIZE            => "ERROR_INCORRECT_SIZE",          // 1462
             ERROR_DYNAMIC_CODE_BLOCKED      => "ERROR_DYNAMIC_CODE_BLOCKED",    // 1655
+            1657                            => "ERROR_STRICT_CFG_VIOLATION",    // 1657
             _                               => match self.0 as _ {
                 E_STRING_NOT_NULL_TERMINATED    => "E_STRING_NOT_NULL_TERMINATED",      // 0x80000017
                 STATUS_ACCESS_DENIED            => "STATUS_ACCESS_DENIED",              // 0xC0000022
