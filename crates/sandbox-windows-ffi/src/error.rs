@@ -29,6 +29,7 @@ impl Error {
             ERROR_FILE_NOT_FOUND            => "ERROR_FILE_NOT_FOUND",          // 2
             ERROR_ACCESS_DENIED             => "ERROR_ACCESS_DENIED",           // 5
             ERROR_INVALID_HANDLE            => "ERROR_INVALID_HANDLE",          // 6
+            ERROR_BAD_ENVIRONMENT           => "ERROR_BAD_ENVIRONMENT",         // 10
             ERROR_BAD_LENGTH                => "ERROR_BAD_LENGTH",              // 24
             ERROR_NOT_SUPPORTED             => "ERROR_NOT_SUPPORTED",           // 50
             ERROR_INVALID_PARAMETER         => "ERROR_INVALID_PARAMETER",       // 87
@@ -42,6 +43,7 @@ impl Error {
             ERROR_INCORRECT_SIZE            => "ERROR_INCORRECT_SIZE",          // 1462
             ERROR_DYNAMIC_CODE_BLOCKED      => "ERROR_DYNAMIC_CODE_BLOCKED",    // 1655
             1657                            => "ERROR_STRICT_CFG_VIOLATION",    // 1657
+            ERROR_INVALID_ENVIRONMENT       => "ERROR_INVALID_ENVIRONMENT",     // 1805 - prefer ERROR_BAD_ENVIRONMENT ?
             _                               => match self.0 as _ {
                 E_STRING_NOT_NULL_TERMINATED    => "E_STRING_NOT_NULL_TERMINATED",      // 0x80000017
                 STATUS_ACCESS_DENIED            => "STATUS_ACCESS_DENIED",              // 0xC0000022
