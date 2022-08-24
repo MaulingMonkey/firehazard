@@ -90,7 +90,6 @@ pub const CREATE_SHARED_WOW_VDM             : CreationFlags = CreationFlags(wina
 pub const INHERIT_PARENT_AFFINITY           : CreationFlags = CreationFlags(winapi::um::winbase::INHERIT_PARENT_AFFINITY            ); // 0x00010000
 pub const CREATE_PROTECTED_PROCESS          : CreationFlags = CreationFlags(winapi::um::winbase::CREATE_PROTECTED_PROCESS           ); // 0x00040000
 pub const EXTENDED_STARTUPINFO_PRESENT      : CreationFlags = CreationFlags(winapi::um::winbase::EXTENDED_STARTUPINFO_PRESENT       ); // 0x00080000
-//pub const CREATE_SECURE_PROCESS             : CreationFlags = CreationFlags(winapi::um::winbase::CREATE_SECURE_PROCESS              ); // 0x00400000
 pub const CREATE_SECURE_PROCESS             : CreationFlags = CreationFlags(0x00400000                                              ); // 0x00400000
 pub const CREATE_BREAKAWAY_FROM_JOB         : CreationFlags = CreationFlags(winapi::um::winbase::CREATE_BREAKAWAY_FROM_JOB          ); // 0x01000000
 pub const CREATE_PRESERVE_CODE_AUTHZ_LEVEL  : CreationFlags = CreationFlags(winapi::um::winbase::CREATE_PRESERVE_CODE_AUTHZ_LEVEL   ); // 0x02000000
