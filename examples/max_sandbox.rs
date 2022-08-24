@@ -186,20 +186,23 @@ fn run(context: &Context, target: Target) {
         | process::creation::mitigation_policy::image_load_no_remote::ALWAYS_ON
         | process::creation::mitigation_policy::image_load_no_low_label::ALWAYS_ON
         | process::creation::mitigation_policy::image_load_prefer_system32::ALWAYS_ON
-        // TODO: look for more?
         ;
 
     let policy2 = 0u64
-        | process::creation::mitigation_policy2::allow_downgrade_dynamic_code_policy::ALWAYS_OFF
+        | process::creation::mitigation_policy2::loader_integrity_continuity::ALWAYS_ON
         | process::creation::mitigation_policy2::strict_control_flow_guard::ALWAYS_ON
+        | process::creation::mitigation_policy2::module_tampering_protection::ALWAYS_ON
         | process::creation::mitigation_policy2::restrict_indirect_branch_prediction::ALWAYS_ON
+        | process::creation::mitigation_policy2::allow_downgrade_dynamic_code_policy::ALWAYS_OFF
         | process::creation::mitigation_policy2::speculative_store_bypass_disable::ALWAYS_ON
         | process::creation::mitigation_policy2::cet_user_shadow_stacks::ALWAYS_ON      // Redundant
         | process::creation::mitigation_policy2::cet_user_shadow_stacks::STRICT_MODE
         | process::creation::mitigation_policy2::user_cet_set_context_ip_validation::ALWAYS_ON
         | process::creation::mitigation_policy2::block_non_cet_binaries::ALWAYS_ON
+        | process::creation::mitigation_policy2::xtended_control_flow_guard::ALWAYS_ON
+        | process::creation::mitigation_policy2::pointer_auth_user_ip::ALWAYS_ON
         | process::creation::mitigation_policy2::cet_dynamic_apis_out_of_proc_only::ALWAYS_ON
-        // TODO: look for more
+        | process::creation::mitigation_policy2::restrict_core_sharing::ALWAYS_ON
         ;
 
     let policy = [policy1, policy2];
