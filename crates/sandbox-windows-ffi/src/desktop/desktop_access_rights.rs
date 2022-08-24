@@ -16,16 +16,10 @@ use core::fmt::{self, Debug, Formatter};
 
 flags!(impl .. for AccessRights(u32) - AccessRightsMask { });
 
-impl AccessRightsMask {
-    pub fn as_u32(self) -> u32 { self.0 }
-}
-
 impl AccessRights {
     /// ### Safety
     /// *   Some APIs might theoretically assume access rights are a valid?
     pub const unsafe fn from_unchecked(rights: u32) -> Self { Self(rights) }
-
-    pub fn as_u32(self) -> u32 { self.0 }
 }
 
 impl Debug for AccessRights {

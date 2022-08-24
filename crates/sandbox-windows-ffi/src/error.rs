@@ -23,8 +23,6 @@ impl Error {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)\] GetLastError if `error`
     pub fn get_last_if(error: bool) -> Result<(), Self> { if !error { Ok(()) } else { Err(Self::get_last()) } }
 
-    pub fn as_u32(self) -> u32 { self.0 }
-
     pub fn friendly(self) -> &'static str {
         match self.0 {
             NO_ERROR                        => "NO_ERROR",                      // 0
