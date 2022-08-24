@@ -216,10 +216,6 @@ fn run(context: &Context, target: Target) {
     let desktop = if target.allow.same_desktop { &context.main_desktop } else { &context.alt_desktop };
     let mut command_line = abistr::CStrBuf::<u16, 32768>::from_truncate(&target.exe.as_os_str().encode_wide().chain(Some(0)).collect::<Vec<_>>());
 
-    let job_list = [context.job.clone()];
-
-    let mut attribute_list = process::ThreadAttributeList::new();
-
     let policy1 = 0u64
         | process::creation::mitigation_policy::DEP_ENABLE
         //| process::creation::mitigation_policy::DEP_ATL_THUNK_ENABLE
@@ -259,26 +255,25 @@ fn run(context: &Context, target: Target) {
         //| process::creation::mitigation_policy2::restrict_core_sharing::ALWAYS_ON             // causes ERROR_INVALID_PARAMETER (do I need to specify cores to hog?)
         ;
 
-    let policy = [policy1, policy2];
-    attribute_list.update(process::ThreadAttributeRef::mitigation_policy_dword64_2(&policy)).unwrap();
+    let mitigation_policy = [policy1, policy2];
+    let child_policy = process::creation::child_process::RESTRICTED;
+    let dab_policy = process::creation::desktop_app_breakaway::ENABLE_PROCESS_TREE;
+    let job_list = [context.job.clone()];
 
-    let policy = process::creation::child_process::RESTRICTED;
-    attribute_list.update(process::ThreadAttributeRef::child_process_policy(&policy)).unwrap();
-
-    let policy = process::creation::desktop_app_breakaway::ENABLE_PROCESS_TREE;
-    attribute_list.update(process::ThreadAttributeRef::desktop_app_policy(&policy)).unwrap();
-
-    // TODO: ThreadAttributeRef::handle_list ?
-    // TODO: ThreadAttributeRef::security_capabilities ? app container / capability sids related: https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_capabilities
-
-    if false {
-        // will cause create_process_as_user_w to fail with ERROR_INVALID_PARAMETER
-        // Also completely pointless, as we're almost certainly not running as a protected app ourselves
-        const PROTECTION_LEVEL_SAME : u32 = 0xFFFFFFFF;
-        attribute_list.update(process::ThreadAttributeRef::protection_level(&PROTECTION_LEVEL_SAME)).unwrap();
-    }
-
-    attribute_list.update(process::ThreadAttributeRef::job_list(&job_list[..])).unwrap();
+    let attribute_list = process::ThreadAttributeList::try_from(&[
+        process::ThreadAttributeRef::mitigation_policy_dword64_2(&mitigation_policy),
+        process::ThreadAttributeRef::child_process_policy(&child_policy),
+        process::ThreadAttributeRef::desktop_app_policy(&dab_policy),
+        #[cfg(nope)] {
+            // will cause create_process_as_user_w to fail with ERROR_INVALID_PARAMETER
+            // Also completely pointless, as we're almost certainly not running as a protected app ourselves
+            const PROTECTION_LEVEL_SAME : u32 = 0xFFFFFFFF;
+            process::ThreadAttributeRef::protection_level(&PROTECTION_LEVEL_SAME)
+        },
+        process::ThreadAttributeRef::job_list(&job_list[..]),
+        // TODO: ThreadAttributeRef::handle_list ?
+        // TODO: ThreadAttributeRef::security_capabilities ? app container / capability sids related: https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_capabilities
+    ][..]).unwrap();
 
     let mut si = process::StartupInfoExW::default();
     si.startup_info.desktop = None; // TODO
