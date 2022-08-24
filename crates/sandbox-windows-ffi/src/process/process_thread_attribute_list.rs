@@ -4,7 +4,7 @@ use crate::*;
 use crate::alloc::CBox;
 
 use winapi::shared::basetsd::DWORD64;
-use winapi::shared::minwindef::{FALSE, WORD, DWORD};
+use winapi::shared::minwindef::{FALSE, WORD, DWORD, LPVOID};
 use winapi::shared::ntdef::*;
 use winapi::um::processthreadsapi::*;
 use winapi::um::winnt::SECURITY_CAPABILITIES;
@@ -42,27 +42,29 @@ impl<'a> ThreadAttributeList<'a> {
     }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\] UpdateProcThreadAttribute
-    pub fn update<'s, T: ?Sized>(&'s mut self, ThreadAttributeRef(attribute, value): ThreadAttributeRef<'a, T>) -> Result<&'s mut Self, Error> where 'a : 's {
-        unsafe { self.update_attribute_impl(attribute, value)?; }
-        Ok(self)
-    }
-
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\] UpdateProcThreadAttribute
-    unsafe fn update_attribute_impl<T: ?Sized>(&mut self, attribute: usize, value: &'a T) -> Result<(), Error> {
+    pub fn update<'s>(&'s mut self, ThreadAttributeRef(attribute, value, size, _): ThreadAttributeRef<'a>) -> Result<&'s mut Self, Error> where 'a : 's {
         Error::get_last_if(FALSE == unsafe { UpdateProcThreadAttribute(
             self.0.as_mut_ptr(),
-            0,                          // flags            (reserved: must be 0)
+            0,              // flags            (reserved: must be 0)
             attribute,
-            value as *const T as *mut T as _,
-            size_of_val(value),
-            null_mut(),                 // previous value   (reserved: must be null)
-            null_mut(),                 // return size      (reserved: must be null)
-        )})
+            value,
+            size,
+            null_mut(),     // previous value   (reserved: must be null)
+            null_mut(),     // return size      (reserved: must be null)
+        )})?;
+        Ok(self)
     }
 }
 
-// TODO: type-erase ThreadAttributeRef s
-// TODO: from slice of type-erased ThreadAttributeRef s
+impl<'a> TryFrom<&'_ [ThreadAttributeRef<'a>]> for ThreadAttributeList<'a> {
+    type Error = Error;
+    fn try_from(refs: &'_ [ThreadAttributeRef<'a>]) -> Result<Self, Error> {
+        let len = refs.len().try_into().unwrap_or(!0u32);
+        let mut list = Self::with_attribute_capacity(len)?;
+        for r in refs.iter().copied() { list.update(r)?; }
+        Ok(list)
+    }
+}
 
 
 
@@ -70,62 +72,62 @@ impl<'a> ThreadAttributeList<'a> {
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\] UpdateProcThreadAttribute (attribute, &value) pair
-pub struct ThreadAttributeRef<'a, T: ?Sized>(usize, &'a T);
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\] UpdateProcThreadAttribute (attribute, &value, size) tuple
+#[derive(Clone, Copy)] pub struct ThreadAttributeRef<'a>(usize, LPVOID, usize, PhantomData<&'a usize>);
 
-impl<'a, T: ?Sized> ThreadAttributeRef<'a, T> {
-    pub unsafe fn from_raw(attribute: usize, value: &'a T) -> Self { Self(attribute, value) }
+impl<'a> ThreadAttributeRef<'a> {
+    pub unsafe fn from_raw<T: ?Sized + 'a>(attribute: usize, value: &'a T) -> Self { Self(attribute, value as *const _ as *mut _, size_of_val(value), PhantomData) }
 }
 
-impl<'a> ThreadAttributeRef<'a, ()> {
+impl<'a> ThreadAttributeRef<'a> {
     /// (PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY, [GROUP_AFFINITY](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-group_affinity))
-    pub fn group_affinity(value: &'a GROUP_AFFINITY) -> ThreadAttributeRef<'a, GROUP_AFFINITY> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY, value) }
+    pub fn group_affinity(value: &'a GROUP_AFFINITY) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_HANDLE_LIST, \[[handle::Owned]\])
-    pub fn handle_list(value: &'a [handle::Owned]) -> ThreadAttributeRef<'a, [handle::Owned]> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_HANDLE_LIST, value) }
+    pub fn handle_list(value: &'a [handle::Owned]) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_HANDLE_LIST, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR, [PROCESSOR_NUMBER](https://docs.microsoft.com/en-us/windows/desktop/api/winnt/ns-winnt-processor_number))
-    pub fn ideal_processor_ntdef(value: &'a winapi::shared::ntdef::PROCESSOR_NUMBER) -> ThreadAttributeRef<'a, winapi::shared::ntdef::PROCESSOR_NUMBER> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR, value) }
+    pub fn ideal_processor_ntdef(value: &'a winapi::shared::ntdef::PROCESSOR_NUMBER) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR, value) } }
     /// (PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR, [PROCESSOR_NUMBER](https://docs.microsoft.com/en-us/windows/desktop/api/winnt/ns-winnt-processor_number))
-    pub fn ideal_processor_winnt(value: &'a winapi::um::winnt::PROCESSOR_NUMBER) -> ThreadAttributeRef<'a, winapi::um::winnt::PROCESSOR_NUMBER> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR, value) }
+    pub fn ideal_processor_winnt(value: &'a winapi::um::winnt::PROCESSOR_NUMBER) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_MACHINE_TYPE, [IMAGE_FILE_MACHINE_*](https://docs.microsoft.com/en-us/windows/win32/sysinfo/image-file-machine-constants))
-    pub fn machine_type(value: &'a WORD) -> ThreadAttributeRef<'a, WORD> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_MACHINE_TYPE, value) }
+    pub fn machine_type(value: &'a WORD) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_MACHINE_TYPE, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, DWORD) - see also <code>[process::creation::mitigation_policy]::\*</code>
-    pub fn mitigation_policy_dword(value: &'a DWORD) -> ThreadAttributeRef<'a, DWORD> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, value) }
+    pub fn mitigation_policy_dword(value: &'a DWORD) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, value) } }
     /// (PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, DWORD64) - see also <code>[process::creation::mitigation_policy]::\*</code>
-    pub fn mitigation_policy_dword64(value: &'a DWORD64) -> ThreadAttributeRef<'a, DWORD64> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, value) }
+    pub fn mitigation_policy_dword64(value: &'a DWORD64) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, value) } }
     /// (PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, [DWORD64; 2]) - see also <code>[process::creation::mitigation_policy]\[[2](process::creation::mitigation_policy2)\]::\*</code>
-    pub fn mitigation_policy_dword64_2(value: &'a [DWORD64; 2]) -> ThreadAttributeRef<'a, [DWORD64; 2]> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, value) }
+    pub fn mitigation_policy_dword64_2(value: &'a [DWORD64; 2]) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_PARENT_PROCESS, [process::OwnedHandle])
-    pub fn parent_process(value: &'a process::OwnedHandle) -> ThreadAttributeRef<'a, process::OwnedHandle> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_PARENT_PROCESS, value) }
+    pub fn parent_process(value: &'a process::OwnedHandle) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_PARENT_PROCESS, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_PREFERRED_NODE, u8)
-    pub fn preferred_node(value: &'a u8) -> ThreadAttributeRef<'a, u8> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_PREFERRED_NODE, value) }
+    pub fn preferred_node(value: &'a u8) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_PREFERRED_NODE, value) } }
 
     // XXX: UMS_CREATE_THREAD_ATTRIBUTES not defined
     // /// (PROC_THREAD_ATTRIBUTE_UMS_THREAD, UMS_CREATE_THREAD_ATTRIBUTES)
-    // pub unsafe fn ums_thread(value: &'a UMS_CREATE_THREAD_ATTRIBUTES) -> ThreadAttributeRef<'a, UMS_CREATE_THREAD_ATTRIBUTES> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_UMS_THREAD, value) }
+    // pub unsafe fn ums_thread(value: &'a UMS_CREATE_THREAD_ATTRIBUTES) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_UMS_THREAD, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES, [SECURITY_CAPABILITIES](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_capabilities))
-    pub unsafe fn security_capabilities_raw(value: &'a SECURITY_CAPABILITIES) -> ThreadAttributeRef<'a, SECURITY_CAPABILITIES> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES, value) }
+    pub unsafe fn security_capabilities_raw(value: &'a SECURITY_CAPABILITIES) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_PROTECTION_LEVEL, [PROTECTION_LEVEL_*](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-process_protection_level_information#members))
-    pub fn protection_level(value: &'a DWORD) -> ThreadAttributeRef<'a, DWORD> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_PROTECTION_LEVEL, value) }
+    pub fn protection_level(value: &'a DWORD) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_PROTECTION_LEVEL, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY, DWORD) - see also <code>[process::creation::child_process]::\*</code>
-    pub fn child_process_policy(value: &'a DWORD) -> ThreadAttributeRef<'a, DWORD> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY, value) }
+    pub fn child_process_policy(value: &'a DWORD) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY, DWORD) - see also <code>[process::creation::desktop_app_breakaway]::\*</code>
-    pub fn desktop_app_policy(value: &'a DWORD) -> ThreadAttributeRef<'a, DWORD> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY, value) }
+    pub fn desktop_app_policy(value: &'a DWORD) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_JOB_LIST, \[[job::OwnedHandle]\])
-    pub fn job_list(value: &'a [job::OwnedHandle]) -> ThreadAttributeRef<'a, [job::OwnedHandle]> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_JOB_LIST, value) }
+    pub fn job_list(value: &'a [job::OwnedHandle]) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_JOB_LIST, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_ENABLE_OPTIONAL_XSTATE_FEATURES, [XSTATE_*](https://docs.microsoft.com/en-us/windows/win32/debug/working-with-xstate-context))
-    pub fn enable_optional_xstate_features(value: &'a DWORD64) -> ThreadAttributeRef<'a, DWORD64> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_ENABLE_OPTIONAL_XSTATE_FEATURES, value) }
+    pub fn enable_optional_xstate_features(value: &'a DWORD64) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_ENABLE_OPTIONAL_XSTATE_FEATURES, value) } }
 }
 
 
