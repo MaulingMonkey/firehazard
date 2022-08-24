@@ -81,7 +81,7 @@ impl<'a> ThreadAttributeRef<'a, ()> {
     /// (PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY, [GROUP_AFFINITY](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-group_affinity))
     pub fn group_affinity(value: &'a GROUP_AFFINITY) -> ThreadAttributeRef<'a, GROUP_AFFINITY> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY, value) }
 
-    /// (PROC_THREAD_ATTRIBUTE_HANDLE_LIST, \[[HANDLE]\])
+    /// (PROC_THREAD_ATTRIBUTE_HANDLE_LIST, \[[handle::Owned]\])
     pub fn handle_list(value: &'a [handle::Owned]) -> ThreadAttributeRef<'a, [handle::Owned]> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_HANDLE_LIST, value) }
 
     /// (PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR, [PROCESSOR_NUMBER](https://docs.microsoft.com/en-us/windows/desktop/api/winnt/ns-winnt-processor_number))
@@ -92,11 +92,11 @@ impl<'a> ThreadAttributeRef<'a, ()> {
     /// (PROC_THREAD_ATTRIBUTE_MACHINE_TYPE, [IMAGE_FILE_MACHINE_*](https://docs.microsoft.com/en-us/windows/win32/sysinfo/image-file-machine-constants))
     pub fn machine_type(value: &'a WORD) -> ThreadAttributeRef<'a, WORD> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_MACHINE_TYPE, value) }
 
-    /// (PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, DWORD)
+    /// (PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, DWORD) - see also <code>[process::creation::mitigation_policy]::\*</code>
     pub fn mitigation_policy_dword(value: &'a DWORD) -> ThreadAttributeRef<'a, DWORD> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, value) }
-    /// (PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, DWORD64)
+    /// (PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, DWORD64) - see also <code>[process::creation::mitigation_policy]::\*</code>
     pub fn mitigation_policy_dword64(value: &'a DWORD64) -> ThreadAttributeRef<'a, DWORD64> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, value) }
-    /// (PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, [DWORD64; 2])
+    /// (PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, [DWORD64; 2]) - see also <code>[process::creation::mitigation_policy]\[[2](process::creation::mitigation_policy2)\]::\*</code>
     pub fn mitigation_policy_dword64_2(value: &'a [DWORD64; 2]) -> ThreadAttributeRef<'a, [DWORD64; 2]> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, value) }
 
     /// (PROC_THREAD_ATTRIBUTE_PARENT_PROCESS, [process::OwnedHandle])
@@ -112,19 +112,19 @@ impl<'a> ThreadAttributeRef<'a, ()> {
     /// (PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES, [SECURITY_CAPABILITIES](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_capabilities))
     pub unsafe fn security_capabilities_raw(value: &'a SECURITY_CAPABILITIES) -> ThreadAttributeRef<'a, SECURITY_CAPABILITIES> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES, value) }
 
-    /// (PROC_THREAD_ATTRIBUTE_PROTECTION_LEVEL, DWORD such as PROTECTION_LEVEL_SAME)
+    /// (PROC_THREAD_ATTRIBUTE_PROTECTION_LEVEL, [PROTECTION_LEVEL_*](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-process_protection_level_information#members))
     pub fn protection_level(value: &'a DWORD) -> ThreadAttributeRef<'a, DWORD> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_PROTECTION_LEVEL, value) }
 
-    /// (PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY, DWORD)
+    /// (PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY, DWORD) - see also <code>[process::creation::child_process]::\*</code>
     pub fn child_process_policy(value: &'a DWORD) -> ThreadAttributeRef<'a, DWORD> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY, value) }
 
-    /// (PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY, DWORD)
+    /// (PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY, DWORD) - see also <code>[process::creation::desktop_app_breakaway]::\*</code>
     pub fn desktop_app_policy(value: &'a DWORD) -> ThreadAttributeRef<'a, DWORD> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY, value) }
 
     /// (PROC_THREAD_ATTRIBUTE_JOB_LIST, \[[job::OwnedHandle]\])
     pub fn job_list(value: &'a [job::OwnedHandle]) -> ThreadAttributeRef<'a, [job::OwnedHandle]> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_JOB_LIST, value) }
 
-    /// (PROC_THREAD_ATTRIBUTE_ENABLE_OPTIONAL_XSTATE_FEATURES, DWORD64)
+    /// (PROC_THREAD_ATTRIBUTE_ENABLE_OPTIONAL_XSTATE_FEATURES, [XSTATE_*](https://docs.microsoft.com/en-us/windows/win32/debug/working-with-xstate-context))
     pub fn enable_optional_xstate_features(value: &'a DWORD64) -> ThreadAttributeRef<'a, DWORD64> { ThreadAttributeRef(PROC_THREAD_ATTRIBUTE_ENABLE_OPTIONAL_XSTATE_FEATURES, value) }
 }
 
