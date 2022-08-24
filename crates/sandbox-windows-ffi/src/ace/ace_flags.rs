@@ -1,5 +1,4 @@
 use core::fmt::{self, Debug, Display, Formatter};
-use core::ops::*;
 
 
 
@@ -12,6 +11,8 @@ use core::ops::*;
 /// ACE_HEADER::AceFlags
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Flags(u8);
+
+flags!(impl .. for Flags(u32, u8) - FlagsMask { });
 
 impl Flags {
     /// ### Safety
@@ -48,26 +49,10 @@ impl Debug for Flags {
             v =! flag;
             if v != 0 { write!(fmt, " | ")?; }
         }
-        if v != 0 { write!(fmt, "0x{:02x}", v)? }
+        if v != 0 { write!(fmt, "0x{:02X}", v)? }
         Ok(())
     }
 }
-
-impl From<()> for Flags { fn from(_: ()) -> Self { Self(0) } }
-impl From<Flags> for u8  { fn from(ar: Flags) -> Self { ar.0 } }
-impl From<Flags> for u32 { fn from(ar: Flags) -> Self { ar.0 as _ } }
-
-impl BitAnd         for Flags { type Output = Self; fn bitand(self, rhs: Self) -> Self::Output { Self(self.0 & rhs.0) } }
-impl BitXor         for Flags { type Output = Self; fn bitxor(self, rhs: Self) -> Self::Output { Self(self.0 ^ rhs.0) } }
-impl BitOr          for Flags { type Output = Self; fn bitor (self, rhs: Self) -> Self::Output { Self(self.0 | rhs.0) } }
-impl BitAndAssign   for Flags { fn bitand_assign(&mut self, rhs: Self) { self.0 &= rhs.0 } }
-impl BitXorAssign   for Flags { fn bitxor_assign(&mut self, rhs: Self) { self.0 ^= rhs.0 } }
-impl BitOrAssign    for Flags { fn bitor_assign (&mut self, rhs: Self) { self.0 |= rhs.0 } }
-
-impl Not                        for Flags       { type Output = FlagsMask;  fn not(self) -> Self::Output { FlagsMask(!self.0) } }
-impl BitAnd<FlagsMask>          for Flags       { type Output = Flags;      fn bitand(self, rhs: FlagsMask) -> Flags { Flags(self.0 & rhs.0) } }
-impl BitAnd<Flags>              for FlagsMask   { type Output = Flags;      fn bitand(self, rhs: Flags    ) -> Flags { Flags(self.0 & rhs.0) } }
-impl BitAndAssign<FlagsMask>    for Flags       { fn bitand_assign(&mut self, rhs: FlagsMask) { self.0 &= rhs.0 } }
 
 pub const OBJECT_INHERIT_ACE            : Flags     = Flags     (winapi::um::winnt::OBJECT_INHERIT_ACE          ); // 0x01
 pub const CONTAINER_INHERIT_ACE         : Flags     = Flags     (winapi::um::winnt::CONTAINER_INHERIT_ACE       ); // 0x02

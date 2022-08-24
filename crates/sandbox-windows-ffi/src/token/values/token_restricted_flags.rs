@@ -1,6 +1,4 @@
-use core::convert::Infallible;
 use core::fmt::{self, Debug, Formatter};
-use core::ops::*;
 
 
 
@@ -11,6 +9,8 @@ use core::ops::*;
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-createrestrictedtoken)\] DWORD/[u32]: CreateRestrictedToken flags
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct RestrictedFlags(u32);
+
+flags!(impl .. for RestrictedFlags(u32) - RestrictedFlagsMask { });
 
 impl RestrictedFlagsMask {
     pub fn as_u32(self) -> u32 { self.0 }
@@ -26,46 +26,15 @@ impl RestrictedFlags {
 
 impl Debug for RestrictedFlags {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-        let mut v = self.0;
-        if v == 0 { return write!(fmt, "0") }
-
-        macro_rules! v { ($e:expr) => {{
-            const E : u32 = $e;
-            if v & E != 0 {
-                write!(fmt, "{}", stringify!($e))?;
-                v &= !E;
-                if v != 0 { write!(fmt, " | ")?; }
-            }
-        }}}
-
         use winapi::um::winnt::*;
-
-        v!(DISABLE_MAX_PRIVILEGE);
-        v!(SANDBOX_INERT);
-        v!(LUA_TOKEN);
-        v!(WRITE_RESTRICTED);
-
-        if v != 0 { write!(fmt, "0x{:X}", v)? }
-
-        Ok(())
+        flags!(self.0, fmt, "0x{:X}", [
+            DISABLE_MAX_PRIVILEGE,
+            SANDBOX_INERT,
+            LUA_TOKEN,
+            WRITE_RESTRICTED,
+        ])
     }
 }
-
-impl From<()> for RestrictedFlags { fn from(_: ()) -> Self { Self(0) } }
-impl From<Option<Infallible>> for RestrictedFlags { fn from(_: Option<Infallible>) -> Self { Self(0) } }
-impl From<RestrictedFlags> for u32 { fn from(ar: RestrictedFlags) -> Self { ar.as_u32() } }
-
-impl BitAnd         for RestrictedFlags { type Output = Self; fn bitand(self, rhs: Self) -> Self::Output { Self(self.as_u32() & rhs.as_u32()) } }
-impl BitXor         for RestrictedFlags { type Output = Self; fn bitxor(self, rhs: Self) -> Self::Output { Self(self.as_u32() ^ rhs.as_u32()) } }
-impl BitOr          for RestrictedFlags { type Output = Self; fn bitor (self, rhs: Self) -> Self::Output { Self(self.as_u32() | rhs.as_u32()) } }
-impl BitAndAssign   for RestrictedFlags { fn bitand_assign(&mut self, rhs: Self) { self.0 &= rhs.as_u32() } }
-impl BitXorAssign   for RestrictedFlags { fn bitxor_assign(&mut self, rhs: Self) { self.0 ^= rhs.as_u32() } }
-impl BitOrAssign    for RestrictedFlags { fn bitor_assign (&mut self, rhs: Self) { self.0 |= rhs.as_u32() } }
-
-impl Not                                for RestrictedFlags     { type Output = RestrictedFlagsMask; fn not(self) -> Self::Output { RestrictedFlagsMask(!self.as_u32()) } }
-impl BitAnd<RestrictedFlagsMask>        for RestrictedFlags     { type Output = RestrictedFlags; fn bitand(self, rhs: RestrictedFlagsMask) -> RestrictedFlags { RestrictedFlags(self.as_u32() & rhs.as_u32()) } }
-impl BitAnd<RestrictedFlags>            for RestrictedFlagsMask { type Output = RestrictedFlags; fn bitand(self, rhs: RestrictedFlags    ) -> RestrictedFlags { RestrictedFlags(self.as_u32() & rhs.as_u32()) } }
-impl BitAndAssign<RestrictedFlagsMask>  for RestrictedFlags     { fn bitand_assign(&mut self, rhs: RestrictedFlagsMask) { self.0 &= rhs.as_u32() } }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-createrestrictedtoken)\]
 /// Remove all privileges except `SeChangeNotifyPrivilege`.

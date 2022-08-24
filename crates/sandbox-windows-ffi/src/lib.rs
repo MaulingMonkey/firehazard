@@ -7,6 +7,7 @@
 #[doc(hidden)] pub extern crate abistr;
 #[doc(hidden)] pub extern crate winapi;
 
+#[path = "util/_util.rs"] #[macro_use]  mod util;               pub(crate) use util::*;
 #[path = "access/_access.rs"]           pub mod access;         //#[doc(hidden)] pub use access::constants::*;
 #[path = "ace/_ace.rs"]                 pub mod ace;            //#[doc(hidden)] pub use ace::funcs::*;
 #[path = "acl/_acl.rs"]                 pub mod acl;            //#[doc(hidden)] pub use acl::funcs::*;
@@ -27,12 +28,6 @@
 
 mod error;                              pub use error::*;
 
-pub(crate) use util::*;
-mod util {
-    mod bits32;                     pub(crate) use bits32::*;
-    pub(crate) mod partition;
-    pub fn none2null<T>(_: Option<core::convert::Infallible>) -> *mut T { core::ptr::null_mut() }
-}
 
 pub use values::*;
 mod values {

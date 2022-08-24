@@ -1,5 +1,4 @@
 use core::fmt::{self, Debug, Formatter};
-use core::ops::*;
 
 
 
@@ -12,6 +11,8 @@ use core::ops::*;
 /// ACCESS_MASK/DWORD/[u32]: Access rights flags
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Mask(pub(super) u32);
+
+flags!(impl .. for Mask(u32) - MaskMask { });
 
 impl MaskMask {
     pub fn as_u32(self) -> u32 { self.0 }
@@ -27,52 +28,22 @@ impl Mask {
 
 impl Debug for Mask {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-        let mut v = self.0;
-        if v == 0 { return write!(fmt, "0") }
-
-        macro_rules! v { ($e:expr) => {{
-            const E : u32 = $e;
-            if v & E != 0 {
-                write!(fmt, "{}", stringify!($e))?;
-                v &= !E;
-                if v != 0 { write!(fmt, " | ")?; }
-            }
-        }}}
-
         use winapi::um::winnt::*;
+        flags!(self.0, fmt, "0x{:04X}", [
+            GENERIC_ALL,
+            GENERIC_EXECUTE,
+            GENERIC_WRITE,
+            GENERIC_READ,
 
-        v!(GENERIC_ALL);
-        v!(GENERIC_EXECUTE);
-        v!(GENERIC_WRITE);
-        v!(GENERIC_READ);
+            MAXIMUM_ALLOWED,
 
-        v!(MAXIMUM_ALLOWED);
+            ACCESS_SYSTEM_SECURITY,
 
-        v!(ACCESS_SYSTEM_SECURITY);
-
-        v!(DELETE);
-        v!(READ_CONTROL);
-        v!(WRITE_DAC);
-        v!(WRITE_OWNER);
-        v!(SYNCHRONIZE);
-
-        if v != 0 { write!(fmt, "0x{:04x}", v)? }
-
-        Ok(())
+            DELETE,
+            READ_CONTROL,
+            WRITE_DAC,
+            WRITE_OWNER,
+            SYNCHRONIZE,
+        ])
     }
 }
-
-impl From<()> for Mask { fn from(_: ()) -> Self { Self(0) } }
-impl From<Mask> for u32 { fn from(ar: Mask) -> Self { ar.0 } }
-
-impl BitAnd         for Mask { type Output = Self; fn bitand(self, rhs: Self) -> Self::Output { Self(self.0 & rhs.0) } }
-impl BitXor         for Mask { type Output = Self; fn bitxor(self, rhs: Self) -> Self::Output { Self(self.0 ^ rhs.0) } }
-impl BitOr          for Mask { type Output = Self; fn bitor (self, rhs: Self) -> Self::Output { Self(self.0 | rhs.0) } }
-impl BitAndAssign   for Mask { fn bitand_assign(&mut self, rhs: Self) { self.0 &= rhs.0 } }
-impl BitXorAssign   for Mask { fn bitxor_assign(&mut self, rhs: Self) { self.0 ^= rhs.0 } }
-impl BitOrAssign    for Mask { fn bitor_assign (&mut self, rhs: Self) { self.0 |= rhs.0 } }
-
-impl Not                            for Mask      { type Output = MaskMask; fn not(self) -> Self::Output { MaskMask(!self.0) } }
-impl BitAnd<MaskMask>         for Mask      { type Output = Mask; fn bitand(self, rhs: MaskMask) -> Mask { Mask(self.0 & rhs.0) } }
-impl BitAnd<Mask>             for MaskMask  { type Output = Mask; fn bitand(self, rhs: Mask    ) -> Mask { Mask(self.0 & rhs.0) } }
-impl BitAndAssign<MaskMask>   for Mask      { fn bitand_assign(&mut self, rhs: MaskMask) { self.0 &= rhs.0 } }
