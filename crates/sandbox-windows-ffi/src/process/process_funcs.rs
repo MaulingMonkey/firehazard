@@ -1,4 +1,5 @@
 use crate::*;
+use crate::process::environment::*;
 
 use abistr::{TryIntoAsOptCStr, AsOptCStr};
 
@@ -22,6 +23,21 @@ fn _create_process_a() -> Result<process::Information, Error> { unimplemented!()
 fn _create_process_w() -> Result<process::Information, Error> { unimplemented!() }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasusera)\] CreateProcessAsUserA
+///
+/// | Error                         | Condition |
+/// | ----------------------------- | --------- |
+/// | ERROR_INCORRECT_SIZE          | If using [process::EXTENDED_STARTUPINFO_PRESENT] with [process::StartupInfoW] instead of [process::StartupInfoExW]
+/// | ERROR_INVALID_PARAMETER       | Various, including various issues with the [process::ThreadAttributeList] of [process::StartupInfoExW]
+/// | ERROR_INVALID_PARAMETER       | [process::creation::mitigation_policy2::xtended_control_flow_guard::ALWAYS_ON] on non-XFG-enabled binary?
+/// | ERROR_INVALID_PARAMETER       | [process::creation::mitigation_policy2::pointer_auth_user_ip::ALWAYS_ON] on a non-ARM64 system?
+/// | ERROR_FILE_NOT_FOUND          | Executable specified by `command_line` not found
+/// | ERROR_ACCESS_DENIED           | Various path access errors
+/// | ERROR_ACCESS_DENIED           | [process::creation::mitigation_policy2::block_non_cet_binaries::ALWAYS_ON] on a non-CET binrary<br>Various path access errors?
+/// | ERROR_STRICT_CFG_VIOLATION    | [process::creation::mitigation_policy2::strict_control_flow_guard::ALWAYS_ON] on a partially CFG-enabled binary?
+/// | ERROR_BAD_ENVIRONMENT         | `environment` was ANSI despite `creation_flags` containing `CREATE_UNICODE_ENVIRONMENT`
+/// | ERROR_BAD_ENVIRONMENT         | `environment` was UTF16 despite `creation_flags` lacking `CREATE_UNICODE_ENVIRONMENT`
+/// | E_STRING_NOT_NULL_TERMINATED  | `environment` was missing `\0\0` terminator
+/// | E_STRING_NOT_NULL_TERMINATED  | `application_name`, `command_line`, or `current_directory` was missing `\0` terminator
 pub fn create_process_as_user_a(
     token:                  &crate::token::OwnedHandle,
     application_name:       impl TryIntoAsOptCStr,
@@ -30,12 +46,12 @@ pub fn create_process_as_user_a(
     thread_attributes:      Option<&security::Attributes>,
     inherit_handles:        bool,
     creation_flags:         impl Into<process::CreationFlags>,
-    environment:            Option<&[u8]>,              // TODO: type to reduce validation needs (expected to be NUL separated, 2xNUL terminated: "key=value\0key=value\0\0")
+    environment:            impl TryIntoEnvironment,
     current_directory:      impl TryIntoAsOptCStr,
     startup_info:           &impl process::AsStartupInfoA,
 ) -> Result<process::Information, Error> {
     if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be NUL terminated
-    if !environment.unwrap_or(&[0, 0]).ends_with(&[0, 0])           { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be 2xNUL terminated
+    let creation_flags = creation_flags.into().into();
     let mut process_information = unsafe { zeroed() };
 
     extern "system" { fn CreateProcessAsUserA(
@@ -59,8 +75,8 @@ pub fn create_process_as_user_a(
         process_attributes.map_or(null(), |a| a) as *mut _,
         thread_attributes.map_or(null(), |a| a) as *mut _,
         inherit_handles as _,
-        creation_flags.into().into(),
-        environment.map_or(null(), |e| e.as_ptr()) as *mut _,
+        creation_flags,
+        environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?,
         current_directory.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
         startup_info.as_winapi()?,
         &mut process_information
@@ -80,6 +96,10 @@ pub fn create_process_as_user_a(
 /// | ERROR_ACCESS_DENIED           | Various path access errors
 /// | ERROR_ACCESS_DENIED           | [process::creation::mitigation_policy2::block_non_cet_binaries::ALWAYS_ON] on a non-CET binrary<br>Various path access errors?
 /// | ERROR_STRICT_CFG_VIOLATION    | [process::creation::mitigation_policy2::strict_control_flow_guard::ALWAYS_ON] on a partially CFG-enabled binary?
+/// | ERROR_BAD_ENVIRONMENT         | `environment` was ANSI despite `creation_flags` containing `CREATE_UNICODE_ENVIRONMENT`
+/// | ERROR_BAD_ENVIRONMENT         | `environment` was UTF16 despite `creation_flags` lacking `CREATE_UNICODE_ENVIRONMENT`
+/// | E_STRING_NOT_NULL_TERMINATED  | `environment` was missing `\0\0` terminator
+/// | E_STRING_NOT_NULL_TERMINATED  | `application_name`, `command_line`, or `current_directory` was missing `\0` terminator
 pub fn create_process_as_user_w(
     token:                  &crate::token::OwnedHandle,
     application_name:       impl TryIntoAsOptCStr<u16>,
@@ -91,12 +111,12 @@ pub fn create_process_as_user_w(
     thread_attributes:      Option<&security::Attributes>,
     inherit_handles:        bool,
     creation_flags:         impl Into<process::CreationFlags>,
-    environment:            Option<&[u16]>,                     // XXX: fix type: should match [process::CREATE_UNICODE_ENVIRONMENT] - TODO: type to reduce validation needs (expected to be NUL separated, 2xNUL terminated: "key=value\0key=value\0\0")
+    environment:            impl TryIntoEnvironment,
     current_directory:      impl TryIntoAsOptCStr<u16>,
     startup_info:           &impl process::AsStartupInfoW,
 ) -> Result<process::Information, Error> {
     if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be NUL terminated
-    if !environment.unwrap_or(&[0, 0]).ends_with(&[0, 0])           { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be 2xNUL terminated
+    let creation_flags = creation_flags.into().into();
     let mut process_information = unsafe { zeroed() };
 
     Error::get_last_if(0 == unsafe { CreateProcessAsUserW(
@@ -106,8 +126,8 @@ pub fn create_process_as_user_w(
         process_attributes.map_or(null(), |a| a) as *mut _,
         thread_attributes.map_or(null(), |a| a) as *mut _,
         inherit_handles as _,
-        creation_flags.into().into(),
-        environment.map_or(null(), |e| e.as_ptr()) as *mut _,
+        creation_flags,
+        environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?,
         current_directory.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
         startup_info.as_winapi()?,
         &mut process_information

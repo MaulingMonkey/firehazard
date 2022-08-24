@@ -133,7 +133,7 @@ fn default(exe: &OsStr) {
         None, // thread security attributes
         false, // inherit inheriable handles
         creation_flags,
-        None, // environment
+        process::environment::Inherit,
         (), // working dir
         &startup_info,
     ).expect("CreateProcessAsUserW");

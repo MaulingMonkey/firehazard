@@ -282,7 +282,7 @@ fn run(context: &Context, target: Target) {
 
     let pi = with_thread_desktop(desktop, || create_process_as_user_w(
         &restricted, (), Some(unsafe { command_line.buffer_mut() }), None, None, false,
-        process::DEBUG_PROCESS | process::CREATE_SEPARATE_WOW_VDM | process::CREATE_SUSPENDED | process::EXTENDED_STARTUPINFO_PRESENT, Some(&[0,0][..]), (), &si
+        process::DEBUG_PROCESS | process::CREATE_SEPARATE_WOW_VDM | process::CREATE_SUSPENDED | process::EXTENDED_STARTUPINFO_PRESENT, process::environment::Clear, (), &si
     ).unwrap()).unwrap();
     set_thread_token(&pi.thread, &permissive).unwrap();
     resume_thread(&pi.thread).unwrap();
