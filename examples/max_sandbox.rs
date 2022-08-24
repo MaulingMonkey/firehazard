@@ -214,7 +214,14 @@ fn run(context: &Context, target: Target) {
     let policy = process::creation::desktop_app_breakaway::ENABLE_PROCESS_TREE;
     attribute_list.update(process::ThreadAttributeRef::desktop_app_policy(&policy)).unwrap();
 
-    // TODO: look for more attributes
+    // TODO: ThreadAttributeRef::handle_list ?
+    // TODO: ThreadAttributeRef::security_capabilities ? app container / capability sids related: https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_capabilities
+
+    // Overkill, since we're almost certainly not running as a protected app ourselves, but harmless
+    const PROTECTION_LEVEL_SAME : u32 = 0xFFFFFFFF;
+    attribute_list.update(process::ThreadAttributeRef::protection_level(&PROTECTION_LEVEL_SAME)).unwrap();
+
+    // TODO: ThreadAttributeRef::job_list ?
 
     let mut si = process::StartupInfoExW::default();
     si.startup_info.desktop = None; // TODO
