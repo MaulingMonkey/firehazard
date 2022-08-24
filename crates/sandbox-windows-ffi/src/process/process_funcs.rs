@@ -69,6 +69,17 @@ pub fn create_process_as_user_a(
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasuserw)\] CreateProcessAsUserW
+///
+/// | Error                         | Condition |
+/// | ----------------------------- | --------- |
+/// | ERROR_INCORRECT_SIZE          | If using [process::EXTENDED_STARTUPINFO_PRESENT] with [process::StartupInfoW] instead of [process::StartupInfoExW]
+/// | ERROR_INVALID_PARAMETER       | Various, including various issues with the [process::ThreadAttributeList] of [process::StartupInfoExW]
+/// | ERROR_INVALID_PARAMETER       | [process::creation::mitigation_policy2::xtended_control_flow_guard::ALWAYS_ON] on non-XFG-enabled binary?
+/// | ERROR_INVALID_PARAMETER       | [process::creation::mitigation_policy2::pointer_auth_user_ip::ALWAYS_ON] on a non-ARM64 system?
+/// | ERROR_FILE_NOT_FOUND          | Executable specified by `command_line` not found
+/// | ERROR_ACCESS_DENIED           | Various path access errors
+/// | ERROR_ACCESS_DENIED           | [process::creation::mitigation_policy2::block_non_cet_binaries::ALWAYS_ON] on a non-CET binrary<br>Various path access errors?
+/// | ERROR_STRICT_CFG_VIOLATION    | [process::creation::mitigation_policy2::strict_control_flow_guard::ALWAYS_ON] on a partially CFG-enabled binary?
 pub fn create_process_as_user_w(
     token:                  &crate::token::OwnedHandle,
     application_name:       impl TryIntoAsOptCStr<u16>,
@@ -80,7 +91,7 @@ pub fn create_process_as_user_w(
     thread_attributes:      Option<&security::Attributes>,
     inherit_handles:        bool,
     creation_flags:         impl Into<process::CreationFlags>,
-    environment:            Option<&[u16]>,             // TODO: type to reduce validation needs (expected to be NUL separated, 2xNUL terminated: "key=value\0key=value\0\0")
+    environment:            Option<&[u16]>,                     // XXX: fix type: should match [process::CREATE_UNICODE_ENVIRONMENT] - TODO: type to reduce validation needs (expected to be NUL separated, 2xNUL terminated: "key=value\0key=value\0\0")
     current_directory:      impl TryIntoAsOptCStr<u16>,
     startup_info:           &impl process::AsStartupInfoW,
 ) -> Result<process::Information, Error> {
