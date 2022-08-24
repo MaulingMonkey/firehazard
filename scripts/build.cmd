@@ -5,13 +5,13 @@
 ::@if ERRORLEVEL 1 goto :die
 
 @cargo +nightly --version >NUL 2>NUL || goto :skip-nightly
-    cargo +nightly build --release --no-default-features --example trivial
+    cargo +nightly build --release --no-default-features --example trivial -Zbuild-std --target=x86_64-pc-windows-msvc
     @if ERRORLEVEL 1 goto :die
 
     @setlocal
     @call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat" >NUL
     @echo on
-    @dumpbin /NOLOGO /IMPORTS target\release\examples\trivial.exe
+    @dumpbin /NOLOGO /IMPORTS target\x86_64-pc-windows-msvc\release\examples\trivial.exe
     @endlocal
 :skip-nightly
 
