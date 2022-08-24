@@ -11,6 +11,7 @@ use winapi::um::winnt::*;
 use std::collections::*;
 use std::ffi::OsString;
 use std::mem::MaybeUninit;
+use std::mem::zeroed;
 use std::os::windows::prelude::*;
 use std::path::PathBuf;
 
@@ -123,6 +124,56 @@ fn main() {
     let context = Context {
         main_desktop:   get_thread_desktop(get_current_thread_id()).unwrap(),
         alt_desktop:    create_desktop_a(cstr!("max_sandbox_desktop"), (), None, 0, access::GENERIC_ALL, None).unwrap(),
+        job: {
+            // TODO: chrome seems to give each process its own job object
+            let mut job = create_job_object_a(None, ()).unwrap();
+            // TODO: consider UserHandleGrantAccess to... do what, exactly?
+            // https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject
+            set_information_job_object(&mut job, JOBOBJECT_BASIC_UI_RESTRICTIONS { UIRestrictionsClass: 0
+                | JOB_OBJECT_UILIMIT_DESKTOP            // Prevents processes associated with the job from creating desktops and switching desktops using the CreateDesktop and SwitchDesktop functions.
+                | JOB_OBJECT_UILIMIT_DISPLAYSETTINGS    // Prevents processes associated with the job from calling the ChangeDisplaySettings function.
+                | JOB_OBJECT_UILIMIT_EXITWINDOWS        // Prevents processes associated with the job from calling the ExitWindows or ExitWindowsEx function.
+                | JOB_OBJECT_UILIMIT_GLOBALATOMS        // Prevents processes associated with the job from accessing global atoms. When this flag is used, each job has its own atom table.
+                | JOB_OBJECT_UILIMIT_HANDLES            // Prevents processes associated with the job from using USER handles owned by processes not associated with the same job.
+                | JOB_OBJECT_UILIMIT_READCLIPBOARD      // Prevents processes associated with the job from reading data from the clipboard.
+                | JOB_OBJECT_UILIMIT_SYSTEMPARAMETERS   // Prevents processes associated with the job from changing system parameters by using the SystemParametersInfo function.
+                | JOB_OBJECT_UILIMIT_WRITECLIPBOARD     // Prevents processes associated with the job from writing data to the clipboard.
+            }).unwrap();
+            set_information_job_object(&mut job, JOBOBJECT_EXTENDED_LIMIT_INFORMATION {
+                BasicLimitInformation: JOBOBJECT_BASIC_LIMIT_INFORMATION {
+                    LimitFlags: 0
+                        | JOB_OBJECT_LIMIT_ACTIVE_PROCESS
+                        | JOB_OBJECT_LIMIT_DIE_ON_UNHANDLED_EXCEPTION
+                        | JOB_OBJECT_LIMIT_JOB_MEMORY
+                        | JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
+                        // | JOB_OBJECT_LIMIT_JOB_TIME // ?
+                        ,
+                    ActiveProcessLimit: 1, // TODO: chrome seems to adjust this down to 0 post-launch?
+                    //PerJobUserTimeLimit: ..., // ?
+                    .. unsafe { zeroed() }
+                },
+                JobMemoryLimit: 4 * 1024*1024*1024, // 4 GiB
+                .. unsafe { zeroed() }
+            }).unwrap();
+            #[cfg(nope)] // TODO: the pointers in this type would require set_information_job_object to be `unsafe`, replace with a safer type
+            set_information_job_object(&mut job, &JOBOBJECT_SECURITY_LIMIT_INFORMATION {
+                SecurityLimitFlags: 0
+                    | JOB_OBJECT_SECURITY_NO_ADMIN          // Prevents any process in the job from using a token that specifies the local administrators group.
+                    | JOB_OBJECT_SECURITY_RESTRICTED_TOKEN  // Prevents any process in the job from using a token that was not created with the CreateRestrictedToken function.
+                    // | JOB_OBJECT_SECURITY_FILTER_TOKENS    // Applies a filter to the token when a process impersonates a client. Requires at least one of the following members to be set: SidsToDisable, PrivilegesToDelete, or RestrictedSids.
+                    // | JOB_OBJECT_SECURITY_ONLY_TOKEN       // I don't have JobToken set - and would this prevent SetThreadToken ?
+                    ,
+                .. unsafe { zeroed() }
+            }).unwrap();
+            // TODO: JOBOBJECT_END_OF_JOB_TIME_INFORMATION to hard-terminate the processes of the job?
+            // TODO: JobObjectGroupInformation processor groups?
+            // TODO: JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2 limits?
+            // TODO: JOBOBJECT_NET_RATE_CONTROL_INFORMATION to disable network?
+            // TODO: JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION[_2] ?
+            // TODO: JOBOBJECT_LIMIT_VIOLATION_INFORMATION ?
+            // TODO: SetIoRateControlInformationJobObject ?
+            job
+        },
     };
     for target in Target::list() {
         run(&context, target);
@@ -132,6 +183,7 @@ fn main() {
 struct Context {
     main_desktop:   desktop::OwnedHandle,
     alt_desktop:    desktop::OwnedHandle,
+    job:            job::OwnedHandle,
 }
 
 fn run(context: &Context, target: Target) {
@@ -164,13 +216,15 @@ fn run(context: &Context, target: Target) {
     let desktop = if target.allow.same_desktop { &context.main_desktop } else { &context.alt_desktop };
     let mut command_line = abistr::CStrBuf::<u16, 32768>::from_truncate(&target.exe.as_os_str().encode_wide().chain(Some(0)).collect::<Vec<_>>());
 
+    let job_list = [context.job.clone()];
+
     let mut attribute_list = process::ThreadAttributeList::new();
 
     let policy1 = 0u64
         | process::creation::mitigation_policy::DEP_ENABLE
         //| process::creation::mitigation_policy::DEP_ATL_THUNK_ENABLE
         | process::creation::mitigation_policy::SEHOP_ENABLE
-        | process::creation::mitigation_policy::force_relocate_images::ALWAYS_ON_REQ_RELOCS
+        | process::creation::mitigation_policy::force_relocate_images::ALWAYS_ON_REQ_RELOCS // chrome.exe doesn't bother with this
         | process::creation::mitigation_policy::heap_terminate::ALWAYS_ON
         | process::creation::mitigation_policy::bottom_up_aslr::ALWAYS_ON
         | process::creation::mitigation_policy::high_entropy_aslr::ALWAYS_ON
@@ -179,7 +233,7 @@ fn run(context: &Context, target: Target) {
         | process::creation::mitigation_policy::extension_point_disable::ALWAYS_ON
         | process::creation::mitigation_policy::prohibit_dynamic_code::ALWAYS_ON
         | process::creation::mitigation_policy::control_flow_guard::ALWAYS_ON               // Redundant?
-        | process::creation::mitigation_policy::control_flow_guard::EXPORT_SUPPRESSION
+        | process::creation::mitigation_policy::control_flow_guard::EXPORT_SUPPRESSION      // https://docs.microsoft.com/en-us/windows/win32/secbp/pe-metadata#export-suppression
         | process::creation::mitigation_policy::block_non_microsoft_binaries::ALWAYS_ON     // Redundant?
         | process::creation::mitigation_policy::block_non_microsoft_binaries::ALLOW_STORE   // ?
         | process::creation::mitigation_policy::font_disable::ALWAYS_ON
@@ -190,7 +244,7 @@ fn run(context: &Context, target: Target) {
 
     let policy2 = 0u64
         | process::creation::mitigation_policy2::loader_integrity_continuity::ALWAYS_ON
-        | process::creation::mitigation_policy2::strict_control_flow_guard::ALWAYS_ON
+        //| process::creation::mitigation_policy2::strict_control_flow_guard::ALWAYS_ON         // causes ERROR_STRICT_CFG_VIOLATION, even if our executables are built with -Zbuild-std and -Ccontrol-flow-guard=checks
         | process::creation::mitigation_policy2::module_tampering_protection::ALWAYS_ON
         | process::creation::mitigation_policy2::restrict_indirect_branch_prediction::ALWAYS_ON
         | process::creation::mitigation_policy2::allow_downgrade_dynamic_code_policy::ALWAYS_OFF
@@ -198,11 +252,11 @@ fn run(context: &Context, target: Target) {
         | process::creation::mitigation_policy2::cet_user_shadow_stacks::ALWAYS_ON      // Redundant
         | process::creation::mitigation_policy2::cet_user_shadow_stacks::STRICT_MODE
         | process::creation::mitigation_policy2::user_cet_set_context_ip_validation::ALWAYS_ON
-        | process::creation::mitigation_policy2::block_non_cet_binaries::ALWAYS_ON
-        | process::creation::mitigation_policy2::xtended_control_flow_guard::ALWAYS_ON
-        | process::creation::mitigation_policy2::pointer_auth_user_ip::ALWAYS_ON
+        //| process::creation::mitigation_policy2::block_non_cet_binaries::ALWAYS_ON            // causes ERROR_ACCESS_DENIED (are our executables not built with CET?)
+        //| process::creation::mitigation_policy2::xtended_control_flow_guard::ALWAYS_ON        // causes ERROR_INVALID_PARAMETER - not built with XFG? see https://connormcgarr.github.io/examining-xfg/ / https://query.prod.cms.rt.microsoft.com/cms/api/am/binary/RE37dMC
+        //| process::creation::mitigation_policy2::pointer_auth_user_ip::ALWAYS_ON              // causes ERROR_INVALID_PARAMETER - ARM64 (not x64/AMD64!) only?
         | process::creation::mitigation_policy2::cet_dynamic_apis_out_of_proc_only::ALWAYS_ON
-        | process::creation::mitigation_policy2::restrict_core_sharing::ALWAYS_ON
+        //| process::creation::mitigation_policy2::restrict_core_sharing::ALWAYS_ON             // causes ERROR_INVALID_PARAMETER (do I need to specify cores to hog?)
         ;
 
     let policy = [policy1, policy2];
@@ -217,11 +271,14 @@ fn run(context: &Context, target: Target) {
     // TODO: ThreadAttributeRef::handle_list ?
     // TODO: ThreadAttributeRef::security_capabilities ? app container / capability sids related: https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_capabilities
 
-    // Overkill, since we're almost certainly not running as a protected app ourselves, but harmless
-    const PROTECTION_LEVEL_SAME : u32 = 0xFFFFFFFF;
-    attribute_list.update(process::ThreadAttributeRef::protection_level(&PROTECTION_LEVEL_SAME)).unwrap();
+    if false {
+        // will cause create_process_as_user_w to fail with ERROR_INVALID_PARAMETER
+        // Also completely pointless, as we're almost certainly not running as a protected app ourselves
+        const PROTECTION_LEVEL_SAME : u32 = 0xFFFFFFFF;
+        attribute_list.update(process::ThreadAttributeRef::protection_level(&PROTECTION_LEVEL_SAME)).unwrap();
+    }
 
-    // TODO: ThreadAttributeRef::job_list ?
+    attribute_list.update(process::ThreadAttributeRef::job_list(&job_list[..])).unwrap();
 
     let mut si = process::StartupInfoExW::default();
     si.startup_info.desktop = None; // TODO
@@ -230,7 +287,7 @@ fn run(context: &Context, target: Target) {
 
     let pi = with_thread_desktop(desktop, || create_process_as_user_w(
         &restricted, (), Some(unsafe { command_line.buffer_mut() }), None, None, false,
-        process::DEBUG_PROCESS | process::CREATE_SEPARATE_WOW_VDM | process::CREATE_SUSPENDED, Some(&[0,0][..]), (), &si
+        process::DEBUG_PROCESS | process::CREATE_SEPARATE_WOW_VDM | process::CREATE_SUSPENDED | process::EXTENDED_STARTUPINFO_PRESENT, Some(&[0,0][..]), (), &si
     ).unwrap()).unwrap();
     set_thread_token(&pi.thread, &permissive).unwrap();
     resume_thread(&pi.thread).unwrap();
