@@ -1,11 +1,11 @@
 [target.x86_64-pc-windows-msvc]
 rustflags = [
-    "-Ccontrol-flow-guard=checks",
-    "-Ctarget-feature=+crt-static"
+    "-Ccontrol-flow-guard=checks",      # extra security checks
+    "-Ctarget-feature=+crt-static",     # require fewer permissions (don't need to find CRT DLL)
 ]
 
 [target.i686-pc-windows-msvc]
 rustflags = [
     "-Ccontrol-flow-guard=checks",
-    "-Ctarget-feature=+crt-static"
+    "-Ctarget-feature=+crt-static",
 ]
