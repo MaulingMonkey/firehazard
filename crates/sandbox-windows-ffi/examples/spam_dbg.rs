@@ -1,4 +1,4 @@
-use sandbox::windows::ffi::*;
+use sandbox_windows_ffi::*;
 
 macro_rules! dbg { ($expr:expr) => { println!("{}\\{}:{} {} = {:?}", env!("CARGO_MANIFEST_DIR"), file!(), line!(), stringify!($expr), $expr) }; }
 macro_rules! dbgl { ($expr:expr) => {{

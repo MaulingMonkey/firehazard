@@ -1,4 +1,4 @@
-use sandbox::windows::ffi::*;
+use sandbox_windows_ffi::*;
 use winapi::um::winnt::*;
 
 fn main() {

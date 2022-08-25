@@ -3,15 +3,6 @@
 [workspace]
 members                     = ["crates/*"]
 
-[package]
-name                        = "win32_security_playground"
-version                     = "0.0.0-git"
-publish                     = false
-authors                     = ["MaulingMonkey <git@maulingmonkey.com>"]
-edition                     = "2021"
-license                     = "Apache-2.0 OR MIT"
-readme                      = "Readme.md"
-
 [profile.dev]
 panic                       = "abort"
 lto                         = true
@@ -19,10 +10,3 @@ lto                         = true
 [profile.release]
 panic                       = "abort"
 lto                         = true
-
-[features]
-default                     = ["std"]
-std                         = ["sandbox/std"]
-
-[dev-dependencies]
-sandbox.path                = "crates/sandbox"

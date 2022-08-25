@@ -2,7 +2,7 @@
 #![cfg_attr(nightly, no_std)]
 #![cfg_attr(nightly, no_main)]
 
-use sandbox::windows::ffi::*;
+use sandbox_windows_ffi::*;
 use abistr::*;
 
 #[cfg(not(nightly))] fn main() { run() }

@@ -1,6 +1,6 @@
 //! Throw away `SeShutdownPrivilege`
 
-use sandbox::windows::ffi::*;
+use sandbox_windows_ffi::*;
 
 use abistr::cstr;
 
