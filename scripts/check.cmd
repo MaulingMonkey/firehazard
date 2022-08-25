@@ -1,6 +1,6 @@
 @pushd "%~dp0.." && setlocal
 
-@cargo check --workspace
+@cargo check --workspace --all-targets
 @if ERRORLEVEL 1 goto :die
 
 :die
