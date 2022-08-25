@@ -1,6 +1,6 @@
 use sandbox::windows::ffi::*;
 
-use abistr::cstr;
+use abistr::*;
 
 use winapi::shared::minwindef::FALSE;
 use winapi::um::handleapi::DuplicateHandle;
@@ -122,8 +122,8 @@ impl Target {
 
 fn main() {
     let context = Context {
-        main_desktop:   get_thread_desktop(get_current_thread_id()).unwrap(),
-        alt_desktop:    create_desktop_a(cstr!("max_sandbox_desktop"), (), None, 0, access::GENERIC_ALL, None).unwrap(),
+        // TODO: make desktop available to low/untrusted integrity processes (currently requires Medium integrity)
+        _alt_desktop:   create_desktop_a(cstr!("max_sandbox_desktop"), (), None, 0, access::GENERIC_ALL, None).unwrap(),
     };
     for target in Target::list() {
         run(&context, target);
@@ -131,11 +131,10 @@ fn main() {
 }
 
 struct Context {
-    main_desktop:   desktop::OwnedHandle,
-    alt_desktop:    desktop::OwnedHandle,
+    _alt_desktop:   desktop::OwnedHandle,
 }
 
-fn run(context: &Context, target: Target) {
+fn run(_context: &Context, target: Target) {
     assert!(target.spawn.integrity >= target.lockdown.integrity, "target.lockdown.integrity cannot be more permissive than spawn integrity");
 
     let sandbox_process_token = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
@@ -162,7 +161,6 @@ fn run(context: &Context, target: Target) {
     restricted.set_integrity_level(sid::AndAttributes::new(target.spawn.integrity.sid(), 0)).unwrap(); // lower child token to target.lockdown.integrity post-spawn
     let permissive = duplicate_token_ex(&permissive, token::ALL_ACCESS, None, security::Impersonation, token::Impersonation).unwrap(); // primary -> impersonation token
 
-    let desktop = if target.allow.same_desktop { &context.main_desktop } else { &context.alt_desktop };
     let mut command_line = abistr::CStrBuf::<u16, 32768>::from_truncate(&target.exe.as_os_str().encode_wide().chain(Some(0)).collect::<Vec<_>>());
 
     let policy1 = 0u64
@@ -174,14 +172,14 @@ fn run(context: &Context, target: Target) {
         | process::creation::mitigation_policy::bottom_up_aslr::ALWAYS_ON
         | process::creation::mitigation_policy::high_entropy_aslr::ALWAYS_ON
         | process::creation::mitigation_policy::strict_handle_checks::ALWAYS_ON
-        | process::creation::mitigation_policy::win32k_system_call_disable::ALWAYS_ON
+        | if target.allow.same_desktop { 0 } else { process::creation::mitigation_policy::win32k_system_call_disable::ALWAYS_ON } // user32.dll(?) requires access on init
         | process::creation::mitigation_policy::extension_point_disable::ALWAYS_ON
         | process::creation::mitigation_policy::prohibit_dynamic_code::ALWAYS_ON
         | process::creation::mitigation_policy::control_flow_guard::ALWAYS_ON               // Redundant?
         | process::creation::mitigation_policy::control_flow_guard::EXPORT_SUPPRESSION      // https://docs.microsoft.com/en-us/windows/win32/secbp/pe-metadata#export-suppression
         | process::creation::mitigation_policy::block_non_microsoft_binaries::ALWAYS_ON     // Redundant?
         | process::creation::mitigation_policy::block_non_microsoft_binaries::ALLOW_STORE   // ?
-        | process::creation::mitigation_policy::font_disable::ALWAYS_ON
+        | if target.allow.same_desktop { 0 } else { process::creation::mitigation_policy::font_disable::ALWAYS_ON } // user32.dll(?) requires access on init
         | process::creation::mitigation_policy::image_load_no_remote::ALWAYS_ON
         | process::creation::mitigation_policy::image_load_no_low_label::ALWAYS_ON
         | process::creation::mitigation_policy::image_load_prefer_system32::ALWAYS_ON
@@ -226,14 +224,16 @@ fn run(context: &Context, target: Target) {
     ][..]).unwrap();
 
     let mut si = process::StartupInfoExW::default();
+    // N.B.: this will cause user32.dll(?) to STATUS_DLL_INIT_FAILED unless the child process can access the named desktop
+    // specifying a nonexistant desktop is also an option
+    si.startup_info.desktop = Some(cstr16!("max_sandbox_desktop")).filter(|_| !target.allow.same_desktop);
     si.startup_info.flags   = STARTF_UNTRUSTEDSOURCE;
     si.attribute_list       = Some(attribute_list);
 
-    // TODO: verify this actually puts the new process in the sandbox desktop
-    let pi = with_thread_desktop(desktop, || create_process_as_user_w(
+    let pi = create_process_as_user_w(
         &restricted, (), Some(unsafe { command_line.buffer_mut() }), None, None, false,
         process::DEBUG_PROCESS | process::CREATE_SEPARATE_WOW_VDM | process::CREATE_SUSPENDED | process::EXTENDED_STARTUPINFO_PRESENT, process::environment::Clear, (), &si
-    ).unwrap()).unwrap();
+    ).unwrap();
     set_thread_token(&pi.thread, &permissive).unwrap();
     relimit_job(&mut job, 0);
     resume_thread(&pi.thread).unwrap();
@@ -276,18 +276,29 @@ fn run(context: &Context, target: Target) {
                 debug_assert!(_prev_thread.is_none());
                 dbg_continue();
             },
-            CreateProcess(_event) => {
+            CreateProcess(event) => {
                 eprintln!("[{dwProcessId}:{dwThreadId}] process created");
+                let mut thread = event.hThread;
+
+                let process = get_current_process().as_handle();
+                assert!(FALSE != unsafe { DuplicateHandle(process, thread, process, &mut thread, access::GENERIC_ALL.into(), false as _, 0) });
+                let thread = unsafe { thread::OwnedHandle::clone_from_raw(thread) };
+
+                set_thread_token(&thread, &permissive).unwrap(); // already set?
+                let _prev_thread = threads.insert(dwThreadId, thread);
+                debug_assert!(_prev_thread.is_none());
                 dbg_continue();
             },
-            ExitThread(_event) => {
-                eprintln!("[{dwProcessId}:{dwThreadId}] thread exited with code: {}", _event.dwExitCode);
+            ExitThread(event) => {
+                eprintln!("[{dwProcessId}:{dwThreadId}] thread exited with code: {:?}", Error::from(event.dwExitCode));
                 let _thread = threads.remove(&dwThreadId);
                 debug_assert!(_thread.is_some());
                 dbg_continue();
             },
-            ExitProcess(_event) => {
-                eprintln!("[{dwProcessId}:{dwThreadId}] process exited with code: {}", _event.dwExitCode);
+            ExitProcess(event) => {
+                eprintln!("[{dwProcessId}:{dwThreadId}] process exited with code: {:?}", Error::from(event.dwExitCode));
+                let _thread = threads.remove(&dwThreadId);
+                debug_assert!(_thread.is_some());
                 dbg_continue();
                 break;
             },
@@ -362,22 +373,6 @@ fn create_job() -> job::OwnedHandle {
         | JOB_OBJECT_UILIMIT_READCLIPBOARD      // Prevents processes associated with the job from reading data from the clipboard.
         | JOB_OBJECT_UILIMIT_SYSTEMPARAMETERS   // Prevents processes associated with the job from changing system parameters by using the SystemParametersInfo function.
         | JOB_OBJECT_UILIMIT_WRITECLIPBOARD     // Prevents processes associated with the job from writing data to the clipboard.
-    }).unwrap();
-    set_information_job_object(&mut job, JOBOBJECT_EXTENDED_LIMIT_INFORMATION {
-        BasicLimitInformation: JOBOBJECT_BASIC_LIMIT_INFORMATION {
-            LimitFlags: 0
-                | JOB_OBJECT_LIMIT_ACTIVE_PROCESS
-                | JOB_OBJECT_LIMIT_DIE_ON_UNHANDLED_EXCEPTION
-                | JOB_OBJECT_LIMIT_JOB_MEMORY
-                | JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
-                // | JOB_OBJECT_LIMIT_JOB_TIME // ?
-                ,
-            ActiveProcessLimit: 1, // TODO: chrome seems to adjust this down to 0 post-launch?
-            //PerJobUserTimeLimit: ..., // ?
-            .. unsafe { zeroed() }
-        },
-        JobMemoryLimit: 4 * 1024*1024*1024, // 4 GiB
-        .. unsafe { zeroed() }
     }).unwrap();
     #[cfg(nope)] // TODO: the pointers in this type would require set_information_job_object to be `unsafe`, replace with a safer type
     set_information_job_object(&mut job, JOBOBJECT_SECURITY_LIMIT_INFORMATION {

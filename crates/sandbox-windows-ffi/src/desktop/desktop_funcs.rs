@@ -264,6 +264,10 @@ pub fn open_input_desktop(
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setthreaddesktop)\]
 /// SetThreadDesktop x2 + GetThreadDesktop
 ///
+/// ### ⚠️ Warning ⚠️
+/// New child processes appear to inherit the process's initial desktop, not the thread's current desktop.
+/// To spawn a child process on a new desktop, instead specify [process::StartupInfoW::desktop].
+///
 /// ### Example
 /// ```
 /// # use sandbox_windows_ffi::*;
