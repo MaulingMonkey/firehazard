@@ -1,5 +1,20 @@
 Playing around with Win32 security APIs to understand/grok/document/wrap them.
 
+## ⚠️ Warning ⚠️
+I'm not subscribed to any security lists.
+I don't have anything alerting me to CVEs.
+I don't have any PGP keys for you to securely send me security bugs.
+This isn't backed by a team or company.
+I have no code reviewers.
+I haven't fuzz tested anything.
+My test coverage is mediocre.
+There is no red team.
+I haven't made a proper attempt to bypass even the example sandbox.
+Just because you're paranoid, doesn't mean that they aren't out to get you.
+Rust has made me overconfident.
+Rust has made **you** overconfident.
+The false sense of security that using this code will lure you into, may be worse than nothing at all.
+
 
 
 <h2 name="license">License</h2>
