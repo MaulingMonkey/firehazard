@@ -1,4 +1,4 @@
-use sandbox::windows::ffi::output_debug_string_a;
+use sandbox::windows::ffi::*;
 
 use abistr::*;
 

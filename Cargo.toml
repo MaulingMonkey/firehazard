@@ -24,17 +24,5 @@ lto                         = true
 default                     = ["std"]
 std                         = ["sandbox/std"]
 
-[dependencies]
+[dev-dependencies]
 sandbox.path                = "crates/sandbox"
-
-#abistr.version              = "0.2.0-rc2"
-abistr.default-features     = false
-abistr.git                  = "https://github.com/MaulingMonkey/abistr"
-abistr.rev                  = "be791b8c6f78fe2399d3f2d0549c43cbe5d74d04"
-
-[target.'cfg(windows)'.dependencies]
-winapi.version = "0.3"
-winapi.features = [
-    # um
-    "synchapi",
-]

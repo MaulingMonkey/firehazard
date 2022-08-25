@@ -55,9 +55,7 @@ checksum = "653f141f39ec16bba3c5abe400a0c60da7468261cc2cbf36805022876bc721a8"
 name = "win32_security_playground"
 version = "0.0.0-git"
 dependencies = [
- "abistr",
  "sandbox",
- "winapi",
 ]
 
 [[package]]
