@@ -176,7 +176,7 @@ fn run(_context: &Context, target: Target) {
 
     let mut command_line = abistr::CStrBuf::<u16, 32768>::from_truncate(&target.exe.as_os_str().encode_wide().collect::<Vec<_>>());
 
-    let policy1 = 0u64
+    let policy1 = process::creation::MitigationPolicyFlags1::default()
         | process::creation::mitigation_policy::DEP_ENABLE
         //| process::creation::mitigation_policy::DEP_ATL_THUNK_ENABLE
         | process::creation::mitigation_policy::SEHOP_ENABLE
@@ -185,20 +185,20 @@ fn run(_context: &Context, target: Target) {
         | process::creation::mitigation_policy::bottom_up_aslr::ALWAYS_ON
         | process::creation::mitigation_policy::high_entropy_aslr::ALWAYS_ON
         | process::creation::mitigation_policy::strict_handle_checks::ALWAYS_ON
-        | if target.allow.same_desktop { 0 } else { process::creation::mitigation_policy::win32k_system_call_disable::ALWAYS_ON } // user32.dll(?) requires access on init
+        | if target.allow.same_desktop { ().into() } else { process::creation::mitigation_policy::win32k_system_call_disable::ALWAYS_ON } // user32.dll(?) requires access on init
         | process::creation::mitigation_policy::extension_point_disable::ALWAYS_ON
         | process::creation::mitigation_policy::prohibit_dynamic_code::ALWAYS_ON
         | process::creation::mitigation_policy::control_flow_guard::ALWAYS_ON               // Redundant?
         | process::creation::mitigation_policy::control_flow_guard::EXPORT_SUPPRESSION      // https://docs.microsoft.com/en-us/windows/win32/secbp/pe-metadata#export-suppression
         | process::creation::mitigation_policy::block_non_microsoft_binaries::ALWAYS_ON     // Redundant?
         | process::creation::mitigation_policy::block_non_microsoft_binaries::ALLOW_STORE   // ?
-        | if target.allow.same_desktop { 0 } else { process::creation::mitigation_policy::font_disable::ALWAYS_ON } // user32.dll(?) requires access on init
+        | if target.allow.same_desktop { ().into() } else { process::creation::mitigation_policy::font_disable::ALWAYS_ON } // user32.dll(?) requires access on init
         | process::creation::mitigation_policy::image_load_no_remote::ALWAYS_ON
         | process::creation::mitigation_policy::image_load_no_low_label::ALWAYS_ON
         | process::creation::mitigation_policy::image_load_prefer_system32::ALWAYS_ON
         ;
 
-    let policy2 = 0u64
+    let policy2 = process::creation::MitigationPolicyFlags2::default()
         | process::creation::mitigation_policy2::loader_integrity_continuity::ALWAYS_ON
         //| process::creation::mitigation_policy2::strict_control_flow_guard::ALWAYS_ON         // causes ERROR_STRICT_CFG_VIOLATION, even if our executables are built with -Zbuild-std and -Ccontrol-flow-guard=checks
         | process::creation::mitigation_policy2::module_tampering_protection::ALWAYS_ON
@@ -215,14 +215,14 @@ fn run(_context: &Context, target: Target) {
         //| process::creation::mitigation_policy2::restrict_core_sharing::ALWAYS_ON             // causes ERROR_INVALID_PARAMETER (do I need to specify cores to hog?)
         ;
 
-    let mitigation_policy = [policy1, policy2];
+    let mitigation_policy = process::creation::MitigationPolicy::from((policy1, policy2));
     let child_policy = process::creation::child_process::RESTRICTED;
     let dab_policy = process::creation::desktop_app_breakaway::ENABLE_PROCESS_TREE;
     let mut job = create_job();
     let job_list = [job.clone()];
 
     let attribute_list = process::ThreadAttributeList::try_from(&[
-        process::ThreadAttributeRef::mitigation_policy_dword64_2(&mitigation_policy),
+        process::ThreadAttributeRef::mitigation_policy(&mitigation_policy),
         process::ThreadAttributeRef::child_process_policy(&child_policy),
         process::ThreadAttributeRef::desktop_app_policy(&dab_policy),
         #[cfg(nope)] {

@@ -94,12 +94,8 @@ impl<'a> ThreadAttributeRef<'a> {
     /// (PROC_THREAD_ATTRIBUTE_MACHINE_TYPE, [IMAGE_FILE_MACHINE_*](https://docs.microsoft.com/en-us/windows/win32/sysinfo/image-file-machine-constants))
     pub fn machine_type(value: &'a WORD) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_MACHINE_TYPE, value) } }
 
-    /// (PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, DWORD) - see also <code>[process::creation::mitigation_policy]::\*</code>
-    pub fn mitigation_policy_dword(value: &'a DWORD) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, value) } }
-    /// (PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, DWORD64) - see also <code>[process::creation::mitigation_policy]::\*</code>
-    pub fn mitigation_policy_dword64(value: &'a DWORD64) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, value) } }
-    /// (PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, [DWORD64; 2]) - see also <code>[process::creation::mitigation_policy]\[[2](process::creation::mitigation_policy2)\]::\*</code>
-    pub fn mitigation_policy_dword64_2(value: &'a [DWORD64; 2]) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, value) } }
+    /// (PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, [process::creation::MitigationPolicy]) - see also <code>[process::creation::mitigation_policy]::\*</code>,  <code>[process::creation::mitigation_policy2]::\*</code>
+    pub fn mitigation_policy(value: &'a process::creation::MitigationPolicy) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_PARENT_PROCESS, [process::OwnedHandle])
     pub fn parent_process(value: &'a process::OwnedHandle) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_PARENT_PROCESS, value) } }
@@ -118,10 +114,10 @@ impl<'a> ThreadAttributeRef<'a> {
     pub fn protection_level(value: &'a DWORD) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_PROTECTION_LEVEL, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY, DWORD) - see also <code>[process::creation::child_process]::\*</code>
-    pub fn child_process_policy(value: &'a DWORD) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY, value) } }
+    pub fn child_process_policy(value: &'a process::creation::ChildProcessPolicyFlags) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY, DWORD) - see also <code>[process::creation::desktop_app_breakaway]::\*</code>
-    pub fn desktop_app_policy(value: &'a DWORD) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY, value) } }
+    pub fn desktop_app_policy(value: &'a process::creation::DesktopAppPolicyFlags) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_JOB_LIST, \[[job::OwnedHandle]\])
     pub fn job_list(value: &'a [job::OwnedHandle]) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_JOB_LIST, value) } }
