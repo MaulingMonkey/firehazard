@@ -1,3 +1,4 @@
+#[allow(unused_imports)] use crate::*;
 use core::fmt::{self, Debug, Formatter};
 
 
@@ -82,7 +83,7 @@ pub const INHERIT_PARENT_AFFINITY           : CreationFlags = CreationFlags(wina
 /// For more information, see [Overview of the Protected Media Path](https://docs.microsoft.com/en-us/windows/win32/medfound/protected-media-path).
 pub const CREATE_PROTECTED_PROCESS          : CreationFlags = CreationFlags(winapi::um::winbase::CREATE_PROTECTED_PROCESS           ); // 0x00040000
 
-/// [StartupInfoExW] is passed to `startup_info`, allowing the use of a [process::ThreadAttributeList].
+/// [process::StartupInfoExW] is passed to `startup_info`, allowing the use of a [process::ThreadAttributeList].
 ///
 /// The configuration of said thread attribute list can result in [create_process_as_user_w] returning various error codes.
 pub const EXTENDED_STARTUPINFO_PRESENT      : CreationFlags = CreationFlags(winapi::um::winbase::EXTENDED_STARTUPINFO_PRESENT       ); // 0x00080000
