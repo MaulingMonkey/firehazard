@@ -17,10 +17,10 @@
     @endlocal
 :skip-nightly
 
-cargo test --features std --workspace
+cargo test --features std
 @if ERRORLEVEL 1 goto :die
 
-cargo test --workspace
+cargo test
 @if ERRORLEVEL 1 goto :die
 
 cargo build --examples
