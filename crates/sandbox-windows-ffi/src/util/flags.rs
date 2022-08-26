@@ -13,10 +13,8 @@ macro_rules! flags {
     $(  impl From<$mask >                            for $inner { fn from(mask:  $mask                        ) -> Self { mask .0 as _ } } )*
 
         impl core::ops::BitAnd              for $flags { type Output = Self; fn bitand(self, rhs: Self) -> Self::Output { Self(self.0 & rhs.0) } }
-        impl core::ops::BitXor              for $flags { type Output = Self; fn bitxor(self, rhs: Self) -> Self::Output { Self(self.0 ^ rhs.0) } }
         impl core::ops::BitOr               for $flags { type Output = Self; fn bitor (self, rhs: Self) -> Self::Output { Self(self.0 | rhs.0) } }
         impl core::ops::BitAndAssign        for $flags { fn bitand_assign(&mut self, rhs: Self) { self.0 &= rhs.0 } }
-        impl core::ops::BitXorAssign        for $flags { fn bitxor_assign(&mut self, rhs: Self) { self.0 ^= rhs.0 } }
         impl core::ops::BitOrAssign         for $flags { fn bitor_assign (&mut self, rhs: Self) { self.0 |= rhs.0 } }
 
         impl core::ops::Not                 for $flags  { type Output = $mask;  fn not(self) -> Self::Output { $mask(!self.0) } }
@@ -30,10 +28,8 @@ macro_rules! flags {
         impl From<AccessRights> for access::Mask { fn from(am: AccessRights) -> Self { unsafe { access::Mask::from_unchecked(am.into()) } } }
 
         impl core::ops::BitAnd         <access::Mask> for AccessRights { type Output = Self; fn bitand(self, rhs: access::Mask) -> Self::Output { Self(u32::from(self) & u32::from(rhs)) } }
-        impl core::ops::BitXor         <access::Mask> for AccessRights { type Output = Self; fn bitxor(self, rhs: access::Mask) -> Self::Output { Self(u32::from(self) ^ u32::from(rhs)) } }
         impl core::ops::BitOr          <access::Mask> for AccessRights { type Output = Self; fn bitor (self, rhs: access::Mask) -> Self::Output { Self(u32::from(self) | u32::from(rhs)) } }
         impl core::ops::BitAndAssign   <access::Mask> for AccessRights { fn bitand_assign(&mut self, rhs: access::Mask) { self.0 &= u32::from(rhs) } }
-        impl core::ops::BitXorAssign   <access::Mask> for AccessRights { fn bitxor_assign(&mut self, rhs: access::Mask) { self.0 ^= u32::from(rhs) } }
         impl core::ops::BitOrAssign    <access::Mask> for AccessRights { fn bitor_assign (&mut self, rhs: access::Mask) { self.0 |= u32::from(rhs) } }
 
         impl core::ops::BitAnd<access::MaskMask>       for AccessRights { type Output = AccessRights; fn bitand(self, rhs: access::MaskMask) -> AccessRights { AccessRights(u32::from(self) & u32::from(rhs)) } }
