@@ -21,6 +21,11 @@ macro_rules! flags {
         impl core::ops::BitAnd<$mask>       for $flags  { type Output = $flags; fn bitand(self, rhs: $mask ) -> $flags { $flags(self.0 & rhs.0) } }
         impl core::ops::BitAnd<$flags>      for $mask   { type Output = $flags; fn bitand(self, rhs: $flags) -> $flags { $flags(self.0 & rhs.0) } }
         impl core::ops::BitAndAssign<$mask> for $flags  { fn bitand_assign(&mut self, rhs: $mask) { self.0 &= rhs.0 } }
+
+        impl core::ops::BitOr<()> for $flags                                { type Output = $flags; fn bitor (self, rhs: ()                                 ) -> Self::Output { $flags::from(self) | $flags::from(rhs) } }
+        impl core::ops::BitOr<$flags> for ()                                { type Output = $flags; fn bitor (self, rhs: $flags                             ) -> Self::Output { $flags::from(self) | $flags::from(rhs) } }
+        impl core::ops::BitOr<Option<core::convert::Infallible>> for $flags { type Output = $flags; fn bitor (self, rhs: Option<core::convert::Infallible>  ) -> Self::Output { $flags::from(self) | $flags::from(rhs) } }
+        impl core::ops::BitOr<$flags> for Option<core::convert::Infallible> { type Output = $flags; fn bitor (self, rhs: $flags                             ) -> Self::Output { $flags::from(self) | $flags::from(rhs) } }
     };
 
     (impl @extra for AccessRights) => {

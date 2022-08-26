@@ -176,7 +176,7 @@ fn run(_context: &Context, target: Target) {
 
     let mut command_line = abistr::CStrBuf::<u16, 32768>::from_truncate(&target.exe.as_os_str().encode_wide().collect::<Vec<_>>());
 
-    let policy1 = process::creation::MitigationPolicyFlags1::default()
+    let policy1 = ()
         | process::creation::mitigation_policy::DEP_ENABLE
         //| process::creation::mitigation_policy::DEP_ATL_THUNK_ENABLE
         | process::creation::mitigation_policy::SEHOP_ENABLE
@@ -198,7 +198,7 @@ fn run(_context: &Context, target: Target) {
         | process::creation::mitigation_policy::image_load_prefer_system32::ALWAYS_ON
         ;
 
-    let policy2 = process::creation::MitigationPolicyFlags2::default()
+    let policy2 = None
         | process::creation::mitigation_policy2::loader_integrity_continuity::ALWAYS_ON
         //| process::creation::mitigation_policy2::strict_control_flow_guard::ALWAYS_ON         // causes ERROR_STRICT_CFG_VIOLATION, even if our executables are built with -Zbuild-std and -Ccontrol-flow-guard=checks
         | process::creation::mitigation_policy2::module_tampering_protection::ALWAYS_ON
