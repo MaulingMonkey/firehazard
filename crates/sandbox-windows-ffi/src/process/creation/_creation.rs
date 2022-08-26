@@ -14,7 +14,7 @@ pub mod mitigation_policy2;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
 /// PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY Flags
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct ChildProcessPolicyFlags(u32);
 
 flags!(impl .. for ChildProcessPolicyFlags(u32) - ChildProcessPolicyFlagsMask { });
@@ -28,7 +28,7 @@ flags!(impl .. for ChildProcessPolicyFlags(u32) - ChildProcessPolicyFlagsMask { 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
 /// PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY Flags
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct DesktopAppPolicyFlags(u32);
 
 flags!(impl .. for DesktopAppPolicyFlags(u32) - DesktopAppPolicyFlagsMask { });
@@ -50,7 +50,7 @@ impl From<(MitigationPolicyFlags1, MitigationPolicyFlags2)> for MitigationPolicy
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
 /// PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY Flags
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct MitigationPolicyFlags1(u64);
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
@@ -60,7 +60,7 @@ impl From<(MitigationPolicyFlags1, MitigationPolicyFlags2)> for MitigationPolicy
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
 /// PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY Flags
-#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct MitigationPolicyFlags2(u64);
 
 flags!(impl .. for MitigationPolicyFlags1(u64) - MitigationPolicyFlags1Mask { });
