@@ -10,7 +10,7 @@ license                     = "Apache-2.0 OR MIT"
 #readme                      = "Readme.md"
 
 [features]
-std                         = ["abistr/std", "abistr/widestring"]
+std                         = ["abistr/std", "abistr/widestring", "winapi/std"]
 
 [dependencies]
 
