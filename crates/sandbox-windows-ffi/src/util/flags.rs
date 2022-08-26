@@ -1,10 +1,10 @@
 macro_rules! flags {
-    (impl .. for $flags:ident ( $($inner:ty),+ $(,)? ) - $mask:ident { /* TODO: values */ } ) => {
-        flags!(impl @basic for $flags ( $($inner),+ ) - $mask { /* TODO: values */ });
+    (impl .. for $flags:ident ( $($inner:ty),+ $(,)? ) - $mask:ident) => {
+        flags!(impl @basic for $flags ( $($inner),+ ) - $mask);
         flags!(impl @extra for $flags);
     };
 
-    (impl @basic for $flags:ident ( $($inner:ty),+ $(,)? ) - $mask:ident { /* TODO: values */ } ) => {
+    (impl @basic for $flags:ident ( $($inner:ty),+ $(,)? ) - $mask:ident) => {
         impl From<()                               > for $flags { fn from(_: ()                               ) -> Self { Self(0) } }
         impl From<()                               > for $mask  { fn from(_: ()                               ) -> Self { Self(0) } }
         impl From<Option<core::convert::Infallible>> for $flags { fn from(_: Option<core::convert::Infallible>) -> Self { Self(0) } }

@@ -14,7 +14,7 @@ use core::fmt::{self, Debug, Formatter};
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct AccessRights(u32);
 
-flags!(impl .. for AccessRights(u32) - AccessRightsMask { });
+flags!(impl .. for AccessRights(u32) - AccessRightsMask);
 
 impl AccessRights {
     /// ### Safety

@@ -10,7 +10,7 @@ use core::fmt::{self, Debug, Formatter};
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct RestrictedFlags(u32);
 
-flags!(impl .. for RestrictedFlags(u32) - RestrictedFlagsMask { });
+flags!(impl .. for RestrictedFlags(u32) - RestrictedFlagsMask);
 
 impl RestrictedFlags {
     /// ### Safety

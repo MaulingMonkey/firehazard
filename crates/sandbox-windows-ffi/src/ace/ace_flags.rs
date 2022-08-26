@@ -12,7 +12,7 @@ use core::fmt::{self, Debug, Display, Formatter};
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Flags(u8);
 
-flags!(impl .. for Flags(u32, u8) - FlagsMask { });
+flags!(impl .. for Flags(u32, u8) - FlagsMask);
 
 impl Flags {
     /// ### Safety

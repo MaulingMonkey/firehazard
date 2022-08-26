@@ -12,7 +12,7 @@ use core::fmt::{self, Debug, Formatter};
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Mask(pub(super) u32);
 
-flags!(impl .. for Mask(u32) - MaskMask { });
+flags!(impl .. for Mask(u32) - MaskMask);
 
 impl Mask {
     /// ### Safety

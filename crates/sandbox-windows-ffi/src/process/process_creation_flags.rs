@@ -11,7 +11,7 @@ use core::fmt::{self, Debug, Formatter};
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct CreationFlags(u32);
 
-flags!(impl .. for CreationFlags(u32) - CreationFlagsMask { });
+flags!(impl .. for CreationFlags(u32) - CreationFlagsMask);
 
 impl CreationFlags {
     /// ### Safety

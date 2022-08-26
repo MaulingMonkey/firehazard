@@ -17,7 +17,7 @@ pub mod mitigation_policy2;
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct ChildProcessPolicyFlags(u32);
 
-flags!(impl .. for ChildProcessPolicyFlags(u32) - ChildProcessPolicyFlagsMask { });
+flags!(impl .. for ChildProcessPolicyFlags(u32) - ChildProcessPolicyFlagsMask);
 
 
 
@@ -31,7 +31,7 @@ flags!(impl .. for ChildProcessPolicyFlags(u32) - ChildProcessPolicyFlagsMask { 
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct DesktopAppPolicyFlags(u32);
 
-flags!(impl .. for DesktopAppPolicyFlags(u32) - DesktopAppPolicyFlagsMask { });
+flags!(impl .. for DesktopAppPolicyFlags(u32) - DesktopAppPolicyFlagsMask);
 
 
 
@@ -63,5 +63,5 @@ impl From<(MitigationPolicyFlags1, MitigationPolicyFlags2)> for MitigationPolicy
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct MitigationPolicyFlags2(u64);
 
-flags!(impl .. for MitigationPolicyFlags1(u64) - MitigationPolicyFlags1Mask { });
-flags!(impl .. for MitigationPolicyFlags2(u64) - MitigationPolicyFlags2Mask { });
+flags!(impl .. for MitigationPolicyFlags1(u64) - MitigationPolicyFlags1Mask);
+flags!(impl .. for MitigationPolicyFlags2(u64) - MitigationPolicyFlags2Mask);
