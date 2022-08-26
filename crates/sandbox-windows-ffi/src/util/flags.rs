@@ -26,6 +26,9 @@ macro_rules! flags {
         impl core::ops::BitOr<$flags> for ()                                { type Output = $flags; fn bitor (self, rhs: $flags                             ) -> Self::Output { $flags::from(self) | $flags::from(rhs) } }
         impl core::ops::BitOr<Option<core::convert::Infallible>> for $flags { type Output = $flags; fn bitor (self, rhs: Option<core::convert::Infallible>  ) -> Self::Output { $flags::from(self) | $flags::from(rhs) } }
         impl core::ops::BitOr<$flags> for Option<core::convert::Infallible> { type Output = $flags; fn bitor (self, rhs: $flags                             ) -> Self::Output { $flags::from(self) | $flags::from(rhs) } }
+
+        impl core::ops::Mul<bool> for $flags { type Output = $flags; fn mul(self, rhs: bool  ) -> Self::Output { if rhs  { self } else { $flags(0) } } }
+        impl core::ops::Mul<$flags> for bool { type Output = $flags; fn mul(self, rhs: $flags) -> Self::Output { if self { rhs  } else { $flags(0) } } }
     };
 
     (impl @extra for AccessRights) => {

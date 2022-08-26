@@ -185,14 +185,14 @@ fn run(_context: &Context, target: Target) {
         | process::creation::mitigation_policy::bottom_up_aslr::ALWAYS_ON
         | process::creation::mitigation_policy::high_entropy_aslr::ALWAYS_ON
         | process::creation::mitigation_policy::strict_handle_checks::ALWAYS_ON
-        | if target.allow.same_desktop { ().into() } else { process::creation::mitigation_policy::win32k_system_call_disable::ALWAYS_ON } // user32.dll(?) requires access on init
+        | (!target.allow.same_desktop * process::creation::mitigation_policy::win32k_system_call_disable::ALWAYS_ON) // user32.dll(?) requires access on init
         | process::creation::mitigation_policy::extension_point_disable::ALWAYS_ON
         | process::creation::mitigation_policy::prohibit_dynamic_code::ALWAYS_ON
         | process::creation::mitigation_policy::control_flow_guard::ALWAYS_ON               // Redundant?
         | process::creation::mitigation_policy::control_flow_guard::EXPORT_SUPPRESSION      // https://docs.microsoft.com/en-us/windows/win32/secbp/pe-metadata#export-suppression
         | process::creation::mitigation_policy::block_non_microsoft_binaries::ALWAYS_ON     // Redundant?
         | process::creation::mitigation_policy::block_non_microsoft_binaries::ALLOW_STORE   // ?
-        | if target.allow.same_desktop { ().into() } else { process::creation::mitigation_policy::font_disable::ALWAYS_ON } // user32.dll(?) requires access on init
+        | (!target.allow.same_desktop * process::creation::mitigation_policy::font_disable::ALWAYS_ON) // user32.dll(?) requires access on init
         | process::creation::mitigation_policy::image_load_no_remote::ALWAYS_ON
         | process::creation::mitigation_policy::image_load_no_low_label::ALWAYS_ON
         | process::creation::mitigation_policy::image_load_prefer_system32::ALWAYS_ON
