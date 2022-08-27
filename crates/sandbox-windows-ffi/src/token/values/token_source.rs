@@ -8,8 +8,7 @@ use core::mem::{align_of, size_of};
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_source)\]
 /// TOKEN_SOURCE
 #[derive(Clone, Copy, Debug)]
-#[repr(C)]
-pub struct Source {
+#[repr(C)] pub struct Source {
     pub source_name:        CStrBuf<u8, TOKEN_SOURCE_LENGTH>,
     pub source_identifier:  Luid,
 }

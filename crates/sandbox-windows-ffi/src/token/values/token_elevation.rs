@@ -7,8 +7,7 @@ use core::mem::{align_of, size_of};
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_elevation)\]
 /// TOKEN_ELEVATION
 #[derive(Clone, Copy, Debug)]
-#[repr(C)]
-pub struct Elevation {
+#[repr(C)] pub struct Elevation {
     pub token_is_elevated:  bool32,
 }
 const _ALIGN : () = assert!(align_of::<Elevation>() == align_of::<TOKEN_ELEVATION>());

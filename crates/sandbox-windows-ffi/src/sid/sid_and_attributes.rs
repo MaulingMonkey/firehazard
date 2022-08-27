@@ -8,7 +8,8 @@ use core::mem::{align_of, size_of};
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid_and_attributes)\] ~ SID_AND_ATTRIBUTES ~ (sid::Ptr, u32)
-#[derive(Clone, Copy)] #[repr(C)] pub struct AndAttributes<'a> {
+#[derive(Clone, Copy)]
+#[repr(C)] pub struct AndAttributes<'a> {
     pub sid:        sid::Ptr<'a>,
     pub attributes: u32,
 }

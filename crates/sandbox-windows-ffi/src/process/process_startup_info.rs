@@ -38,7 +38,8 @@ pub type StartupInfoExW<'s> = StartupInfoEx<'s, u16>;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa)\]
 /// STARTUPINFO
-#[derive(Debug)] #[repr(C)] pub struct StartupInfo<'s, U: abistr::Unit> where U::CChar : Clone {
+#[derive(Debug)]
+#[repr(C)] pub struct StartupInfo<'s, U: abistr::Unit> where U::CChar : Clone {
     #[doc(hidden)] pub cb: u32,
     #[doc(hidden)] pub _reserved: DefaultOnly<Option<CStrNonNull<'s, U>>>,
     pub desktop:        Option<CStrNonNull<'s, U>>,
@@ -61,7 +62,8 @@ pub type StartupInfoExW<'s> = StartupInfoEx<'s, u16>;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-startupinfoexa)\]
 /// STARTUPINFOEX
-#[derive(Debug)] #[repr(C)] pub struct StartupInfoEx<'s, U: abistr::Unit> where U::CChar : Clone {
+#[derive(Debug)]
+#[repr(C)] pub struct StartupInfoEx<'s, U: abistr::Unit> where U::CChar : Clone {
     pub startup_info:   StartupInfo<'s, U>,
     pub attribute_list: Option<process::ThreadAttributeList<'s>>, // XXX: some borrowing option might be nicer, would re-enable Clone
 }

@@ -32,7 +32,8 @@ use winapi::um::winnt::{SID_IDENTIFIER_AUTHORITY, SID_MAX_SUB_AUTHORITIES};
     }};
 }
 
-#[doc(hidden)] #[repr(C)] pub struct Static<const NS: usize> {
+#[doc(hidden)]
+#[repr(C)] pub struct Static<const NS: usize> {
     revision:               u8,
     sub_authority_count:    u8,
     identifier_authority:   SID_IDENTIFIER_AUTHORITY,
