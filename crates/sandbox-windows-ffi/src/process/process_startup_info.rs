@@ -54,9 +54,9 @@ pub type StartupInfoExW<'s> = StartupInfoEx<'s, u16>;
     pub show_window:    u16,
     #[doc(hidden)] pub _cb_reserved_2: DefaultOnly<u16>,
     #[doc(hidden)] pub _lp_reserved_2: DefaultOnly<usize>,
-    pub std_input:      handle::Owned, // XXX: switch to handle::Borrowed<'s> ?
-    pub std_output:     handle::Owned, // XXX: switch to handle::Borrowed<'s> ?
-    pub std_error:      handle::Owned, // XXX: switch to handle::Borrowed<'s> ?
+    pub std_input:      Option<handle::Borrowed<'s>>,
+    pub std_output:     Option<handle::Borrowed<'s>>,
+    pub std_error:      Option<handle::Borrowed<'s>>,
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-startupinfoexa)\]

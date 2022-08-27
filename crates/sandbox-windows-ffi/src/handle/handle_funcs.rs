@@ -38,15 +38,9 @@ pub fn close_handle(object: impl Into<handle::Owned>) -> Result<(), Error> {
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
 /// CloseHandle or panic
-#[track_caller] pub(crate) unsafe fn drop_close_handle(handle: HANDLE) {
-    assert!(handle.is_null() || (0 != unsafe { CloseHandle(handle) }), "CloseHandle(0x{:X}) failed with GetLastError()={:?}", handle as usize, Error::get_last());
-}
-
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
-/// CloseHandle or panic
-#[allow(dead_code)] // TODO: use
-#[track_caller] pub(crate) unsafe fn drop_close_handle_nn(handle: HANDLENN) {
-    assert!(0 != unsafe { CloseHandle(handle.as_ptr()) }, "CloseHandle(0x{:X}) failed with GetLastError()={:?}", handle.as_ptr() as usize, Error::get_last());
+#[track_caller] pub(crate) unsafe fn drop_close_handle_nn<T>(this: &mut impl AsLocalHandleNN<T>) {
+    let handle = this.as_handle_nn().as_ptr().cast();
+    assert!(0 != unsafe { CloseHandle(handle) }, "CloseHandle(0x{:X}) failed with GetLastError()={:?}", handle as usize, Error::get_last());
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]

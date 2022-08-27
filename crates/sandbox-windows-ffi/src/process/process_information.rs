@@ -18,5 +18,9 @@ const _SIZE  : () = assert!(size_of ::<process::Information>() == size_of ::<PRO
 impl AsRef<PROCESS_INFORMATION> for process::Information { fn as_ref(&self) -> &PROCESS_INFORMATION { unsafe { transmute(self) } } }
 
 impl process::Information {
-    pub unsafe fn from_raw(pi: PROCESS_INFORMATION) -> Self { unsafe { transmute(pi) } }
+    pub unsafe fn from_raw(pi: PROCESS_INFORMATION) -> Self {
+        assert!(!pi.hProcess.is_null()); // Self::process is NonNull
+        assert!(!pi.hThread .is_null()); // Self::thread  is NonNull
+        unsafe { transmute(pi) }
+    }
 }

@@ -1,6 +1,6 @@
 use crate::*;
 
-use winapi::um::winnt::*;
+use winapi::ctypes::c_void;
 
 #[cfg(std)] use std::os::windows::io::IntoRawHandle;
 #[cfg(std)] use std::thread::JoinHandle;
@@ -11,22 +11,22 @@ use core::marker::PhantomData;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createthread)\]
 /// `HANDLE` to a thread
-#[repr(transparent)] pub struct OwnedHandle(HANDLE);
+#[repr(transparent)] pub struct OwnedHandle(HANDLENN);
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createthread)\]
 /// `HANDLE` to a thread
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[repr(transparent)] pub struct Handle<'a>(HANDLE, PhantomData<&'a HANDLE>);
+#[repr(transparent)] pub struct Handle<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createthread)\]
 /// `HANDLE` to a thread
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[repr(transparent)] pub struct PsuedoHandle<'a>(HANDLE, PhantomData<&'a HANDLE>);
+#[repr(transparent)] pub struct PsuedoHandle<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
 
-handles!(impl *LocalHandle<HANDLE>  for thread::{OwnedHandle, Handle, PsuedoHandle});
-handles!(impl Debug                 for thread::{OwnedHandle, Handle, PsuedoHandle});
-handles!(impl {AsRef, From}         for thread::{OwnedHandle, Handle, PsuedoHandle});
-handles!(impl {AsRef<@base>, From}  for thread::{OwnedHandle, Handle, PsuedoHandle});
+handles!(impl *LocalHandleNN<c_void>    for thread::{OwnedHandle, Handle, PsuedoHandle});
+handles!(impl Debug                     for thread::{OwnedHandle, Handle, PsuedoHandle});
+handles!(impl {AsRef, From}             for thread::{OwnedHandle, Handle, PsuedoHandle});
+handles!(impl {AsRef<@base>, From}      for thread::{OwnedHandle, Handle, PsuedoHandle});
 
-impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle(self.0) } } }
+impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 #[cfg(std)] impl<T> From<JoinHandle<T>> for OwnedHandle { fn from(jh: JoinHandle<T>) -> Self { unsafe { Self::from_raw(jh.into_raw_handle().cast()).unwrap() } } }

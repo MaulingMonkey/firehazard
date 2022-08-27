@@ -1,4 +1,5 @@
 use crate::*;
+use winapi::ctypes::c_void;
 use winapi::shared::ntdef::HANDLE;
 
 
@@ -41,12 +42,12 @@ pub trait AsLocalHandle<H=HANDLE> {
 }
 
 /// Some kind of wrapper around a non-null HANDLE owned by the current/local process.
-pub trait AsLocalHandleNN : AsLocalHandle {
+pub trait AsLocalHandleNN<H=c_void> : AsLocalHandle<*mut H> {
     /// HANDLE, but [core::ptr::NonNull].
-    fn as_handle_nn(&self) -> HANDLENN;
+    fn as_handle_nn(&self) -> core::ptr::NonNull<H>;
 }
 
-impl<T: AsLocalHandleNN> AsLocalHandle for T { fn as_handle(&self) -> HANDLE { self.as_handle_nn().as_ptr() } }
+impl<H, T: AsLocalHandleNN<H>> AsLocalHandle<*mut H> for T { fn as_handle(&self) -> *mut H { self.as_handle_nn().as_ptr() } }
 
 // trait DuplicateFromLocal ?
 
