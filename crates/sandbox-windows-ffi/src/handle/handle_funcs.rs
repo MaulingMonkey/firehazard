@@ -2,14 +2,17 @@
 
 use crate::*;
 
+use winapi::ctypes::c_void;
 use winapi::shared::minwindef::FALSE;
 use winapi::shared::ntdef::HANDLE;
 use winapi::um::handleapi::*;
 use winapi::um::winnt::DUPLICATE_CLOSE_SOURCE;
 
-use core::ptr::null_mut;
+use core::ptr::{null_mut, NonNull};
 
 
+
+pub type HANDLENN = NonNull<c_void>;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
 /// CloseHandle
@@ -20,7 +23,7 @@ use core::ptr::null_mut;
 /// # use sandbox_windows_ffi::*;
 /// # use winapi::shared::winerror::*;
 /// let thread : thread::OwnedHandle = std::thread::spawn(||{}).into();
-/// let dangling = unsafe { thread::OwnedHandle::from_raw_unchecked(thread.as_handle()) };
+/// let dangling = unsafe { thread::OwnedHandle::from_raw(thread.as_handle()).unwrap() };
 /// let _ : ()    = close_handle( thread ).unwrap();
 /// let e : Error = close_handle(dangling).unwrap_err();
 /// assert_eq!(ERROR_INVALID_HANDLE, e);
@@ -31,6 +34,19 @@ pub fn close_handle(object: impl Into<handle::Owned>) -> Result<(), Error> {
     let h = object.as_handle();
     core::mem::forget(object);
     Error::get_last_if(FALSE == unsafe { CloseHandle(h) })
+}
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
+/// CloseHandle or panic
+#[track_caller] pub(crate) unsafe fn drop_close_handle(handle: HANDLE) {
+    assert!(handle.is_null() || (0 != unsafe { CloseHandle(handle) }), "CloseHandle(0x{:X}) failed with GetLastError()={:?}", handle as usize, Error::get_last());
+}
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
+/// CloseHandle or panic
+#[allow(dead_code)] // TODO: use
+#[track_caller] pub(crate) unsafe fn drop_close_handle_nn(handle: HANDLENN) {
+    assert!(0 != unsafe { CloseHandle(handle.as_ptr()) }, "CloseHandle(0x{:X}) failed with GetLastError()={:?}", handle.as_ptr() as usize, Error::get_last());
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]

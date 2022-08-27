@@ -145,7 +145,7 @@ fn _create_process_with_token_w() -> Result<process::Information, Error> { unimp
 pub fn exit_process(exit_code: u32) -> ! { unsafe { ExitProcess(exit_code); core::hint::unreachable_unchecked() } }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentprocess)\] GetCurrentProcess
-pub fn get_current_process() -> process::PsuedoHandle { unsafe { process::PsuedoHandle::from_raw_unchecked(GetCurrentProcess()) } }
+pub fn get_current_process() -> process::PsuedoHandle<'static> { unsafe { process::PsuedoHandle::from_raw(GetCurrentProcess()).unwrap() } }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentprocessid)\] GetCurrentProcess
 pub fn get_current_process_id() -> process::Id { unsafe { GetCurrentProcessId() } }
@@ -160,20 +160,20 @@ pub fn get_current_process_id() -> process::Id { unsafe { GetCurrentProcessId() 
 /// *   `Ok(exit_code)`                             if `process` exited otherwise
 /// *   `Err(...)`                                  if `process` lacks appropriate querying permissions?
 /// *   `Err(...)`                                  if `process` is an invalid handle?
-pub fn get_exit_code_process(process: impl AsRef<process::Handle>) -> Result<u32, Error> {
+pub fn get_exit_code_process<'a>(process: impl AsRef<process::Handle<'a>>) -> Result<u32, Error> {
     let mut exit_code = 0;
     Error::get_last_if(0 == unsafe { GetExitCodeProcess(process.as_ref().as_handle(), &mut exit_code) })?;
     Ok(exit_code)
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(process, 0) == WAIT_TIMEOUT
-pub fn is_process_running(process: impl AsRef<process::Handle>) -> bool {
+pub fn is_process_running<'a>(process: impl AsRef<process::Handle<'a>>) -> bool {
     WAIT_TIMEOUT == unsafe { WaitForSingleObject(process.as_ref().as_handle(), 0) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(process, INFINITE) +<br>
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodeprocess)\] GetExitCodeProcess
-pub fn wait_for_process(process: impl AsRef<process::Handle>) -> Result<u32, Error> {
+pub fn wait_for_process<'a>(process: impl AsRef<process::Handle<'a>>) -> Result<u32, Error> {
     match unsafe { WaitForSingleObject(process.as_ref().as_handle(), INFINITE) } {
         WAIT_OBJECT_0       => {},
         WAIT_ABANDONED_0    => return Err(Error(ERROR_ABANDONED_WAIT_0)),   // shouldn't happen as `process` isn't a mutex, right?

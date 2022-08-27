@@ -6,7 +6,7 @@ use core::mem::{align_of, size_of, transmute};
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-process_information)\]
 /// PROCESS_INFORMATION
-#[derive(Clone, Debug)] #[repr(C)] pub struct Information {
+#[derive(Debug)] #[repr(C)] pub struct Information {
     pub process:    process::OwnedHandle,
     pub thread:     thread::OwnedHandle,
     pub process_id: process::Id,

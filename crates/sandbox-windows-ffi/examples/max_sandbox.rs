@@ -218,8 +218,8 @@ fn run(_context: &Context, target: Target) {
     let mitigation_policy = process::creation::MitigationPolicy::from((policy1, policy2));
     let child_policy = process::creation::child_process::RESTRICTED;
     let dab_policy = process::creation::desktop_app_breakaway::ENABLE_PROCESS_TREE;
-    let mut job = create_job();
-    let job_list = [job.clone()];
+    let job = create_job();
+    let job_list = [(&job).into()];
 
     let attribute_list = process::ThreadAttributeList::try_from(&[
         process::ThreadAttributeRef::mitigation_policy(&mitigation_policy),
@@ -248,7 +248,7 @@ fn run(_context: &Context, target: Target) {
         process::DEBUG_PROCESS | process::CREATE_SEPARATE_WOW_VDM | process::CREATE_SUSPENDED | process::EXTENDED_STARTUPINFO_PRESENT, process::environment::Clear, (), &si
     ).unwrap();
     set_thread_token(&pi.thread, &permissive).unwrap();
-    relimit_job(&mut job, 0);
+    relimit_job(&job, 0);
     resume_thread(&pi.thread).unwrap();
 
     let mut sandboxed = false;
@@ -282,7 +282,7 @@ fn run(_context: &Context, target: Target) {
 
                 let process = get_current_process().as_handle();
                 assert!(FALSE != unsafe { DuplicateHandle(process, thread, process, &mut thread, access::GENERIC_ALL.into(), false as _, 0) });
-                let thread = unsafe { thread::OwnedHandle::clone_from_raw(thread) };
+                let thread = unsafe { thread::OwnedHandle::from_raw(thread) }.unwrap();
 
                 set_thread_token(&thread, &permissive).unwrap();
                 let _prev_thread = threads.insert(dwThreadId, thread);
@@ -295,7 +295,7 @@ fn run(_context: &Context, target: Target) {
 
                 let process = get_current_process().as_handle();
                 assert!(FALSE != unsafe { DuplicateHandle(process, thread, process, &mut thread, access::GENERIC_ALL.into(), false as _, 0) });
-                let thread = unsafe { thread::OwnedHandle::clone_from_raw(thread) };
+                let thread = unsafe { thread::OwnedHandle::from_raw(thread) }.unwrap();
 
                 set_thread_token(&thread, &permissive).unwrap(); // already set?
                 let _prev_thread = threads.insert(dwThreadId, thread);
@@ -367,7 +367,7 @@ fn run(_context: &Context, target: Target) {
 
     assert!(sandboxed, "process was never sandboxed");
 
-    let exit = wait_for_process(pi.process).unwrap();
+    let exit = wait_for_process(&pi.process).unwrap();
     assert!(exit == 0, "exit code: 0x{exit:08x} {}", Error::from(exit).friendly());
 }
 
@@ -407,7 +407,7 @@ fn create_job() -> job::OwnedHandle {
     job
 }
 
-fn relimit_job(job: &mut job::OwnedHandle, processes: u32) {
+fn relimit_job(job: &job::OwnedHandle, processes: u32) {
     set_information_job_object(job, JOBOBJECT_EXTENDED_LIMIT_INFORMATION {
         BasicLimitInformation: JOBOBJECT_BASIC_LIMIT_INFORMATION {
             LimitFlags: 0

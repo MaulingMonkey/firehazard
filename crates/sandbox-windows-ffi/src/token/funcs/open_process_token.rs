@@ -9,9 +9,9 @@
 /// ### Errors
 /// *   `ERROR_INVALID_HANDLE`  if `process` wasn't a valid process handle (maybe it was a thread handle?)
 /// *   `ERROR_ACCESS_DENIED`   if the current process/thread token lacks the rights to open the token with `desired_access` (Untrusted integrity, missing SIDs, blocked by DACL, etc.)
-pub fn open_process_token(process: impl AsRef<crate::process::Handle>, desired_access: impl Into<crate::token::AccessRights>) -> Result<crate::token::OwnedHandle, crate::Error> {
+pub fn open_process_token<'a>(process: impl AsRef<crate::process::PsuedoHandle<'a>>, desired_access: impl Into<crate::token::AccessRights>) -> Result<crate::token::OwnedHandle, crate::Error> {
+    use crate::*;
     let mut h = core::ptr::null_mut();
-    crate::Error::get_last_if(0 == unsafe { winapi::um::processthreadsapi::OpenProcessToken(process.as_ref().as_handle(), desired_access.into().into(), &mut h) })?;
-    if h.is_null() { return Err(crate::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)) }
-    Ok(unsafe { crate::token::OwnedHandle::from_raw(h) })
+    Error::get_last_if(0 == unsafe { winapi::um::processthreadsapi::OpenProcessToken(process.as_ref().as_handle(), desired_access.into().into(), &mut h) })?;
+    unsafe { token::OwnedHandle::from_raw(h) }
 }

@@ -14,7 +14,8 @@ use core::time::Duration;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-checkremotedebuggerpresent)\]
 /// CheckRemoteDebuggerPresent
-pub fn check_remote_debugger_present(process: impl AsRef<process::Handle>) -> Result<bool, Error> {
+pub fn check_remote_debugger_present<'a>(process: impl AsRef<process::Handle<'a>>) -> Result<bool, Error> {
+    // TODO: weaken to PsuedoHandle to allow invoking on self?
     let mut result = 0;
     Error::get_last_if(FALSE == unsafe { CheckRemoteDebuggerPresent(process.as_ref().as_handle(), &mut result) })?;
     Ok(result != FALSE)

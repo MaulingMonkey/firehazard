@@ -10,8 +10,8 @@ use core::mem::{MaybeUninit, size_of_val, size_of};
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-readprocessmemory)\]
 /// ReadProcessMemory
-pub fn read_process_memory<'a, T>(
-    process:        impl AsRef<process::Handle>,
+pub fn read_process_memory<'a, 'p, T>(
+    process:        impl AsRef<process::Handle<'p>>, // TODO: weaken to PsuedoHandle to allow invoking on self?
     base_address:   *const T,
     buffer:         &'a mut [MaybeUninit<T>],
 ) -> Result<&'a [T], Error> {

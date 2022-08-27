@@ -105,7 +105,7 @@ unsafe fn adjust_token_privileges(token: &token::OwnedHandle, disable_all_privil
 
 #[test] fn test() {
     let t = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
-    let t = t.clone();
+    let t = duplicate_token_ex(&t, token::ALL_ACCESS, None, security::Delegation, token::Primary).unwrap();
     t.privileges_disable_if(|_| true).unwrap();
     t.privileges_remove_if(|_| true).unwrap();
 }

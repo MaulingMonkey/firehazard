@@ -2,7 +2,7 @@
 //! Window Station APIs
 
 mod winsta_access_rights;               pub use winsta_access_rights::*;
-mod winsta_owned_handle;                pub use winsta_owned_handle::*;
+mod winsta_handles;                     pub use winsta_handles::*;
 
 pub use funcs::*;
 #[path = "winsta_funcs.rs"] pub(crate) mod funcs;

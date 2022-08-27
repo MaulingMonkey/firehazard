@@ -38,7 +38,7 @@ pub type StartupInfoExW<'s> = StartupInfoEx<'s, u16>;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa)\]
 /// STARTUPINFO
-#[derive(Clone, Debug)] #[repr(C)] pub struct StartupInfo<'s, U: abistr::Unit> where U::CChar : Clone {
+#[derive(Debug)] #[repr(C)] pub struct StartupInfo<'s, U: abistr::Unit> where U::CChar : Clone {
     #[doc(hidden)] pub cb: u32,
     #[doc(hidden)] pub _reserved: DefaultOnly<Option<CStrNonNull<'s, U>>>,
     pub desktop:        Option<CStrNonNull<'s, U>>,
@@ -119,9 +119,9 @@ impl<'s, U: abistr::Unit> Default for StartupInfo<'s, U> where U::CChar : Clone 
             show_window:    0,
             _cb_reserved_2: Default::default(),
             _lp_reserved_2: Default::default(),
-            std_input:      handle::Owned::NULL,
-            std_output:     handle::Owned::NULL,
-            std_error:      handle::Owned::NULL,
+            std_input:      Default::default(),
+            std_output:     Default::default(),
+            std_error:      Default::default(),
         }
     }
 }

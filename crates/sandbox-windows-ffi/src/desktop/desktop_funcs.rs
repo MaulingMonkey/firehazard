@@ -2,9 +2,12 @@ use crate::*;
 use abistr::*;
 use winapi::ctypes::c_char;
 use winapi::shared::minwindef::{FALSE, LPARAM, BOOL, TRUE};
+use winapi::shared::ntdef::HANDLE;
 use winapi::shared::windef::HDESK;
 use winapi::shared::winerror::*;
 use winapi::um::errhandlingapi::SetLastError;
+use winapi::um::handleapi::DuplicateHandle;
+use winapi::um::winnt::DUPLICATE_SAME_ACCESS;
 use winapi::um::winuser::*;
 use core::ptr::null;
 
@@ -38,7 +41,7 @@ pub fn create_desktop_a(
         sa.map_or(null(), |sa| sa) as *mut _
     )};
     Error::get_last_if(handle.is_null())?;
-    Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
+    unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowstationw)\]
@@ -69,7 +72,7 @@ pub fn create_desktop_w(
         sa.map_or(null(), |sa| sa) as *mut _
     )};
     Error::get_last_if(handle.is_null())?;
-    Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
+    unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
 // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopexa
@@ -83,7 +86,7 @@ pub fn create_desktop_w(
 /// ### Example
 /// ```
 /// # use sandbox_windows_ffi::*;
-/// let winsta = get_process_window_station().unwrap();
+/// let winsta = open_process_window_station().unwrap();
 /// enum_desktops_a(&winsta, |desktop| {
 ///     println!("{desktop:?}");
 ///     Ok(())
@@ -128,7 +131,7 @@ unsafe extern "system" fn fwd_enum_desktops_a<F: FnMut(CStrPtr) -> Result<(), Er
 /// ### Example
 /// ```
 /// # use sandbox_windows_ffi::*;
-/// let winsta = get_process_window_station().unwrap();
+/// let winsta = open_process_window_station().unwrap();
 /// enum_desktops_w(&winsta, |desktop| {
 ///     println!("{desktop:?}");
 ///     Ok(())
@@ -171,12 +174,12 @@ unsafe extern "system" fn fwd_enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(
 // EnumDesktopWindows
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getthreaddesktop)\]
-/// GetThreadDesktop
+/// GetThreadDesktop + DuplicateHandle
 ///
 /// ### Example
 /// ```
 /// # use sandbox_windows_ffi::*;
-/// let desktop = get_thread_desktop(get_current_thread_id()).unwrap();
+/// let desktop = open_thread_desktop(get_current_thread_id()).unwrap();
 /// ```
 ///
 /// ### Errata
@@ -184,10 +187,12 @@ unsafe extern "system" fn fwd_enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(
 /// >   You do not need to call the CloseDesktop function to close the returned handle.
 ///
 /// A borrowed handle is super awkward here, so this function returns a *duplicated* handle that can be closed instead.
-pub fn get_thread_desktop(thread_id: thread::Id) -> Result<desktop::OwnedHandle, Error> {
-    let desktop = unsafe { GetThreadDesktop(thread_id) };
+pub fn open_thread_desktop(thread_id: thread::Id) -> Result<desktop::OwnedHandle, Error> {
+    let mut desktop : HANDLE = unsafe { GetThreadDesktop(thread_id) }.cast();
     Error::get_last_if(desktop.is_null())?;
-    Ok(unsafe { desktop::OwnedHandle::clone_from_raw(desktop) })
+    let process = get_current_process().as_handle();
+    Error::get_last_if(FALSE == unsafe { DuplicateHandle(process, desktop, process, &mut desktop, 0, 0, DUPLICATE_SAME_ACCESS) })?;
+    unsafe { desktop::OwnedHandle::from_raw(desktop.cast()) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openwindowstationa)\]
@@ -213,7 +218,7 @@ pub fn open_desktop_a(
         desired_access.into().into()
     )};
     Error::get_last_if(handle.is_null())?;
-    Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
+    unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openwindowstationw)\]
@@ -239,7 +244,7 @@ pub fn open_desktop_w(
         desired_access.into().into()
     )};
     Error::get_last_if(handle.is_null())?;
-    Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
+    unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openinputdesktop)\]
@@ -258,7 +263,7 @@ pub fn open_input_desktop(
 ) -> Result<desktop::OwnedHandle, Error> {
     let handle = unsafe { OpenInputDesktop(flags, inherit as _, desired_access.into().into()) };
     Error::get_last_if(handle.is_null())?;
-    Ok(unsafe { desktop::OwnedHandle::from_raw_unchecked(handle) })
+    unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setthreaddesktop)\]
@@ -276,7 +281,7 @@ pub fn open_input_desktop(
 /// # use winapi::um::winuser::*;
 /// let temp1 = create_desktop_a(cstr!("wtd.temp1"), (), None, 0, GENERIC_ALL, None).unwrap();
 /// let temp2 = create_desktop_a(cstr!("wtd.temp2"), (), None, 0, GENERIC_ALL, None).unwrap();
-/// let orig  = get_thread_desktop(get_current_thread_id()).unwrap();
+/// let orig  = open_thread_desktop(get_current_thread_id()).unwrap();
 /// with_thread_desktop(&temp1, || {
 ///     with_thread_desktop(&temp2, || {
 ///         with_thread_desktop(&temp1, || {

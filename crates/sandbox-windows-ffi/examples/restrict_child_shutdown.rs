@@ -31,5 +31,5 @@ fn shutdown_as_user(args: &str, token: &token::OwnedHandle) -> Result<u32, Error
     let mut args = format!("shutdown {args}\0").encode_utf16().collect::<Vec<_>>();
     let si = process::StartupInfoW::default();
     let cmd = create_process_as_user_w(token, (), Some(&mut args[..]), None, None, false, process::DETACHED_PROCESS, process::environment::Inherit, (), &si)?;
-    wait_for_process(cmd.process)
+    wait_for_process(&cmd.process)
 }

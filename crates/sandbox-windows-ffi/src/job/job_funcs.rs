@@ -22,7 +22,7 @@ use core::ptr::null_mut;
 /// let anon = create_job_object_a(None, ()).unwrap();
 /// assign_process_to_job_object(&anon, get_current_process()).unwrap();
 /// ```
-pub fn assign_process_to_job_object(job: &job::OwnedHandle, process: impl AsRef<process::Handle>) -> Result<(), Error> {
+pub fn assign_process_to_job_object<'a>(job: &job::OwnedHandle, process: impl AsRef<process::PsuedoHandle<'a>>) -> Result<(), Error> {
     Error::get_last_if(FALSE == unsafe { AssignProcessToJobObject(job.as_handle(), process.as_ref().as_handle()) })
 }
 
@@ -40,7 +40,7 @@ pub fn create_job_object_a(job_attributes: Option<core::convert::Infallible>, na
     let name = name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?;
     let h = unsafe { CreateJobObjectA(none2null(job_attributes), name.as_opt_cstr()) };
     Error::get_last_if(h.is_null())?;
-    Ok(unsafe { job::OwnedHandle::from_raw_unchecked(h) })
+    unsafe { job::OwnedHandle::from_raw(h) }
 }
 
 
@@ -58,7 +58,7 @@ pub fn create_job_object_w(job_attributes: Option<core::convert::Infallible>, na
     let name = name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?;
     let h = unsafe { CreateJobObjectW(none2null(job_attributes), name.as_opt_cstr()) };
     Error::get_last_if(h.is_null())?;
-    Ok(unsafe { job::OwnedHandle::from_raw_unchecked(h) })
+    unsafe { job::OwnedHandle::from_raw(h) }
 }
 
 // \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-freememoryjobobject)\]
@@ -75,7 +75,7 @@ pub fn create_job_object_w(job_attributes: Option<core::convert::Infallible>, na
 /// assert_eq!(Ok(false), is_process_in_job(get_current_process(), Some(&job)));
 /// assert_eq!(Ok(true),  is_process_in_job(get_current_process(), None));
 /// ```
-pub fn is_process_in_job(process: impl AsRef<process::Handle>, job: Option<&job::OwnedHandle>) -> Result<bool, Error> {
+pub fn is_process_in_job<'a>(process: impl AsRef<process::PsuedoHandle<'a>>, job: Option<&job::OwnedHandle>) -> Result<bool, Error> {
     let mut r = 0;
     Error::get_last_if(FALSE == unsafe { IsProcessInJob(process.as_ref().as_handle(), job.map_or(null_mut(), |j| j.as_handle()), &mut r) })?;
     Ok(r != FALSE)
@@ -97,7 +97,7 @@ pub fn open_job_object_a(desired_access: impl Into<access::Mask>, inherit_handle
     let name = name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?;
     let h = unsafe { OpenJobObjectA(desired_access.into().into(), inherit_handle as _, name.as_cstr()) };
     Error::get_last_if(h.is_null())?;
-    Ok(unsafe { job::OwnedHandle::from_raw_unchecked(h) })
+    unsafe { job::OwnedHandle::from_raw(h) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-openjobobjectw)\]
@@ -116,7 +116,7 @@ pub fn open_job_object_w(desired_access: impl Into<access::Mask>, inherit_handle
     let name = name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?;
     let h = unsafe { OpenJobObjectW(desired_access.into().into(), inherit_handle as _, name.as_cstr()) };
     Error::get_last_if(h.is_null())?;
-    Ok(unsafe { job::OwnedHandle::from_raw_unchecked(h) })
+    unsafe { job::OwnedHandle::from_raw(h) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
@@ -159,7 +159,7 @@ pub fn query_information_job_object<Info: job::QueryInformation>(job: &job::Owne
 ///     | JOB_OBJECT_UILIMIT_WRITECLIPBOARD
 /// }).unwrap();
 /// ```
-pub fn set_information_job_object(job: &mut job::OwnedHandle, information: impl job::SetInformation) -> Result<(), Error> { information.set_on(job) }
+pub fn set_information_job_object(job: &job::OwnedHandle, information: impl job::SetInformation) -> Result<(), Error> { information.set_on(job) }
 
 // "Starting with Windows 10, version 1607, this function is no longer supported."
 // \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setioratecontrolinformationjobobject)\]

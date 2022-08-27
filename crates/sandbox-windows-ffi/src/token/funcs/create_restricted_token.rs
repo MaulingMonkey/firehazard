@@ -23,7 +23,7 @@ pub fn create_restricted_token(
         sids_to_restrict.map_or(null_mut(), |s| s.as_ptr() as *mut _),
         &mut new_handle
     )})?;
-    Ok(unsafe { token::OwnedHandle::from_raw(new_handle) })
+    unsafe { token::OwnedHandle::from_raw(new_handle) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] GetTokenInformation(self, TokenGroupsAndPrivileges, ...) +<br>

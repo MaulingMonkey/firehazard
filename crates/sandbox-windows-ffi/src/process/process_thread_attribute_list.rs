@@ -120,7 +120,7 @@ impl<'a> ThreadAttributeRef<'a> {
     pub fn desktop_app_policy(value: &'a process::creation::DesktopAppPolicyFlags) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_JOB_LIST, \[[job::OwnedHandle]\])
-    pub fn job_list(value: &'a [job::OwnedHandle]) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_JOB_LIST, value) } }
+    pub fn job_list(value: &'a [job::Handle<'a>]) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_JOB_LIST, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_ENABLE_OPTIONAL_XSTATE_FEATURES, [XSTATE_*](https://docs.microsoft.com/en-us/windows/win32/debug/working-with-xstate-context))
     pub fn enable_optional_xstate_features(value: &'a DWORD64) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_ENABLE_OPTIONAL_XSTATE_FEATURES, value) } }

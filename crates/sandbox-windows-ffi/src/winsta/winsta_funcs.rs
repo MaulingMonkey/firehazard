@@ -2,8 +2,11 @@ use crate::*;
 use abistr::*;
 use winapi::ctypes::c_char;
 use winapi::shared::minwindef::{FALSE, LPARAM, BOOL, TRUE};
+use winapi::shared::ntdef::HANDLE;
 use winapi::shared::winerror::*;
 use winapi::um::errhandlingapi::SetLastError;
+use winapi::um::handleapi::DuplicateHandle;
+use winapi::um::winnt::DUPLICATE_SAME_ACCESS;
 use winapi::um::winuser::*;
 use core::ptr::null;
 
@@ -33,7 +36,7 @@ pub fn create_window_station_a(
         sa.map_or(null(), |sa| sa) as *mut _
     )};
     Error::get_last_if(handle.is_null())?;
-    Ok(unsafe { winsta::OwnedHandle::from_raw_unchecked(handle) })
+    unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowstationw)\]
@@ -60,7 +63,7 @@ pub fn create_window_station_w(
         sa.map_or(null(), |sa| sa) as *mut _
     )};
     Error::get_last_if(handle.is_null())?;
-    Ok(unsafe { winsta::OwnedHandle::from_raw_unchecked(handle) })
+    unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumwindow_stationsa)\]
@@ -147,7 +150,7 @@ unsafe extern "system" fn fwd_enum_window_stations_w<F: FnMut(CStrPtr<u16>) -> R
 /// ### Example
 /// ```
 /// # use sandbox_windows_ffi::*;
-/// let winsta0 = get_process_window_station().unwrap();
+/// let winsta0 = open_process_window_station().unwrap();
 /// ```
 ///
 /// ### Errata
@@ -155,11 +158,13 @@ unsafe extern "system" fn fwd_enum_window_stations_w<F: FnMut(CStrPtr<u16>) -> R
 /// >   Do not close the handle returned by this function.
 ///
 /// A borrowed handle is super awkward here, so this function returns a *duplicated* handle that can be closed instead.
-pub fn get_process_window_station() -> Result<winsta::OwnedHandle, Error> {
+pub fn open_process_window_station() -> Result<winsta::OwnedHandle, Error> {
     // "Do not close the handle returned by this function." - so we return a closeable clone instead
-    let winsta = unsafe { GetProcessWindowStation() };
+    let mut winsta : HANDLE = unsafe { GetProcessWindowStation() }.cast();
     Error::get_last_if(winsta.is_null())?;
-    Ok(unsafe { winsta::OwnedHandle::clone_from_raw(winsta) })
+    let process = get_current_process().as_handle();
+    Error::get_last_if(FALSE == unsafe { DuplicateHandle(process, winsta, process, &mut winsta, 0, 0, DUPLICATE_SAME_ACCESS) })?;
+    unsafe { winsta::OwnedHandle::from_raw(winsta.cast()) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openwindowstationa)\]
@@ -182,7 +187,7 @@ pub fn open_window_station_a(
         desired_access.into().into()
     )};
     Error::get_last_if(handle.is_null())?;
-    Ok(unsafe { winsta::OwnedHandle::from_raw_unchecked(handle) })
+    unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openwindowstationw)\]
@@ -205,7 +210,7 @@ pub fn open_window_station_w(
         desired_access.into().into()
     )};
     Error::get_last_if(handle.is_null())?;
-    Ok(unsafe { winsta::OwnedHandle::from_raw_unchecked(handle) })
+    unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setprocesswindowstation)\]
