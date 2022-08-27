@@ -7,7 +7,7 @@
 #[doc(hidden)] pub extern crate abistr;
 #[doc(hidden)] pub extern crate winapi;
 
-#[path = "util/_util.rs"] #[macro_use]  mod util;               pub(crate) use util::*;
+#[path = "macros/_macros.rs"] #[macro_use] mod macros;
 #[path = "access/_access.rs"]           pub mod access;         //#[doc(hidden)] pub use access::constants::*;
 #[path = "ace/_ace.rs"]                 pub mod ace;            //#[doc(hidden)] pub use ace::funcs::*;
 #[path = "acl/_acl.rs"]                 pub mod acl;            //#[doc(hidden)] pub use acl::funcs::*;
@@ -24,6 +24,7 @@
 #[path = "sid/_sid.rs"]                 pub mod sid;            #[doc(hidden)] pub use sid::funcs::*;
 #[path = "thread/_thread.rs"]           pub mod thread;         #[doc(hidden)] pub use thread::funcs::*;
 #[path = "token/_token.rs"]             pub mod token;          #[doc(hidden)] pub use token::funcs::*;
+#[path = "util/_util.rs"]               mod util;               pub(crate) use util::*;
 #[path = "winsta/_winsta.rs"]           pub mod winsta;         #[doc(hidden)] pub use winsta::funcs::*;
 
 mod error;                              pub use error::*;
