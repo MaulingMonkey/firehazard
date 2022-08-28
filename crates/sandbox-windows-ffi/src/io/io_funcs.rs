@@ -1,13 +1,10 @@
 use crate::*;
-use crate::pipe::*;
 
 use winapi::shared::minwindef::FALSE;
+use winapi::shared::winerror::ERROR_INVALID_HANDLE;
 use winapi::um::namedpipeapi::*;
 
-use core::ptr::null_mut;
-
-use std::fs::File;
-use std::os::windows::io::FromRawHandle;
+use core::ptr::{null_mut, NonNull};
 
 
 
@@ -18,13 +15,13 @@ use std::os::windows::io::FromRawHandle;
 /// # use sandbox_windows_ffi::*;
 /// let (read, write) = create_pipe(None, 0).unwrap();
 /// ```
-pub fn create_pipe(pipe_attributes: Option<&security::Attributes>, size: u32) -> Result<(ReadPipe, WritePipe), Error> {
+pub fn create_pipe(pipe_attributes: Option<&security::Attributes>, size: u32) -> Result<(io::ReadPipe, io::WritePipe), Error> {
     let mut read = null_mut();
     let mut write = null_mut();
     Error::get_last_if(FALSE == unsafe { CreatePipe(&mut read, &mut write, pipe_attributes.map_or(null_mut(), |a| a as *const _ as *mut _), size) })?;
-    let read  = ReadPipe (unsafe { File::from_raw_handle(read.cast()) });
-    let write = WritePipe(unsafe { File::from_raw_handle(write.cast()) });
-    Ok((read, write))
+    let read  = NonNull::new(read ).map(|nn| io::ReadPipe (nn)).ok_or(Error(ERROR_INVALID_HANDLE));
+    let write = NonNull::new(write).map(|nn| io::WritePipe(nn)).ok_or(Error(ERROR_INVALID_HANDLE));
+    Ok((read?, write?))
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createnamedpipea)\] <strike>CreateNamedPipeA</strike>
