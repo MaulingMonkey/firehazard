@@ -10,16 +10,16 @@ use core::marker::PhantomData;
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessw)\]
-/// _Owned_, _nullable_, `HANDLE` to a _process_
+/// _Owned_, _non-null_, `HANDLE` to a _process_
 #[repr(transparent)] pub struct OwnedHandle(HANDLENN);
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessw)\]
-/// _Borrowed_, _nullable_, `HANDLE` to a _process_
+/// _Borrowed_, _non-null_, `HANDLE` to a _process_
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Handle<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessw)\]
-/// _Borrowed or psuedo_, _nullable_, `HANDLE` to a _process_
+/// _Borrowed or psuedo_, _non-null_, `HANDLE` to a _process_
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct PsuedoHandle<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
 

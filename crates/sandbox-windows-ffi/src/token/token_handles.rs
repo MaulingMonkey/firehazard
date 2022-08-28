@@ -6,16 +6,16 @@ use core::marker::PhantomData;
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/secauthz/access-tokens)\]
-/// _Owned_, _nullable_ `HANDLE` to an _Access Token_
+/// _Owned_, _non-null_ `HANDLE` to an _Access Token_
 #[repr(transparent)] pub struct OwnedHandle(HANDLENN);
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/secauthz/access-tokens)\]
-/// _Borrowed, _nullable_ `HANDLE` to an _Access Token_
+/// _Borrowed, _non-null_ `HANDLE` to an _Access Token_
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Handle<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/secauthz/access-tokens)\]
-/// _Borrowed or psuedo, _nullable_ `HANDLE` to an _Access Token_
+/// _Borrowed or psuedo, _non-null_ `HANDLE` to an _Access Token_
 ///
 /// ### References: Local
 /// *   [get_current_process_token]
