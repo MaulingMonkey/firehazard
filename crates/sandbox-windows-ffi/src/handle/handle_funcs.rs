@@ -64,7 +64,7 @@ pub fn compare_object_handles(first: &handle::Owned, second: &handle::Owned) -> 
 pub fn duplicate_handle<'t>(
     source_process: &process::Handle,
     source:         &handle::Owned,
-    target_process: impl Into<Option<&'t process::Handle>>,
+    target_process: impl Into<Option<&'t process::Handle<'t>>>,
     desired_access: impl Into<access::Mask>,
     inherit_handle: bool,
     options:        u32,                                    // TODO: type
