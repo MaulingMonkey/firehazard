@@ -45,8 +45,6 @@ pub fn close_handle(object: impl Into<handle::Owned>) -> Result<(), Error> {
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
 /// <strike>DuplicateHandle(process, handle, 0, 0, 0, 0, DUPLICATE_CLOSE_SOURCE)</strike>
-//#[allow(dead_code)] // XXX: convert (process, handle) -> OwnedRemoteHandle type and make function 'safe'?
-//#[cfg(all(nope, not(nope)))]
 #[cfg(doc)]
 pub unsafe fn close_remote_handle(process: &process::Handle, handle: HANDLE) -> Result<(), Error> {
     Error::get_last_if(FALSE == unsafe { DuplicateHandle(process.as_handle(), handle, null_mut(), null_mut(), 0, false as _, DUPLICATE_CLOSE_SOURCE)})
