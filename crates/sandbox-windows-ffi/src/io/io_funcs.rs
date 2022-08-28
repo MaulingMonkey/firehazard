@@ -30,7 +30,7 @@ pub fn create_pipe(pipe_attributes: Option<&security::Attributes>, size: u32) ->
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew)\] <strike>CreateNamedPipeW</strike>
 #[cfg(doc)] pub fn create_named_pipe_w() { unimplemented!() }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-disconnectnamedpipe)\] DisconnectNamedPipe
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-disconnectnamedpipe)\] <strike>DisconnectNamedPipe</strike>
 #[cfg(doc)] pub fn disconnect_named_pipe(handle: ()) -> Result<(), Error> { unimplemented!() }
 
 
