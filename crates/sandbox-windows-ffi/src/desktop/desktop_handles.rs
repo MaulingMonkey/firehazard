@@ -11,10 +11,10 @@ use core::ptr::NonNull;
 /// `HDESK` to a desktop
 #[repr(transparent)] pub struct OwnedHandle(NonNull<HDESK__>);
 
-handles!(impl *LocalHandleNN<HDESK__>   for desktop::{OwnedHandle});
-handles!(impl Debug                     for desktop::{OwnedHandle});
-handles!(impl {AsRef, From}             for desktop::{OwnedHandle});
-handles!(impl {AsRef<@base>, From}      for desktop::{OwnedHandle});
+handles!(unsafe impl *LocalHandleNN<HDESK__>    for desktop::{OwnedHandle});
+handles!(unsafe impl {AsRef, From}              for desktop::{OwnedHandle});
+handles!(unsafe impl {AsRef<@base>, From}       for desktop::{OwnedHandle});
+handles!(impl Debug                             for desktop::{OwnedHandle});
 
 impl Drop for OwnedHandle { fn drop(&mut self) {
     let h = self.as_handle();

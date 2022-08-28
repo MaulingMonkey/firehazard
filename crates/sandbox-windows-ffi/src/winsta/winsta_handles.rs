@@ -11,10 +11,10 @@ use winapi::um::winuser::CloseWindowStation;
 /// `HWINSTA` to a window station
 #[repr(transparent)] pub struct OwnedHandle(NonNull<HWINSTA__>);
 
-handles!(impl *LocalHandleNN<HWINSTA__> for winsta::{OwnedHandle});
-handles!(impl Debug                     for winsta::{OwnedHandle});
-handles!(impl {AsRef, From}             for winsta::{OwnedHandle});
-handles!(impl {AsRef<@base>, From}      for winsta::{OwnedHandle});
+handles!(unsafe impl *LocalHandleNN<HWINSTA__>  for winsta::{OwnedHandle});
+handles!(unsafe impl {AsRef, From}              for winsta::{OwnedHandle});
+handles!(unsafe impl {AsRef<@base>, From}       for winsta::{OwnedHandle});
+handles!(impl Debug                             for winsta::{OwnedHandle});
 
 impl Drop for OwnedHandle { fn drop(&mut self) {
     let h = self.as_handle();

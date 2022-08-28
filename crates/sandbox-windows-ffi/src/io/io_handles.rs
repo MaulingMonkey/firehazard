@@ -14,7 +14,7 @@ use core::ptr::null_mut;
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned non-null file `HANDLE`
-#[repr(transparent)] pub struct File (pub(super) HANDLENN);
+#[repr(transparent)] pub struct File(pub(super) HANDLENN);
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned anonymous non-null pipe `HANDLE` ([Read]able end)
 #[repr(transparent)] pub struct ReadPipe (pub(super) HANDLENN);
@@ -22,20 +22,20 @@ use core::ptr::null_mut;
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned anonymous non-null pipe `HANDLE` ([Write]able end)
 #[repr(transparent)] pub struct WritePipe(pub(super) HANDLENN);
 
-handles!(impl *LocalHandleNN<c_void>    for io::{File});
-handles!(impl Debug                     for io::{File});
-handles!(impl {AsRef, From}             for io::{File});
-handles!(impl {AsRef<@base>, From}      for io::{File});
+handles!(unsafe impl *LocalHandleNN<c_void> for io::{File});
+handles!(unsafe impl {AsRef, From}          for io::{File});
+handles!(unsafe impl {AsRef<@base>, From}   for io::{File});
+handles!(impl Debug                         for io::{File});
 
-handles!(impl *LocalHandleNN<c_void>    for io::{ReadPipe});
-handles!(impl Debug                     for io::{ReadPipe});
-handles!(impl {AsRef, From}             for io::{ReadPipe});
-handles!(impl {AsRef<@base>, From}      for io::{ReadPipe});
+handles!(unsafe impl *LocalHandleNN<c_void> for io::{ReadPipe});
+handles!(unsafe impl {AsRef, From}          for io::{ReadPipe});
+handles!(unsafe impl {AsRef<@base>, From}   for io::{ReadPipe});
+handles!(impl Debug                         for io::{ReadPipe});
 
-handles!(impl *LocalHandleNN<c_void>    for io::{WritePipe});
-handles!(impl Debug                     for io::{WritePipe});
-handles!(impl {AsRef, From}             for io::{WritePipe});
-handles!(impl {AsRef<@base>, From}      for io::{WritePipe});
+handles!(unsafe impl *LocalHandleNN<c_void> for io::{WritePipe});
+handles!(unsafe impl {AsRef, From}          for io::{WritePipe});
+handles!(unsafe impl {AsRef<@base>, From}   for io::{WritePipe});
+handles!(impl Debug                         for io::{WritePipe});
 
 impl Drop       for File        { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 impl Drop       for ReadPipe    { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }

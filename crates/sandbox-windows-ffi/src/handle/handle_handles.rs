@@ -20,8 +20,8 @@ use core::marker::PhantomData;
 /// Borrowed or psuedo-`HANDLE` to a kernel object
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)] #[repr(transparent)] pub struct Psuedo<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
 
-handles!(impl *LocalHandleNN<c_void>    for handle::{Owned, Borrowed, Psuedo});
-handles!(impl Debug                     for handle::{Owned, Borrowed, Psuedo});
-handles!(impl {AsRef, From}             for handle::{Owned, Borrowed, Psuedo});
+handles!(unsafe impl *LocalHandleNN<c_void> for handle::{Owned, Borrowed, Psuedo});
+handles!(unsafe impl {AsRef, From}          for handle::{Owned, Borrowed, Psuedo});
+handles!(impl Debug                         for handle::{Owned, Borrowed, Psuedo});
 
 impl Drop for Owned { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
