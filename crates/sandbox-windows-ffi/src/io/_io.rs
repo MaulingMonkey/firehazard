@@ -11,4 +11,4 @@
 
 
 #[path = "io_funcs.rs"]             pub(crate) mod funcs;       pub use funcs::*;
-mod pipe_handles;                   pub use pipe_handles::*;
+mod io_handles;                     pub use io_handles::*;
