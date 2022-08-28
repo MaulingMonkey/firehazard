@@ -16,10 +16,10 @@ use core::ptr::null_mut;
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned non-null file `HANDLE`
 #[repr(transparent)] pub struct File(pub(super) HANDLENN);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned anonymous non-null pipe `HANDLE` ([Read]able end)
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned anonymous non-null pipe `HANDLE` ([io::Read]able end)
 #[repr(transparent)] pub struct ReadPipe (pub(super) HANDLENN);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned anonymous non-null pipe `HANDLE` ([Write]able end)
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned anonymous non-null pipe `HANDLE` ([io::Write]able end)
 #[repr(transparent)] pub struct WritePipe(pub(super) HANDLENN);
 
 handles!(unsafe impl *LocalHandleNN<c_void> for io::{File});
