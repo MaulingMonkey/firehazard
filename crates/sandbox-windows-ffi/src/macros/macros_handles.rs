@@ -38,23 +38,23 @@ macro_rules! handles {
 
     (impl {AsRef<@base>, From} for $mod:ident :: { $owned:ident $(,$( $borrowed:ident $(,$( $psuedo:ident )?)? )?)? } ) => {
             impl     AsRef<crate::handle::Owned       > for     $owned    { fn as_ref(&self) -> &crate::handle::Owned        { unsafe { core::mem::transmute(self) } } }
+            impl<'a> AsRef<crate::handle::Borrowed<'a>> for &'a $owned    { fn as_ref(&self) -> &crate::handle::Borrowed<'a> { unsafe { core::mem::transmute(*self) } } }
+            impl<'a> AsRef<crate::handle::Psuedo<'a>  > for &'a $owned    { fn as_ref(&self) -> &crate::handle::Psuedo<'a>   { unsafe { core::mem::transmute(*self) } } }
 
             impl     From<    $owned    > for     crate::handle::Owned    { fn from(h:     $owned ) -> Self { unsafe { core::mem::transmute(h) } } }
             impl<'a> From<&'a $owned    > for &'a crate::handle::Owned    { fn from(h: &'a $owned ) -> Self { unsafe { core::mem::transmute(h) } } }
+            impl<'a> From<&'a $owned    > for crate::handle::Borrowed<'a> { fn from(h: &'a $owned ) -> Self { unsafe { core::mem::transmute(h.0) } } }
+            impl<'a> From<&'a $owned    > for crate::handle::Psuedo<'a>   { fn from(h: &'a $owned ) -> Self { unsafe { core::mem::transmute(h.0) } } }
         $($(
-            impl<'a> AsRef<crate::handle::Borrowed<'a>> for &'a $owned    { fn as_ref(&self) -> &crate::handle::Borrowed<'a> { unsafe { core::mem::transmute(*self) } } }
             impl<'a> AsRef<crate::handle::Borrowed<'a>> for $borrowed<'a> { fn as_ref(&self) -> &crate::handle::Borrowed<'a> { unsafe { core::mem::transmute(self) } } }
+            impl<'a> AsRef<crate::handle::Psuedo<'a>  > for $borrowed<'a> { fn as_ref(&self) -> &crate::handle::Psuedo<'a>   { unsafe { core::mem::transmute(self) } } }
 
-            impl<'a> From<&'a $owned    > for crate::handle::Borrowed<'a> { fn from(h: &'a $owned   ) -> Self { unsafe { core::mem::transmute(h.0) } } }
             impl<'a> From<$borrowed<'a> > for crate::handle::Borrowed<'a> { fn from(h: $borrowed<'a>) -> Self { unsafe { core::mem::transmute(h) } } }
+            impl<'a> From<$borrowed<'a> > for crate::handle::Psuedo<'a>   { fn from(h: $borrowed<'a>) -> Self { unsafe { core::mem::transmute(h) } } }
         $($(
-            impl<'a> AsRef<crate::handle::Psuedo<'a>  > for &'a $owned    { fn as_ref(&self) -> &crate::handle::Psuedo<'a> { unsafe { core::mem::transmute(*self) } } }
-            impl<'a> AsRef<crate::handle::Psuedo<'a>  > for $borrowed<'a> { fn as_ref(&self) -> &crate::handle::Psuedo<'a> { unsafe { core::mem::transmute(self) } } }
             impl<'a> AsRef<crate::handle::Psuedo<'a>  > for $psuedo<'a>   { fn as_ref(&self) -> &crate::handle::Psuedo<'a> { unsafe { core::mem::transmute(self) } } }
 
-            impl<'a> From<&'a $owned    > for crate::handle::Psuedo<'a> { fn from(h: &'a $owned   ) -> Self { unsafe { core::mem::transmute(h.0) } } }
-            impl<'a> From<$borrowed<'a> > for crate::handle::Psuedo<'a> { fn from(h: $borrowed<'a>) -> Self { unsafe { core::mem::transmute(h) } } }
-            impl<'a> From<$psuedo<'a>   > for crate::handle::Psuedo<'a> { fn from(h: $psuedo<'a>  ) -> Self { unsafe { core::mem::transmute(h) } } }
+            impl<'a> From<$psuedo<'a>   > for crate::handle::Psuedo<'a>   { fn from(h: $psuedo<'a>  ) -> Self { unsafe { core::mem::transmute(h) } } }
         )?)?
         )?)?
     };
