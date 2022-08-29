@@ -1,0 +1,21 @@
+# https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[package]
+name                        = "no-std"
+version                     = "0.0.0-git"
+publish                     = false
+authors                     = ["MaulingMonkey <git@maulingmonkey.com>"]
+edition                     = "2021"
+license                     = "Apache-2.0 OR MIT"
+
+[profile.dev]
+panic                       = "abort"
+lto                         = true
+
+[profile.release]
+panic                       = "abort"
+lto                         = true
+
+[dependencies.sandbox-windows-ffi]
+path                        = "../sandbox-windows-ffi"
+default-features            = false

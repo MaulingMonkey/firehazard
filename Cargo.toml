@@ -2,6 +2,7 @@
 
 [workspace]
 members                     = ["crates/*"]
+exclude                     = ["crates/no-std"] # separate workspace
 
 [profile.dev]
 panic                       = "abort"

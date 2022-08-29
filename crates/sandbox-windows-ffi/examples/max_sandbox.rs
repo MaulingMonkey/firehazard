@@ -70,11 +70,28 @@ impl Target {
 
         let self_exe = std::path::PathBuf::from(std::env::args_os().next().expect("args[0] / exe"));
         let dir = self_exe.parent().unwrap();
+        let manifest_dir = dir.ancestors().nth(2).unwrap(); // target/debug
+        let build = if cfg!(debug_assertions) { "debug" } else { "release" };
+        let arch = "x86_64-pc-windows-msvc"; // XXX
 
         let se_change_notify_privilege = lookup_privilege_value_a(cstr!("SeChangeNotifyPrivilege")).unwrap();
-        vec![
+        let mut targets = vec![
             Target {
-                exe: dir.join("trivial.exe"),
+                exe: manifest_dir.join(format!(r"crates\no-std\target\{build}\trivial.exe")),
+                allow: Allow::default(),
+                spawn: TokenSettings {
+                    // Minimal permissions to access e.g. `/KnownDlls` / `kernel32.dll` for init
+                    privileges: [se_change_notify_privilege].into_iter().collect(),
+                    enabled:    vec![everyone],
+                    restricted: Some(vec![everyone]),
+                    .. Default::default()
+                },
+                lockdown: TokenSettings {
+                    .. Default::default()
+                },
+            },
+            Target {
+                exe: manifest_dir.join(format!(r"crates\no-std\target\{arch}\{build}\trivial.exe")),
                 allow: Allow::default(),
                 spawn: TokenSettings {
                     // Minimal permissions to access e.g. `/KnownDlls` / `kernel32.dll` for init
@@ -116,7 +133,9 @@ impl Target {
                     .. Default::default()
                 },
             },
-        ].into_iter()
+        ];
+        targets.retain(|t| t.exe.exists() || !t.exe.ends_with("trivial.exe"));
+        targets.into_iter()
     }
 }
 
