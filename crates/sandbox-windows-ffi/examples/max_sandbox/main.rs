@@ -15,20 +15,12 @@ use std::os::windows::prelude::*;
 
 
 fn main() {
-    let context = Context {
-        // TODO: make desktop available to low/untrusted integrity processes (currently requires Medium integrity)
-        _alt_desktop:   create_desktop_a(cstr!("max_sandbox_desktop"), (), None, 0, access::GENERIC_ALL, None).unwrap(),
-    };
-    for target in settings::Target::list() {
-        run(&context, target);
-    }
+    // TODO: make desktop available to low/untrusted integrity processes (currently requires Medium integrity)
+    let _alt_desktop = create_desktop_a(cstr!("max_sandbox_desktop"), (), None, 0, access::GENERIC_ALL, None).unwrap();
+    for target in settings::Target::list() { run(target) }
 }
 
-struct Context {
-    _alt_desktop:   desktop::OwnedHandle,
-}
-
-fn run(_context: &Context, target: settings::Target) {
+fn run(target: settings::Target) {
     assert!(target.spawn.integrity >= target.lockdown.integrity, "target.lockdown.integrity cannot be more permissive than spawn integrity");
 
     let tokens = tokens::create(&target);
@@ -45,7 +37,8 @@ fn run(_context: &Context, target: settings::Target) {
 
     let pi = create_process_as_user_w(
         &tokens.restricted, (), Some(unsafe { command_line.buffer_mut() }), None, None, false,
-        process::DEBUG_PROCESS | process::CREATE_SEPARATE_WOW_VDM | process::CREATE_SUSPENDED | process::EXTENDED_STARTUPINFO_PRESENT, process::environment::Clear, (), &si
+        process::DEBUG_PROCESS | process::CREATE_SEPARATE_WOW_VDM | process::CREATE_SUSPENDED | process::EXTENDED_STARTUPINFO_PRESENT,
+        process::environment::Clear, (), &si
     ).unwrap();
     set_thread_token(&pi.thread, &tokens.permissive).unwrap();
     job::relimit(&job, 0);
