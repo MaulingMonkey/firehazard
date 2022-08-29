@@ -61,7 +61,11 @@ impl Error {
 
 impl Debug for Error {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-        write!(fmt, "Error({} {})", self.0, self.friendly())
+        if self.0 < 0x8000_0000 {
+            write!(fmt, "Error({} {})", self.0, self.friendly())
+        } else {
+            write!(fmt, "Error(0x{:X} {})", self.0, self.friendly())
+        }
     }
 }
 
