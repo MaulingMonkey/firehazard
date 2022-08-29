@@ -6,6 +6,7 @@ use winapi::um::fileapi::{ReadFile, WriteFile};
 
 #[cfg(std)] use std::os::windows::prelude::*;
 
+use core::marker::PhantomData;
 use core::ptr::null_mut;
 
 // TODO: consider implementing std::os::windows::io::* interop traits
@@ -22,30 +23,45 @@ use core::ptr::null_mut;
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned anonymous non-null pipe `HANDLE` ([io::Write]able end)
 #[repr(transparent)] pub struct WritePipe(pub(super) HANDLENN);
 
+/// Borrowed non-null readable pipe or file `HANDLE`
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(transparent)] pub struct ReadHandle<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
+
+/// Borrowed non-null writeable pipe or file `HANDLE`
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(transparent)] pub struct WriteHandle<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
+
 handles!(unsafe impl *LocalHandleNN<c_void> for io::{File});
 handles!(unsafe impl {AsRef, From}          for io::{File});
 handles!(unsafe impl {AsRef<@base>, From}   for io::{File});
 handles!(impl Debug                         for io::{File});
 
-handles!(unsafe impl *LocalHandleNN<c_void> for io::{ReadPipe});
-handles!(unsafe impl {AsRef, From}          for io::{ReadPipe});
-handles!(unsafe impl {AsRef<@base>, From}   for io::{ReadPipe});
-handles!(impl Debug                         for io::{ReadPipe});
+handles!(unsafe impl *LocalHandleNN<c_void> for io::{ReadPipe, ReadHandle});
+handles!(unsafe impl {AsRef, From}          for io::{ReadPipe, ReadHandle});
+handles!(unsafe impl {AsRef<@base>, From}   for io::{ReadPipe, ReadHandle});
+handles!(impl Debug                         for io::{ReadPipe, ReadHandle});
 
-handles!(unsafe impl *LocalHandleNN<c_void> for io::{WritePipe});
-handles!(unsafe impl {AsRef, From}          for io::{WritePipe});
-handles!(unsafe impl {AsRef<@base>, From}   for io::{WritePipe});
-handles!(impl Debug                         for io::{WritePipe});
+handles!(unsafe impl *LocalHandleNN<c_void> for io::{WritePipe, WriteHandle});
+handles!(unsafe impl {AsRef, From}          for io::{WritePipe, WriteHandle});
+handles!(unsafe impl {AsRef<@base>, From}   for io::{WritePipe, WriteHandle});
+handles!(impl Debug                         for io::{WritePipe, WriteHandle});
+
+handles!(unsafe impl @convert io::File => io::WritePipe );
+handles!(unsafe impl @convert io::File => io::ReadPipe  );
+handles!(unsafe impl @convert &'_ io::File => io::WriteHandle<'_>   );
+handles!(unsafe impl @convert &'_ io::File => io::ReadHandle<'_>    );
 
 impl Drop       for File        { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 impl Drop       for ReadPipe    { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 impl Drop       for WritePipe   { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 
-impl io::Read   for File        { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0, buf) } } }
-impl io::Read   for ReadPipe    { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0, buf) } } }
+impl io::Read   for File            { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0, buf) } } }
+impl io::Read   for ReadPipe        { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0, buf) } } }
+impl io::Read   for ReadHandle<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0, buf) } } }
 
-impl io::Write  for File        { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
-impl io::Write  for WritePipe   { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl io::Write  for File            { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl io::Write  for WritePipe       { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl io::Write  for WriteHandle<'_> { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
 
 #[cfg(std)] impl From<std::fs::File> for File { fn from(file: std::fs::File ) -> Self { Self(HANDLENN::new(file.into_raw_handle().cast()).unwrap()) } }
 #[cfg(std)] impl From<File> for std::fs::File { fn from(file: File          ) -> Self { unsafe { std::fs::File::from_raw_handle(file.as_handle().cast()) } } }
