@@ -37,17 +37,17 @@ handles!(unsafe impl {AsRef, From}          for io::{File});
 handles!(unsafe impl {AsRef<@base>, From}   for io::{File});
 handles!(impl Debug                         for io::{File});
 
-handles!(unsafe impl *LocalHandleNN<c_void> for io::{ReadPipe, ReadHandle});
-handles!(unsafe impl {Send, Sync}           for io::{ReadPipe, ReadHandle});
-handles!(unsafe impl {AsRef, From}          for io::{ReadPipe, ReadHandle});
-handles!(unsafe impl {AsRef<@base>, From}   for io::{ReadPipe, ReadHandle});
-handles!(impl Debug                         for io::{ReadPipe, ReadHandle});
+handles!(unsafe impl *LocalHandleNN<c_void> for io::{ReadPipe, ReadHandle<'_>});
+handles!(unsafe impl {Send, Sync}           for io::{ReadPipe, ReadHandle<'_>});
+handles!(unsafe impl {AsRef, From}          for io::{ReadPipe, ReadHandle<'_>});
+handles!(unsafe impl {AsRef<@base>, From}   for io::{ReadPipe, ReadHandle<'_>});
+handles!(impl Debug                         for io::{ReadPipe, ReadHandle<'_>});
 
-handles!(unsafe impl *LocalHandleNN<c_void> for io::{WritePipe, WriteHandle});
-handles!(unsafe impl {Send, Sync}           for io::{WritePipe, WriteHandle});
-handles!(unsafe impl {AsRef, From}          for io::{WritePipe, WriteHandle});
-handles!(unsafe impl {AsRef<@base>, From}   for io::{WritePipe, WriteHandle});
-handles!(impl Debug                         for io::{WritePipe, WriteHandle});
+handles!(unsafe impl *LocalHandleNN<c_void> for io::{WritePipe, WriteHandle<'_>});
+handles!(unsafe impl {Send, Sync}           for io::{WritePipe, WriteHandle<'_>});
+handles!(unsafe impl {AsRef, From}          for io::{WritePipe, WriteHandle<'_>});
+handles!(unsafe impl {AsRef<@base>, From}   for io::{WritePipe, WriteHandle<'_>});
+handles!(impl Debug                         for io::{WritePipe, WriteHandle<'_>});
 
 handles!(unsafe impl @convert io::File => io::WritePipe );
 handles!(unsafe impl @convert io::File => io::ReadPipe  );
