@@ -24,11 +24,12 @@ use core::marker::PhantomData;
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct PsuedoHandle<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
 
-handles!(unsafe impl *LocalHandleNN<c_void> for token::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
-handles!(unsafe impl {Send, Sync}           for token::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
-handles!(unsafe impl {AsRef, From}          for token::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
-handles!(unsafe impl {AsRef<@base>, From}   for token::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
-handles!(impl Debug                         for token::{OwnedHandle, Handle<'_>}); // XXX: PsuedoHandle specially classed
+handles!(unsafe impl *LocalHandleNN<c_void>         for token::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
+handles!(unsafe impl AsRef<Self>                    for token::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
+handles!(unsafe impl {Send, Sync}                   for token::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
+handles!(unsafe impl {AsRef, From}                  for token::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
+handles!(unsafe impl {AsRef<@base>, From<@base>}    for token::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
+handles!(impl Debug                                 for token::{OwnedHandle, Handle<'_>}); // XXX: PsuedoHandle specially classed
 
 impl PsuedoHandle<'static> { pub(crate) const unsafe fn from_raw_const(c: isize) -> Self { assert!(c != 0); Self(unsafe{core::ptr::NonNull::new_unchecked(c as _)}, PhantomData) } }
 impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }

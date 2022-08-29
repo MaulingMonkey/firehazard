@@ -9,48 +9,39 @@
 /// handles!(impl Debug for token::{Owned, Borrowed<'_>, Psuedo<'_>});
 /// ```
 macro_rules! handles {
-    (unsafe impl *LocalHandleNN<$raw:ty> for $mod:ident :: { $owned:ident $(,$( $borrowed:ident<'_> $(,$( $psuedo:ident<'_> )?)? )?)? } ) => {
-            impl FromLocalHandle<$raw> for $owned       { unsafe fn from_raw_nn(handle: core::ptr::NonNull<$raw>) -> Self { Self(handle) } }
-        $($(
-            impl FromLocalHandle<$raw> for $borrowed<'_>{ unsafe fn from_raw_nn(handle: core::ptr::NonNull<$raw>) -> Self { Self(handle, core::marker::PhantomData) } }
-        $($(
-            impl FromLocalHandle<$raw> for $psuedo<'_>  { unsafe fn from_raw_nn(handle: core::ptr::NonNull<$raw>) -> Self { Self(handle, core::marker::PhantomData) } }
-        )?)?
-        )?)?
+    // impl Trait for mod::{Ty...}
 
-            impl AsLocalHandleNN<$raw> for $owned         { fn as_handle_nn(&self) -> core::ptr::NonNull<$raw> { self.0 } }
-        $($(
-            impl AsLocalHandleNN<$raw> for $borrowed<'_>  { fn as_handle_nn(&self) -> core::ptr::NonNull<$raw> { self.0 } }
-        $($(
-            impl AsLocalHandleNN<$raw> for $psuedo<'_>    { fn as_handle_nn(&self) -> core::ptr::NonNull<$raw> { self.0 } }
-        )?)?
-        )?)?
+    (  unsafe   impl Send                       for $mo:ident::{$($ty:ident$(<$l:lifetime>)?),+$(,)?} ) => {$( handles!(unsafe impl Send                    for $mo::$ty$(<$l>)?); )+};
+    (  unsafe   impl Sync                       for $mo:ident::{$($ty:ident$(<$l:lifetime>)?),+$(,)?} ) => {$( handles!(unsafe impl Sync                    for $mo::$ty$(<$l>)?); )+};
+    (  unsafe   impl FromLocalHandle<$raw:ty>   for $mo:ident::{$($ty:ident$(<$l:lifetime>)?),+$(,)?} ) => {$( handles!(unsafe impl FromLocalHandle<$raw>   for $mo::$ty$(<$l>)?); )+};
+    ($(unsafe)? impl AsRef<Self>                for $mo:ident::{$($ty:ident$(<$l:lifetime>)?),+$(,)?} ) => {$( handles!(       impl AsRef<Self>             for $mo::$ty$(<$l>)?); )+};
+    ($(unsafe)? impl AsLocalHandleNN<$raw:ty>   for $mo:ident::{$($ty:ident$(<$l:lifetime>)?),+$(,)?} ) => {$( handles!(       impl AsLocalHandleNN<$raw>   for $mo::$ty$(<$l>)?); )+};
+    ($(unsafe)? impl Debug                      for $mo:ident::{$($ty:ident$(<$l:lifetime>)?),+$(,)?} ) => {$( handles!(       impl Debug                   for $mo::$ty$(<$l>)?); )+};
+
+    // impl Trait for Ty
+
+    (unsafe impl Send for $ty:ty) => { unsafe impl Send for $ty {} };
+    (unsafe impl Sync for $ty:ty) => { unsafe impl Sync for $ty {} };
+    (unsafe impl FromLocalHandle<$raw:ty> for $mo:ident::$ty:ident<'_>) => { impl FromLocalHandle<$raw> for $mo::$ty<'_> { unsafe fn from_raw_nn(handle: core::ptr::NonNull<$raw>) -> Self { Self(handle, core::marker::PhantomData) } } };
+    (unsafe impl FromLocalHandle<$raw:ty> for $mo:ident::$ty:ident    ) => { impl FromLocalHandle<$raw> for $mo::$ty     { unsafe fn from_raw_nn(handle: core::ptr::NonNull<$raw>) -> Self { Self(handle) } } };
+    ($(unsafe)? impl AsRef<Self> for $mo:ident::$ty:ident<'_>) => { impl<'a> AsRef<$mo::$ty<'a>> for $mo::$ty<'a> { fn as_ref(&self) -> &Self { self } } };
+    ($(unsafe)? impl AsRef<Self> for $mo:ident::$ty:ident    ) => { impl     AsRef<$mo::$ty    > for $mo::$ty     { fn as_ref(&self) -> &Self { self } } };
+    ($(unsafe)? impl AsLocalHandleNN<$raw:ty> for $ty:ty) => {
+        impl AsLocalHandleNN<$raw> for $ty {
+            fn as_handle_nn(&self) -> core::ptr::NonNull<$raw> { self.0 }
+        }
+    };
+    ($(unsafe)? impl Debug for $mo:ident::$ty:ident$(<$l:lifetime>)?) => {
+        impl core::fmt::Debug for $mo::$ty$(<$l>)? {
+            fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::fmt::Result {
+                write!(fmt, "{mo}::{ty}(0x{value:08x})", mo=stringify!($mo), ty=stringify!($ty), value=self.0.as_ptr() as usize)
+            }
+        }
     };
 
-    (impl Debug for $mod:ident :: { $owned:ident $(,$( $borrowed:ident<'_> $(,$( $psuedo:ident<'_> )?)? )?)? } ) => {
-            impl core::fmt::Debug for $owned        { fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::fmt::Result { write!(fmt, "{mo}::{ty}(0x{value:08x})", mo=stringify!($mod), ty=stringify!($owned    ), value=self.0.as_ptr() as usize) } }
-        $($(
-            impl core::fmt::Debug for $borrowed<'_> { fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::fmt::Result { write!(fmt, "{mo}::{ty}(0x{value:08x})", mo=stringify!($mod), ty=stringify!($borrowed ), value=self.0.as_ptr() as usize) } }
-        $($(
-            impl core::fmt::Debug for $psuedo<'_>   { fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::fmt::Result { write!(fmt, "{mo}::{ty}(0x{value:08x})", mo=stringify!($mod), ty=stringify!($psuedo   ), value=self.0.as_ptr() as usize) } }
-        )?)?
-        )?)?
-    };
+    // "Legacy"
 
-    (unsafe impl {Send, Sync} for $mod:ident :: { $owned:ident $(,$( $borrowed:ident<'_> $(,$( $psuedo:ident<'_> )?)? )?)? } ) => {
-            unsafe impl Send for $owned        {}
-            unsafe impl Sync for $owned        {}
-        $($(
-            unsafe impl Send for $borrowed<'_> {}
-            unsafe impl Sync for $borrowed<'_> {}
-        $($(
-            unsafe impl Send for $psuedo<'_>   {}
-            unsafe impl Sync for $psuedo<'_>   {}
-        )?)?
-        )?)?
-    };
-
-    (unsafe impl {AsRef<@base>, From} for $mod:ident :: { $owned:ident $(,$( $borrowed:ident<'_> $(,$( $psuedo:ident<'_> )?)? )?)? } ) => {
+    (unsafe impl {AsRef<@base>, From<@base>} for $mod:ident :: { $owned:ident $(,$( $borrowed:ident<'_> $(,$( $psuedo:ident<'_> )?)? )?)? } ) => {
             handles!(unsafe impl @convert     $mod::$owned      => handle::Owned        );
             handles!(unsafe impl @convert &'_ $mod::$owned      => handle::Borrowed<'_> );
             handles!(unsafe impl @convert &'_ $mod::$owned      => handle::Psuedo<'_>   );
@@ -64,17 +55,28 @@ macro_rules! handles {
     };
 
     (unsafe impl {AsRef, From} for $mod:ident :: { $owned:ident $(,$( $borrowed:ident<'_> $(,$( $psuedo:ident<'_> )?)? )?)? } ) => {
-            impl AsRef<$owned> for $owned { fn as_ref(&self) -> &$owned { self } }
         $($(
-            impl<'a> AsRef<$borrowed<'a>> for $borrowed<'a> { fn as_ref(&self) -> &$borrowed<'a> { self } }
             handles!(unsafe impl @convert &'_ $mod::$owned => $mod::$borrowed<'_>);
         $($(
-            impl<'a> AsRef<$psuedo<'a>> for $psuedo<'a> { fn as_ref(&self) -> &$psuedo<'a> { self } }
             handles!(unsafe impl @convert &'_ $mod::$owned    => $mod::$psuedo<'_>);
             handles!(unsafe impl @convert $mod::$borrowed<'_> => $mod::$psuedo<'_>);
         )?)?
         )?)?
     };
+
+    // Multi-impls
+
+    (unsafe impl *LocalHandleNN<$raw:ty> for $($tt:tt)* ) => {
+        handles!(unsafe impl FromLocalHandle<$raw> for $($tt)*);
+        handles!(unsafe impl AsLocalHandleNN<$raw> for $($tt)*);
+    };
+
+    (unsafe impl {Send, Sync} for $($tt:tt)* ) => {
+        handles!(unsafe impl Send for $($tt)*);
+        handles!(unsafe impl Sync for $($tt)*);
+    };
+
+    // unsafe impl @convert Src => Dest
 
     (unsafe impl @convert $($src:ident)::+ => $($dst:ident)::+) => {
         impl AsRef<$($dst)::+> for $($src)::+ { fn as_ref(&self) -> &$($dst)::+ { unsafe { core::mem::transmute(self) } } }
