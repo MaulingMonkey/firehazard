@@ -16,6 +16,8 @@ fn main() {
 }
 
 fn sandbox() {
+    println!("stdout");
     output_debug_string_a(cstr!("sandbox"));
-    #[cfg(std)] std::thread::sleep(std::time::Duration::from_secs(1));
+    eprintln!("stderr");
+    sleep_ms(1_000);
 }
