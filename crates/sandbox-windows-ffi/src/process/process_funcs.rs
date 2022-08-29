@@ -17,10 +17,69 @@ use core::ptr::{null_mut, null};
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa)\] CreateProcessA
-fn _create_process_a() -> Result<process::Information, Error> { unimplemented!() }
+pub fn create_process_a(
+    application_name:       impl TryIntoAsOptCStr,
+    command_line:           Option<&[u8]>,
+    process_attributes:     Option<&security::Attributes>,
+    thread_attributes:      Option<&security::Attributes>,
+    inherit_handles:        bool,
+    creation_flags:         impl Into<process::CreationFlags>,
+    environment:            impl TryIntoEnvironment,
+    current_directory:      impl TryIntoAsOptCStr,
+    startup_info:           &impl process::AsStartupInfoA,
+) -> Result<process::Information, Error> {
+    if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be NUL terminated
+    let creation_flags = creation_flags.into().into();
+    let mut process_information = unsafe { zeroed() };
+
+    Error::get_last_if(0 == unsafe { CreateProcessA(
+        application_name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
+        command_line.as_ref().map_or(null(), |c| c.as_ptr()) as *mut _,
+        process_attributes.map_or(null(), |a| a) as *mut _,
+        thread_attributes.map_or(null(), |a| a) as *mut _,
+        inherit_handles as _,
+        creation_flags,
+        environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?,
+        current_directory.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
+        startup_info.as_winapi()?,
+        &mut process_information
+    )})?;
+    Ok(unsafe { process::Information::from_raw(process_information) })
+}
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessw)\] CreateProcessW
-fn _create_process_w() -> Result<process::Information, Error> { unimplemented!() }
+pub fn create_process_w(
+    application_name:       impl TryIntoAsOptCStr<u16>,
+    // "The Unicode version of this function, CreateProcessW, can modify the contents of this string.
+    // Therefore, this parameter cannot be a pointer to read-only memory (such as a const variable or a literal string).
+    // If this parameter is a constant string, the function may cause an access violation."
+    mut command_line:       Option<&mut [u16]>,
+    process_attributes:     Option<&security::Attributes>,
+    thread_attributes:      Option<&security::Attributes>,
+    inherit_handles:        bool,
+    creation_flags:         impl Into<process::CreationFlags>,
+    environment:            impl TryIntoEnvironment,
+    current_directory:      impl TryIntoAsOptCStr<u16>,
+    startup_info:           &impl process::AsStartupInfoW,
+) -> Result<process::Information, Error> {
+    if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be NUL terminated
+    let creation_flags = creation_flags.into().into();
+    let mut process_information = unsafe { zeroed() };
+
+    Error::get_last_if(0 == unsafe { CreateProcessW(
+        application_name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
+        command_line.as_mut().map_or(null_mut(), |c| c.as_mut_ptr()),
+        process_attributes.map_or(null(), |a| a) as *mut _,
+        thread_attributes.map_or(null(), |a| a) as *mut _,
+        inherit_handles as _,
+        creation_flags,
+        environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?,
+        current_directory.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
+        startup_info.as_winapi()?,
+        &mut process_information
+    )})?;
+    Ok(unsafe { process::Information::from_raw(process_information) })
+}
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasusera)\] CreateProcessAsUserA
 ///
