@@ -12,6 +12,7 @@ use winapi::um::winuser::CloseWindowStation;
 #[repr(transparent)] pub struct OwnedHandle(NonNull<HWINSTA__>);
 
 handles!(unsafe impl *LocalHandleNN<HWINSTA__>  for winsta::{OwnedHandle});
+handles!(unsafe impl {Send, Sync}               for winsta::{OwnedHandle});
 handles!(unsafe impl {AsRef, From}              for winsta::{OwnedHandle});
 handles!(unsafe impl {AsRef<@base>, From}       for winsta::{OwnedHandle});
 handles!(impl Debug                             for winsta::{OwnedHandle});

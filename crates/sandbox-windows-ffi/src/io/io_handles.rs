@@ -32,16 +32,19 @@ use core::ptr::null_mut;
 #[repr(transparent)] pub struct WriteHandle<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
 
 handles!(unsafe impl *LocalHandleNN<c_void> for io::{File});
+handles!(unsafe impl {Send, Sync}           for io::{File});
 handles!(unsafe impl {AsRef, From}          for io::{File});
 handles!(unsafe impl {AsRef<@base>, From}   for io::{File});
 handles!(impl Debug                         for io::{File});
 
 handles!(unsafe impl *LocalHandleNN<c_void> for io::{ReadPipe, ReadHandle});
+handles!(unsafe impl {Send, Sync}           for io::{ReadPipe, ReadHandle});
 handles!(unsafe impl {AsRef, From}          for io::{ReadPipe, ReadHandle});
 handles!(unsafe impl {AsRef<@base>, From}   for io::{ReadPipe, ReadHandle});
 handles!(impl Debug                         for io::{ReadPipe, ReadHandle});
 
 handles!(unsafe impl *LocalHandleNN<c_void> for io::{WritePipe, WriteHandle});
+handles!(unsafe impl {Send, Sync}           for io::{WritePipe, WriteHandle});
 handles!(unsafe impl {AsRef, From}          for io::{WritePipe, WriteHandle});
 handles!(unsafe impl {AsRef<@base>, From}   for io::{WritePipe, WriteHandle});
 handles!(impl Debug                         for io::{WritePipe, WriteHandle});

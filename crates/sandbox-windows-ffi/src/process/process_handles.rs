@@ -24,6 +24,7 @@ use core::marker::PhantomData;
 #[repr(transparent)] pub struct PsuedoHandle<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
 
 handles!(unsafe impl *LocalHandleNN<c_void> for process::{OwnedHandle, Handle, PsuedoHandle});
+handles!(unsafe impl {Send, Sync}           for process::{OwnedHandle, Handle, PsuedoHandle});
 handles!(unsafe impl {AsRef, From}          for process::{OwnedHandle, Handle, PsuedoHandle});
 handles!(unsafe impl {AsRef<@base>, From}   for process::{OwnedHandle, Handle, PsuedoHandle});
 handles!(impl Debug                         for process::{OwnedHandle, Handle, PsuedoHandle});

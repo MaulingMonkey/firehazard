@@ -18,6 +18,7 @@ use core::marker::PhantomData;
 // No psuedo job handles?
 
 handles!(unsafe impl *LocalHandleNN<c_void> for job::{OwnedHandle, Handle});
+handles!(unsafe impl {Send, Sync}           for job::{OwnedHandle, Handle});
 handles!(unsafe impl {AsRef, From}          for job::{OwnedHandle, Handle});
 handles!(unsafe impl {AsRef<@base>, From}   for job::{OwnedHandle, Handle});
 handles!(impl Debug                         for job::{OwnedHandle, Handle});

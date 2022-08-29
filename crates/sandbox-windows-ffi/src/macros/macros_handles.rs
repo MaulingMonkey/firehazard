@@ -37,6 +37,19 @@ macro_rules! handles {
         )?)?
     };
 
+    (unsafe impl {Send, Sync} for $mod:ident :: { $owned:ident $(,$( $borrowed:ident $(,$( $psuedo:ident )?)? )?)? } ) => {
+            unsafe impl Send for $owned        {}
+            unsafe impl Sync for $owned        {}
+        $($(
+            unsafe impl Send for $borrowed<'_> {}
+            unsafe impl Sync for $borrowed<'_> {}
+        $($(
+            unsafe impl Send for $psuedo<'_>   {}
+            unsafe impl Sync for $psuedo<'_>   {}
+        )?)?
+        )?)?
+    };
+
     (unsafe impl {AsRef<@base>, From} for $mod:ident :: { $owned:ident $(,$( $borrowed:ident $(,$( $psuedo:ident )?)? )?)? } ) => {
             handles!(unsafe impl @convert     $mod::$owned      => handle::Owned        );
             handles!(unsafe impl @convert &'_ $mod::$owned      => handle::Borrowed<'_> );
