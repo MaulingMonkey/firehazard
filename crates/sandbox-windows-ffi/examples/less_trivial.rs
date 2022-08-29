@@ -10,9 +10,9 @@ fn main() {
     //  1. loading dlls         (can fail to even read the DLL into memory)
     //  2. initializing dlls    (can fail to finish DllMain)
     //  3. executing dlls       (can fail on bellow line due to internal access denied panic)
-    #[cfg(std)] dbg!(std::collections::HashMap::<u32, u32>::new());
+    dbg!(std::collections::HashMap::<u32, u32>::new());
     sandbox();
-    #[cfg(std)] dbg!(std::collections::HashMap::<u32, u32>::new());
+    dbg!(std::collections::HashMap::<u32, u32>::new());
 }
 
 fn sandbox() {
