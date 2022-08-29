@@ -1,3 +1,5 @@
+#![forbid(unsafe_op_in_unsafe_fn)]
+
 use sandbox_windows_ffi::*;
 
 use abistr::*;
@@ -19,5 +21,27 @@ fn sandbox() {
     println!("stdout");
     output_debug_string_a(cstr!("sandbox"));
     eprintln!("stderr");
+    let write_handle            = unsafe { env_var_handle("%WRITE_HANDLE%"          ) };
+    let read_handle_noinherit   = unsafe { env_var_handle("%READ_HANDLE_NOINHERIT%" ) };
+    let _ = dbg!(get_handle_information(write_handle));
+
+    if false {
+        // XXX: This kills the process if:
+        //  1. strict handle checks are enabled
+        //  2. READ_HANDLE_NOINHERIT is indeed not inherited by this process (e.g. `process::ThreadAttributeRef::handle_list` was used to only inherit WRITE_HANDLE)
+        // The documentation states that enabling strict handle checks causes invalid handles to throw an exception.
+        // These might be unhandleable?  I don't even see them in the debugger events stream: only the immediate fatal exit.
+        // At the very least, this catch_unwind doesn't do anything useful.
+        let _ = dbg!(std::panic::catch_unwind(|| get_handle_information(read_handle_noinherit)));
+    }
+
     sleep_ms(1_000);
+}
+
+unsafe fn env_var_handle(name: &str) -> handle::Borrowed<'static> {
+    let inner = name.strip_prefix("%").and_then(|name| name.strip_suffix("%")).unwrap();
+    let handle = std::env::var(inner).expect(name);
+    let handle = handle.parse::<usize>().expect(name);
+    let handle = unsafe { handle::Borrowed::from_raw(handle as _) }.expect(name);
+    handle
 }

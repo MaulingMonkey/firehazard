@@ -8,11 +8,12 @@ pub struct List<'s> {
     pub child_policy:       process::creation::ChildProcessPolicyFlags,
     pub dab_policy:         process::creation::DesktopAppPolicyFlags,
     pub job_list:           Vec<job::Handle<'s>>,
+    pub inherit:            Vec<handle::Borrowed<'s>>,
     // ...
 }
 
 impl<'s> List<'s> {
-    pub fn new(target: &crate::settings::Target, job: impl Into<job::Handle<'s>>) -> Self {
+    pub fn new(target: &crate::settings::Target, job: impl Into<job::Handle<'s>>, inherit: impl IntoIterator<Item = handle::Borrowed<'s>>) -> Self {
         let policy1 = ()
             | process::creation::mitigation_policy::DEP_ENABLE
             //| process::creation::mitigation_policy::DEP_ATL_THUNK_ENABLE
@@ -56,8 +57,9 @@ impl<'s> List<'s> {
         let child_policy        = process::creation::child_process::RESTRICTED;
         let dab_policy          = process::creation::desktop_app_breakaway::ENABLE_PROCESS_TREE;
         let job_list            = vec![job.into()];
+        let inherit             = inherit.into_iter().collect();
 
-        Self { mitigation_policy, child_policy, dab_policy, job_list }
+        Self { mitigation_policy, child_policy, dab_policy, job_list, inherit }
     }
 
     pub fn to_list(&self) -> ThreadAttributeList {
@@ -72,7 +74,7 @@ impl<'s> List<'s> {
                 process::ThreadAttributeRef::protection_level(&PROTECTION_LEVEL_SAME)
             },
             process::ThreadAttributeRef::job_list(&self.job_list[..]),
-            // TODO: ThreadAttributeRef::handle_list ?
+            process::ThreadAttributeRef::handle_list(&self.inherit[..]),
             // TODO: ThreadAttributeRef::security_capabilities ? app container / capability sids related: https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_capabilities
         ][..]).unwrap()
     }

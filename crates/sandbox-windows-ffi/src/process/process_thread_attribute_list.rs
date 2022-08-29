@@ -83,8 +83,14 @@ impl<'a> ThreadAttributeRef<'a> {
     /// (PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY, [GROUP_AFFINITY](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-group_affinity))
     pub fn group_affinity(value: &'a GROUP_AFFINITY) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY, value) } }
 
-    /// (PROC_THREAD_ATTRIBUTE_HANDLE_LIST, \[[handle::Owned]\])
-    pub fn handle_list(value: &'a [handle::Owned]) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_HANDLE_LIST, value) } }
+    /// (PROC_THREAD_ATTRIBUTE_HANDLE_LIST, &\[[handle::Borrowed]\])
+    ///
+    /// Note that [`create_process_as_user_a`] must specify `true` for `inherit_handles`,
+    /// and the handles must also be marked as inheritable,
+    /// or you'll get ERROR_INVALID_PARAMETER from [`create_process_as_user_a`].
+    ///
+    /// In other words: using this attribute strictly *narrows* what handles the child process inherits.
+    pub fn handle_list(value: &'a [handle::Borrowed<'a>]) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_HANDLE_LIST, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR, [PROCESSOR_NUMBER](https://docs.microsoft.com/en-us/windows/desktop/api/winnt/ns-winnt-processor_number))
     pub fn ideal_processor_ntdef(value: &'a winapi::shared::ntdef::PROCESSOR_NUMBER) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR, value) } }

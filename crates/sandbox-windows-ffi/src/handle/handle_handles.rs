@@ -21,6 +21,7 @@ use core::marker::PhantomData;
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)] #[repr(transparent)] pub struct Psuedo<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
 
 handles!(unsafe impl *LocalHandleNN<c_void> for handle::{Owned, Borrowed<'_>, Psuedo<'_>});
+handles!(unsafe impl AsRef<Self>            for handle::{Owned, Borrowed<'_>, Psuedo<'_>});
 handles!(unsafe impl {AsRef, From}          for handle::{Owned, Borrowed<'_>, Psuedo<'_>});
 handles!(impl Debug                         for handle::{Owned, Borrowed<'_>, Psuedo<'_>});
 

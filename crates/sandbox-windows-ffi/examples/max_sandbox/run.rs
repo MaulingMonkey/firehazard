@@ -20,7 +20,7 @@ pub fn one(target: settings::Target) {
 
     let (_read, write) = io::create_pipe(Some(&security::Attributes::new(None, true)), 0).unwrap();
     let job = job::create();
-    let attribute_list = attribute::List::new(&target, &job);
+    let attribute_list = attribute::List::new(&target, &job, vec![(&write).into()]);
     let mut si = process::StartupInfoExW::default();
     // N.B.: this will cause user32.dll(?) to STATUS_DLL_INIT_FAILED unless the child process can access the named desktop
     // specifying a nonexistant desktop is also an option
@@ -30,10 +30,20 @@ pub fn one(target: settings::Target) {
     si.startup_info.std_error   = Some((&write).into());
     si.attribute_list           = Some(attribute_list.to_list());
 
+    let environment = format!(
+        concat!(
+            "WRITE_HANDLE={write}\0",
+            "READ_HANDLE_NOINHERIT={read}\0",
+            "\0"
+        ),
+        write = write.as_handle_nn().as_ptr() as usize,
+        read  = _read.as_handle_nn().as_ptr() as usize,
+    );
+
     let pi = create_process_as_user_w(
         &tokens.restricted, (), Some(unsafe { command_line.buffer_mut() }), None, None, true,
         process::DEBUG_PROCESS | process::CREATE_SEPARATE_WOW_VDM | process::CREATE_SUSPENDED | process::EXTENDED_STARTUPINFO_PRESENT,
-        process::environment::Clear, (), &si
+        environment.as_bytes(), (), &si
     ).unwrap();
     set_thread_token(&pi.thread, &tokens.permissive).unwrap();
     job::relimit(&job, 0);

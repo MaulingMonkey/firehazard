@@ -97,7 +97,7 @@ pub fn duplicate_handle<'t>(
 /// close_handle(thread).unwrap();
 /// # }
 /// ```
-pub fn get_handle_information(object: impl AsRef<handle::Owned>) ->  Result<u32, Error> { // TODO: type
+pub fn get_handle_information<'a>(object: impl AsRef<handle::Borrowed<'a>>) ->  Result<u32, Error> { // TODO: type
     let mut flags = 0;
     Error::get_last_if(FALSE == unsafe { GetHandleInformation(object.as_ref().as_handle(), &mut flags) })?;
     Ok(flags)
@@ -117,6 +117,6 @@ pub fn get_handle_information(object: impl AsRef<handle::Owned>) ->  Result<u32,
 /// close_handle(thread).unwrap();
 /// # }
 /// ```
-pub fn set_handle_information(object: impl AsRef<handle::Owned>, mask: u32, flags: u32) -> Result<(), Error> { // TODO: type
+pub fn set_handle_information<'a>(object: impl AsRef<handle::Borrowed<'a>>, mask: u32, flags: u32) -> Result<(), Error> { // TODO: type
     Error::get_last_if(FALSE == unsafe { SetHandleInformation(object.as_ref().as_handle(), mask, flags) })
 }

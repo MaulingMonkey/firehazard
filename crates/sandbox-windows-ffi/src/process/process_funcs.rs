@@ -87,6 +87,7 @@ pub fn create_process_w(
 /// | ----------------------------- | --------- |
 /// | ERROR_INCORRECT_SIZE          | If using [process::EXTENDED_STARTUPINFO_PRESENT] with [process::StartupInfoW] instead of [process::StartupInfoExW]
 /// | ERROR_INVALID_PARAMETER       | Various, including various issues with the [process::ThreadAttributeList] of [process::StartupInfoExW]
+/// | ERROR_INVALID_PARAMETER       | [process::ThreadAttributeRef::handle_list] used but `inherit_handles` is false
 /// | ERROR_INVALID_PARAMETER       | [process::creation::mitigation_policy2::xtended_control_flow_guard::ALWAYS_ON] on non-XFG-enabled binary?
 /// | ERROR_INVALID_PARAMETER       | [process::creation::mitigation_policy2::pointer_auth_user_ip::ALWAYS_ON] on a non-ARM64 system?
 /// | ERROR_FILE_NOT_FOUND          | Executable specified by `command_line` not found
@@ -149,6 +150,7 @@ pub fn create_process_as_user_a(
 /// | ----------------------------- | --------- |
 /// | ERROR_INCORRECT_SIZE          | If using [process::EXTENDED_STARTUPINFO_PRESENT] with [process::StartupInfoW] instead of [process::StartupInfoExW]
 /// | ERROR_INVALID_PARAMETER       | Various, including various issues with the [process::ThreadAttributeList] of [process::StartupInfoExW]
+/// | ERROR_INVALID_PARAMETER       | [process::ThreadAttributeRef::handle_list] used but `inherit_handles` is false
 /// | ERROR_INVALID_PARAMETER       | [process::creation::mitigation_policy2::xtended_control_flow_guard::ALWAYS_ON] on non-XFG-enabled binary?
 /// | ERROR_INVALID_PARAMETER       | [process::creation::mitigation_policy2::pointer_auth_user_ip::ALWAYS_ON] on a non-ARM64 system?
 /// | ERROR_FILE_NOT_FOUND          | Executable specified by `command_line` not found
