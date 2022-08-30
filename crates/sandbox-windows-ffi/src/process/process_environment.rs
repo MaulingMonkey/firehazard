@@ -1,3 +1,5 @@
+//! [Inherit], [Clear], [TryIntoEnvironment]
+
 use crate::*;
 use winapi::shared::minwindef::LPVOID;
 use winapi::shared::winerror::*;
