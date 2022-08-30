@@ -5,7 +5,7 @@ use core::fmt::{self, Debug, Formatter};
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/winstation/window-station-security-and-access-rights)\]
-/// DWORD/[u32]: Access rights mask for removing or restricting access rights to Window Station objects
+/// DWORD/[u32]: Mask for removing or restricting access rights to Window Station objects
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct AccessRightsMask(u32);
 
