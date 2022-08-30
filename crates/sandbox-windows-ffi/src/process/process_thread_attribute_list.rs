@@ -130,6 +130,18 @@ impl<'a> ThreadAttributeRef<'a> {
 
     /// (PROC_THREAD_ATTRIBUTE_ENABLE_OPTIONAL_XSTATE_FEATURES, [XSTATE_*](https://docs.microsoft.com/en-us/windows/win32/debug/working-with-xstate-context))
     pub fn enable_optional_xstate_features(value: &'a DWORD64) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_ENABLE_OPTIONAL_XSTATE_FEATURES, value) } }
+
+    /// (PROC_THREAD_ATTRIBUTE_COMPONENT_FILTER, COMPONENT_* flags)
+    ///
+    /// ### 0
+    /// Protect against nothing.
+    ///
+    /// ### COMPONENT_KTM (1)
+    /// Blocks access to [Kernel Transaction Manager](https://docs.microsoft.com/en-us/windows/win32/ktm/kernel-transaction-manager-portal) APIs to mitigate
+    /// [CVE-2018-8611](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-8611)
+    ///
+    /// <https://research.nccgroup.com/2020/04/27/cve-2018-8611-exploiting-windows-ktm-part-1-5-introduction/>
+    pub fn component_filter_flags(component_flags: &'a DWORD) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_COMPONENT_FILTER, component_flags) } }
 }
 
 

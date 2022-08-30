@@ -7,6 +7,7 @@ pub struct List<'s> {
     pub mitigation_policy:  process::creation::MitigationPolicy,
     pub child_policy:       process::creation::ChildProcessPolicyFlags,
     pub dab_policy:         process::creation::DesktopAppPolicyFlags,
+    pub component_filter:   u32,
     pub job_list:           Vec<job::Handle<'s>>,
     pub inherit:            Vec<handle::Borrowed<'s>>,
     // ...
@@ -56,10 +57,12 @@ impl<'s> List<'s> {
         let mitigation_policy   = process::creation::MitigationPolicy::from((policy1, policy2));
         let child_policy        = process::creation::child_process::RESTRICTED;
         let dab_policy          = process::creation::desktop_app_breakaway::ENABLE_PROCESS_TREE;
+        const COMPONENT_KTM : u32 = 1; // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h
+        let component_filter    = COMPONENT_KTM;
         let job_list            = vec![job.into()];
         let inherit             = inherit.into_iter().collect();
 
-        Self { mitigation_policy, child_policy, dab_policy, job_list, inherit }
+        Self { mitigation_policy, child_policy, dab_policy, component_filter, job_list, inherit }
     }
 
     pub fn to_list(&self) -> ThreadAttributeList {
@@ -67,6 +70,7 @@ impl<'s> List<'s> {
             process::ThreadAttributeRef::mitigation_policy(&self.mitigation_policy),
             process::ThreadAttributeRef::child_process_policy(&self.child_policy),
             process::ThreadAttributeRef::desktop_app_policy(&self.dab_policy),
+            process::ThreadAttributeRef::component_filter_flags(&self.component_filter),
             #[cfg(nope)] {
                 // will cause create_process_as_user_w to fail with ERROR_INVALID_PARAMETER
                 // Also completely pointless, as we're almost certainly not running as a protected app ourselves
