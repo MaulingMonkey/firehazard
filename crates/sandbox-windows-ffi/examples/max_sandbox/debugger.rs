@@ -1,14 +1,14 @@
 use sandbox_windows_ffi::*;
 
+use winapi::ctypes::c_void;
 use winapi::shared::minwindef::FALSE;
 use winapi::um::handleapi::DuplicateHandle;
 use winapi::um::minwinbase::*;
 use winapi::um::winnt::*;
 
 use std::collections::*;
-use std::ffi::OsString;
 use std::mem::MaybeUninit;
-use std::os::windows::prelude::*;
+use std::path::PathBuf;
 
 
 
@@ -18,6 +18,7 @@ pub fn debug_loop(
 ) {
     let mut sandboxed = false;
     let mut threads = HashMap::<thread::Id, thread::OwnedHandle>::new();
+    let mut dlls    = HashMap::<*mut c_void, PathBuf>::new();
     loop {
         let event = wait_for_debug_event_ex(None).unwrap();
         let DEBUG_EVENT { dwProcessId, dwThreadId, .. } = *event;
@@ -80,33 +81,34 @@ pub fn debug_loop(
                 dbg_continue();
                 break;
             },
-            LoadDll(_event) => {
-                eprintln!("[{dwProcessId}:{dwThreadId}] dll loaded");
+            LoadDll(event) => {
+                let hfile = unsafe { io::File::borrow_from_raw(&event.hFile) }.unwrap();
+                let image_name = get_final_path_name_by_handle(&hfile, 0).unwrap();
+
+                eprintln!("[{dwProcessId}:{dwThreadId}] dll loaded: {image_name:?}");
+                let _prev_name = dlls.insert(event.lpBaseOfDll, image_name);
                 dbg_continue();
             },
-            UnloadDll(_event)  => {
-                eprintln!("[{dwProcessId}:{dwThreadId}] dll unloaded");
+            UnloadDll(event)  => {
+                let image_name = dlls.remove(&event.lpBaseOfDll).unwrap_or_default();
+                eprintln!("[{dwProcessId}:{dwThreadId}] dll unloaded: {image_name:?}");
                 dbg_continue();
             },
             DebugString(event) => {
                 let bytes = usize::from(event.nDebugStringLength);
-                let mut buffer_wide;
-                let mut buffer_narrow;
-                let buffer_osstring;
                 let narrow = if event.fUnicode != 0 {
                     // Unicode
-                    buffer_wide = vec![MaybeUninit::<u16>::uninit(); (bytes+1)/2];
-                    let buffer = read_process_memory(&pi.process, event.lpDebugStringData.cast(), &mut buffer_wide[..]).unwrap();
+                    let mut buffer = vec![MaybeUninit::<u16>::uninit(); (bytes+1)/2];
+                    let buffer = read_process_memory(&pi.process, event.lpDebugStringData.cast(), &mut buffer[..]).unwrap();
                     let nul = buffer.iter().position(|ch| *ch == 0).unwrap_or(buffer.len());
-                    buffer_osstring = OsString::from_wide(buffer.split_at(nul).0);
-                    buffer_osstring.to_string_lossy()
+                    String::from_utf16_lossy(buffer.split_at(nul).0)
                 } else {
-                    buffer_narrow = vec![MaybeUninit::<u8>::uninit(); bytes];
-                    let buffer = read_process_memory(&pi.process, event.lpDebugStringData.cast(), &mut buffer_narrow[..]).unwrap();
+                    let mut buffer = vec![MaybeUninit::<u8>::uninit(); bytes];
+                    let buffer = read_process_memory(&pi.process, event.lpDebugStringData.cast(), &mut buffer[..]).unwrap();
                     let nul = buffer.iter().position(|ch| *ch == 0).unwrap_or(buffer.len());
-                    String::from_utf8_lossy(buffer.split_at(nul).0)
+                    String::from_utf8_lossy(buffer.split_at(nul).0).into_owned()
                 };
-                eprintln!("[{dwProcessId}:{dwThreadId}] debug string: {:?}", &*narrow);
+                eprintln!("[{dwProcessId}:{dwThreadId}] debug string: {:?}", narrow);
                 if narrow == "sandbox" {
                     for thread in threads.values() { suspend_thread(thread).unwrap(); }
                     debug_active_process_stop(pi.process_id).unwrap();
