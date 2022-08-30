@@ -4,6 +4,8 @@ use sandbox_windows_ffi::*;
 
 use abistr::*;
 
+use std::io::Write;
+
 fn main() {
     // Pulls in for DoS resistant hash seeding:
     //  BCryptGenRandom                     (bcrypt.dll)
@@ -21,9 +23,11 @@ fn sandbox() {
     println!("stdout");
     output_debug_string_a(cstr!("sandbox"));
     eprintln!("stderr");
-    let write_handle            = unsafe { env_var_handle("%WRITE_HANDLE%"          ) };
-    let read_handle_noinherit   = unsafe { env_var_handle("%READ_HANDLE_NOINHERIT%" ) };
+    let mut write_handle        : io::WriteHandle<'static>  = unsafe { env_var_handle("%WRITE_HANDLE%"          ) };
+    let read_handle_noinherit   : io::ReadHandle<'static>   = unsafe { env_var_handle("%READ_HANDLE_NOINHERIT%" ) };
     let _ = dbg!(get_handle_information(write_handle));
+
+    write_handle.write_all(b"explicit handle i/o\n").unwrap();
 
     if false {
         // XXX: This kills the process if:
@@ -38,10 +42,10 @@ fn sandbox() {
     sleep_ms(1_000);
 }
 
-unsafe fn env_var_handle(name: &str) -> handle::Borrowed<'static> {
+unsafe fn env_var_handle<H: FromLocalHandle>(name: &str) -> H {
     let inner = name.strip_prefix("%").and_then(|name| name.strip_suffix("%")).unwrap();
     let handle = std::env::var(inner).expect(name);
     let handle = handle.parse::<usize>().expect(name);
-    let handle = unsafe { handle::Borrowed::from_raw(handle as _) }.expect(name);
+    let handle = unsafe { H::from_raw(handle as _) }.expect(name);
     handle
 }
