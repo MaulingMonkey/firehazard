@@ -66,7 +66,7 @@ pub fn create_window_station_w(
     unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumwindow_stationsa)\]
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumwindowstationsa)\]
 /// EnumWindowStationsA
 ///
 /// ### Example
@@ -105,7 +105,7 @@ unsafe extern "system" fn fwd_enum_window_stations_a<F: FnMut(CStrPtr) -> Result
     }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumwindow_stationsw)\]
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumwindowstationsw)\]
 /// EnumWindowStationsW
 ///
 /// ### Example
@@ -144,8 +144,8 @@ unsafe extern "system" fn fwd_enum_window_stations_w<F: FnMut(CStrPtr<u16>) -> R
     }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getprocesswindowstation)
-/// GetProcessWindowStation
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getprocesswindowstation)\]
+/// GetProcessWindowStation + DuplicateHandle
 ///
 /// ### Example
 /// ```
