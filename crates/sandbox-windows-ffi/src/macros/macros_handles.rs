@@ -22,8 +22,18 @@ macro_rules! handles {
 
     (unsafe impl Send for $ty:ty) => { unsafe impl Send for $ty {} };
     (unsafe impl Sync for $ty:ty) => { unsafe impl Sync for $ty {} };
-    (unsafe impl FromLocalHandle<$raw:ty> for $mo:ident::$ty:ident<'_>) => { impl FromLocalHandle<$raw> for $mo::$ty<'_> { unsafe fn from_raw_nn(handle: core::ptr::NonNull<$raw>) -> Self { Self(handle, core::marker::PhantomData) } } };
-    (unsafe impl FromLocalHandle<$raw:ty> for $mo:ident::$ty:ident    ) => { impl FromLocalHandle<$raw> for $mo::$ty     { unsafe fn from_raw_nn(handle: core::ptr::NonNull<$raw>) -> Self { Self(handle) } } };
+    (unsafe impl FromLocalHandle<$raw:ty> for $mo:ident::$ty:ident<'_>) => {
+        impl FromLocalHandle<$raw> for $mo::$ty<'_> {
+            unsafe fn from_raw_nn       (handle:  core::ptr::NonNull<$raw>) ->  Self { Self(handle, core::marker::PhantomData) }
+            unsafe fn borrow_from_raw_nn(handle: &core::ptr::NonNull<$raw>) -> &Self { unsafe { core::mem::transmute(handle) } }
+        }
+    };
+    (unsafe impl FromLocalHandle<$raw:ty> for $mo:ident::$ty:ident    ) => {
+        impl FromLocalHandle<$raw> for $mo::$ty     {
+            unsafe fn from_raw_nn       (handle:  core::ptr::NonNull<$raw>) ->  Self { Self(handle) }
+            unsafe fn borrow_from_raw_nn(handle: &core::ptr::NonNull<$raw>) -> &Self { unsafe { core::mem::transmute(handle) } }
+        }
+    };
     ($(unsafe)? impl AsRef<Self> for $mo:ident::$ty:ident<'_>) => { impl<'a> AsRef<$mo::$ty<'a>> for $mo::$ty<'a> { fn as_ref(&self) -> &Self { self } } };
     ($(unsafe)? impl AsRef<Self> for $mo:ident::$ty:ident    ) => { impl     AsRef<$mo::$ty    > for $mo::$ty     { fn as_ref(&self) -> &Self { self } } };
     ($(unsafe)? impl AsLocalHandleNN<$raw:ty> for $ty:ty) => {
