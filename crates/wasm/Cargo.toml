@@ -1,0 +1,16 @@
+# https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[package]
+name                        = "wasm"
+version                     = "0.0.0-git"
+publish                     = false
+authors                     = ["MaulingMonkey <git@maulingmonkey.com>"]
+edition                     = "2021"
+license                     = "Apache-2.0 OR MIT"
+
+[dependencies.sandbox-windows-ffi]
+path                        = "../sandbox-windows-ffi"
+
+[dev-dependencies]
+wasmer                      = "2.3.0"
+wasmtime                    = "0.40.0"

@@ -46,6 +46,7 @@ impl Default for Token {
 #[derive(Default)]
 pub struct Allow {
     pub same_desktop:   bool,
+    pub dynamic_code:   bool,
 }
 
 
@@ -128,6 +129,44 @@ impl Target {
                     // <https://github.com/rust-lang/rust/blob/1.61.0/library/std/src/sys/windows/rand.rs#L18>
                     // <https://github.com/rust-lang/rust/blob/1.63.0/library/std/src/sys/windows/rand.rs#L16>
                     // <https://github.com/rust-lang/rust/blob/2fbc08e2ce64dee45a29cb6133da6b32366268aa/library/std/src/sys/windows/rand.rs#L16>
+                    enabled:    vec![session],
+                    restricted: Some(vec![session]),
+                    .. Default::default()
+                },
+            },
+            Target {
+                exe: dir.join("run-wasmer.exe"),
+                allow: Allow {
+                    dynamic_code: true,
+                    .. Allow::default()
+                },
+                spawn: Token {
+                    integrity:  Integrity::Low,
+                    privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
+                    enabled:    vec![user, users, everyone, session],
+                    restricted: Some(vec![user, users, everyone, session]),
+                    .. Default::default()
+                },
+                lockdown: Token {
+                    enabled:    vec![session],
+                    restricted: Some(vec![session]),
+                    .. Default::default()
+                },
+            },
+            Target {
+                exe: dir.join("run-wasmtime.exe"),
+                allow: Allow {
+                    dynamic_code: true,
+                    .. Allow::default()
+                },
+                spawn: Token {
+                    integrity:  Integrity::Low,
+                    privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
+                    enabled:    vec![user, users, everyone, session],
+                    restricted: Some(vec![user, users, everyone, session]),
+                    .. Default::default()
+                },
+                lockdown: Token {
                     enabled:    vec![session],
                     restricted: Some(vec![session]),
                     .. Default::default()

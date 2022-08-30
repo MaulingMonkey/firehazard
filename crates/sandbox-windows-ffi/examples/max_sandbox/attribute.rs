@@ -25,7 +25,7 @@ impl<'s> List<'s> {
             | process::creation::mitigation_policy::strict_handle_checks::ALWAYS_ON
             | (!target.allow.same_desktop * process::creation::mitigation_policy::win32k_system_call_disable::ALWAYS_ON) // user32.dll(?) requires access on init
             | process::creation::mitigation_policy::extension_point_disable::ALWAYS_ON
-            | process::creation::mitigation_policy::prohibit_dynamic_code::ALWAYS_ON
+            | (!target.allow.dynamic_code * process::creation::mitigation_policy::prohibit_dynamic_code::ALWAYS_ON)
             | process::creation::mitigation_policy::control_flow_guard::ALWAYS_ON               // Redundant?
             | process::creation::mitigation_policy::control_flow_guard::EXPORT_SUPPRESSION      // https://docs.microsoft.com/en-us/windows/win32/secbp/pe-metadata#export-suppression
             | process::creation::mitigation_policy::block_non_microsoft_binaries::ALWAYS_ON     // Redundant?
@@ -41,7 +41,7 @@ impl<'s> List<'s> {
             //| process::creation::mitigation_policy2::strict_control_flow_guard::ALWAYS_ON         // causes ERROR_STRICT_CFG_VIOLATION, even if our executables are built with -Zbuild-std and -Ccontrol-flow-guard=checks
             | process::creation::mitigation_policy2::module_tampering_protection::ALWAYS_ON
             | process::creation::mitigation_policy2::restrict_indirect_branch_prediction::ALWAYS_ON
-            | process::creation::mitigation_policy2::allow_downgrade_dynamic_code_policy::ALWAYS_OFF
+            | (!target.allow.dynamic_code * process::creation::mitigation_policy2::allow_downgrade_dynamic_code_policy::ALWAYS_OFF)
             | process::creation::mitigation_policy2::speculative_store_bypass_disable::ALWAYS_ON
             | process::creation::mitigation_policy2::cet_user_shadow_stacks::ALWAYS_ON      // Redundant
             | process::creation::mitigation_policy2::cet_user_shadow_stacks::STRICT_MODE
