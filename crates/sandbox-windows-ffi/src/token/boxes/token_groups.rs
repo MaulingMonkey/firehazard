@@ -1,7 +1,9 @@
+use super::assert_valid_saa;
+
 use crate::*;
 use crate::alloc::*;
 
-use winapi::um::winnt::TOKEN_GROUPS;
+use winapi::um::winnt::{TOKEN_GROUPS, SID_AND_ATTRIBUTES};
 
 use core::fmt::{self, Debug, Formatter};
 use core::mem::{size_of, align_of};
@@ -12,13 +14,16 @@ use core::mem::{size_of, align_of};
 pub struct BoxTokenGroups(CBox<TOKEN_GROUPS>);
 
 impl BoxTokenGroups {
-    pub unsafe fn from_raw(cbs: CBoxSized<TOKEN_GROUPS>) -> Self {
-        let bytes = cbs.bytes();
-        assert!(bytes >= 4);
-        assert!(cbs.as_ptr() as usize % Self::GROUPS_ALIGN == 0); // TODO: static assert alignment instead
-        let btg = Self(cbs.into());
-        assert!(usize::from32(btg.group_count()) <= (bytes-Self::GROUPS_OFFSET)/size_of::<sid::AndAttributes>());
-        btg
+    pub fn from_raw(cbs: CBoxSized<TOKEN_GROUPS>) -> Self {
+        let group_count = usize::from32(cbs.GroupCount);
+        assert!(group_count <= (cbs.bytes()-Self::GROUPS_OFFSET)/size_of::<sid::AndAttributes>());
+
+        // XXX: Not 100% sure this avoids [Strict Providence](https://doc.rust-lang.org/std/ptr/index.html#strict-provenance) spatial narrowing to Groups[0]
+        let groups = unsafe { core::ptr::addr_of!((*cbs.as_ptr()).Groups).cast() };
+        let groups = unsafe { core::slice::from_raw_parts::<SID_AND_ATTRIBUTES>(groups, group_count) };
+        for group in groups.iter() { assert_valid_saa(&cbs, *group) } // REQUIRED FOR SOUNDNESS
+
+        Self(cbs.into())
     }
 
     pub fn as_winapi(&self) -> *mut TOKEN_GROUPS { self.0.as_ptr() as *mut _ }
@@ -35,7 +40,6 @@ impl BoxTokenGroups {
     fn groups_mut_ptr<'s>(&'s mut self) -> *mut   sid::AndAttributes<'s> { unsafe { core::ptr::addr_of_mut!((*self.0.as_mut_ptr()).Groups).cast() } }
 
     const fn max_usize(a: usize, b: usize) -> usize { if a < b { b } else { a } }
-    const GROUPS_ALIGN  : usize = Self::max_usize(align_of::<u32>(), align_of::<sid::AndAttributes>());
     const GROUPS_OFFSET : usize = Self::max_usize(size_of ::<u32>(), align_of::<sid::AndAttributes>());
 }
 

@@ -1,7 +1,8 @@
-use winapi::um::winnt::TOKEN_APPCONTAINER_INFORMATION;
-
+use super::assert_valid_sid;
 use crate::*;
 use crate::alloc::*;
+
+use winapi::um::winnt::TOKEN_APPCONTAINER_INFORMATION;
 
 use core::fmt::{self, Debug, Formatter};
 
@@ -11,8 +12,8 @@ use core::fmt::{self, Debug, Formatter};
 pub struct BoxTokenAppcontainerInformation(CBox<TOKEN_APPCONTAINER_INFORMATION>);
 
 impl BoxTokenAppcontainerInformation {
-    pub unsafe fn from_raw(cbs: CBoxSized<TOKEN_APPCONTAINER_INFORMATION>) -> Self {
-        // TODO: validate sid length
+    pub fn from_raw(cbs: CBoxSized<TOKEN_APPCONTAINER_INFORMATION>) -> Self {
+        assert_valid_sid(&cbs, cbs.TokenAppContainer); // REQUIRED FOR SOUNDNESS
         Self(cbs.into())
     }
 

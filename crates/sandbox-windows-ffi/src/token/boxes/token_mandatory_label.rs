@@ -1,3 +1,5 @@
+use super::assert_valid_saa;
+
 use crate::*;
 use crate::alloc::*;
 
@@ -11,8 +13,8 @@ use core::fmt::{self, Debug, Formatter};
 pub struct BoxTokenMandatoryLabel(CBox<TOKEN_MANDATORY_LABEL>);
 
 impl BoxTokenMandatoryLabel {
-    pub unsafe fn from_raw(cbs: CBoxSized<TOKEN_MANDATORY_LABEL>) -> Self {
-        // TODO: validate
+    pub fn from_raw(cbs: CBoxSized<TOKEN_MANDATORY_LABEL>) -> Self {
+        assert_valid_saa(&cbs, cbs.Label); // REQUIRED FOR SOUNDNESS
         Self(cbs.into())
     }
 

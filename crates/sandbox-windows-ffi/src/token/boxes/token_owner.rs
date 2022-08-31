@@ -1,3 +1,5 @@
+use super::assert_valid_sid;
+
 use crate::*;
 use crate::alloc::*;
 
@@ -11,8 +13,8 @@ use core::fmt::{self, Debug, Formatter};
 pub struct BoxTokenOwner(CBox<TOKEN_OWNER>);
 
 impl BoxTokenOwner {
-    pub unsafe fn from_raw(cbs: CBoxSized<TOKEN_OWNER>) -> Self {
-        // TODO: validate
+    pub fn from_raw(cbs: CBoxSized<TOKEN_OWNER>) -> Self {
+        assert_valid_sid(&cbs, cbs.Owner); // REQUIRED FOR SOUNDNESS
         Self(cbs.into())
     }
 
