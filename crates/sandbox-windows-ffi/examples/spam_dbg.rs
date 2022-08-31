@@ -11,6 +11,7 @@ macro_rules! dbgl { ($expr:expr) => {{
 
 fn main() {
     let t = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
+    let r = create_restricted_token(&t, None, None, None, Some(&[sid::AndAttributes::new(sid!(S-1-0-0), 0)])).unwrap();
 
     // https://docs.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-token_information_class
     dbg!(t.user());
@@ -23,6 +24,8 @@ fn main() {
     dbg!(t.ty());
     dbg!(t.impersonation_level());
     dbg!(t.statistics().map(|s| s.GroupCount)); // several more subfields
+    dbgl!(t.restricted_sids().unwrap().groups());
+    dbgl!(r.restricted_sids().unwrap().groups());
     dbg!(t.session_id());
     dbgl!(t.groups_and_privileges().unwrap().sids());
     dbgl!(t.groups_and_privileges().unwrap().restricted_sids());
@@ -35,6 +38,7 @@ fn main() {
     dbg!(t.elevation());
     dbg!(t.is_elevated());
     dbg!(t.has_restrictions());
+    dbg!(r.has_restrictions());
     dbg!(t.access_information().map(|i| i.AppContainerNumber)); // several more subfields
     dbg!(t.virtualization_allowed());
     dbg!(t.virtualization_enabled());
@@ -50,4 +54,5 @@ fn main() {
     dbg!(t.device_claim_attributes().map(|a| a.AttributeCount));
     dbg!(t.device_groups());
     dbg!(t.restricted_device_groups());
+    dbg!(r.restricted_device_groups());
 }

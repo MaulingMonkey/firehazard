@@ -40,7 +40,8 @@ pub use r#type as ty;
 pub fn impersonation_level(token: &token::OwnedHandle) -> Result<security::ImpersonationLevel, Error> { unsafe { raw_fixed(token, TokenImpersonationLevel) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenStatistics, ...)`
 pub fn statistics(token: &token::OwnedHandle) -> Result<TOKEN_STATISTICS, Error> { unsafe { raw_fixed(token, TokenStatistics) } }
-// TODO: TokenRestrictedSids
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenRestrictedSids, ...)`
+pub fn restricted_sids(token: &token::OwnedHandle) -> Result<BoxTokenGroups, Error> { unsafe { Ok(BoxTokenGroups::from_raw(raw_bytes(token, TokenRestrictedSids)?)) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenSessionId, ...)`
 pub fn session_id(token: &token::OwnedHandle) -> Result<u32, Error> { unsafe { raw_fixed(token, TokenSessionId) } }
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenGroupsAndPrivileges, ...)`
@@ -140,7 +141,8 @@ impl token::OwnedHandle {
     pub fn impersonation_level(&self) -> Result<security::ImpersonationLevel, Error> { impersonation_level(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenStatistics, ...)`
     pub fn statistics(&self) -> Result<TOKEN_STATISTICS, Error> { statistics(self) }
-    // TODO: TokenRestrictedSids
+    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenRestrictedSids, ...)`
+    pub fn restricted_sids(&self) -> Result<BoxTokenGroups, Error> { restricted_sids(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenSessionId, ...)`
     pub fn session_id(&self) -> Result<u32, Error> { session_id(self) }
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\] `GetTokenInformation(self, TokenGroupsAndPrivileges, ...)`
