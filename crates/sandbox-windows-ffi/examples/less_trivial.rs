@@ -38,8 +38,6 @@ fn sandbox() {
         // At the very least, this catch_unwind doesn't do anything useful.
         let _ = dbg!(std::panic::catch_unwind(|| get_handle_information(read_handle_noinherit)));
     }
-
-    sleep_ms(1_000);
 }
 
 unsafe fn env_var_handle<H: FromLocalHandle>(name: &str) -> H {

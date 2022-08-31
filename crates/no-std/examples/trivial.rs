@@ -12,5 +12,4 @@ use abistr::*;
 fn run() {
     revert_to_self().unwrap();
     output_debug_string_a(cstr!("sandbox"));
-    sleep_ms(1_000);
 }
