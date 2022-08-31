@@ -44,7 +44,7 @@ pub fn create_desktop_a(
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowstationw)\]
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopw)\]
 /// CreateDesktopW
 ///
 /// ### Example
@@ -195,7 +195,7 @@ pub fn open_thread_desktop(thread_id: thread::Id) -> Result<desktop::OwnedHandle
     unsafe { desktop::OwnedHandle::from_raw(desktop.cast()) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openwindowstationa)\]
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-opendesktopa)\]
 /// OpenDesktopA
 ///
 /// ### Example
@@ -221,7 +221,7 @@ pub fn open_desktop_a(
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openwindowstationw)\]
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-opendesktopw)\]
 /// OpenDesktopW
 ///
 /// ### Example
