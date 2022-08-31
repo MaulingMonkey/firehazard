@@ -39,6 +39,12 @@ impl Error {
             ERROR_PARTIAL_COPY              => "ERROR_PARTIAL_COPY",            // 299
             ERROR_NO_TOKEN                  => "ERROR_NO_TOKEN",                // 1008
             ERROR_PRIVILEGE_NOT_HELD        => "ERROR_PRIVILEGE_NOT_HELD",      // 1314
+            ERROR_INVALID_SUB_AUTHORITY     => "ERROR_INVALID_SUB_AUTHORITY",   // 1335
+            ERROR_INVALID_ACL               => "ERROR_INVALID_ACL",             // 1336
+            ERROR_INVALID_SID               => "ERROR_INVALID_SID",             // 1337
+            ERROR_INVALID_SECURITY_DESCR    => "ERROR_INVALID_SECURITY_DESCR",  // 1338
+            ERROR_BAD_INHERITANCE_ACL       => "ERROR_BAD_INHERITANCE_ACL",     // 1340
+            ERROR_INVALID_ID_AUTHORITY      => "ERROR_INVALID_ID_AUTHORITY",    // 1343
             ERROR_ALLOTTED_SPACE_EXCEEDED   => "ERROR_ALLOTTED_SPACE_EXCEEDED", // 1344
             ERROR_BAD_TOKEN_TYPE            => "ERROR_BAD_TOKEN_TYPE",          // 1349
             ERROR_INCORRECT_SIZE            => "ERROR_INCORRECT_SIZE",          // 1462
