@@ -266,6 +266,28 @@ pub fn open_input_desktop(
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-switchdesktop)\]
+/// SwitchDesktop
+///
+/// ### Example
+/// ```no_run
+/// # use sandbox_windows_ffi::*;
+/// # use abistr::*;
+/// let original = open_thread_desktop(get_current_thread_id()).unwrap();
+/// let desktop = create_desktop_a(cstr!("examples_ui_switch_desktop"), (), None, 0, access::GENERIC_ALL, None).unwrap();
+///
+/// // Sanity check we have permission to return to the original desktop before switching away from it
+/// switch_desktop(&original).expect("unable to switch_desktop to original desktop, that's a bit sketchy");
+///
+/// // Switch to our new desktop (an empty black screen without explorer.exe rendering a background) for 3 seconds
+/// switch_desktop(&desktop).unwrap();
+/// sleep_ms(3000);
+/// switch_desktop(&original).unwrap();
+/// ```
+pub fn switch_desktop(desktop: &desktop::OwnedHandle) -> Result<(), Error> {
+    Error::get_last_if(FALSE == unsafe { SwitchDesktop(desktop.as_handle()) })
+}
+
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setthreaddesktop)\]
 /// SetThreadDesktop x2 + GetThreadDesktop
 ///
