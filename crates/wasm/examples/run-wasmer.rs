@@ -15,12 +15,12 @@ fn main() {
             i32.add))
     "#;
 
-    let store = Store::default();
+    let mut store = Store::default();
     let module = Module::new(&store, &module_wat).unwrap();
     let import_object = imports! {};
-    let instance = Instance::new(&module, &import_object).unwrap();
+    let instance = Instance::new(&mut store, &module, &import_object).unwrap();
 
     let add_one = instance.exports.get_function("add_one").unwrap();
-    let result = add_one.call(&[Value::I32(42)]).unwrap();
+    let result = add_one.call(&mut store, &[Value::I32(42)]).unwrap();
     assert_eq!(result[0], Value::I32(43));
 }
