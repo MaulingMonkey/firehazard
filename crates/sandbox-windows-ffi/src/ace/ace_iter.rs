@@ -26,7 +26,7 @@ impl<'a> Iter<'a> {
 }
 
 impl<'a> Iterator for Iter<'a> {
-    type Item = ace::Ptr<'a>; // TODO: replace with ace::Ptr ?
+    type Item = ace::Ptr<'a>;
     fn next(&mut self) -> Option<Self::Item> {
         if self.count == 0 { return None }
         let r = self.next_ace;
