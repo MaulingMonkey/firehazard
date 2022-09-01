@@ -5,6 +5,8 @@ use core::ptr::NonNull;
 
 
 
+/// A trait for objects that can be constructed from `HANDLE`s owned by the local process.
+///
 /// ### Safety
 /// #### Kernel Object Type
 /// `handle` should be a handle of the correct [kernel object type](https://docs.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects).

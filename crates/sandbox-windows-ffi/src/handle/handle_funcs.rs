@@ -12,6 +12,8 @@ use core::ptr::{null_mut, NonNull};
 
 
 
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
+/// A raw **N**on **N**ull Handle
 pub type HANDLENN = NonNull<c_void>;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
