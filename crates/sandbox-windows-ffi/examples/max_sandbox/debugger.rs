@@ -99,12 +99,12 @@ pub fn debug_loop(
                 let narrow = if event.fUnicode != 0 {
                     // Unicode
                     let mut buffer = vec![MaybeUninit::<u16>::uninit(); (bytes+1)/2];
-                    let buffer = read_process_memory(&pi.process, event.lpDebugStringData.cast(), &mut buffer[..]).unwrap();
+                    let buffer = unsafe { read_process_memory(&pi.process, event.lpDebugStringData.cast(), &mut buffer[..]) }.unwrap();
                     let nul = buffer.iter().position(|ch| *ch == 0).unwrap_or(buffer.len());
                     String::from_utf16_lossy(buffer.split_at(nul).0)
                 } else {
                     let mut buffer = vec![MaybeUninit::<u8>::uninit(); bytes];
-                    let buffer = read_process_memory(&pi.process, event.lpDebugStringData.cast(), &mut buffer[..]).unwrap();
+                    let buffer = unsafe { read_process_memory(&pi.process, event.lpDebugStringData.cast(), &mut buffer[..]) }.unwrap();
                     let nul = buffer.iter().position(|ch| *ch == 0).unwrap_or(buffer.len());
                     String::from_utf8_lossy(buffer.split_at(nul).0).into_owned()
                 };
