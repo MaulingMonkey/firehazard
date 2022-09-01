@@ -3,7 +3,7 @@
 /// ### Example
 /// ```
 /// # use sandbox_windows_ffi::*;
-/// let token : token::OwnedHandle = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
+/// let token = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
 /// ```
 ///
 /// ### Errors
