@@ -172,6 +172,25 @@ impl Target {
                     .. Default::default()
                 },
             },
+            Target {
+                exe: dir.join("ui_basic_window.exe"),
+                allow: Allow {
+                    same_desktop: true,
+                    .. Allow::default()
+                },
+                spawn: Token {
+                    integrity:  Integrity::Low,
+                    privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
+                    enabled:    vec![user, users, everyone, session],
+                    restricted: Some(vec![user, users, everyone, session]),
+                    .. Default::default()
+                },
+                lockdown: Token {
+                    enabled:    vec![session],
+                    restricted: Some(vec![session]),
+                    .. Default::default()
+                },
+            },
         ];
         targets.retain(|t| t.exe.exists() || !t.exe.ends_with("trivial.exe"));
         targets.into_iter()
