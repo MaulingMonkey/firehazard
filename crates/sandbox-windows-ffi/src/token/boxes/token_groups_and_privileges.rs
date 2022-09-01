@@ -1,3 +1,5 @@
+use super::*;
+
 use crate::*;
 use crate::alloc::*;
 
@@ -11,8 +13,13 @@ use core::fmt::{self, Debug, Formatter};
 pub struct BoxTokenGroupsAndPrivileges(CBox<TOKEN_GROUPS_AND_PRIVILEGES>);
 
 impl BoxTokenGroupsAndPrivileges {
-    pub unsafe fn from_raw(cbs: CBoxSized<TOKEN_GROUPS_AND_PRIVILEGES>) -> Self {
-        // TODO: validate fields
+    pub fn from_raw(cbs: CBoxSized<TOKEN_GROUPS_AND_PRIVILEGES>) -> Self {
+        let sids = unsafe { assert_valid_after_header_slice(&cbs, cbs.Sids, cbs.SidCount) };
+        for sid in sids { assert_valid_saa(&cbs, *sid) }
+        let sids = unsafe { assert_valid_after_header_slice(&cbs, cbs.RestrictedSids, cbs.RestrictedSidCount) };
+        for sid in sids { assert_valid_saa(&cbs, *sid) }
+        let privs = unsafe { assert_valid_after_header_slice(&cbs, cbs.Privileges, cbs.PrivilegeCount) };
+        let _ = privs; // all bit patterns valid
         Self(cbs.into())
     }
 
