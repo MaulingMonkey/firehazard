@@ -1,3 +1,5 @@
+use super::*;
+
 use crate::*;
 use crate::alloc::*;
 
@@ -12,13 +14,9 @@ use core::mem::{size_of, align_of, size_of_val, zeroed};
 pub struct BoxTokenPrivileges(CBox<TOKEN_PRIVILEGES>);
 
 impl BoxTokenPrivileges {
-    pub unsafe fn from_raw(cbs: CBoxSized<TOKEN_PRIVILEGES>) -> Self {
-        let bytes = cbs.bytes();
-        assert!(bytes >= 4);
-        assert!(cbs.as_ptr() as usize % Self::PRIVILEGES_ALIGN == 0); // TODO: static assert size instead
-        let btg = Self(cbs.into());
-        assert!(usize::from32(btg.privilege_count()) <= (bytes-Self::PRIVILEGES_OFFSET)/size_of::<privilege::LuidAndAttributes>());
-        btg
+    pub fn from_raw(cbs: CBoxSized<TOKEN_PRIVILEGES>) -> Self {
+        let _privs = unsafe { assert_valid_after_header_slice(&cbs, cbs.Privileges.as_ptr(), cbs.PrivilegeCount, true) };
+        Self(cbs.into())
     }
 
     pub fn new(v: impl Into<Self>) -> Self { v.into() }
@@ -36,7 +34,6 @@ impl BoxTokenPrivileges {
     fn privileges_mut_ptr(&mut self) -> *mut   privilege::LuidAndAttributes { provenance_addr_mut(self.0.as_mut_ptr(), self.0.Privileges.as_mut_ptr().cast()) }
 
     const fn max_usize(a: usize, b: usize) -> usize { if a < b { b } else { a } }
-    const PRIVILEGES_ALIGN  : usize = Self::max_usize(align_of::<u32>(), align_of::<privilege::LuidAndAttributes>());
     const PRIVILEGES_OFFSET : usize = Self::max_usize(size_of ::<u32>(), align_of::<privilege::LuidAndAttributes>());
 }
 
@@ -51,10 +48,10 @@ impl Debug for BoxTokenPrivileges {
 impl From<&'_ [privilege::LuidAndAttributes]> for BoxTokenPrivileges {
     fn from(laa: &'_ [privilege::LuidAndAttributes]) -> Self {
         let len32 = u32::try_from(laa.len()).unwrap();
-        let n_bytes = BoxTokenPrivileges::PRIVILEGES_OFFSET + size_of_val(laa);
+        let n_bytes = BoxTokenPrivileges::PRIVILEGES_OFFSET + size_of_val(laa).max(size_of::<privilege::LuidAndAttributes>());
         let mut data = CBoxSized::<TOKEN_PRIVILEGES>::new_oversized(unsafe{zeroed()}, n_bytes);
         data.PrivilegeCount = len32;
-        let mut data = unsafe { BoxTokenPrivileges::from_raw(data) };
+        let mut data = BoxTokenPrivileges::from_raw(data);
         data.privileges_mut().copy_from_slice(laa);
         data
     }

@@ -1,12 +1,11 @@
-use super::assert_valid_saa;
+use super::*;
 
 use crate::*;
 use crate::alloc::*;
 
-use winapi::um::winnt::{TOKEN_GROUPS, SID_AND_ATTRIBUTES};
+use winapi::um::winnt::TOKEN_GROUPS;
 
 use core::fmt::{self, Debug, Formatter};
-use core::mem::{size_of, align_of};
 
 
 
@@ -15,13 +14,8 @@ pub struct BoxTokenGroups(CBox<TOKEN_GROUPS>);
 
 impl BoxTokenGroups {
     pub fn from_raw(cbs: CBoxSized<TOKEN_GROUPS>) -> Self {
-        let group_count = usize::from32(cbs.GroupCount);
-        assert!(group_count <= (cbs.bytes()-Self::GROUPS_OFFSET)/size_of::<sid::AndAttributes>());
-
-        let groups = provenance_addr(cbs.as_ptr(), cbs.Groups.as_ptr());
-        let groups = unsafe { core::slice::from_raw_parts::<SID_AND_ATTRIBUTES>(groups, group_count) };
+        let groups = unsafe { assert_valid_after_header_slice(&cbs, cbs.Groups.as_ptr(), cbs.GroupCount, true) };
         for group in groups.iter() { assert_valid_saa(&cbs, *group) } // REQUIRED FOR SOUNDNESS
-
         Self(cbs.into())
     }
 
@@ -36,9 +30,6 @@ impl BoxTokenGroups {
 
     fn groups_ptr    <'s>(&'s     self) -> *const sid::AndAttributes<'s> { provenance_addr    (self.0.as_ptr(),     self.0.Groups.as_ptr().cast()    ) }
     fn groups_mut_ptr<'s>(&'s mut self) -> *mut   sid::AndAttributes<'s> { provenance_addr_mut(self.0.as_mut_ptr(), self.0.Groups.as_mut_ptr().cast()) }
-
-    const fn max_usize(a: usize, b: usize) -> usize { if a < b { b } else { a } }
-    const GROUPS_OFFSET : usize = Self::max_usize(size_of ::<u32>(), align_of::<sid::AndAttributes>());
 }
 
 impl Debug for BoxTokenGroups {

@@ -14,11 +14,11 @@ pub struct BoxTokenGroupsAndPrivileges(CBox<TOKEN_GROUPS_AND_PRIVILEGES>);
 
 impl BoxTokenGroupsAndPrivileges {
     pub fn from_raw(cbs: CBoxSized<TOKEN_GROUPS_AND_PRIVILEGES>) -> Self {
-        let sids = unsafe { assert_valid_after_header_slice(&cbs, cbs.Sids, cbs.SidCount) };
+        let sids = unsafe { assert_valid_after_header_slice(&cbs, cbs.Sids, cbs.SidCount, false) };
         for sid in sids { assert_valid_saa(&cbs, *sid) }
-        let sids = unsafe { assert_valid_after_header_slice(&cbs, cbs.RestrictedSids, cbs.RestrictedSidCount) };
+        let sids = unsafe { assert_valid_after_header_slice(&cbs, cbs.RestrictedSids, cbs.RestrictedSidCount, false) };
         for sid in sids { assert_valid_saa(&cbs, *sid) }
-        let privs = unsafe { assert_valid_after_header_slice(&cbs, cbs.Privileges, cbs.PrivilegeCount) };
+        let privs = unsafe { assert_valid_after_header_slice(&cbs, cbs.Privileges, cbs.PrivilegeCount, false) };
         let _ = privs; // all bit patterns valid
         Self(cbs.into())
     }
