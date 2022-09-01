@@ -15,6 +15,18 @@ Rust has made me overconfident.
 Rust has made **you** overconfident.
 The false sense of security that using this code will lure you into, may be worse than nothing at all.
 
+## Quickstart
+```toml
+# Cargo.toml
+[dependencies]
+sandbox-windows-ffi.git = "ssh://git@github.com/MaulingMonkey/win32_security_playground.git"
+```
+```toml
+# %USERPROFILE%\.cargo\config.toml
+[net]
+git-fetch-with-cli = true
+```
+
 
 
 <h2 name="license">License</h2>
