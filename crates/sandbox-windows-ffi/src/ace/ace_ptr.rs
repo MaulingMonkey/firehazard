@@ -37,7 +37,13 @@ impl Debug for Ptr<'_> {
         }}}
 
         struct Hex(u32);   impl Debug for Hex { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "0x{:08x}", self.0) } }
-        struct Guid(GUID); impl Debug for Guid { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "{{...}}") } } // TODO: actually write out GUID
+        struct Guid(GUID); impl Debug for Guid { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+            let [a,b,c,d,e,f,g,h] = self.0.Data4;
+            write!(fmt,
+                "{{{:08X}-{:04X}-{:04X}-{a:02X}{b:02X}-{c:02X}{d:02X}{e:02X}{f:02X}{g:02X}{h:02X}}}",
+                self.0.Data1, self.0.Data2, self.0.Data3,
+            )
+        }}
 
         // https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members
         match header.ty {
