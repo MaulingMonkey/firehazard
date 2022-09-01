@@ -14,8 +14,15 @@ use core::time::Duration;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-checkremotedebuggerpresent)\]
 /// CheckRemoteDebuggerPresent
-pub fn check_remote_debugger_present<'a>(process: impl AsRef<process::Handle<'a>>) -> Result<bool, Error> {
-    // TODO: weaken to PsuedoHandle to allow invoking on self?
+///
+/// ### Example
+/// ```
+/// # use sandbox_windows_ffi::*;
+/// let a = is_debugger_present();
+/// let b = check_remote_debugger_present(get_current_process()).unwrap();
+/// assert_eq!(a, b);
+/// ```
+pub fn check_remote_debugger_present<'a>(process: impl AsRef<process::PsuedoHandle<'a>>) -> Result<bool, Error> {
     let mut result = 0;
     Error::get_last_if(FALSE == unsafe { CheckRemoteDebuggerPresent(process.as_ref().as_handle(), &mut result) })?;
     Ok(result != FALSE)
@@ -29,36 +36,85 @@ pub fn continue_debug_event(process_id: process::Id, thread_id: thread::Id, cont
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-debugactiveprocess)\]
 /// DebugActiveProcess
+///
+/// ### Example
+/// ```
+/// # use sandbox_windows_ffi::*;
+/// # return;
+/// # let pid = 0;
+/// # #[cfg(nope)]
+/// let pid = ..;
+/// debug_active_process(pid).unwrap();
+/// ```
 pub fn debug_active_process(process_id: process::Id) -> Result<(), Error> {
     Error::get_last_if(FALSE == unsafe { DebugActiveProcess(process_id) })
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-debugactiveprocessstop)\]
 /// DebugActiveProcessStop
+///
+/// ### Example
+/// ```
+/// # use sandbox_windows_ffi::*;
+/// # return;
+/// # let pid = 0;
+/// # #[cfg(nope)]
+/// let pid = ..;
+/// debug_active_process(pid).expect("start debugging self");
+/// debug_active_process_stop(pid).expect("stop debugging self");
+/// ```
 pub fn debug_active_process_stop(process_id: process::Id) -> Result<(), Error> {
     Error::get_last_if(FALSE == unsafe { DebugActiveProcessStop(process_id) })
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-debugbreak)\]
 /// DebugBreak
+///
+/// ### Example
+/// ```
+/// # use sandbox_windows_ffi::*;
+/// # return;
+/// eprintln!("BUG: something bad happened");
+/// debug_break(); // trigegr the debugger
+/// ```
 pub fn debug_break() {
     unsafe { DebugBreak() }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-isdebuggerpresent)\]
 /// IsDebuggerPresent
+///
+/// ### Example
+/// ```
+/// # use sandbox_windows_ffi::*;
+/// if is_debugger_present() { println!("Hello, debugger!"); }
+/// ```
 pub fn is_debugger_present() -> bool {
     FALSE != unsafe { IsDebuggerPresent() }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-outputdebugstringa)\]
 /// OutputDebugStringA
+///
+/// ### Example
+/// ```
+/// # use sandbox_windows_ffi::*;
+/// # use abistr::*;
+/// output_debug_string_a(cstr!("Hello, debugger!"));
+/// ```
 pub fn output_debug_string_a(output_string: impl AsCStr) {
     unsafe { OutputDebugStringA(output_string.as_cstr()) }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-outputdebugstringw)\]
 /// OutputDebugStringW
+///
+/// ### Example
+/// ```
+/// # use sandbox_windows_ffi::*;
+/// # use abistr::*;
+/// output_debug_string_w(cstr16!("Hello, debugger!"));
+/// ```
 pub fn output_debug_string_w(output_string: impl AsCStr<u16>) {
     unsafe { OutputDebugStringW(output_string.as_cstr()) }
 }
