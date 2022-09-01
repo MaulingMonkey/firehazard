@@ -31,15 +31,9 @@ impl Debug for Ptr<'_> {
         let mut d = fmt.debug_struct("ace::Ptr");
         d.field("header", &header);
 
-        /// XXX: code bellow is chock full of improperly narrowing pointer spatial providence errors in the form:<br>
-        /// `&DWORD` -> `*const DWORD` -> `*const SID` -> `*mut SID`
-        ///
-        /// Since the resulting `*mut SID` isn't directly dereferenced by Rust code, only indirectly via Win32 functions, in a read-only fashion, this is *probably* fine?
-        ///
-        /// https://doc.rust-lang.org/nightly/core/ptr/index.html#provenance
         macro_rules! sid_of { ( $ace:expr ) => {&{
-            let sid_start : &u32 = &$ace.SidStart;
-            sid::Ptr::from_raw_unchecked(sid_start as *const _ as *mut _)
+            let sid_start : *const u32 = provenance_addr(self.0, &$ace.SidStart);
+            sid::Ptr::from_raw_unchecked(sid_start as *mut _)
         }}}
 
         struct Hex(u32);   impl Debug for Hex { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "0x{:08x}", self.0) } }

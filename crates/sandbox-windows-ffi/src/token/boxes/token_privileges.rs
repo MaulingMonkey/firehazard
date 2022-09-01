@@ -32,9 +32,8 @@ impl BoxTokenPrivileges {
 
     fn privileges_len(&self) -> usize { usize::from32(self.privilege_count()) }
 
-    // XXX: Not 100% sure this avoids [Strict Providence](https://doc.rust-lang.org/std/ptr/index.html#strict-provenance) spatial narrowing to Groups[0]
-    fn privileges_ptr    (&    self) -> *const privilege::LuidAndAttributes { unsafe { core::ptr::addr_of!    ((*self.0.as_ptr    ()).Privileges).cast() } }
-    fn privileges_mut_ptr(&mut self) -> *mut   privilege::LuidAndAttributes { unsafe { core::ptr::addr_of_mut!((*self.0.as_mut_ptr()).Privileges).cast() } }
+    fn privileges_ptr    (&    self) -> *const privilege::LuidAndAttributes { provenance_addr    (self.0.as_ptr(),     self.0.Privileges.as_ptr().cast()    ) }
+    fn privileges_mut_ptr(&mut self) -> *mut   privilege::LuidAndAttributes { provenance_addr_mut(self.0.as_mut_ptr(), self.0.Privileges.as_mut_ptr().cast()) }
 
     const fn max_usize(a: usize, b: usize) -> usize { if a < b { b } else { a } }
     const PRIVILEGES_ALIGN  : usize = Self::max_usize(align_of::<u32>(), align_of::<privilege::LuidAndAttributes>());

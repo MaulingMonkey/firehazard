@@ -18,8 +18,7 @@ impl BoxTokenGroups {
         let group_count = usize::from32(cbs.GroupCount);
         assert!(group_count <= (cbs.bytes()-Self::GROUPS_OFFSET)/size_of::<sid::AndAttributes>());
 
-        // XXX: Not 100% sure this avoids [Strict Providence](https://doc.rust-lang.org/std/ptr/index.html#strict-provenance) spatial narrowing to Groups[0]
-        let groups = unsafe { core::ptr::addr_of!((*cbs.as_ptr()).Groups).cast() };
+        let groups = provenance_addr(cbs.as_ptr(), cbs.Groups.as_ptr());
         let groups = unsafe { core::slice::from_raw_parts::<SID_AND_ATTRIBUTES>(groups, group_count) };
         for group in groups.iter() { assert_valid_saa(&cbs, *group) } // REQUIRED FOR SOUNDNESS
 
@@ -35,9 +34,8 @@ impl BoxTokenGroups {
 
     fn groups_len(&self) -> usize { usize::from32(self.group_count()) }
 
-    // XXX: Not 100% sure this avoids [Strict Providence](https://doc.rust-lang.org/std/ptr/index.html#strict-provenance) spatial narrowing to Groups[0]
-    fn groups_ptr    <'s>(&'s     self) -> *const sid::AndAttributes<'s> { unsafe { core::ptr::addr_of!    ((*self.0.as_ptr    ()).Groups).cast() } }
-    fn groups_mut_ptr<'s>(&'s mut self) -> *mut   sid::AndAttributes<'s> { unsafe { core::ptr::addr_of_mut!((*self.0.as_mut_ptr()).Groups).cast() } }
+    fn groups_ptr    <'s>(&'s     self) -> *const sid::AndAttributes<'s> { provenance_addr    (self.0.as_ptr(),     self.0.Groups.as_ptr().cast()    ) }
+    fn groups_mut_ptr<'s>(&'s mut self) -> *mut   sid::AndAttributes<'s> { provenance_addr_mut(self.0.as_mut_ptr(), self.0.Groups.as_mut_ptr().cast()) }
 
     const fn max_usize(a: usize, b: usize) -> usize { if a < b { b } else { a } }
     const GROUPS_OFFSET : usize = Self::max_usize(size_of ::<u32>(), align_of::<sid::AndAttributes>());
