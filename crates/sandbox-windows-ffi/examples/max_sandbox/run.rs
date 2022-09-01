@@ -2,7 +2,6 @@ use crate::{*, job};
 use sandbox_windows_ffi::*;
 use abistr::*;
 use winapi::um::winbase::*;
-use std::os::windows::prelude::*;
 
 
 
@@ -16,7 +15,8 @@ pub fn one(target: settings::Target) {
     assert!(target.spawn.integrity >= target.lockdown.integrity, "target.lockdown.integrity cannot be more permissive than spawn integrity");
 
     let tokens = tokens::create(&target);
-    let mut command_line = abistr::CStrBuf::<u16, 32768>::from_truncate(&target.exe.as_os_str().encode_wide().collect::<Vec<_>>());
+    let args : &[&str] = &[];
+    let mut command_line = argv_to_command_line_0(&target.exe, args);
 
     let (_read, write) = io::create_pipe(Some(&security::Attributes::new(None, true)), 0).unwrap();
     let job = job::create();
@@ -41,7 +41,7 @@ pub fn one(target: settings::Target) {
     );
 
     let pi = create_process_as_user_w(
-        &tokens.restricted, (), Some(unsafe { command_line.buffer_mut() }), None, None, true,
+        &tokens.restricted, (), Some(&mut command_line[..]), None, None, true,
         process::DEBUG_PROCESS | process::CREATE_SEPARATE_WOW_VDM | process::CREATE_SUSPENDED | process::EXTENDED_STARTUPINFO_PRESENT,
         environment.as_bytes(), (), &si
     ).unwrap();

@@ -11,10 +11,75 @@ use winapi::um::processthreadsapi::*;
 use winapi::um::synchapi::WaitForSingleObject;
 use winapi::um::winbase::*;
 
+#[cfg(std)] use std::ffi::OsStr;
+#[cfg(std)] use std::os::windows::prelude::*;
+#[cfg(std)] use std::path::Path;
+
 use core::mem::zeroed;
 use core::ptr::{null_mut, null};
 
 
+
+#[cfg(std)]
+pub fn argv_to_command_line_0<A: AsRef<OsStr>>(exe: impl AsRef<Path>, args: impl IntoIterator<Item = A>) -> Vec<u16> {
+    let mut cl = Vec::new();
+    argv_to_command_line_0_inplace(exe, args, &mut cl);
+    cl
+}
+
+#[cfg(std)]
+pub fn argv_to_command_line_0_inplace<A: AsRef<OsStr>>(exe: impl AsRef<Path>, args: impl IntoIterator<Item = A>, command_line: &mut Vec<u16>) {
+    const QUOTE     : u16 = b'\"' as u16;
+    const BACKSLASH : u16 = b'\\' as u16;
+    command_line.clear();
+    command_line.push(QUOTE);
+    command_line.extend(exe.as_ref().as_os_str().encode_wide());
+    command_line.push(QUOTE);
+    for arg in args {
+        let arg = arg.as_ref();
+        let quote = arg.is_empty() || arg.encode_wide().any(|ch| ch == b' ' as u16 || ch == b'\t' as u16);
+        command_line.push(b' ' as _);
+        if quote { command_line.push(QUOTE) }
+        let mut arg = arg.encode_wide();
+        while let Some(ch) = arg.next() {
+            match ch {
+                BACKSLASH => {
+                    let mut backslashes = 1;
+                    loop {
+                        match arg.next() {
+                            Some(BACKSLASH) => backslashes += 1,
+                            Some(QUOTE) => {
+                                for _ in 0 .. backslashes {
+                                    command_line.push(BACKSLASH);
+                                    command_line.push(BACKSLASH);
+                                }
+                                command_line.push(BACKSLASH);
+                                command_line.push(QUOTE);
+                                break;
+                            },
+                            Some(ch) => {
+                                for _ in 0 .. backslashes { command_line.push(BACKSLASH) }
+                                command_line.push(ch);
+                                break;
+                            },
+                            None => {
+                                for _ in 0 .. backslashes { command_line.push(BACKSLASH) }
+                                break;
+                            },
+                        }
+                    }
+                },
+                QUOTE => {
+                    command_line.push(BACKSLASH);
+                    command_line.push(ch);
+                },
+                _ => command_line.push(ch),
+            }
+        }
+        if quote { command_line.push(QUOTE) }
+    }
+    command_line.push(0);
+}
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa)\] CreateProcessA
 pub fn create_process_a(
