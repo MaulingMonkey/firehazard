@@ -215,7 +215,14 @@ pub fn open_window_station_w(
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setprocesswindowstation)\]
 /// SetProcessWindowStation
-// TODO: example?
+///
+/// ### Example
+/// ```
+/// # use sandbox_windows_ffi::*;
+/// # let winsta = open_process_window_station().unwrap();
+/// set_process_window_station(&winsta).unwrap();
+/// # std::mem::forget(winsta); // will ERROR_BUSY otherwise
+/// ```
 pub fn set_process_window_station(winsta: &winsta::OwnedHandle) -> Result<(), Error> {
     Error::get_last_if(FALSE == unsafe { SetProcessWindowStation(winsta.as_handle()) })
 }
