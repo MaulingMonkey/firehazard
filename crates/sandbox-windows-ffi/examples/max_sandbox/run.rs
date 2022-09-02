@@ -43,7 +43,7 @@ pub fn one(target: settings::Target) {
     let pi = create_process_as_user_w(
         &tokens.restricted, (), Some(&mut command_line[..]), None, None, true,
         process::DEBUG_PROCESS | process::CREATE_SEPARATE_WOW_VDM | process::CREATE_SUSPENDED | process::EXTENDED_STARTUPINFO_PRESENT,
-        environment.as_bytes(), (), &si
+        environment, (), &si
     ).unwrap();
     set_thread_token(&pi.thread, &tokens.permissive).unwrap();
     job::relimit(&job, 0);
