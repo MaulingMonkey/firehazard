@@ -95,14 +95,14 @@ pub fn duplicate_handle<'t>(
 /// # use winapi::shared::winerror::*;
 /// let thread : thread::OwnedHandle = std::thread::spawn(||{}).into();
 /// let info = get_handle_information(&thread).unwrap();
-/// assert_eq!(info, 0);
+/// assert_eq!(info, handle::Flags::default());
 /// close_handle(thread).unwrap();
 /// # }
 /// ```
-pub fn get_handle_information<'a>(object: impl AsRef<handle::Borrowed<'a>>) ->  Result<u32, Error> { // TODO: type
+pub fn get_handle_information<'a>(object: impl AsRef<handle::Borrowed<'a>>) -> Result<handle::Flags, Error> {
     let mut flags = 0;
     Error::get_last_if(FALSE == unsafe { GetHandleInformation(object.as_ref().as_handle(), &mut flags) })?;
-    Ok(flags)
+    Ok(unsafe { handle::Flags::from_unchecked(flags) })
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-sethandleinformation)\]
@@ -119,6 +119,6 @@ pub fn get_handle_information<'a>(object: impl AsRef<handle::Borrowed<'a>>) ->  
 /// close_handle(thread).unwrap();
 /// # }
 /// ```
-pub fn set_handle_information<'a>(object: impl AsRef<handle::Borrowed<'a>>, mask: u32, flags: u32) -> Result<(), Error> { // TODO: type
-    Error::get_last_if(FALSE == unsafe { SetHandleInformation(object.as_ref().as_handle(), mask, flags) })
+pub fn set_handle_information<'a>(object: impl AsRef<handle::Borrowed<'a>>, mask: impl Into<handle::FlagsMask>, flags: impl Into<handle::Flags>) -> Result<(), Error> {
+    Error::get_last_if(FALSE == unsafe { SetHandleInformation(object.as_ref().as_handle(), mask.into().into(), flags.into().into()) })
 }

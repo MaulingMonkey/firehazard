@@ -14,8 +14,8 @@ flags!(impl .. for Flags(u32) - FlagsMask);
 
 impl Flags {
     /// ### Safety
-    /// *   Some APIs might theoretically assume access rights are a valid?
-    pub const unsafe fn from_unchecked(rights: u32) -> Self { Self(rights) }
+    /// *   Some APIs might theoretically assume flags are a valid?
+    pub const unsafe fn from_unchecked(flags: u32) -> Self { Self(flags) }
 }
 
 impl Debug for Flags {

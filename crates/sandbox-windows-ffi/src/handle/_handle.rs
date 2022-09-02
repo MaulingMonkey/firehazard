@@ -2,5 +2,6 @@
 //! Kernel Object `HANDLE` wrapping types and functions
 
 #[path = "handle_handles.rs"]   mod handles;            pub use handles::*;
+#[path = "handle_flags.rs"]     mod flags;              pub use flags::*;
 #[path = "handle_funcs.rs"]     pub(crate) mod funcs;   pub use funcs::*;
 #[path = "handle_traits.rs"]    pub(crate) mod traits;  pub use traits::*;

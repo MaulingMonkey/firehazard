@@ -9,8 +9,10 @@ macro_rules! flags {
         impl From<()                               > for $mask  { fn from(_: ()                               ) -> Self { Self(0) } }
         impl From<Option<core::convert::Infallible>> for $flags { fn from(_: Option<core::convert::Infallible>) -> Self { Self(0) } }
         impl From<Option<core::convert::Infallible>> for $mask  { fn from(_: Option<core::convert::Infallible>) -> Self { Self(0) } }
+        impl From<$flags                           > for $mask  { fn from(flags: $flags                       ) -> Self { Self(flags.0) } }
     $(  impl From<$flags>                            for $inner { fn from(flags: $flags                       ) -> Self { flags.0 as _ } } )*
     $(  impl From<$mask >                            for $inner { fn from(mask:  $mask                        ) -> Self { mask .0 as _ } } )*
+    $(  impl From<$inner>                            for $mask  { fn from(mask:  $inner                       ) -> Self { Self(mask as _) } } )*
 
         impl core::ops::BitAnd              for $flags { type Output = Self; fn bitand(self, rhs: Self) -> Self::Output { Self(self.0 & rhs.0) } }
         impl core::ops::BitOr               for $flags { type Output = Self; fn bitor (self, rhs: Self) -> Self::Output { Self(self.0 | rhs.0) } }
