@@ -39,8 +39,8 @@ pub fn create_pipe(pipe_attributes: Option<&security::Attributes>, size: u32) ->
 #[cfg(doc)] pub fn disconnect_named_pipe(handle: ()) -> Result<(), Error> { unimplemented!() }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlea)\] GetFinalPathNameByHandleA
-pub fn get_final_path_name_by_handle_a_inplace(
-    handle: impl AsRef<io::File>,
+pub fn get_final_path_name_by_handle_a_inplace<'a>(
+    handle: impl AsRef<io::FileHandle<'a>>,
     path:   &mut [u8],
     flags:  u32, // TODO: type
 ) -> Result<&[u8], Error> {
@@ -51,8 +51,8 @@ pub fn get_final_path_name_by_handle_a_inplace(
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlea)\] GetFinalPathNameByHandleW
-pub fn get_final_path_name_by_handle_w_inplace(
-    handle: impl AsRef<io::File>,
+pub fn get_final_path_name_by_handle_w_inplace<'a>(
+    handle: impl AsRef<io::FileHandle<'a>>,
     path:   &mut [u16],
     flags:  u32, // TODO: type
 ) -> Result<&[u16], Error> {
@@ -64,7 +64,7 @@ pub fn get_final_path_name_by_handle_w_inplace(
 
 #[cfg(std)]
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlea)\] GetFinalPathNameByHandleW
-pub fn get_final_path_name_by_handle(handle: impl AsRef<io::File>, flags: u32) -> Result<PathBuf, Error> {
+pub fn get_final_path_name_by_handle<'a>(handle: impl AsRef<io::FileHandle<'a>>, flags: u32) -> Result<PathBuf, Error> {
     let handle = handle.as_ref();
 
     let mut buf = [0u16; 260];

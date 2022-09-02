@@ -23,6 +23,10 @@ use core::ptr::null_mut;
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned anonymous non-null pipe `HANDLE` ([io::Write]able end)
 #[repr(transparent)] pub struct WritePipe(pub(super) HANDLENN);
 
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea)\] Borrowed non-null file `HANDLE`
+#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(transparent)] pub struct FileHandle<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
+
 /// Borrowed non-null readable pipe or file `HANDLE`
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct ReadHandle<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
@@ -31,12 +35,12 @@ use core::ptr::null_mut;
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct WriteHandle<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
 
-handles!(unsafe impl *LocalHandleNN<c_void>         for io::{File});
-handles!(unsafe impl AsRef<Self>                    for io::{File});
-handles!(unsafe impl {Send, Sync}                   for io::{File});
-handles!(unsafe impl {AsRef, From}                  for io::{File});
-handles!(unsafe impl {AsRef<@base>, From<@base>}    for io::{File});
-handles!(       impl Debug                          for io::{File});
+handles!(unsafe impl *LocalHandleNN<c_void>         for io::{File, FileHandle<'_>});
+handles!(unsafe impl AsRef<Self>                    for io::{File, FileHandle<'_>});
+handles!(unsafe impl {Send, Sync}                   for io::{File, FileHandle<'_>});
+handles!(unsafe impl {AsRef, From}                  for io::{File, FileHandle<'_>});
+handles!(unsafe impl {AsRef<@base>, From<@base>}    for io::{File, FileHandle<'_>});
+handles!(       impl Debug                          for io::{File, FileHandle<'_>});
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for io::{ReadPipe, ReadHandle<'_>});
 handles!(unsafe impl AsRef<Self>                    for io::{ReadPipe, ReadHandle<'_>});
@@ -62,10 +66,12 @@ impl Drop       for ReadPipe    { fn drop(&mut self) { unsafe { drop_close_handl
 impl Drop       for WritePipe   { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 
 impl io::Read   for File            { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0, buf) } } }
+impl io::Read   for FileHandle<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0, buf) } } }
 impl io::Read   for ReadPipe        { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0, buf) } } }
 impl io::Read   for ReadHandle<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0, buf) } } }
 
 impl io::Write  for File            { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl io::Write  for FileHandle<'_>  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
 impl io::Write  for WritePipe       { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
 impl io::Write  for WriteHandle<'_> { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
 
