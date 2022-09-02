@@ -7,7 +7,7 @@ use winapi::um::winbase::*;
 
 pub fn all() {
     // TODO: make desktop available to low/untrusted integrity processes (currently requires Medium integrity)
-    let _alt_desktop = create_desktop_a(cstr!("max_sandbox_desktop"), (), None, 0, access::GENERIC_ALL, None).unwrap();
+    let _alt_desktop = create_desktop_a(cstr!("max_sandbox_desktop"), (), None, None, access::GENERIC_ALL, None).unwrap();
     for target in settings::Target::list() { one(target) }
 }
 

@@ -21,14 +21,14 @@ use core::ptr::null;
 /// # use sandbox_windows_ffi::*;
 /// # use sandbox_windows_ffi::access::*;
 /// # use abistr::cstr;
-/// let desktop = create_desktop_a(cstr!("PlaygroundDesktop"), (), None, 0, GENERIC_ALL, None).unwrap();
-/// # let desktop = create_desktop_a(cstr!("PlaygroundDesktop"), (), None, 0, GENERIC_ALL, None).unwrap();
+/// let desktop = create_desktop_a(cstr!("PlaygroundDesktop"), (), None, None, GENERIC_ALL, None).unwrap();
+/// # let desktop = create_desktop_a(cstr!("PlaygroundDesktop"), (), None, None, GENERIC_ALL, None).unwrap();
 /// ```
 pub fn create_desktop_a(
     desktop:        impl TryIntoAsCStr,
     device:         impl TryIntoAsOptCStr,
     devmode:        Option<core::convert::Infallible>,
-    flags:          u32,                                // TODO: type
+    flags:          impl Into<desktop::Flags>,
     desired_access: impl Into<desktop::AccessRights>,
     sa:             Option<&security::Attributes>,
 ) -> Result<desktop::OwnedHandle, Error> {
@@ -36,7 +36,7 @@ pub fn create_desktop_a(
         desktop.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_cstr(),
         device.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
         none2null(devmode),
-        flags,
+        flags.into().into(),
         desired_access.into().into(),
         sa.map_or(null(), |sa| sa) as *mut _
     )};
@@ -52,14 +52,14 @@ pub fn create_desktop_a(
 /// # use sandbox_windows_ffi::*;
 /// # use sandbox_windows_ffi::access::*;
 /// # use abistr::cstr16;
-/// let desktop = create_desktop_w(cstr16!("PlaygroundDesktop"), (), None, 0, GENERIC_ALL, None).unwrap();
-/// # let desktop = create_desktop_w(cstr16!("PlaygroundDesktop"), (), None, 0, GENERIC_ALL, None).unwrap();
+/// let desktop = create_desktop_w(cstr16!("PlaygroundDesktop"), (), None, None, GENERIC_ALL, None).unwrap();
+/// # let desktop = create_desktop_w(cstr16!("PlaygroundDesktop"), (), None, None, GENERIC_ALL, None).unwrap();
 /// ```
 pub fn create_desktop_w(
     desktop:        impl TryIntoAsCStr<u16>,
     device:         impl TryIntoAsOptCStr<u16>,
     devmode:        Option<core::convert::Infallible>,
-    flags:          u32,                                // TODO: type
+    flags:          impl Into<desktop::Flags>,
     desired_access: impl Into<desktop::AccessRights>,
     sa:             Option<&security::Attributes>,
 ) -> Result<desktop::OwnedHandle, Error> {
@@ -67,7 +67,7 @@ pub fn create_desktop_w(
         desktop.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_cstr(),
         device.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
         none2null(devmode),
-        flags,
+        flags.into().into(),
         desired_access.into().into(),
         sa.map_or(null(), |sa| sa) as *mut _
     )};
@@ -203,17 +203,17 @@ pub fn open_thread_desktop(thread_id: thread::Id) -> Result<desktop::OwnedHandle
 /// # use sandbox_windows_ffi::*;
 /// # use sandbox_windows_ffi::access::*;
 /// # use abistr::cstr;
-/// let desktop = open_desktop_a(cstr!("Default"), 0, false, GENERIC_ALL).unwrap();
+/// let desktop = open_desktop_a(cstr!("Default"), None, false, GENERIC_ALL).unwrap();
 /// ```
 pub fn open_desktop_a(
     desktop:        impl TryIntoAsCStr,
-    flags:          u32,    // TODO: type
+    flags:          impl Into<desktop::Flags>,
     inherit:        bool,
     desired_access: impl Into<desktop::AccessRights>,
 ) -> Result<desktop::OwnedHandle, Error> {
     let handle = unsafe { OpenDesktopA(
         desktop.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_cstr(),
-        flags,
+        flags.into().into(),
         inherit as _,
         desired_access.into().into()
     )};
@@ -229,17 +229,17 @@ pub fn open_desktop_a(
 /// # use sandbox_windows_ffi::*;
 /// # use sandbox_windows_ffi::access::*;
 /// # use abistr::cstr16;
-/// let desktop = open_desktop_w(cstr16!("Default"), 0, false, GENERIC_ALL).unwrap();
+/// let desktop = open_desktop_w(cstr16!("Default"), None, false, GENERIC_ALL).unwrap();
 /// ```
 pub fn open_desktop_w(
     desktop:        impl TryIntoAsCStr<u16>,
-    flags:          u32,    // TODO: type
+    flags:          impl Into<desktop::Flags>,
     inherit:        bool,
     desired_access: impl Into<desktop::AccessRights>,
 ) -> Result<desktop::OwnedHandle, Error> {
     let handle = unsafe { OpenDesktopW(
         desktop.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_cstr(),
-        flags,
+        flags.into().into(),
         inherit as _,
         desired_access.into().into()
     )};
@@ -254,14 +254,14 @@ pub fn open_desktop_w(
 /// ```
 /// # use sandbox_windows_ffi::*;
 /// # use sandbox_windows_ffi::access::*;
-/// let desktop = open_input_desktop(0, false, GENERIC_ALL).unwrap();
+/// let desktop = open_input_desktop(None, false, GENERIC_ALL).unwrap();
 /// ```
 pub fn open_input_desktop(
-    flags:          u32,    // TODO: type
+    flags:          impl Into<desktop::Flags>,
     inherit:        bool,
     desired_access: impl Into<desktop::AccessRights>,
 ) -> Result<desktop::OwnedHandle, Error> {
-    let handle = unsafe { OpenInputDesktop(flags, inherit as _, desired_access.into().into()) };
+    let handle = unsafe { OpenInputDesktop(flags.into().into(), inherit as _, desired_access.into().into()) };
     Error::get_last_if(handle.is_null())?;
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
@@ -274,7 +274,7 @@ pub fn open_input_desktop(
 /// # use sandbox_windows_ffi::*;
 /// # use abistr::*;
 /// let original = open_thread_desktop(get_current_thread_id()).unwrap();
-/// let desktop = create_desktop_a(cstr!("examples_ui_switch_desktop"), (), None, 0, access::GENERIC_ALL, None).unwrap();
+/// let desktop = create_desktop_a(cstr!("examples_ui_switch_desktop"), (), None, None, access::GENERIC_ALL, None).unwrap();
 ///
 /// // Sanity check we have permission to return to the original desktop before switching away from it
 /// switch_desktop(&original).expect("unable to switch_desktop to original desktop, that's a bit sketchy");
@@ -301,8 +301,8 @@ pub fn switch_desktop(desktop: &desktop::OwnedHandle) -> Result<(), Error> {
 /// # use sandbox_windows_ffi::access::*;
 /// # use abistr::cstr;
 /// # use winapi::um::winuser::*;
-/// let temp1 = create_desktop_a(cstr!("wtd.temp1"), (), None, 0, GENERIC_ALL, None).unwrap();
-/// let temp2 = create_desktop_a(cstr!("wtd.temp2"), (), None, 0, GENERIC_ALL, None).unwrap();
+/// let temp1 = create_desktop_a(cstr!("wtd.temp1"), (), None, None, GENERIC_ALL, None).unwrap();
+/// let temp2 = create_desktop_a(cstr!("wtd.temp2"), (), None, None, GENERIC_ALL, None).unwrap();
 /// let orig  = open_thread_desktop(get_current_thread_id()).unwrap();
 /// with_thread_desktop(&temp1, || {
 ///     with_thread_desktop(&temp2, || {
