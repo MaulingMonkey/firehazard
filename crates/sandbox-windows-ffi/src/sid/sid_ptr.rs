@@ -13,7 +13,6 @@ use core::ops::Deref;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\] ~ PSID
 #[derive(Clone, Copy)] #[repr(transparent)] pub struct Ptr<'a>(*mut SID, PhantomData<&'a SID>);
-// TODO: consider merging Ptr<'a> into Sid by introducing Borrower<'a> ?
 
 impl Debug for Ptr<'_> { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { Debug::fmt(&**self, fmt) } }
 impl Deref for Ptr<'_> { type Target = sid::Value; fn deref(&self) -> &Self::Target { unsafe { core::mem::transmute(self) } } }
@@ -45,5 +44,5 @@ impl Ptr<'_> {
     Revision:               BYTE,
     SubAuthorityCount:      BYTE,
     IdentifierAuthority:    SID_IDENTIFIER_AUTHORITY,
-    // SubAuthority: [DWORD; 1 .. 15], // varlen based on SubAuthorityCount
+    //SubAuthority:         [DWORD; 0 ..= 15], // varlen based on SubAuthorityCount
 }
