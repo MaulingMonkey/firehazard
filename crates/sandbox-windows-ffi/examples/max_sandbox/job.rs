@@ -21,16 +21,6 @@ pub fn create() -> job::OwnedHandle {
         | job::object::uilimit::SYSTEMPARAMETERS   // Prevents processes associated with the job from changing system parameters by using the SystemParametersInfo function.
         | job::object::uilimit::WRITECLIPBOARD     // Prevents processes associated with the job from writing data to the clipboard.
     }).unwrap();
-    #[cfg(nope)] // TODO: the pointers in this type would require set_information_job_object to be `unsafe`, replace with a safer type
-    set_information_job_object(&mut job, JOBOBJECT_SECURITY_LIMIT_INFORMATION {
-        SecurityLimitFlags: 0
-            | JOB_OBJECT_SECURITY_NO_ADMIN          // Prevents any process in the job from using a token that specifies the local administrators group.
-            | JOB_OBJECT_SECURITY_RESTRICTED_TOKEN  // Prevents any process in the job from using a token that was not created with the CreateRestrictedToken function.
-            // | JOB_OBJECT_SECURITY_FILTER_TOKENS    // Applies a filter to the token when a process impersonates a client. Requires at least one of the following members to be set: SidsToDisable, PrivilegesToDelete, or RestrictedSids.
-            // | JOB_OBJECT_SECURITY_ONLY_TOKEN       // I don't have JobToken set - and would this prevent SetThreadToken ?
-            ,
-        .. unsafe { zeroed() }
-    }).unwrap();
     // TODO: JOBOBJECT_END_OF_JOB_TIME_INFORMATION to hard-terminate the processes of the job?
     // TODO: JobObjectGroupInformation processor groups?
     // TODO: JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2 limits?
