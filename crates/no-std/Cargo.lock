@@ -25,7 +25,7 @@ checksum = "13f20d88ba0fa44a8a39460f54eb919b5b7d34f62f84ceb70dd2bd5a3073db91"
 
 [[package]]
 name = "firehazard"
-version = "0.0.0-git"
+version = "0.0.0-2022-09-02"
 dependencies = [
  "abibool",
  "abistr",
