@@ -44,7 +44,7 @@ macro_rules! handles {
     ($(unsafe)? impl Debug for $mo:ident::$ty:ident$(<$l:lifetime>)?) => {
         impl core::fmt::Debug for $mo::$ty$(<$l>)? {
             fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::fmt::Result {
-                write!(fmt, "{mo}::{ty}(0x{value:08x})", mo=stringify!($mo), ty=stringify!($ty), value=self.0.as_ptr() as usize)
+                crate::handle::debug(fmt, stringify!($mo), stringify!($ty), self.0)
             }
         }
     };

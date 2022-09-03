@@ -1,6 +1,5 @@
 use crate::*;
 use winapi::ctypes::c_void;
-use core::fmt::{self, Debug, Formatter};
 use core::marker::PhantomData;
 
 
@@ -29,18 +28,7 @@ handles!(unsafe impl AsRef<Self>                    for token::{OwnedHandle, Han
 handles!(unsafe impl Send                           for token::{OwnedHandle});
 handles!(unsafe impl {AsRef, From}                  for token::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
 handles!(unsafe impl {AsRef<@base>, From<@base>}    for token::{OwnedHandle, Handle<'_>}); // XXX: token PsuedoHandles cannot be DuplicateHandle()d, so exclude them from conversion to generic handle::Psuedo s - see duplicate_handle_local[_same_access]
-handles!(impl Debug                                 for token::{OwnedHandle, Handle<'_>}); // XXX: PsuedoHandle specially classed
+handles!(impl Debug                                 for token::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
 
 impl PsuedoHandle<'static> { pub(crate) const unsafe fn from_raw_const(c: isize) -> Self { assert!(c != 0); Self(unsafe{core::ptr::NonNull::new_unchecked(c as _)}, PhantomData) } }
 impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
-
-impl Debug for PsuedoHandle<'_> {
-    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-        match self.0.as_ptr() as isize {
-            -4  => write!(fmt, "token::PsuedoHandle(-4 aka GetCurrentProcessToken())"),
-            -5  => write!(fmt, "token::PsuedoHandle(-5 aka GetCurrentThreadToken())"),
-            -6  => write!(fmt, "token::PsuedoHandle(-6 aka GetCurrentThreadEffectiveToken())"),
-            o   => write!(fmt, "token::PsuedoHandle(0x{:08x})", o as usize),
-        }
-    }
-}
