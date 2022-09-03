@@ -34,6 +34,10 @@ categories = [
     # "virtualization"  # not yet, but eventually?
 ]
 
+[package.metadata.docs.rs]
+all-features                = true
+default-target              = "x86_64-pc-windows-msvc"
+
 [features]
 default                     = ["std"]
 std                         = ["abistr/std", "abistr/widestring", "winapi/std"]
