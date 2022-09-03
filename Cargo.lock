@@ -596,7 +596,7 @@ dependencies = [
 
 [[package]]
 name = "firehazard"
-version = "0.0.0-2022-09-02"
+version = "0.0.0-2022-09-03"
 dependencies = [
  "abibool",
  "abistr",
