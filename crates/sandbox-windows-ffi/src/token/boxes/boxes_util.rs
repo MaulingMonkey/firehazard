@@ -5,6 +5,26 @@ use core::mem::{size_of, align_of};
 
 
 
+/// ### Arguments
+/// *   `cbs`       the allocation to validate against
+/// *   `ptr`       a ptr into `cbs` (can be null if min_count == 0)
+/// *   `min_count` the minimum number of `U` *elements* that `ptr` should be valid for
+/// *   Returns:    the number of *bytes* available after `ptr`
+#[track_caller] pub fn assert_valid_ptr_bytes<T, U, A: Allocator>(cbs: &CBoxSized<T, A>, ptr: *const U, min_count: usize) -> usize {
+    if ptr.is_null() && min_count == 0 { return 0 }
+    let pbegin = cbs.as_ptr() as usize;
+    let pend = pbegin + cbs.bytes(); // shouldn't overflow: contiguous alloc
+    let pbegin = pbegin + size_of::<T>().min(cbs.bytes()); // ensure `ptr` trails after the header
+    let ptr = ptr as usize;
+    assert!(ptr % align_of::<U>() == 0, "ptr was not aligned");
+    assert!(pbegin <= ptr, "ptr not part of `cbs` allocation");
+    assert!(ptr < pend, "ptr not part of `cbs` allocation");
+    let bytes_avail = pend - ptr; // shouldn't underflow: pend > ptr
+    let count_avail = bytes_avail / size_of::<U>();
+    assert!(min_count <= count_avail, "ptr valid for at most {count_avail} elements, but was required to be valid for {min_count} elements");
+    bytes_avail
+}
+
 #[track_caller] pub fn assert_valid_sid<T, A: Allocator>(cbs: &CBoxSized<T, A>, sid: PSID) {
     let p = cbs.as_ptr() as usize;
     let pend = p + cbs.bytes(); // shouldn't be possible for this to overflow since p .. p+bytes is a contiguous allocation

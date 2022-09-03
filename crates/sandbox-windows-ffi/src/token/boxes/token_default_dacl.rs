@@ -1,5 +1,6 @@
 use crate::*;
 use crate::alloc::*;
+use crate::token::boxes::boxes_util::assert_valid_ptr_bytes;
 
 use winapi::um::winnt::TOKEN_DEFAULT_DACL;
 
@@ -12,9 +13,10 @@ use core::fmt::{self, Debug, Formatter};
 pub struct BoxTokenDefaultDacl(CBox<TOKEN_DEFAULT_DACL>);
 
 impl BoxTokenDefaultDacl {
-    pub unsafe fn from_raw(bytes: CBoxSized<TOKEN_DEFAULT_DACL>) -> Self {
-        // TODO: validate acl length
-        Self(bytes.into())
+    pub unsafe fn from_raw(cbs: CBoxSized<TOKEN_DEFAULT_DACL>) -> Self {
+        let acl_bytes = assert_valid_ptr_bytes(&cbs, cbs.DefaultDacl, 1);
+        unsafe { acl::Ptr::from_raw(cbs.DefaultDacl, acl_bytes) }.unwrap(); // this isn't 100% safe yet
+        Self(cbs.into())
     }
 
     /// DefaultDacl

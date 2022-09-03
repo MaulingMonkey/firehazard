@@ -1,10 +1,12 @@
 use crate::*;
 
+use winapi::shared::winerror::*;
 use winapi::um::securitybaseapi::GetAclInformation;
 use winapi::um::winnt::*;
 
 use core::fmt::{self, Debug, Formatter};
 use core::marker::PhantomData;
+use core::mem::{align_of, size_of};
 
 
 
@@ -18,7 +20,15 @@ impl Ptr<'_> {
 
     /// ### Safety
     /// `acl` should be null, or point to a valid [`ACL`](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl) for the lifetime `'a` given [`acl::Ptr<'a>`].
-    pub unsafe fn from_raw(acl: *mut ACL) -> Option<Self> { if acl.is_null() { None } else { Some(Self(acl, PhantomData)) } }
+    pub unsafe fn from_raw(acl: *mut ACL, bytes: usize) -> Result<Self, Error> {
+        if acl.is_null()                            { return Ok(Self(acl, PhantomData)) }
+        if acl as usize % align_of::<ACL>() != 0    { return Err(Error(ERROR_INVALID_ACL)) }
+        if bytes < size_of::<ACL>()                 { return Err(Error(ERROR_INVALID_ACL)) }
+        let header : ACL = unsafe { *acl };
+        if usize::from(header.AclSize) > bytes      { return Err(Error(ERROR_INVALID_ACL)) }
+        // TODO: enumerate and validate ACE pointers, sizes, make fn safe, make callers safe
+        Ok(Self(acl, PhantomData))
+    }
 
     pub fn acl_revision(&self) -> u8 { unsafe { (*self.0).AclRevision } }
     // Sbz1: padding
