@@ -37,26 +37,35 @@ impl Debug for Flags {
     }
 }
 
-/// Prevents processes associated with the job from creating desktops and switching desktops using the [create_desktop_a] and [switch_desktop] functions.
+/// Forbids calling [create_desktop_a] or [switch_desktop].
 pub const DESKTOP : Flags = Flags(winapi::um::winnt::JOB_OBJECT_UILIMIT_DESKTOP);
 
-/// Prevents processes associated with the job from calling the [ChangeDisplaySettings](https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-changedisplaysettingsa) function.
+/// Forbids calling [ChangeDisplaySettings].
+///
+/// [ChangeDisplaySettings]:    https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-changedisplaysettingsa
 pub const DISPLAYSETTINGS : Flags = Flags(winapi::um::winnt::JOB_OBJECT_UILIMIT_DISPLAYSETTINGS);
 
-/// Prevents processes associated with the job from calling the ExitWindows or ExitWindowsEx function.
+/// Forbids calling [ExitWindows] or [ExitWindowsEx].
+///
+/// [ExitWindows]:      https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-exitwindows
+/// [ExitWindowsEx]:    https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-exitwindowsex
 pub const EXITWINDOWS : Flags = Flags(winapi::um::winnt::JOB_OBJECT_UILIMIT_EXITWINDOWS);
 
-/// Prevents processes associated with the job from accessing global atoms. When this flag is used, each job has its own atom table.
+/// Forbids accessing global [atoms]. When this flag is used, the job has its own atom table.
+///
+/// [atoms]:    https://docs.microsoft.com/en-us/windows/win32/dataxchg/about-atom-tables
 pub const GLOBALATOMS : Flags = Flags(winapi::um::winnt::JOB_OBJECT_UILIMIT_GLOBALATOMS);
 
-/// Prevents processes associated with the job from using USER handles owned by processes not associated with the same job.
+/// Forbids using USER handles owned by processes not associated with the same job.
 pub const HANDLES : Flags = Flags(winapi::um::winnt::JOB_OBJECT_UILIMIT_HANDLES);
 
-/// Prevents processes associated with the job from reading data from the clipboard.
+/// Forbids reading data from the clipboard.
 pub const READCLIPBOARD : Flags = Flags(winapi::um::winnt::JOB_OBJECT_UILIMIT_READCLIPBOARD);
 
-/// Prevents processes associated with the job from changing system parameters by using the [SystemParametersInfo](https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-systemparametersinfoa) function.
+/// Forbids calling [SystemParametersInfo].
+///
+/// [SystemParametersInfo]: https://docs.microsoft.com/en-us/windows/desktop/api/winuser/nf-winuser-systemparametersinfoa
 pub const SYSTEMPARAMETERS : Flags = Flags(winapi::um::winnt::JOB_OBJECT_UILIMIT_SYSTEMPARAMETERS);
 
-/// Prevents processes associated with the job from writing data to the clipboard.
+/// Forbids writing data to the clipboard.
 pub const WRITECLIPBOARD : Flags = Flags(winapi::um::winnt::JOB_OBJECT_UILIMIT_WRITECLIPBOARD);
