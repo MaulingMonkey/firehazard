@@ -8,9 +8,7 @@ authors                     = ["MaulingMonkey <git@maulingmonkey.com>"]
 edition                     = "2021"
 license                     = "Apache-2.0 OR MIT"
 
-[dependencies.firehazard]
-path                        = "../.."
-
 [dev-dependencies]
+firehazard.path             = "../.."
 wasmer                      = "3.0.0-beta"
 wasmtime                    = "0.40.0"

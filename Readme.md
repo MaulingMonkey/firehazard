@@ -4,6 +4,7 @@ Unopinionated low level API bindings focused on soundness, safety, and stronger 
 You may be *at hazard* of being *fired* (or worse) for relying on this crate for security:
 
 ## ⚠️ Warnings ⚠️
+* `0.0.0-yyyy-mm-dd` doesn't follow semver.
 * I'm not subscribed to any security lists.
 * I don't have anything alerting me to CVEs.
 * This crate is probably not 100% sound.  Bug reports welcome.
@@ -24,14 +25,9 @@ You may be *at hazard* of being *fired* (or worse) for relying on this crate for
 
 ## Quickstart
 ```toml
-# Cargo.toml
+## Cargo.toml
 [dependencies]
-firehazard.git = "ssh://git@github.com/MaulingMonkey/win32_security_playground.git"
-```
-```toml
-# %USERPROFILE%\.cargo\config.toml
-[net]
-git-fetch-with-cli = true
+firehazard.git = "https://github.com/MaulingMonkey/firehazard"
 ```
 
 

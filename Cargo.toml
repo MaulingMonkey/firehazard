@@ -8,10 +8,32 @@ exclude                     = ["crates/no-std"] # separate workspace
 name                        = "firehazard"
 version                     = "0.0.0-git"
 publish                     = false
+# rust-version              = "1.63" # TODO: verify or downlevel
+description                 = "Unopinionated low level API bindings focused on soundness, safety, and stronger types over raw FFI."
 authors                     = ["MaulingMonkey <git@maulingmonkey.com>"]
 edition                     = "2021"
 license                     = "Apache-2.0 OR MIT"
-#readme                      = "Readme.md"
+readme                      = "Readme.md"
+documentation               = "https://docs.rs/firehazard"
+repository                  = "https://github.com/MaulingMonkey/firehazard"
+
+keywords = [
+    # Note: crates.io has a maximum of 5 keywords
+    "windows",
+    "win32",
+    "security",
+    "sandbox",
+    "sandboxing",
+]
+
+categories = [
+    # https://crates.io/category_slugs
+    "api-bindings",
+    # "cryptography"    # not yet, but eventually?
+    "no-std",
+    "os::windows-apis",
+    # "virtualization"  # not yet, but eventually?
+]
 
 [features]
 default                     = ["std"]
