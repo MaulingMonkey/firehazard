@@ -20,10 +20,10 @@
 cargo build --manifest-path crates/no-std/Cargo.toml --release --example trivial
 @if ERRORLEVEL 1 goto :die
 
-cargo test --no-default-features
+cargo test --workspace --no-default-features
 @if ERRORLEVEL 1 goto :die
 
-cargo test
+cargo test --workspace
 @if ERRORLEVEL 1 goto :die
 
 cargo build --examples

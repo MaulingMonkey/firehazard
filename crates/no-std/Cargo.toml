@@ -17,5 +17,5 @@ panic                       = "abort"
 lto                         = true
 
 [dependencies.firehazard]
-path                        = "../sandbox-windows-ffi"
+path                        = "../.."
 default-features            = false

@@ -1,7 +1,7 @@
 @pushd "%~dp0.." && setlocal
 
 @if "%~1" EQU "crates\no-std\examples\trivial.rs" goto :trivial
-@if "%~1" EQU "crates\sandbox-windows-ffi\examples\spam_dbg.rs" goto :spam_dbg
+@if "%~1" EQU "examples\spam_dbg.rs" goto :spam_dbg
 
 @cargo check --workspace --all-targets --all-features
 @if ERRORLEVEL 1 goto :die
