@@ -37,21 +37,21 @@ use core::ptr::null_mut;
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for io::{File, FileHandle<'_>});
 handles!(unsafe impl AsRef<Self>                    for io::{File, FileHandle<'_>});
-handles!(unsafe impl {Send, Sync}                   for io::{File, FileHandle<'_>});
+handles!(unsafe impl Send                           for io::{File});
 handles!(unsafe impl {AsRef, From}                  for io::{File, FileHandle<'_>});
 handles!(unsafe impl {AsRef<@base>, From<@base>}    for io::{File, FileHandle<'_>});
 handles!(       impl Debug                          for io::{File, FileHandle<'_>});
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for io::{ReadPipe, ReadHandle<'_>});
 handles!(unsafe impl AsRef<Self>                    for io::{ReadPipe, ReadHandle<'_>});
-handles!(unsafe impl {Send, Sync}                   for io::{ReadPipe, ReadHandle<'_>});
+handles!(unsafe impl Send                           for io::{ReadPipe});
 handles!(unsafe impl {AsRef, From}                  for io::{ReadPipe, ReadHandle<'_>});
 handles!(unsafe impl {AsRef<@base>, From<@base>}    for io::{ReadPipe, ReadHandle<'_>});
 handles!(       impl Debug                          for io::{ReadPipe, ReadHandle<'_>});
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for io::{WritePipe, WriteHandle<'_>});
 handles!(unsafe impl AsRef<Self>                    for io::{WritePipe, WriteHandle<'_>});
-handles!(unsafe impl {Send, Sync}                   for io::{WritePipe, WriteHandle<'_>});
+handles!(unsafe impl Send                           for io::{WritePipe});
 handles!(unsafe impl {AsRef, From}                  for io::{WritePipe, WriteHandle<'_>});
 handles!(unsafe impl {AsRef<@base>, From<@base>}    for io::{WritePipe, WriteHandle<'_>});
 handles!(       impl Debug                          for io::{WritePipe, WriteHandle<'_>});

@@ -25,7 +25,7 @@ use core::marker::PhantomData;
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for process::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
 handles!(unsafe impl AsRef<Self>                    for process::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
-handles!(unsafe impl {Send, Sync}                   for process::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
+handles!(unsafe impl Send                           for process::{OwnedHandle});
 handles!(unsafe impl {AsRef, From}                  for process::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
 handles!(unsafe impl {AsRef<@base>, From<@base>}    for process::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
 handles!(impl Debug                                 for process::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});

@@ -19,7 +19,7 @@ use core::marker::PhantomData;
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for job::{OwnedHandle, Handle<'_>});
 handles!(unsafe impl AsRef<Self>                    for job::{OwnedHandle, Handle<'_>});
-handles!(unsafe impl {Send, Sync}                   for job::{OwnedHandle, Handle<'_>});
+handles!(unsafe impl Send                           for job::{OwnedHandle});
 handles!(unsafe impl {AsRef, From}                  for job::{OwnedHandle, Handle<'_>});
 handles!(unsafe impl {AsRef<@base>, From<@base>}    for job::{OwnedHandle, Handle<'_>});
 handles!(impl Debug                                 for job::{OwnedHandle, Handle<'_>});

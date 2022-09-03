@@ -26,7 +26,7 @@ use core::marker::PhantomData;
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for token::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
 handles!(unsafe impl AsRef<Self>                    for token::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
-handles!(unsafe impl {Send, Sync}                   for token::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
+handles!(unsafe impl Send                           for token::{OwnedHandle});
 handles!(unsafe impl {AsRef, From}                  for token::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
 handles!(unsafe impl {AsRef<@base>, From<@base>}    for token::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
 handles!(impl Debug                                 for token::{OwnedHandle, Handle<'_>}); // XXX: PsuedoHandle specially classed

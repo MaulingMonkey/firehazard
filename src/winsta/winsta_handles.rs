@@ -13,7 +13,7 @@ use winapi::um::winuser::CloseWindowStation;
 
 handles!(unsafe impl *LocalHandleNN<HWINSTA__>      for winsta::{OwnedHandle});
 handles!(unsafe impl AsRef<Self>                    for winsta::{OwnedHandle});
-handles!(unsafe impl {Send, Sync}                   for winsta::{OwnedHandle});
+handles!(unsafe impl Send                           for winsta::{OwnedHandle});
 handles!(unsafe impl {AsRef, From}                  for winsta::{OwnedHandle});
 handles!(unsafe impl {AsRef<@base>, From<@base>}    for winsta::{OwnedHandle});
 handles!(impl Debug                                 for winsta::{OwnedHandle});

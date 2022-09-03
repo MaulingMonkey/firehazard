@@ -13,7 +13,7 @@ use core::ptr::NonNull;
 
 handles!(unsafe impl *LocalHandleNN<HDESK__>        for desktop::{OwnedHandle});
 handles!(unsafe impl AsRef<Self>                    for desktop::{OwnedHandle});
-handles!(unsafe impl {Send, Sync}                   for desktop::{OwnedHandle});
+handles!(unsafe impl Send                           for desktop::{OwnedHandle});
 handles!(unsafe impl {AsRef, From}                  for desktop::{OwnedHandle});
 handles!(unsafe impl {AsRef<@base>, From<@base>}    for desktop::{OwnedHandle});
 handles!(       impl Debug                          for desktop::{OwnedHandle});
