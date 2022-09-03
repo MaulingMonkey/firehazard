@@ -2,6 +2,7 @@
 #![cfg(windows)]
 
 #![cfg_attr(not(std), no_std)]
+#![cfg_attr(not(std), allow(unused_imports))]
 #![forbid(unsafe_op_in_unsafe_fn)]
 #![deny(unreachable_patterns)]
 

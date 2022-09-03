@@ -1,11 +1,11 @@
-use core::mem::MaybeUninit;
-
 use crate::*;
 
 use winapi::shared::minwindef::FALSE;
 use winapi::shared::winerror::*;
 use winapi::um::jobapi2::*;
 use winapi::um::winnt::*;
+
+use core::mem::{size_of, MaybeUninit};
 
 
 
@@ -19,8 +19,6 @@ impl QueryInformation for JOBOBJECT_BASIC_LIMIT_INFORMATION                 { fn
 impl QueryInformation for JOBOBJECT_CPU_RATE_CONTROL_INFORMATION            { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectCpuRateControlInformation) } } }
 impl QueryInformation for JOBOBJECT_END_OF_JOB_TIME_INFORMATION             { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
 impl QueryInformation for JOBOBJECT_EXTENDED_LIMIT_INFORMATION              { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectExtendedLimitInformation) } } }
-//impl QueryInformation for Vec<u16>                                          { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_???(job, JobObjectGroupInformation) } } }
-//impl QueryInformation for Vec<GROUP_AFFINITY>                               { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_???(job, JobObjectGroupInformationEx) } } }
 impl QueryInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION             { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectLimitViolationInformation) } } }
 impl QueryInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2           { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectLimitViolationInformation2) } } }
 impl QueryInformation for JOBOBJECT_NET_RATE_CONTROL_INFORMATION            { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectNetRateControlInformation) } } }
@@ -36,8 +34,6 @@ impl SetInformation for JOBOBJECT_BASIC_LIMIT_INFORMATION           { fn set_on(
 impl SetInformation for JOBOBJECT_CPU_RATE_CONTROL_INFORMATION      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectCpuRateControlInformation, &self) } } }
 impl SetInformation for JOBOBJECT_END_OF_JOB_TIME_INFORMATION       { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectEndOfJobTimeInformation, &self) } } }
 impl SetInformation for JOBOBJECT_EXTENDED_LIMIT_INFORMATION        { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectExtendedLimitInformation, &self) } } }
-impl SetInformation for &'_ [u16]                                   { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectGroupInformation, self) } } }
-impl SetInformation for &'_ [GROUP_AFFINITY]                        { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectGroupInformationEx, self) } } }
 impl SetInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION       { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectLimitViolationInformation, &self) } } }
 impl SetInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2     { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectLimitViolationInformation2, &self) } } }
 impl SetInformation for JOBOBJECT_NET_RATE_CONTROL_INFORMATION      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectNetRateControlInformation, &self) } } }
@@ -56,6 +52,42 @@ pub(super) unsafe fn query_fixed<T>(job: &job::OwnedHandle, class: JOBOBJECTINFO
     if ret_size > size { return Err(Error(ERROR_BUFFER_OVERFLOW)) }
     if ret_size < size { return Err(Error(ERROR_INVALID_PARAMETER)) }
     Ok(unsafe { info.assume_init() })
+}
+
+#[cfg(std)]
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
+/// QueryInformationJobObject
+pub(super) unsafe fn query_vec<T>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS) -> Result<Vec<T>, Error> {
+    let mut bytes = 0;
+    match Error::get_last_if(FALSE == unsafe { QueryInformationJobObject(job.as_handle(), class, core::ptr::null_mut(), 0, &mut bytes) }) {
+        Ok(()) if bytes == 0                    => return Ok(Vec::new()),
+        Ok(())                                  => {},
+        Err(Error(ERROR_INSUFFICIENT_BUFFER))   => {}, // seen for e.g. JobObjectGroupInformationEx (set bytes)
+        Err(Error(ERROR_BAD_LENGTH))            => {}, // seen for e.g. JobObjectGroupInformation (doesn't set bytes)
+        Err(error)                              => return Err(error),
+    }
+
+    let capacity = 1.max(usize::from32(bytes) / size_of::<T>());
+    let mut vec = Vec::<T>::new();
+    loop {
+        vec.reserve(vec.capacity().max(capacity));
+        let capacity = u32::try_from(vec.capacity() * size_of::<T>()).unwrap_or(!0u32);
+
+        let mut bytes = 0;
+        match Error::get_last_if(FALSE == unsafe { QueryInformationJobObject(job.as_handle(), class, vec.as_mut_ptr().cast(), capacity, &mut bytes) }) {
+            Ok(())                                                      => {},
+            Err(Error(ERROR_INSUFFICIENT_BUFFER)) if capacity != !0u32  => continue, // seen for e.g. JobObjectGroupInformationEx (set bytes)
+            Err(Error(ERROR_BAD_LENGTH))          if capacity != !0u32  => continue, // seen for e.g. JobObjectGroupInformation (doesn't set bytes)
+            Err(error)                                                  => return Err(error),
+        }
+
+        let bytes = usize::from32(bytes);
+        let count = bytes / size_of::<T>();
+        assert_eq!(count * size_of::<T>(), bytes, "query_vec: job object supposedly returned fractions of a T");
+        unsafe { vec.set_len(count) };
+        vec.shrink_to_fit();
+        return Ok(vec)
+    }
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
