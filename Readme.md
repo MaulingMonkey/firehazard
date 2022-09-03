@@ -1,4 +1,9 @@
 # 🔥 firehazard 🔥
+[![GitHub](https://img.shields.io/github/stars/MaulingMonkey/firehazard.svg?label=GitHub&style=social)](https://github.com/MaulingMonkey/firehazard)
+[![crates.io](https://img.shields.io/crates/v/firehazard.svg)](https://crates.io/crates/firehazard)
+[![docs.rs](https://docs.rs/firehazard/badge.svg)](https://docs.rs/firehazard)
+[![License](https://img.shields.io/crates/l/firehazard.svg)](https://github.com/MaulingMonkey/firehazard)
+
 Create a *fire hazard* by locking down your <span style="opacity: 50%">(Microsoft)</span> *Windows* so nobody can *escape* (your security sandbox.)<br>
 Unopinionated low level API bindings focused on soundness, safety, and stronger types over raw FFI.<br>
 You may be *at hazard* of being *fired* (or worse) for relying on this crate for security:
