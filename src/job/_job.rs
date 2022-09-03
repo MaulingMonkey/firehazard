@@ -8,9 +8,11 @@ mod job_information;                    pub use job_information::*;
 
 /// JOB_OBJECT_* and JOBOBJECT_* stuff
 pub mod object {
+    pub mod limit;
     pub mod uilimit;
 
     mod basic_ui_restrictions;          pub use basic_ui_restrictions::*;
     mod group_information;              pub use group_information::*;
+    mod limit_information;              pub use limit_information::*;
     mod security_limit_information;     //pub use security_limit_information::*;
 }

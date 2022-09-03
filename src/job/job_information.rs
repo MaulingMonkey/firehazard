@@ -14,11 +14,9 @@ use core::mem::{size_of, MaybeUninit};
 pub trait QueryInformation : Sized                                          { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error>; }
 impl QueryInformation for JOBOBJECT_BASIC_ACCOUNTING_INFORMATION            { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectBasicAccountingInformation) } } }
 impl QueryInformation for JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION     { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectBasicAndIoAccountingInformation) } } }
-impl QueryInformation for JOBOBJECT_BASIC_LIMIT_INFORMATION                 { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectBasicLimitInformation) } } }
 //impl QueryInformation for JOBOBJECT_BASIC_PROCESS_ID_LIST                   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_header(job, JobObjectBasicProcessIdList) } } } // trailing array
 impl QueryInformation for JOBOBJECT_CPU_RATE_CONTROL_INFORMATION            { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectCpuRateControlInformation) } } }
 impl QueryInformation for JOBOBJECT_END_OF_JOB_TIME_INFORMATION             { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
-impl QueryInformation for JOBOBJECT_EXTENDED_LIMIT_INFORMATION              { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectExtendedLimitInformation) } } }
 impl QueryInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION             { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectLimitViolationInformation) } } }
 impl QueryInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2           { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectLimitViolationInformation2) } } }
 impl QueryInformation for JOBOBJECT_NET_RATE_CONTROL_INFORMATION            { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectNetRateControlInformation) } } }
@@ -30,10 +28,8 @@ impl QueryInformation for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION_2        { fn
 pub trait SetInformation                                            { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error>; }
 
 impl SetInformation for JOBOBJECT_ASSOCIATE_COMPLETION_PORT         { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectAssociateCompletionPortInformation, &self) } } }
-impl SetInformation for JOBOBJECT_BASIC_LIMIT_INFORMATION           { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectBasicLimitInformation, &self) } } }
 impl SetInformation for JOBOBJECT_CPU_RATE_CONTROL_INFORMATION      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectCpuRateControlInformation, &self) } } }
 impl SetInformation for JOBOBJECT_END_OF_JOB_TIME_INFORMATION       { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectEndOfJobTimeInformation, &self) } } }
-impl SetInformation for JOBOBJECT_EXTENDED_LIMIT_INFORMATION        { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectExtendedLimitInformation, &self) } } }
 impl SetInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION       { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectLimitViolationInformation, &self) } } }
 impl SetInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2     { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectLimitViolationInformation2, &self) } } }
 impl SetInformation for JOBOBJECT_NET_RATE_CONTROL_INFORMATION      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectNetRateControlInformation, &self) } } }

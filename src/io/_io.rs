@@ -11,4 +11,5 @@
 
 
 #[path = "io_funcs.rs"]             pub(crate) mod funcs;       pub use funcs::*;
+mod io_counters;                    pub use io_counters::*;
 mod io_handles;                     pub use io_handles::*;

@@ -1,7 +1,5 @@
 pub use firehazard::job::*;
 use firehazard::*;
-use winapi::um::winnt::*;
-use std::mem::zeroed;
 
 
 
@@ -32,20 +30,20 @@ pub fn create() -> job::OwnedHandle {
 }
 
 pub fn relimit(job: &job::OwnedHandle, processes: u32) {
-    set_information_job_object(job, JOBOBJECT_EXTENDED_LIMIT_INFORMATION {
-        BasicLimitInformation: JOBOBJECT_BASIC_LIMIT_INFORMATION {
-            LimitFlags: 0
-                | JOB_OBJECT_LIMIT_ACTIVE_PROCESS
-                | JOB_OBJECT_LIMIT_DIE_ON_UNHANDLED_EXCEPTION
-                | JOB_OBJECT_LIMIT_JOB_MEMORY
-                | JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE
-                // | JOB_OBJECT_LIMIT_JOB_TIME // ?
+    set_information_job_object(job, job::object::ExtendedLimitInformation {
+        basic_limit_information: job::object::BasicLimitInformation {
+            limit_flags: ()
+                | job::object::limit::ACTIVE_PROCESS
+                | job::object::limit::DIE_ON_UNHANDLED_EXCEPTION
+                | job::object::limit::JOB_MEMORY
+                | job::object::limit::KILL_ON_JOB_CLOSE
+                // | job::object::limit::JOB_TIME // ?
                 ,
-            ActiveProcessLimit: processes,
-            //PerJobUserTimeLimit: ..., // ?
-            .. unsafe { zeroed() }
+            active_process_limit: processes,
+            // per_job_user_time_limit: ..., // ?
+            .. Default::default()
         },
-        JobMemoryLimit: 4 * 1024*1024*1024, // 4 GiB
-        .. unsafe { zeroed() }
+        job_memory_limit: 4 * 1024*1024*1024, // 4 GiB
+        .. Default::default()
     }).unwrap();
 }
