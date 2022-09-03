@@ -2,7 +2,7 @@
 
 [package]
 name                        = "wasm"
-version                     = "0.0.0-git"
+version                     = "0.0.0"
 publish                     = false
 authors                     = ["MaulingMonkey <git@maulingmonkey.com>"]
 edition                     = "2021"
