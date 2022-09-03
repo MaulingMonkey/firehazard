@@ -16,7 +16,6 @@ impl QueryInformation for JOBOBJECT_BASIC_ACCOUNTING_INFORMATION            { fn
 impl QueryInformation for JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION     { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectBasicAndIoAccountingInformation) } } }
 impl QueryInformation for JOBOBJECT_BASIC_LIMIT_INFORMATION                 { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectBasicLimitInformation) } } }
 //impl QueryInformation for JOBOBJECT_BASIC_PROCESS_ID_LIST                   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_header(job, JobObjectBasicProcessIdList) } } } // trailing array
-impl QueryInformation for JOBOBJECT_BASIC_UI_RESTRICTIONS                   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectBasicUIRestrictions) } } }
 impl QueryInformation for JOBOBJECT_CPU_RATE_CONTROL_INFORMATION            { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectCpuRateControlInformation) } } }
 impl QueryInformation for JOBOBJECT_END_OF_JOB_TIME_INFORMATION             { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
 impl QueryInformation for JOBOBJECT_EXTENDED_LIMIT_INFORMATION              { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectExtendedLimitInformation) } } }
@@ -34,7 +33,6 @@ pub trait SetInformation                                            { fn set_on(
 
 impl SetInformation for JOBOBJECT_ASSOCIATE_COMPLETION_PORT         { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectAssociateCompletionPortInformation, &self) } } }
 impl SetInformation for JOBOBJECT_BASIC_LIMIT_INFORMATION           { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectBasicLimitInformation, &self) } } }
-impl SetInformation for JOBOBJECT_BASIC_UI_RESTRICTIONS             { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectBasicUIRestrictions, &self) } } }
 impl SetInformation for JOBOBJECT_CPU_RATE_CONTROL_INFORMATION      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectCpuRateControlInformation, &self) } } }
 impl SetInformation for JOBOBJECT_END_OF_JOB_TIME_INFORMATION       { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectEndOfJobTimeInformation, &self) } } }
 impl SetInformation for JOBOBJECT_EXTENDED_LIMIT_INFORMATION        { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectExtendedLimitInformation, &self) } } }
@@ -49,7 +47,7 @@ impl SetInformation for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION_2  { fn set_on(
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
 /// QueryInformationJobObject
-unsafe fn query_fixed<T>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS) -> Result<T, Error> {
+pub(super) unsafe fn query_fixed<T>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS) -> Result<T, Error> {
     let mut info = MaybeUninit::<T>::zeroed();
     let size = u32::try_from(core::mem::size_of_val(&info)).map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let pinfo : *mut MaybeUninit<T> = &mut info;
@@ -62,7 +60,7 @@ unsafe fn query_fixed<T>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS) -> R
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
 /// SetInformationJobObject
-unsafe fn set<T: ?Sized>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS, information: &T) -> Result<(), Error> {
+pub(super) unsafe fn set<T: ?Sized>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS, information: &T) -> Result<(), Error> {
     let size = u32::try_from(core::mem::size_of_val(information)).map_err(|_| Error(ERROR_INVALID_PARAMETER))?;
     let info : *const T = information;
     Error::get_last_if(FALSE == unsafe { SetInformationJobObject(job.as_handle(), class, info as *mut _, size) })

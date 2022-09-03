@@ -143,20 +143,20 @@ pub fn query_information_job_object<Info: job::QueryInformation>(job: &job::Owne
 /// ```
 /// # use sandbox_windows_ffi::*;
 /// # use winapi::shared::winerror::*;
-/// # use winapi::um::winnt::*;
 /// let mut job = create_job_object_w(None, ()).unwrap();
 ///
-/// assert_eq!(ERROR_INVALID_PARAMETER, set_information_job_object(&mut job, JOBOBJECT_BASIC_UI_RESTRICTIONS { UIRestrictionsClass: !0 }).unwrap_err());
+/// let ui_restrictions_class = unsafe { job::object::uilimit::Flags::from_unchecked(!0) };
+/// assert_eq!(ERROR_INVALID_PARAMETER, set_information_job_object(&mut job, job::object::BasicUiRestrictions { ui_restrictions_class }).unwrap_err());
 ///
-/// set_information_job_object(&mut job, JOBOBJECT_BASIC_UI_RESTRICTIONS { UIRestrictionsClass: 0
-///     | JOB_OBJECT_UILIMIT_DESKTOP
-///     | JOB_OBJECT_UILIMIT_DISPLAYSETTINGS
-///     | JOB_OBJECT_UILIMIT_EXITWINDOWS
-///     | JOB_OBJECT_UILIMIT_GLOBALATOMS
-///     | JOB_OBJECT_UILIMIT_HANDLES
-///     | JOB_OBJECT_UILIMIT_READCLIPBOARD
-///     | JOB_OBJECT_UILIMIT_SYSTEMPARAMETERS
-///     | JOB_OBJECT_UILIMIT_WRITECLIPBOARD
+/// set_information_job_object(&mut job, job::object::BasicUiRestrictions { ui_restrictions_class: ()
+///     | job::object::uilimit::DESKTOP
+///     | job::object::uilimit::DISPLAYSETTINGS
+///     | job::object::uilimit::EXITWINDOWS
+///     | job::object::uilimit::GLOBALATOMS
+///     | job::object::uilimit::HANDLES
+///     | job::object::uilimit::READCLIPBOARD
+///     | job::object::uilimit::SYSTEMPARAMETERS
+///     | job::object::uilimit::WRITECLIPBOARD
 /// }).unwrap();
 /// ```
 pub fn set_information_job_object(job: &job::OwnedHandle, information: impl job::SetInformation) -> Result<(), Error> { information.set_on(job) }
