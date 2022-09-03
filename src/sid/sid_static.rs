@@ -1,6 +1,6 @@
 use crate::*;
 
-use winapi::um::winnt::{SID_IDENTIFIER_AUTHORITY, SID_MAX_SUB_AUTHORITIES};
+use winapi::um::winnt::SID_MAX_SUB_AUTHORITIES;
 
 
 
@@ -33,17 +33,18 @@ use winapi::um::winnt::{SID_IDENTIFIER_AUTHORITY, SID_MAX_SUB_AUTHORITIES};
 }
 
 #[doc(hidden)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(C)] pub struct Static<const NS: usize> {
     revision:               u8,
     sub_authority_count:    u8,
-    identifier_authority:   SID_IDENTIFIER_AUTHORITY,
+    identifier_authority:   [u8; 6],
     sub_authority:          [u32; NS],
 }
 
 impl<const NS: usize> Static<NS> {
     pub const fn new(revision: u8, identifier_authority: u8, sub_authority: [u32; NS]) -> Self {
         assert!(NS <= SID_MAX_SUB_AUTHORITIES as _, "too many subauthorities (> SID_MAX_SUB_AUTHORITIES = 15)");
-        let identifier_authority = SID_IDENTIFIER_AUTHORITY { Value: [0, 0, 0, 0, 0, identifier_authority] };
+        let identifier_authority = [0, 0, 0, 0, 0, identifier_authority];
         Self { revision, sub_authority_count: NS as u8, identifier_authority, sub_authority }
     }
 

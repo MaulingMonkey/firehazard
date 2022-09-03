@@ -28,8 +28,8 @@ pub fn create(target: &crate::settings::Target) -> Tokens {
         Some(&target.lockdown.restricted.as_ref().unwrap_or(&all_group_sids).iter().copied().map(|r| sid::AndAttributes::new(r, 0)).collect::<Vec<_>>()[..]),
     ).unwrap();
 
-    permissive.set_integrity_level(sid::AndAttributes::new(target.spawn.integrity.sid(), 0)).unwrap();
-    restricted.set_integrity_level(sid::AndAttributes::new(target.spawn.integrity.sid(), 0)).unwrap(); // lower child token to target.lockdown.integrity post-spawn
+    permissive.set_integrity_level(sid::AndAttributes::new(&target.spawn.integrity, 0)).unwrap();
+    restricted.set_integrity_level(sid::AndAttributes::new(&target.spawn.integrity, 0)).unwrap(); // lower child token to target.lockdown.integrity post-spawn
     let permissive = duplicate_token_ex(&permissive, token::ALL_ACCESS, None, security::Impersonation, token::Impersonation).unwrap(); // primary -> impersonation token
 
     if false { // the need for this is currently being eliminated via abuse of the debugger APIs

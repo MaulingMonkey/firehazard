@@ -2,6 +2,8 @@
 //! [`SID`](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)
 //! related types and manipulation functions
 
+#[path = "sid_integrity.rs"] pub mod integrity;
+
 mod sid_and_attributes;                 pub use sid_and_attributes::*;
 mod sid_ptr;                            pub use sid_ptr::*;
 mod sid_box;                            pub use sid_box::*;

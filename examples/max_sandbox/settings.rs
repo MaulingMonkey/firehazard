@@ -5,26 +5,10 @@ use abistr::*;
 use std::collections::*;
 use std::path::PathBuf;
 
-#[allow(dead_code)] // individual trust levels
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[repr(u8)] pub enum Integrity { Untrusted, Low, Medium, High, System }
-
-impl Default for Integrity { fn default() -> Self { Integrity::Untrusted } }
-
-impl Integrity {
-    pub fn sid(self) -> sid::Ptr<'static> { match self {
-        Self::Untrusted => sid!(S-1-16-0x0000),
-        Self::Low       => sid!(S-1-16-0x1000),
-        Self::Medium    => sid!(S-1-16-0x2000),
-        Self::High      => sid!(S-1-16-0x3000),
-        Self::System    => sid!(S-1-16-0x4000),
-    }}
-}
-
 
 
 pub struct Token {
-    pub integrity:      Integrity,
+    pub integrity:      sid::integrity::Level,
     pub privileges:     HashSet<privilege::Luid>,
     pub enabled:        Vec<sid::Ptr<'static>>,
     pub restricted:     Option<Vec<sid::Ptr<'static>>>,
@@ -109,7 +93,7 @@ impl Target {
                 exe: dir.join("less_trivial.exe"),
                 allow: Allow::default(),
                 spawn: Token {
-                    integrity:  Integrity::Low,
+                    integrity:  sid::integrity::Low,
                     privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
                     enabled:    vec![user, users, everyone, session],
                     restricted: Some(vec![user, users, everyone, session]),
@@ -141,7 +125,7 @@ impl Target {
                     .. Allow::default()
                 },
                 spawn: Token {
-                    integrity:  Integrity::Low,
+                    integrity:  sid::integrity::Low,
                     privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
                     enabled:    vec![user, users, everyone, session],
                     restricted: Some(vec![user, users, everyone, session]),
@@ -160,7 +144,7 @@ impl Target {
                     .. Allow::default()
                 },
                 spawn: Token {
-                    integrity:  Integrity::Low,
+                    integrity:  sid::integrity::Low,
                     privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
                     enabled:    vec![user, users, everyone, session],
                     restricted: Some(vec![user, users, everyone, session]),
@@ -179,7 +163,7 @@ impl Target {
                     .. Allow::default()
                 },
                 spawn: Token {
-                    integrity:  Integrity::Low,
+                    integrity:  sid::integrity::Low,
                     privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
                     enabled:    vec![user, users, everyone, session],
                     restricted: Some(vec![user, users, everyone, session]),
