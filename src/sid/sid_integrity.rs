@@ -21,11 +21,13 @@ impl<'a> From<&'a Level> for sid::Ptr<'a> { fn from(level: &'a Level) -> Self { 
 impl Debug for Level {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         let friendly = match *self {
-            Untrusted   => "sid::integrity::Untrusted",
-            Low         => "sid::integrity::Low",
-            Medium      => "sid::integrity::Medium",
-            High        => "sid::integrity::High",
-            System      => "sid::integrity::System",
+            Untrusted           => "sid::integrity::Untrusted",
+            Low                 => "sid::integrity::Low",
+            Medium              => "sid::integrity::Medium",
+            MediumPlus          => "sid::integrity::MediumPlus",
+            High                => "sid::integrity::High",
+            System              => "sid::integrity::System",
+            ProtectedProcess    => "sid::integrity::ProtectedProcess",
             _other => {
                 let sid  = self.sid.as_sid_ptr();
                 let rev  = sid.revision();
@@ -40,16 +42,20 @@ impl Debug for Level {
 
 impl Level {
     /// Create a new integrity level that doesn't exactly match any of the existing integrity levels.
-    pub const fn new(sa0: u32) -> Self { Self { sid: sid::Static::new(1, 16, [sa0]) } }
-    pub const Untrusted : Level = Level::new(0x0000);
-    pub const Low       : Level = Level::new(0x1000);
-    pub const Medium    : Level = Level::new(0x2000);
-    pub const High      : Level = Level::new(0x3000);
-    pub const System    : Level = Level::new(0x4000);
+    pub const fn new(sa0: u32) -> Self { Self { sid: sid::Static::new(1, 16, [sa0]) } } // 16 = SECURITY_MANDATORY_LABEL_AUTHORITY
+    pub const Untrusted         : Level = Level::new(0x0000); // SECURITY_MANDATORY_UNTRUSTED_RID
+    pub const Low               : Level = Level::new(0x1000); // SECURITY_MANDATORY_LOW_RID
+    pub const Medium            : Level = Level::new(0x2000); // SECURITY_MANDATORY_MEDIUM_RID
+    pub const MediumPlus        : Level = Level::new(0x2100); // SECURITY_MANDATORY_MEDIUM_PLUS_RID
+    pub const High              : Level = Level::new(0x3000); // SECURITY_MANDATORY_HIGH_RID
+    pub const System            : Level = Level::new(0x4000); // SECURITY_MANDATORY_SYSTEM_RID
+    pub const ProtectedProcess  : Level = Level::new(0x5000); // SECURITY_MANDATORY_PROTECTED_PROCESS_RID
 }
 
-pub const Untrusted : Level = Level::new(0x0000);
-pub const Low       : Level = Level::new(0x1000);
-pub const Medium    : Level = Level::new(0x2000);
-pub const High      : Level = Level::new(0x3000);
-pub const System    : Level = Level::new(0x4000);
+pub const Untrusted         : Level = Level::new(0x0000); // SECURITY_MANDATORY_UNTRUSTED_RID
+pub const Low               : Level = Level::new(0x1000); // SECURITY_MANDATORY_LOW_RID
+pub const Medium            : Level = Level::new(0x2000); // SECURITY_MANDATORY_MEDIUM_RID
+pub const MediumPlus        : Level = Level::new(0x2100); // SECURITY_MANDATORY_MEDIUM_PLUS_RID
+pub const High              : Level = Level::new(0x3000); // SECURITY_MANDATORY_HIGH_RID
+pub const System            : Level = Level::new(0x4000); // SECURITY_MANDATORY_SYSTEM_RID
+pub const ProtectedProcess  : Level = Level::new(0x5000); // SECURITY_MANDATORY_PROTECTED_PROCESS_RID
