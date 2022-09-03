@@ -78,7 +78,7 @@ fn register_window_class() -> ATOM {
         lpszClassName:  cstr16!("ui_basic_window").as_ptr(),
         lpfnWndProc:    Some(wndproc),
         hbrBackground:  bg,
-        ..Default::default()
+        .. zeroed()
     })};
     assert!(atom != 0, "RegisterClassExW failed with GetLastError()={:?}", Error::get_last());
 
