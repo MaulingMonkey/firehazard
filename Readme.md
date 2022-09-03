@@ -1,19 +1,26 @@
-Playing around with Win32 security APIs to understand/grok/document/wrap them.
+# 🔥 firehazard 🔥
+Create a *fire hazard* by locking down your <span style="opacity: 50%">(Microsoft)</span> *Windows* so nobody can *escape* (your security sandbox.)<br>
+Unopinionated low level API bindings focused on soundness, safety, and stronger types over raw FFI.<br>
+You may be *at hazard* of being *fired* (or worse) for relying on this crate for security:
 
-## ⚠️ Warning ⚠️
-I'm not subscribed to any security lists.
-I don't have anything alerting me to CVEs.
-I don't have any PGP keys for you to securely send me security bugs.
-This isn't backed by a team or company.
-I have no code reviewers.
-I haven't fuzz tested anything.
-My test coverage is mediocre.
-There is no red team.
-I haven't made a proper attempt to bypass even the example sandbox.
-Just because you're paranoid, doesn't mean that they aren't out to get you.
-Rust has made me overconfident.
-Rust has made **you** overconfident.
-The false sense of security that using this code will lure you into, may be worse than nothing at all.
+## ⚠️ Warnings ⚠️
+* I'm not subscribed to any security lists.
+* I don't have anything alerting me to CVEs.
+* This crate is probably not 100% sound.  Bug reports welcome.
+* I don't have any PGP keys for you to securely send me security bugs.
+* Keep flammable materials away from heaters and other ignition sources.
+* This isn't backed by a team or company.  Nor me, frankly.
+* I have no code reviewers.
+* I haven't fuzz tested anything.
+* My test coverage is mediocre.
+* There is no red team.
+* I haven't made a proper attempt to bypass even the example sandbox.
+* Just because you're paranoid, doesn't mean that they aren't out to get you.
+* Rust has made me overconfident.
+* Rust has made **you** overconfident.
+* Keep emergency exits accessible and usable to avoid fire safety hazards.
+* The false sense of security - that using this code will lure you into - may be worse than nothing at all.
+* Test your fire alarms.  The batteries are probably dead.
 
 ## Quickstart
 ```toml
