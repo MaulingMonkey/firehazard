@@ -3,7 +3,7 @@
 ///
 /// ### Example
 /// ```
-/// use sandbox_windows_ffi::*;
+/// use firehazard::*;
 /// use winapi::shared::winerror::ERROR_BAD_TOKEN_TYPE;
 /// let token = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
 /// let imp = duplicate_token_ex(

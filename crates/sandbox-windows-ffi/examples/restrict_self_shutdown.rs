@@ -1,6 +1,6 @@
 //! Throw away `SeShutdownPrivilege`
 
-use sandbox_windows_ffi::*;
+use firehazard::*;
 use abistr::cstr;
 use winapi::shared::winerror::ERROR_ACCESS_DENIED;
 use std::io;

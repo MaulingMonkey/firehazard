@@ -17,7 +17,7 @@ use core::ptr::null_mut;
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use abistr::*;
 /// let anon = create_job_object_a(None, ()).unwrap();
 /// assign_process_to_job_object(&anon, get_current_process()).unwrap();
@@ -31,7 +31,7 @@ pub fn assign_process_to_job_object<'a>(job: &job::OwnedHandle, process: impl As
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use abistr::*;
 /// let anon = create_job_object_a(None, ()).unwrap();
 /// let named = create_job_object_a(None, cstr!("Local/win32_security_playground/tests/create_job_object_a")).unwrap();
@@ -49,7 +49,7 @@ pub fn create_job_object_a(job_attributes: Option<core::convert::Infallible>, na
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use abistr::*;
 /// let anon = create_job_object_w(None, ()).unwrap();
 /// let named = create_job_object_w(None, cstr16!("Local/win32_security_playground/tests/create_job_object_a")).unwrap();
@@ -69,7 +69,7 @@ pub fn create_job_object_w(job_attributes: Option<core::convert::Infallible>, na
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use abistr::*;
 /// let job = create_job_object_w(None, ()).unwrap();
 /// assert_eq!(Ok(false), is_process_in_job(get_current_process(), Some(&job)));
@@ -86,8 +86,8 @@ pub fn is_process_in_job<'a>(process: impl AsRef<process::PsuedoHandle<'a>>, job
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
-/// # use sandbox_windows_ffi::access::*;
+/// # use firehazard::*;
+/// # use firehazard::access::*;
 /// # use abistr::*;
 /// let job1 = create_job_object_a(None, cstr!("Local/win32_security_playground/tests/open_job_object_w")).unwrap();
 /// let job2 = open_job_object_a(GENERIC_ALL, false, cstr!("Local/win32_security_playground/tests/open_job_object_w")).unwrap();
@@ -105,8 +105,8 @@ pub fn open_job_object_a(desired_access: impl Into<access::Mask>, inherit_handle
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
-/// # use sandbox_windows_ffi::access::*;
+/// # use firehazard::*;
+/// # use firehazard::access::*;
 /// # use abistr::*;
 /// let job1 = create_job_object_w(None, cstr16!("Local/win32_security_playground/tests/open_job_object_a")).unwrap();
 /// let job2 = open_job_object_w(GENERIC_ALL, false, cstr16!("Local/win32_security_playground/tests/open_job_object_a")).unwrap();
@@ -124,7 +124,7 @@ pub fn open_job_object_w(desired_access: impl Into<access::Mask>, inherit_handle
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use winapi::shared::winerror::*;
 /// # use winapi::um::winnt::*;
 /// let job = create_job_object_w(None, ()).unwrap();
@@ -141,7 +141,7 @@ pub fn query_information_job_object<Info: job::QueryInformation>(job: &job::Owne
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use winapi::shared::winerror::*;
 /// let mut job = create_job_object_w(None, ()).unwrap();
 ///
@@ -170,7 +170,7 @@ pub fn set_information_job_object(job: &job::OwnedHandle, information: impl job:
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use winapi::um::winnt::GENERIC_ALL;
 /// let job = create_job_object_w(None, ()).unwrap();
 /// terminate_job_object(&job, 0).unwrap();

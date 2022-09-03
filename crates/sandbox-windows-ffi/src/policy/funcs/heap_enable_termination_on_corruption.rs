@@ -5,7 +5,7 @@
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// heap_enable_termination_on_corruption().unwrap();
 /// ```
 ///

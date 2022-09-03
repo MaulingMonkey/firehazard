@@ -1,4 +1,4 @@
-use sandbox_windows_ffi::*;
+use firehazard::*;
 use winapi::um::winnt::*;
 
 fn main() {

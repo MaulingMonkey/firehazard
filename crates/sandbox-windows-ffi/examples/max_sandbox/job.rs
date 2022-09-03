@@ -1,5 +1,5 @@
-pub use sandbox_windows_ffi::job::*;
-use sandbox_windows_ffi::*;
+pub use firehazard::job::*;
+use firehazard::*;
 use winapi::um::winnt::*;
 use std::mem::zeroed;
 

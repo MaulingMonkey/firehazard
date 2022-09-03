@@ -15,7 +15,7 @@ use core::ptr::null_mut;
 ///
 /// ### Examples
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # #[cfg(feature = "std")] {
 /// let err = convert_string_sid_to_sid_a("XYZ").unwrap_err();
 /// let sid = convert_string_sid_to_sid_a("S-1-0-0").unwrap();
@@ -38,7 +38,7 @@ pub fn convert_string_sid_to_sid_a(s: impl TryIntoAsCStr) -> Result<SidBox<alloc
 ///
 /// ### Examples
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// use abistr::cstr16;
 /// let err = convert_string_sid_to_sid_w(cstr16!("XYZ")).unwrap_err();
 /// let sid = convert_string_sid_to_sid_w(cstr16!("S-1-0-0")).unwrap();

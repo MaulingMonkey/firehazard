@@ -1,4 +1,4 @@
-use sandbox_windows_ffi::*;
+use firehazard::*;
 
 use winapi::ctypes::c_void;
 use winapi::shared::minwindef::FALSE;

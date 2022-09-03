@@ -17,7 +17,7 @@ use core::ptr::{null_mut, NonNull};
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// let (read, write) = create_pipe(None, 0).unwrap();
 /// ```
 pub fn create_pipe(pipe_attributes: Option<&security::Attributes>, size: u32) -> Result<(io::ReadPipe, io::WritePipe), Error> {

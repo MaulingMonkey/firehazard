@@ -1,5 +1,5 @@
-use sandbox_windows_ffi::*;
-use sandbox_windows_ffi::process::ThreadAttributeList;
+use firehazard::*;
+use firehazard::process::ThreadAttributeList;
 
 
 

@@ -17,7 +17,7 @@ use core::ptr::null;
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use abistr::cstr;
 /// # use winapi::shared::winerror::*;
 /// assert_eq!(ERROR_ACCESS_DENIED, create_window_station_a(cstr!("WinSta0"), winsta::CWF_CREATE_ONLY, winsta::ALL_ACCESS, None).unwrap_err());
@@ -44,7 +44,7 @@ pub fn create_window_station_a(
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use abistr::cstr16;
 /// # use winapi::shared::winerror::*;
 /// assert_eq!(ERROR_ACCESS_DENIED, create_window_station_w(cstr16!("WinSta0"), winsta::CWF_CREATE_ONLY, winsta::ALL_ACCESS, None).unwrap_err());
@@ -72,7 +72,7 @@ pub fn create_window_station_w(
 /// ### Example
 /// ```
 /// # #[cfg(feature = "std")] {
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// let mut found_winsta0 = false;
 /// enum_window_stations_a(|winsta|{
 ///     found_winsta0 |= winsta.to_string_lossy() == "WinSta0";
@@ -111,7 +111,7 @@ unsafe extern "system" fn fwd_enum_window_stations_a<F: FnMut(CStrPtr) -> Result
 /// ### Example
 /// ```
 /// # #[cfg(feature = "std")] {
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// let mut found_winsta0 = false;
 /// enum_window_stations_w(|winsta|{
 ///     found_winsta0 |= winsta.to_string_lossy() == "WinSta0";
@@ -149,7 +149,7 @@ unsafe extern "system" fn fwd_enum_window_stations_w<F: FnMut(CStrPtr<u16>) -> R
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// let winsta0 = open_process_window_station().unwrap();
 /// ```
 ///
@@ -172,7 +172,7 @@ pub fn open_process_window_station() -> Result<winsta::OwnedHandle, Error> {
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use abistr::cstr;
 /// let winsta0 = open_window_station_a(cstr!("WinSta0"), false, winsta::ALL_ACCESS).unwrap();
 /// ```
@@ -195,7 +195,7 @@ pub fn open_window_station_a(
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use abistr::cstr16;
 /// let winsta0 = open_window_station_w(cstr16!("WinSta0"), false, winsta::ALL_ACCESS).unwrap();
 /// ```
@@ -218,7 +218,7 @@ pub fn open_window_station_w(
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # let winsta = open_process_window_station().unwrap();
 /// set_process_window_station(&winsta).unwrap();
 /// # std::mem::forget(winsta); // will ERROR_BUSY otherwise

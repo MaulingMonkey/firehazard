@@ -18,8 +18,8 @@ use core::ptr::null;
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
-/// # use sandbox_windows_ffi::access::*;
+/// # use firehazard::*;
+/// # use firehazard::access::*;
 /// # use abistr::cstr;
 /// let desktop = create_desktop_a(cstr!("PlaygroundDesktop"), (), None, None, GENERIC_ALL, None).unwrap();
 /// # let desktop = create_desktop_a(cstr!("PlaygroundDesktop"), (), None, None, GENERIC_ALL, None).unwrap();
@@ -49,8 +49,8 @@ pub fn create_desktop_a(
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
-/// # use sandbox_windows_ffi::access::*;
+/// # use firehazard::*;
+/// # use firehazard::access::*;
 /// # use abistr::cstr16;
 /// let desktop = create_desktop_w(cstr16!("PlaygroundDesktop"), (), None, None, GENERIC_ALL, None).unwrap();
 /// # let desktop = create_desktop_w(cstr16!("PlaygroundDesktop"), (), None, None, GENERIC_ALL, None).unwrap();
@@ -85,7 +85,7 @@ pub fn create_desktop_w(
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// let winsta = open_process_window_station().unwrap();
 /// enum_desktops_a(&winsta, |desktop| {
 ///     println!("{desktop:?}");
@@ -130,7 +130,7 @@ unsafe extern "system" fn fwd_enum_desktops_a<F: FnMut(CStrPtr) -> Result<(), Er
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// let winsta = open_process_window_station().unwrap();
 /// enum_desktops_w(&winsta, |desktop| {
 ///     println!("{desktop:?}");
@@ -178,7 +178,7 @@ unsafe extern "system" fn fwd_enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// let desktop = open_thread_desktop(get_current_thread_id()).unwrap();
 /// ```
 ///
@@ -200,8 +200,8 @@ pub fn open_thread_desktop(thread_id: thread::Id) -> Result<desktop::OwnedHandle
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
-/// # use sandbox_windows_ffi::access::*;
+/// # use firehazard::*;
+/// # use firehazard::access::*;
 /// # use abistr::cstr;
 /// let desktop = open_desktop_a(cstr!("Default"), None, false, GENERIC_ALL).unwrap();
 /// ```
@@ -226,8 +226,8 @@ pub fn open_desktop_a(
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
-/// # use sandbox_windows_ffi::access::*;
+/// # use firehazard::*;
+/// # use firehazard::access::*;
 /// # use abistr::cstr16;
 /// let desktop = open_desktop_w(cstr16!("Default"), None, false, GENERIC_ALL).unwrap();
 /// ```
@@ -252,8 +252,8 @@ pub fn open_desktop_w(
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
-/// # use sandbox_windows_ffi::access::*;
+/// # use firehazard::*;
+/// # use firehazard::access::*;
 /// let desktop = open_input_desktop(None, false, GENERIC_ALL).unwrap();
 /// ```
 pub fn open_input_desktop(
@@ -271,7 +271,7 @@ pub fn open_input_desktop(
 ///
 /// ### Example
 /// ```no_run
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use abistr::*;
 /// let original = open_thread_desktop(get_current_thread_id()).unwrap();
 /// let desktop = create_desktop_a(cstr!("examples_ui_switch_desktop"), (), None, None, access::GENERIC_ALL, None).unwrap();
@@ -297,8 +297,8 @@ pub fn switch_desktop(desktop: &desktop::OwnedHandle) -> Result<(), Error> {
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
-/// # use sandbox_windows_ffi::access::*;
+/// # use firehazard::*;
+/// # use firehazard::access::*;
 /// # use abistr::cstr;
 /// # use winapi::um::winuser::*;
 /// let temp1 = create_desktop_a(cstr!("wtd.temp1"), (), None, None, GENERIC_ALL, None).unwrap();

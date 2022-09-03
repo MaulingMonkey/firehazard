@@ -22,7 +22,7 @@ pub type HANDLENN = NonNull<c_void>;
 /// ### Example
 /// ```
 /// # #[cfg(std)] {
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use winapi::shared::winerror::*;
 /// let thread : thread::OwnedHandle = std::thread::spawn(||{}).into();
 /// let dangling = unsafe { thread::OwnedHandle::from_raw(thread.as_handle()).unwrap() };
@@ -91,7 +91,7 @@ pub fn duplicate_handle<'t>(
 /// ### Example
 /// ```
 /// # #[cfg(std)] {
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use winapi::shared::winerror::*;
 /// let thread : thread::OwnedHandle = std::thread::spawn(||{}).into();
 /// let info = get_handle_information(&thread).unwrap();
@@ -111,7 +111,7 @@ pub fn get_handle_information<'a>(object: impl AsRef<handle::Borrowed<'a>>) -> R
 /// ### Example
 /// ```
 /// # #[cfg(std)] {
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use winapi::shared::winerror::*;
 /// let thread : thread::OwnedHandle = std::thread::spawn(||{}).into();
 /// let info = get_handle_information(&thread).unwrap();

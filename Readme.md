@@ -19,7 +19,7 @@ The false sense of security that using this code will lure you into, may be wors
 ```toml
 # Cargo.toml
 [dependencies]
-sandbox-windows-ffi.git = "ssh://git@github.com/MaulingMonkey/win32_security_playground.git"
+firehazard.git = "ssh://git@github.com/MaulingMonkey/win32_security_playground.git"
 ```
 ```toml
 # %USERPROFILE%\.cargo\config.toml

@@ -1,4 +1,4 @@
-use sandbox_windows_ffi::*;
+use firehazard::*;
 
 pub struct Tokens {
     pub permissive: token::OwnedHandle,

@@ -17,7 +17,7 @@ use core::time::Duration;
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// let a = is_debugger_present();
 /// let b = check_remote_debugger_present(get_current_process()).unwrap();
 /// assert_eq!(a, b);
@@ -39,7 +39,7 @@ pub fn continue_debug_event(process_id: process::Id, thread_id: thread::Id, cont
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # return;
 /// # let pid = 0;
 /// # #[cfg(nope)]
@@ -55,7 +55,7 @@ pub fn debug_active_process(process_id: process::Id) -> Result<(), Error> {
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # return;
 /// # let pid = 0;
 /// # #[cfg(nope)]
@@ -72,7 +72,7 @@ pub fn debug_active_process_stop(process_id: process::Id) -> Result<(), Error> {
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # return;
 /// eprintln!("BUG: something bad happened");
 /// debug_break(); // trigegr the debugger
@@ -86,7 +86,7 @@ pub fn debug_break() {
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// if is_debugger_present() { println!("Hello, debugger!"); }
 /// ```
 pub fn is_debugger_present() -> bool {
@@ -98,7 +98,7 @@ pub fn is_debugger_present() -> bool {
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use abistr::*;
 /// output_debug_string_a(cstr!("Hello, debugger!"));
 /// ```
@@ -111,7 +111,7 @@ pub fn output_debug_string_a(output_string: impl AsCStr) {
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use abistr::*;
 /// output_debug_string_w(cstr16!("Hello, debugger!"));
 /// ```

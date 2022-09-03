@@ -2,7 +2,7 @@
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// # use winapi::shared::winerror::*;
 /// # let token = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
 /// # let token = duplicate_token_ex(&token, token::ALL_ACCESS, None, security::Delegation, token::Impersonation).unwrap();

@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 
-use sandbox_windows_ffi::*;
+use firehazard::*;
 use abistr::*;
 
 #[no_mangle] extern fn mainCRTStartup() -> i32 { run(); 0 }

@@ -1,6 +1,6 @@
 #![forbid(unsafe_op_in_unsafe_fn)]
 
-use sandbox_windows_ffi::*;
+use firehazard::*;
 
 use abistr::*;
 

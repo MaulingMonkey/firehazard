@@ -1,5 +1,5 @@
 use crate::{*, job};
-use sandbox_windows_ffi::*;
+use firehazard::*;
 use abistr::*;
 use winapi::um::winbase::*;
 

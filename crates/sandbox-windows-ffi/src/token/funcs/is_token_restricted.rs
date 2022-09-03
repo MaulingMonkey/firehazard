@@ -2,7 +2,7 @@
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// let token : token::OwnedHandle = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
 /// assert!(!is_token_restricted(&token));
 /// ```

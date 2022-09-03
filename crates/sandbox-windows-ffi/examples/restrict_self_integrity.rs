@@ -1,4 +1,4 @@
-use sandbox_windows_ffi::*;
+use firehazard::*;
 use std::fs::File;
 
 fn main() {

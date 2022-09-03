@@ -20,7 +20,7 @@ use core::mem::{MaybeUninit, size_of_val, size_of};
 ///
 /// ### Example
 /// ```
-/// # use sandbox_windows_ffi::*;
+/// # use firehazard::*;
 /// let original = [42u32];
 /// let mut copy = [core::mem::MaybeUninit::<u32>::uninit(); 1];
 /// let copy = unsafe { read_process_memory(get_current_process(), original.as_ptr(), &mut copy[..]) }.unwrap();

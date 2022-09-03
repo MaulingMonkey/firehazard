@@ -1,7 +1,7 @@
 # https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [package]
-name                        = "sandbox-windows-ffi"
+name                        = "firehazard"
 version                     = "0.0.0-git"
 publish                     = false
 authors                     = ["MaulingMonkey <git@maulingmonkey.com>"]
