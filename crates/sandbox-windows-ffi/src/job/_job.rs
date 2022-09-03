@@ -5,3 +5,8 @@ mod job_handles;                        pub use job_handles::*;
 mod job_information;                    pub use job_information::*;
 
 #[path = "job_funcs.rs"] pub(crate) mod funcs; pub use funcs::*;
+
+/// JOB_OBJECT_* and JOBOBJECT_* stuff
+pub mod object {
+    mod security_limit_information;     //pub use security_limit_information::*;
+}

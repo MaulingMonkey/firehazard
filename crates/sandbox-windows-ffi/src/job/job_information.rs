@@ -27,7 +27,6 @@ impl QueryInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2           { fn
 impl QueryInformation for JOBOBJECT_NET_RATE_CONTROL_INFORMATION            { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectNetRateControlInformation) } } }
 impl QueryInformation for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION          { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectNotificationLimitInformation) } } }
 impl QueryInformation for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION_2        { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectNotificationLimitInformation2) } } }
-//impl QueryInformation for  JOBOBJECT_SECURITY_LIMIT_INFORMATION             { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_header(job, JobObjectSecurityLimitInformation) } } } // self-referential pointers? (sids)
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
 /// SetInformationJobObject parameters
@@ -46,7 +45,6 @@ impl SetInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2     { fn set_on(
 impl SetInformation for JOBOBJECT_NET_RATE_CONTROL_INFORMATION      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectNetRateControlInformation, &self) } } }
 impl SetInformation for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION    { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectNotificationLimitInformation, &self) } } }
 impl SetInformation for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION_2  { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectNotificationLimitInformation2, &self) } } }
-//impl SetInformation for JOBOBJECT_SECURITY_LIMIT_INFORMATION        { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectSecurityLimitInformation, &self) } } } // interior pointers
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
