@@ -10,7 +10,7 @@ use core::fmt::{self, Debug, Formatter};
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_user)\] ~ `Box<(TOKEN_USER, ..)>`
-pub struct BoxTokenUser(CBox<TOKEN_USER>);
+#[repr(transparent)] pub struct BoxTokenUser(CBox<TOKEN_USER>);
 
 impl BoxTokenUser {
     pub fn from_raw(cbs: CBoxSized<TOKEN_USER>) -> Self {

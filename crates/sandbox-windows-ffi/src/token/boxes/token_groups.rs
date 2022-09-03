@@ -10,7 +10,7 @@ use core::fmt::{self, Debug, Formatter};
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_groups)\] ~ `Box<(TOKEN_GROUPS, ..)>`
-pub struct BoxTokenGroups(CBox<TOKEN_GROUPS>);
+#[repr(transparent)] pub struct BoxTokenGroups(CBox<TOKEN_GROUPS>);
 
 impl BoxTokenGroups {
     pub fn from_raw(cbs: CBoxSized<TOKEN_GROUPS>) -> Self {

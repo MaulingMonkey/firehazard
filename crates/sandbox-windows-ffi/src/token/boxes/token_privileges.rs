@@ -11,7 +11,7 @@ use core::mem::{size_of, align_of, size_of_val, zeroed};
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\] ~ `Box<(TOKEN_PRIVILEGES, ..)>`
-pub struct BoxTokenPrivileges(CBox<TOKEN_PRIVILEGES>);
+#[repr(transparent)] pub struct BoxTokenPrivileges(CBox<TOKEN_PRIVILEGES>);
 
 impl BoxTokenPrivileges {
     pub fn from_raw(cbs: CBoxSized<TOKEN_PRIVILEGES>) -> Self {

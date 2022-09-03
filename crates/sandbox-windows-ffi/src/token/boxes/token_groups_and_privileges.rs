@@ -10,7 +10,7 @@ use core::fmt::{self, Debug, Formatter};
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_groups_and_privileges)\] ~ `Box<(TOKEN_GROUPS_AND_PRIVILEGES, ..)>`
-pub struct BoxTokenGroupsAndPrivileges(CBox<TOKEN_GROUPS_AND_PRIVILEGES>);
+#[repr(transparent)] pub struct BoxTokenGroupsAndPrivileges(CBox<TOKEN_GROUPS_AND_PRIVILEGES>);
 
 impl BoxTokenGroupsAndPrivileges {
     pub fn from_raw(cbs: CBoxSized<TOKEN_GROUPS_AND_PRIVILEGES>) -> Self {

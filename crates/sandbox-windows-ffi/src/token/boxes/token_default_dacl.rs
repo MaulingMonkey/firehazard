@@ -10,7 +10,7 @@ use core::fmt::{self, Debug, Formatter};
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_default_dacl)\]
 /// ~ `Box<(TOKEN_DEFAULT_DACL, ..)>`
-pub struct BoxTokenDefaultDacl(CBox<TOKEN_DEFAULT_DACL>);
+#[repr(transparent)] pub struct BoxTokenDefaultDacl(CBox<TOKEN_DEFAULT_DACL>);
 
 impl BoxTokenDefaultDacl {
     pub unsafe fn from_raw(cbs: CBoxSized<TOKEN_DEFAULT_DACL>) -> Self {

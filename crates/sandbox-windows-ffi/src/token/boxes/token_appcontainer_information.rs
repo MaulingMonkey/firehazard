@@ -9,7 +9,7 @@ use core::fmt::{self, Debug, Formatter};
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_appcontainer_information)\] ~ `Box<(TOKEN_APPCONTAINER_INFORMATION, ..)>`
-pub struct BoxTokenAppcontainerInformation(CBox<TOKEN_APPCONTAINER_INFORMATION>);
+#[repr(transparent)] pub struct BoxTokenAppcontainerInformation(CBox<TOKEN_APPCONTAINER_INFORMATION>);
 
 impl BoxTokenAppcontainerInformation {
     pub fn from_raw(cbs: CBoxSized<TOKEN_APPCONTAINER_INFORMATION>) -> Self {
