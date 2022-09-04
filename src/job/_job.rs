@@ -30,5 +30,6 @@ pub mod object {
     mod group_information;              pub use group_information::*;
     mod limit_information;              pub use limit_information::*;
     mod net_rate_control;               pub use net_rate_control::*;
+    mod notification_limit_information; pub use notification_limit_information::*;
     mod security_limit_information;     //pub use security_limit_information::*;
 }
