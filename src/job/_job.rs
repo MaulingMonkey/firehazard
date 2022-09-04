@@ -1,5 +1,11 @@
 //! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/procthread/job-objects)\]
 //! Job Object types and fns
+//!
+//! Note that jobs aren't inescapeable:
+//! *   [project-zero: Blog: In-Console-Able (2015)](https://googleprojectzero.blogspot.com/2015/05/in-console-able.html)
+//! *   [project-zero: Issue 213: Windows: Console Driver Job Object Process Limit Bypass](https://bugs.chromium.org/p/project-zero/issues/detail?id=213&redir=1)
+
+
 
 mod job_handles;                        pub use job_handles::*;
 mod job_information;                    pub use job_information::*;
