@@ -48,7 +48,7 @@ pub fn close_handle(object: impl Into<handle::Owned>) -> Result<(), Error> {
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
-/// <strike>DuplicateHandle(process, handle, 0, 0, 0, 0, DUPLICATE_CLOSE_SOURCE)</strike>
+/// <strike>DuplicateHandle(process, handle, 0, 0, 0, DUPLICATE_CLOSE_SOURCE)</strike>
 #[cfg(doc)]
 pub unsafe fn close_remote_handle(process: &process::Handle, handle: HANDLE) -> Result<(), Error> {
     Error::get_last_if(FALSE == unsafe { DuplicateHandle(process.as_handle(), handle, null_mut(), null_mut(), 0, false as _, DUPLICATE_CLOSE_SOURCE)})
@@ -56,7 +56,7 @@ pub unsafe fn close_remote_handle(process: &process::Handle, handle: HANDLE) -> 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-compareobjecthandles)\]
 /// <strike>CompareObjectHandles</strike>
-#[cfg(doc)] /// NYI (windows SDK too early to link this win10+ API?)
+#[cfg(doc)] /// NYI (windows SDK too early to link this API?)
 pub fn compare_object_handles(first: &handle::Owned, second: &handle::Owned) -> bool {
     // #[link(name = "kernelbase")] extern {} // unable to link against kernelbase?
     FALSE != unsafe { CompareObjectHandles(first.as_handle(), second.as_handle()) }
@@ -87,31 +87,6 @@ pub(crate) fn debug<T>(fmt: &mut Formatter, module: &str, name: &str, handle: No
     assert_eq!(-4, get_current_process_token()          .as_handle() as isize);
     assert_eq!(-5, get_current_thread_token()           .as_handle() as isize);
     assert_eq!(-6, get_current_thread_effective_token() .as_handle() as isize);
-}
-
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
-/// <strike>DuplicateHandle</strike>
-#[cfg(doc)] /// Too parameterized (may or may not close / be locally owned)
-pub fn duplicate_handle<'t>(
-    source_process: &process::Handle,
-    source:         &handle::Owned,
-    target_process: impl Into<Option<&'t process::Handle<'t>>>,
-    desired_access: impl Into<access::Mask>,
-    inherit_handle: bool,
-    options:        u32,                                    // TODO: type
-) -> Result<handle::Owned, Error> {
-    let mut target = null_mut();
-    Error::get_last_if(FALSE == unsafe { DuplicateHandle(
-        source_process.as_handle(),
-        source.as_handle(),
-        target_process.into().map_or(null_mut(), |h| h.as_handle()),
-        &mut target,
-        desired_access.into().into(),
-        inherit_handle as _,
-        options,
-    )})?;
-
-    unsafe { handle::Owned::from_raw(target) }.ok_or(Error(ERROR_INVALID_HANDLE))
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
@@ -154,7 +129,7 @@ pub fn duplicate_handle_local<'a>(source: impl AsRef<handle::Psuedo<'a>>, access
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
-/// DuplicateHandle(-1, source, -1, None, inherit, DUPLICATE_SAME_ACCESS)
+/// DuplicateHandle(-1, source, -1, 0, inherit, DUPLICATE_SAME_ACCESS)
 ///
 /// ### Examples
 /// ```
