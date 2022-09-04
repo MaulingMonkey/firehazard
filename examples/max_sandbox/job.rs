@@ -14,7 +14,7 @@ pub fn create() -> job::OwnedHandle {
     relimit(&mut job, 1);
 
     // TODO: consider UserHandleGrantAccess to... do what, exactly?
-    // https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject
+
     set_information_job_object(&mut job, job::object::BasicUiRestrictions { ui_restrictions_class: ()
         | job::object::uilimit::DESKTOP            // Prevents processes associated with the job from creating desktops and switching desktops using the CreateDesktop and SwitchDesktop functions.
         | job::object::uilimit::DISPLAYSETTINGS    // Prevents processes associated with the job from calling the ChangeDisplaySettings function.
@@ -25,22 +25,28 @@ pub fn create() -> job::OwnedHandle {
         | job::object::uilimit::SYSTEMPARAMETERS   // Prevents processes associated with the job from changing system parameters by using the SystemParametersInfo function.
         | job::object::uilimit::WRITECLIPBOARD     // Prevents processes associated with the job from writing data to the clipboard.
     }).unwrap();
+
     set_information_job_object(&mut job, job::object::EndOfJobTimeInformation {
         // default behavior, but doesn't hurt to be explicit?
         // in case parent job had a different policy perhaps?
         end_of_job_time_action: job::object::TERMINATE_AT_END_OF_JOB,
     }).unwrap();
+
     // TODO: JobObjectGroupInformation processor groups?
     // TODO: JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2 limits?
+
     set_information_job_object(&mut job, job::object::NetRateControlInformation {
         max_bandwidth:  0, // limit network egress
         control_flags:  job::object::NET_RATE_CONTROL_ENABLE | job::object::NET_RATE_CONTROL_MAX_BANDWIDTH,
         .. Default::default()
     }).unwrap();
+
     set_information_job_object(&mut job, job::object::CpuRateControlInformation::from_weight(5, false, false)).unwrap();
+
     // TODO: JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION[_2] ?
     // TODO: JOBOBJECT_LIMIT_VIOLATION_INFORMATION ?
     // TODO: SetIoRateControlInformationJobObject ?
+
     job
 }
 
