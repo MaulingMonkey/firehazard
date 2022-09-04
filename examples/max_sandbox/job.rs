@@ -19,7 +19,11 @@ pub fn create() -> job::OwnedHandle {
         | job::object::uilimit::SYSTEMPARAMETERS   // Prevents processes associated with the job from changing system parameters by using the SystemParametersInfo function.
         | job::object::uilimit::WRITECLIPBOARD     // Prevents processes associated with the job from writing data to the clipboard.
     }).unwrap();
-    // TODO: JOBOBJECT_END_OF_JOB_TIME_INFORMATION to hard-terminate the processes of the job?
+    set_information_job_object(&mut job, job::object::EndOfJobTimeInformation {
+        // default behavior, but doesn't hurt to be explicit?
+        // in case parent job had a different policy perhaps?
+        end_of_job_time_action: job::object::TERMINATE_AT_END_OF_JOB,
+    }).unwrap();
     // TODO: JobObjectGroupInformation processor groups?
     // TODO: JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2 limits?
     set_information_job_object(&mut job, job::object::NetRateControlInformation {
