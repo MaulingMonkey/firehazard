@@ -14,7 +14,7 @@ const _SIZE  : () = assert!(size_of ::<NetRateControlInformation>() == size_of :
 #[repr(C)] pub struct NetRateControlInformation {
     /// Limit the maximum number of *outgoing* network traffic bytes for the job.
     ///
-    /// Ignored unless [`control_flags`] has [`NET_RATE_CONTROL_ENABLE`] and [`NET_RATE_CONTROL_MAX_BANDWIDTH`] set?
+    /// Ignored unless [`control_flags`](Self::control_flags) has [`NET_RATE_CONTROL_ENABLE`] and [`NET_RATE_CONTROL_MAX_BANDWIDTH`] set?
     pub max_bandwidth:  u64,
 
     /// Control which field(s) of this [`NetRateControlInformation`] to use.
@@ -22,7 +22,7 @@ const _SIZE  : () = assert!(size_of ::<NetRateControlInformation>() == size_of :
 
     /// Control the [differentiated services code point](https://en.wikipedia.org/wiki/Differentiated_services) tag.
     ///
-    /// Ignored unless [`control_flags`] has [`NET_RATE_CONTROL_ENABLE`] and [`NET_RATE_CONTROL_DSCP_TAG`] set?
+    /// Ignored unless [`control_flags`](Self::control_flags) has [`NET_RATE_CONTROL_ENABLE`] and [`NET_RATE_CONTROL_DSCP_TAG`] set?
     pub dscp_tag:       u8,
 }
 
