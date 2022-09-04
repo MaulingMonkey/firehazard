@@ -25,10 +25,20 @@ impl Default for Token {
 
 
 
-#[derive(Default)]
 pub struct Allow {
     pub same_desktop:   bool,
     pub dynamic_code:   bool,
+    pub missing_cet:    bool,
+}
+
+impl Default for Allow {
+    fn default() -> Self {
+        Self {
+            same_desktop:   false,
+            dynamic_code:   false,
+            missing_cet:    ! cfg!(cet),
+        }
+    }
 }
 
 
@@ -61,7 +71,10 @@ impl Target {
         let mut targets = vec![
             Target {
                 exe: manifest_dir.join(format!(r"crates\no-std\target\{build}\trivial.exe")),
-                allow: Allow::default(),
+                allow: Allow{
+                    missing_cet: true, // no-std doesn't have my fancy build.rs script enabling cet builds
+                    .. Default::default()
+                },
                 spawn: Token {
                     // Minimal permissions to access e.g. `/KnownDlls` / `kernel32.dll` for init
                     privileges: [se_change_notify_privilege].into_iter().collect(),
@@ -75,7 +88,10 @@ impl Target {
             },
             Target {
                 exe: manifest_dir.join(format!(r"crates\no-std\target\{arch}\{build}\trivial.exe")),
-                allow: Allow::default(),
+                allow: Allow{
+                    missing_cet: true, // no-std doesn't have my fancy build.rs script enabling cet builds
+                    .. Default::default()
+                },
                 spawn: Token {
                     // Minimal permissions to access e.g. `/KnownDlls` / `kernel32.dll` for init
                     privileges: [se_change_notify_privilege].into_iter().collect(),
@@ -119,7 +135,8 @@ impl Target {
             Target {
                 exe: dir.join("run-wasmer.exe"),
                 allow: Allow {
-                    dynamic_code: true,
+                    dynamic_code:   true,
+                    missing_cet:    true, // `wasm` doesn't have my fancy build.rs script enabling cet builds
                     .. Allow::default()
                 },
                 spawn: Token {
@@ -138,7 +155,8 @@ impl Target {
             Target {
                 exe: dir.join("run-wasmtime.exe"),
                 allow: Allow {
-                    dynamic_code: true,
+                    dynamic_code:   true,
+                    missing_cet:    true, // `wasm` doesn't have my fancy build.rs script enabling cet builds
                     .. Allow::default()
                 },
                 spawn: Token {

@@ -15,8 +15,8 @@ pub fn one(target: settings::Target) {
     assert!(target.spawn.integrity >= target.lockdown.integrity, "target.lockdown.integrity cannot be more permissive than spawn integrity");
 
     let tokens = tokens::create(&target);
-    let args : &[&str] = &[];
-    let mut command_line = argv_to_command_line_0(&target.exe, args);
+    let exe = &target.exe;
+    let mut command_line = exe_to_command_line_0(exe);
 
     let (_read, write) = io::create_pipe(Some(&security::Attributes::new(None, true)), 0).unwrap();
     let job = job::create();
@@ -44,7 +44,7 @@ pub fn one(target: settings::Target) {
         &tokens.restricted, (), Some(&mut command_line[..]), None, None, true,
         process::DEBUG_PROCESS | process::CREATE_SEPARATE_WOW_VDM | process::CREATE_SUSPENDED | process::EXTENDED_STARTUPINFO_PRESENT,
         environment, (), &si
-    ).unwrap();
+    ).unwrap_or_else(|err| panic!("process {exe:?} failed: {err:?}"));
     set_thread_token(&pi.thread, &tokens.permissive).unwrap();
     job::relimit(&job, 0);
     resume_thread(&pi.thread).unwrap();

@@ -47,7 +47,7 @@ impl<'s> List<'s> {
             | process::creation::mitigation_policy2::cet_user_shadow_stacks::ALWAYS_ON      // Redundant
             | process::creation::mitigation_policy2::cet_user_shadow_stacks::STRICT_MODE
             | process::creation::mitigation_policy2::user_cet_set_context_ip_validation::ALWAYS_ON
-            //| process::creation::mitigation_policy2::block_non_cet_binaries::ALWAYS_ON            // causes ERROR_ACCESS_DENIED (are our executables not built with CET?)
+            | (!target.allow.missing_cet * process::creation::mitigation_policy2::block_non_cet_binaries::ALWAYS_ON)
             //| process::creation::mitigation_policy2::xtended_control_flow_guard::ALWAYS_ON        // causes ERROR_INVALID_PARAMETER - not built with XFG? see https://connormcgarr.github.io/examining-xfg/ / https://query.prod.cms.rt.microsoft.com/cms/api/am/binary/RE37dMC
             //| process::creation::mitigation_policy2::pointer_auth_user_ip::ALWAYS_ON              // causes ERROR_INVALID_PARAMETER - ARM64 (not x64/AMD64!) only?
             | process::creation::mitigation_policy2::cet_dynamic_apis_out_of_proc_only::ALWAYS_ON
