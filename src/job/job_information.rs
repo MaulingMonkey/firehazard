@@ -18,7 +18,6 @@ impl QueryInformation for JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION     { fn
 impl QueryInformation for JOBOBJECT_CPU_RATE_CONTROL_INFORMATION            { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectCpuRateControlInformation) } } }
 impl QueryInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION             { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectLimitViolationInformation) } } }
 impl QueryInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2           { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectLimitViolationInformation2) } } }
-impl QueryInformation for JOBOBJECT_NET_RATE_CONTROL_INFORMATION            { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectNetRateControlInformation) } } }
 impl QueryInformation for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION          { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectNotificationLimitInformation) } } }
 impl QueryInformation for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION_2        { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectNotificationLimitInformation2) } } }
 
@@ -30,7 +29,6 @@ impl SetInformation for JOBOBJECT_ASSOCIATE_COMPLETION_PORT         { fn set_on(
 impl SetInformation for JOBOBJECT_CPU_RATE_CONTROL_INFORMATION      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectCpuRateControlInformation, &self) } } }
 impl SetInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION       { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectLimitViolationInformation, &self) } } }
 impl SetInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2     { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectLimitViolationInformation2, &self) } } }
-impl SetInformation for JOBOBJECT_NET_RATE_CONTROL_INFORMATION      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectNetRateControlInformation, &self) } } }
 impl SetInformation for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION    { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectNotificationLimitInformation, &self) } } }
 impl SetInformation for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION_2  { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectNotificationLimitInformation2, &self) } } }
 

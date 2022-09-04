@@ -22,6 +22,11 @@ pub fn create() -> job::OwnedHandle {
     // TODO: JOBOBJECT_END_OF_JOB_TIME_INFORMATION to hard-terminate the processes of the job?
     // TODO: JobObjectGroupInformation processor groups?
     // TODO: JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2 limits?
+    set_information_job_object(&mut job, job::object::NetRateControlInformation {
+        max_bandwidth:  0, // limit network egress
+        control_flags:  job::object::NET_RATE_CONTROL_ENABLE | job::object::NET_RATE_CONTROL_MAX_BANDWIDTH,
+        .. Default::default()
+    }).unwrap();
     // TODO: JOBOBJECT_NET_RATE_CONTROL_INFORMATION to disable network?
     // TODO: JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION[_2] ?
     // TODO: JOBOBJECT_LIMIT_VIOLATION_INFORMATION ?
