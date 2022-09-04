@@ -37,7 +37,6 @@ pub fn create() -> job::OwnedHandle {
         control_flags:  job::object::NET_RATE_CONTROL_ENABLE | job::object::NET_RATE_CONTROL_MAX_BANDWIDTH,
         .. Default::default()
     }).unwrap();
-    // TODO: JOBOBJECT_NET_RATE_CONTROL_INFORMATION to disable network?
     // TODO: JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION[_2] ?
     // TODO: JOBOBJECT_LIMIT_VIOLATION_INFORMATION ?
     // TODO: SetIoRateControlInformationJobObject ?
