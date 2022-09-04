@@ -39,7 +39,7 @@ impl<'s> List<'s> {
 
         let policy2 = None
             | process::creation::mitigation_policy2::loader_integrity_continuity::ALWAYS_ON
-            //| process::creation::mitigation_policy2::strict_control_flow_guard::ALWAYS_ON         // causes ERROR_STRICT_CFG_VIOLATION, even if our executables are built with -Zbuild-std and -Ccontrol-flow-guard=checks
+            | process::creation::mitigation_policy2::strict_control_flow_guard::ALWAYS_ON
             | process::creation::mitigation_policy2::module_tampering_protection::ALWAYS_ON
             | process::creation::mitigation_policy2::restrict_indirect_branch_prediction::ALWAYS_ON
             | (!target.allow.dynamic_code * process::creation::mitigation_policy2::allow_downgrade_dynamic_code_policy::ALWAYS_OFF)
