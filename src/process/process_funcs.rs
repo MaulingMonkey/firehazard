@@ -32,7 +32,7 @@ pub fn argv_to_command_line_0<A: AsRef<OsStr>>(exe: impl AsRef<Path>, args: impl
 
 /// Escape executable path - like [`argv_to_command_line_0`] - without any arguments.
 #[cfg(std)]
-pub fn exe_to_command_line_0<A: AsRef<OsStr>>(exe: impl AsRef<Path>) -> Vec<u16> {
+pub fn exe_to_command_line_0(exe: impl AsRef<Path>) -> Vec<u16> {
     let args : [&'static str; 0] = [];
     argv_to_command_line_0(exe, args)
 }
