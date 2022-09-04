@@ -49,9 +49,9 @@ abibool                     = "0.5.3"
 #abibool.rev                 = "7998497f56ec339d1cf2ea70532d55550b2380f3"
 
 abistr.default-features     = false
-abistr.version              = "0.2.0-rc2"
-#abistr.git                  = "https://github.com/MaulingMonkey/abistr"
-#abistr.rev                  = "be791b8c6f78fe2399d3f2d0549c43cbe5d74d04"
+#abistr.version              = "0.2.0-rc3"
+abistr.git                  = "https://github.com/MaulingMonkey/abistr"
+abistr.rev                  = "3d57e647dbbdc00f953dea779497758a226d8191"
 
 [target.'cfg(windows)'.dependencies]
 winapi.version = "0.3"

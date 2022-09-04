@@ -6,12 +6,11 @@ use crate::*;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/secauthz/privilege-constants)\]
 /// Privilege name, referencing a [privilege](https://docs.microsoft.com/en-us/windows/win32/secauthz/privilege-constants#constants) such as `"SeShutdownPrivilege"`
-#[derive(Clone, Copy, Debug)] #[repr(transparent)] pub struct Name(&'static str);
+#[derive(Clone, Copy, Debug)] #[repr(transparent)] pub struct Name(CStrNonNull<'static>);
 
 impl Name {
     pub fn luid(self) -> privilege::Luid {
-        let n = CStrNonNull::from_units_with_nul(self.0.as_bytes()).unwrap();
-        privilege::lookup_privilege_value_a(n).unwrap()
+        privilege::lookup_privilege_value_a(self.0).unwrap()
     }
 }
 
@@ -21,7 +20,7 @@ impl From<Name> for privilege::Luid { fn from(n: Name) -> Self { n.luid() } }
 /// SE_*_NAME
 pub mod name {
     use super::*;
-    macro_rules! name { ( $name:tt ) => { Name(concat!($name, "\0")) } }
+    macro_rules! name { ( $name:tt ) => { Name(abistr::cstr!($name)) } }
 
     // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h
     // Line 11396 .. 11431

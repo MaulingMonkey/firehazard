@@ -10,18 +10,16 @@ checksum = "0bd30f59e066010fda3421085177545205e1fd063de54700e9c7a6ceffad2e5e"
 
 [[package]]
 name = "abistr"
-version = "0.2.0-rc2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "58642716402495b50138a9aba7ca2854ab73147621249d8ab3e0b610bdc1fd4d"
+version = "0.0.0-git"
+source = "git+https://github.com/MaulingMonkey/abistr?rev=3d57e647dbbdc00f953dea779497758a226d8191#3d57e647dbbdc00f953dea779497758a226d8191"
 dependencies = [
  "abistr-macros",
 ]
 
 [[package]]
 name = "abistr-macros"
-version = "0.2.0-rc2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "13f20d88ba0fa44a8a39460f54eb919b5b7d34f62f84ceb70dd2bd5a3073db91"
+version = "0.0.0-git"
+source = "git+https://github.com/MaulingMonkey/abistr?rev=3d57e647dbbdc00f953dea779497758a226d8191#3d57e647dbbdc00f953dea779497758a226d8191"
 
 [[package]]
 name = "firehazard"
