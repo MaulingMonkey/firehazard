@@ -1,7 +1,5 @@
 use firehazard::*;
 
-use abistr::*;
-
 use std::collections::*;
 use std::path::PathBuf;
 
@@ -59,7 +57,7 @@ impl Target {
         let build = if cfg!(debug_assertions) { "debug" } else { "release" };
         let arch = "x86_64-pc-windows-msvc"; // XXX
 
-        let se_change_notify_privilege = lookup_privilege_value_a(cstr!("SeChangeNotifyPrivilege")).unwrap();
+        let se_change_notify_privilege = privilege::name::CHANGE_NOTIFY.luid();
         let mut targets = vec![
             Target {
                 exe: manifest_dir.join(format!(r"crates\no-std\target\{build}\trivial.exe")),
