@@ -69,3 +69,11 @@ pub const SYSTEMPARAMETERS : Flags = Flags(winapi::um::winnt::JOB_OBJECT_UILIMIT
 
 /// Forbids writing data to the clipboard.
 pub const WRITECLIPBOARD : Flags = Flags(winapi::um::winnt::JOB_OBJECT_UILIMIT_WRITECLIPBOARD);
+
+pub const NONE : Flags = Flags(winapi::um::winnt::JOB_OBJECT_UILIMIT_NONE);
+pub const IME : Flags = Flags(JOB_OBJECT_UILIMIT_IME);
+pub const ALL : FlagsMask = FlagsMask(JOB_OBJECT_UILIMIT_ALL);
+
+// C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h
+const JOB_OBJECT_UILIMIT_IME : u32 = 0x00000100;
+const JOB_OBJECT_UILIMIT_ALL : u32 = 0x000001FF;

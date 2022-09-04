@@ -17,6 +17,12 @@ pub mod object {
     pub mod limit;
     pub mod uilimit;
 
+    // Valid Job Object Limits - C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h
+    pub const LIMIT_VALID_FLAGS              : limit::FlagsMask = limit::FlagsMask(winapi::um::winnt::JOB_OBJECT_LIMIT_VALID_FLAGS);
+    pub const BASIC_LIMIT_VALID_FLAGS        : limit::FlagsMask = limit::FlagsMask(winapi::um::winnt::JOB_OBJECT_BASIC_LIMIT_VALID_FLAGS);
+    pub const EXTENDED_LIMIT_VALID_FLAGS     : limit::FlagsMask = limit::FlagsMask(winapi::um::winnt::JOB_OBJECT_EXTENDED_LIMIT_VALID_FLAGS);
+    pub const NOTIFICATION_LIMIT_VALID_FLAGS : limit::FlagsMask = limit::FlagsMask(winapi::um::winnt::JOB_OBJECT_NOTIFICATION_LIMIT_VALID_FLAGS);
+
     mod basic_accounting_information;   pub use basic_accounting_information::*;
     mod basic_ui_restrictions;          pub use basic_ui_restrictions::*;
     mod cpu_rate_control;               pub use cpu_rate_control::*;
