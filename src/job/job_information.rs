@@ -13,16 +13,12 @@ use core::mem::{size_of, MaybeUninit};
 /// QueryInformationJobObject parameters
 pub trait QueryInformation : Sized                                          { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error>; }
 //impl QueryInformation for JOBOBJECT_BASIC_PROCESS_ID_LIST                   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_header(job, JobObjectBasicProcessIdList) } } } // trailing array
-impl QueryInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION             { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectLimitViolationInformation) } } }
-impl QueryInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2           { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_fixed(job, JobObjectLimitViolationInformation2) } } }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
 /// SetInformationJobObject parameters
 pub trait SetInformation                                            { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error>; }
 
 impl SetInformation for JOBOBJECT_ASSOCIATE_COMPLETION_PORT         { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectAssociateCompletionPortInformation, &self) } } }
-impl SetInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION       { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectLimitViolationInformation, &self) } } }
-impl SetInformation for JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2     { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectLimitViolationInformation2, &self) } } }
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]

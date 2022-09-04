@@ -29,7 +29,9 @@ pub mod object {
     mod end_of_job_time;                pub use end_of_job_time::*;
     mod group_information;              pub use group_information::*;
     mod limit_information;              pub use limit_information::*;
+    mod limit_violation_information;    pub use limit_violation_information::*;
     mod net_rate_control;               pub use net_rate_control::*;
     mod notification_limit_information; pub use notification_limit_information::*;
+    mod rate_control_tolerance;         pub use rate_control_tolerance::*;
     mod security_limit_information;     //pub use security_limit_information::*;
 }
