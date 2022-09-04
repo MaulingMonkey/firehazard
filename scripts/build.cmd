@@ -29,10 +29,11 @@ cargo test --workspace
 cargo build --examples
 @if ERRORLEVEL 1 goto :die
 
-target\debug\examples\max_sandbox.exe >NUL 2>NUL
+target\debug\examples\max_sandbox.exe >NUL
 @if ERRORLEVEL 1 goto :die
 
 
 
 :die
+@if ERRORLEVEL 1 echo BUILD ERRORS BUILD ERRORS BUILD ERRORS BUILD ERRORS BUILD ERRORS
 @popd && endlocal && exit /b %ERRORLEVEL%

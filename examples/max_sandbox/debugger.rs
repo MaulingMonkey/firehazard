@@ -39,11 +39,11 @@ pub fn debug_loop(
                     //0x8007045A                      => "ERROR_DLL_INIT_FAILED",
                     _                               => "???",
                 };
-                eprintln!("[{dwProcessId}:{dwThreadId}] exception: {ty} ({code})");
+                println!("[{dwProcessId}:{dwThreadId}] exception: {ty} ({code})");
                 dbg_exception_not_handled();
             },
             CreateThread(event) => {
-                eprintln!("[{dwProcessId}:{dwThreadId}] thread created");
+                println!("[{dwProcessId}:{dwThreadId}] thread created");
                 let mut thread = event.hThread;
 
                 let process = get_current_process().as_handle();
@@ -56,7 +56,7 @@ pub fn debug_loop(
                 dbg_continue();
             },
             CreateProcess(event) => {
-                eprintln!("[{dwProcessId}:{dwThreadId}] process created");
+                println!("[{dwProcessId}:{dwThreadId}] process created");
                 let mut thread = event.hThread;
 
                 let process = get_current_process().as_handle();
@@ -69,13 +69,13 @@ pub fn debug_loop(
                 dbg_continue();
             },
             ExitThread(event) => {
-                eprintln!("[{dwProcessId}:{dwThreadId}] thread exited with code: {:?}", Error::from(event.dwExitCode));
+                println!("[{dwProcessId}:{dwThreadId}] thread exited with code: {:?}", Error::from(event.dwExitCode));
                 let _thread = threads.remove(&dwThreadId);
                 debug_assert!(_thread.is_some());
                 dbg_continue();
             },
             ExitProcess(event) => {
-                eprintln!("[{dwProcessId}:{dwThreadId}] process exited with code: {:?}", Error::from(event.dwExitCode));
+                println!("[{dwProcessId}:{dwThreadId}] process exited with code: {:?}", Error::from(event.dwExitCode));
                 let _thread = threads.remove(&dwThreadId);
                 debug_assert!(_thread.is_some());
                 dbg_continue();
@@ -85,13 +85,13 @@ pub fn debug_loop(
                 let hfile = unsafe { io::FileHandle::from_raw(event.hFile) }.unwrap();
                 let image_name = get_final_path_name_by_handle(hfile, 0).unwrap();
 
-                eprintln!("[{dwProcessId}:{dwThreadId}] dll loaded: {image_name:?}");
+                println!("[{dwProcessId}:{dwThreadId}] dll loaded: {image_name:?}");
                 let _prev_name = dlls.insert(event.lpBaseOfDll, image_name);
                 dbg_continue();
             },
             UnloadDll(event)  => {
                 let image_name = dlls.remove(&event.lpBaseOfDll).unwrap_or_default();
-                eprintln!("[{dwProcessId}:{dwThreadId}] dll unloaded: {image_name:?}");
+                println!("[{dwProcessId}:{dwThreadId}] dll unloaded: {image_name:?}");
                 dbg_continue();
             },
             DebugString(event) => {
@@ -108,7 +108,7 @@ pub fn debug_loop(
                     let nul = buffer.iter().position(|ch| *ch == 0).unwrap_or(buffer.len());
                     String::from_utf8_lossy(buffer.split_at(nul).0).into_owned()
                 };
-                eprintln!("[{dwProcessId}:{dwThreadId}] debug string: {:?}", narrow);
+                println!("[{dwProcessId}:{dwThreadId}] debug string: {:?}", narrow);
                 if narrow == "sandbox" {
                     for thread in threads.values() { suspend_thread(thread).unwrap(); }
                     debug_active_process_stop(pi.process_id).unwrap();
@@ -118,14 +118,14 @@ pub fn debug_loop(
                     for thread in threads.values() { resume_thread(thread).unwrap(); }
                     threads.clear();
                     sandboxed = true;
-                    eprintln!("[{dwProcessId}:{dwThreadId}] sandboxed");
+                    println!("[{dwProcessId}:{dwThreadId}] sandboxed");
                     break;
                 } else {
                     dbg_continue();
                 }
             },
             Rip(_event) => {
-                eprintln!("[{dwProcessId}:{dwThreadId}] rip event: {{ dwError: {}, dwType: {} }}", _event.dwError, _event.dwType);
+                println!("[{dwProcessId}:{dwThreadId}] rip event: {{ dwError: {}, dwType: {} }}", _event.dwError, _event.dwType);
                 dbg_continue();
             },
             _ => {},
