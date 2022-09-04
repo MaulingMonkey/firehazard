@@ -9,7 +9,6 @@
 
 use crate::*;
 use winapi::um::winnt::JOBOBJECT_SECURITY_LIMIT_INFORMATION;
-use core::mem::{align_of, size_of};
 
 
 
@@ -26,8 +25,13 @@ use core::mem::{align_of, size_of};
     pub restricted_sids:        Option<token::BoxTokenGroups>,
 }
 
-const _ : () = assert!(align_of::<SecurityLimitInformation>() == align_of::<JOBOBJECT_SECURITY_LIMIT_INFORMATION>());
-const _ : () = assert!(size_of ::<SecurityLimitInformation>() == size_of ::<JOBOBJECT_SECURITY_LIMIT_INFORMATION>());
+structure!(@assert layout SecurityLimitInformation => JOBOBJECT_SECURITY_LIMIT_INFORMATION {
+    security_limit_flags    == SecurityLimitFlags,
+    job_token               == JobToken,
+    sids_to_disable         == SidsToDisable,
+    privileges_to_delete    == PrivilegesToDelete,
+    restricted_sids         == RestrictedSids,
+});
 
 //impl job::QueryInformation for JOBOBJECT_SECURITY_LIMIT_INFORMATION   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_header(job, JobObjectSecurityLimitInformation) } } } // self-referential pointers? (sids)
 //impl job::SetInformation for JOBOBJECT_SECURITY_LIMIT_INFORMATION     { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectSecurityLimitInformation, &self) } } } // interior pointers

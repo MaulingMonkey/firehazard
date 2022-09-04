@@ -1,7 +1,6 @@
 use crate::*;
 use winapi::shared::ntdef;
 use winapi::um::winnt::{self, JobObjectGroupInformation, JobObjectGroupInformationEx};
-use core::mem::{align_of, size_of};
 
 
 
@@ -23,10 +22,17 @@ use core::mem::{align_of, size_of};
     #[doc(hidden)] pub _reserved: [u16; 3],
 }
 
-const _ : () = assert!(align_of::<GroupAffinity>() == align_of::<ntdef::GROUP_AFFINITY>());
-const _ : () = assert!(align_of::<GroupAffinity>() == align_of::<winnt::GROUP_AFFINITY>());
-const _ : () = assert!(size_of ::<GroupAffinity>() == size_of ::<ntdef::GROUP_AFFINITY>());
-const _ : () = assert!(size_of ::<GroupAffinity>() == size_of ::<winnt::GROUP_AFFINITY>());
+structure!(@assert layout GroupAffinity => ntdef::GROUP_AFFINITY {
+    mask        == Mask,
+    group       == Group,
+    _reserved   == Reserved,
+});
+
+structure!(@assert layout GroupAffinity => winnt::GROUP_AFFINITY {
+    mask        == Mask,
+    group       == Group,
+    _reserved   == Reserved,
+});
 
 #[cfg(std)] impl job::QueryInformation for Vec<Group>                   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_vec(job, JobObjectGroupInformation  ) } } }
 #[cfg(std)] impl job::QueryInformation for Vec<GroupAffinity>           { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_vec(job, JobObjectGroupInformationEx) } } }

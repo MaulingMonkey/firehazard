@@ -1,6 +1,6 @@
 use crate::*;
 use winapi::um::processthreadsapi::PROCESS_INFORMATION;
-use core::mem::{align_of, size_of, transmute};
+use core::mem::{transmute};
 
 
 
@@ -13,8 +13,13 @@ use core::mem::{align_of, size_of, transmute};
     pub process_id: process::Id,
     pub thread_id:  thread::Id,
 }
-const _ : () = assert!(align_of::<process::Information>() == align_of::<PROCESS_INFORMATION>());
-const _ : () = assert!(size_of ::<process::Information>() == size_of ::<PROCESS_INFORMATION>());
+
+structure!(@assert layout Information => PROCESS_INFORMATION {
+    process     == hProcess,
+    thread      == hThread,
+    process_id  == dwProcessId,
+    thread_id   == dwThreadId,
+});
 
 impl AsRef<PROCESS_INFORMATION> for process::Information { fn as_ref(&self) -> &PROCESS_INFORMATION { unsafe { transmute(self) } } }
 

@@ -1,11 +1,8 @@
 use crate::*;
 use winapi::um::winnt::{JOBOBJECT_BASIC_LIMIT_INFORMATION, JOBOBJECT_EXTENDED_LIMIT_INFORMATION, JobObjectBasicLimitInformation, JobObjectExtendedLimitInformation};
-use core::mem::{align_of, size_of};
 
 
 
-const _ : () = assert!(align_of::<BasicLimitInformation>() == align_of::<JOBOBJECT_BASIC_LIMIT_INFORMATION>());
-const _ : () = assert!(size_of ::<BasicLimitInformation>() == size_of ::<JOBOBJECT_BASIC_LIMIT_INFORMATION>());
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_limit_information)\]
 /// JOBOBJECT_BASIC_LIMIT_INFORMATION
 #[derive(Clone, Copy, Debug, Default)]
@@ -21,10 +18,20 @@ const _ : () = assert!(size_of ::<BasicLimitInformation>() == size_of ::<JOBOBJE
     pub scheduling_class:               u32,    // 0 ..= 9 (default: 5)
 }
 
+structure!(@assert layout BasicLimitInformation => JOBOBJECT_BASIC_LIMIT_INFORMATION {
+    per_process_user_time_limit == PerProcessUserTimeLimit,
+    per_job_user_time_limit     == PerJobUserTimeLimit,
+    limit_flags                 == LimitFlags,
+    minimum_working_set_size    == MinimumWorkingSetSize,
+    maximum_working_set_size    == MaximumWorkingSetSize,
+    active_process_limit        == ActiveProcessLimit,
+    affinity                    == Affinity,
+    priority_class              == PriorityClass,
+    scheduling_class            == SchedulingClass,
+});
 
 
-const _ : () = assert!(align_of::<ExtendedLimitInformation>() == align_of::<JOBOBJECT_EXTENDED_LIMIT_INFORMATION>());
-const _ : () = assert!(size_of ::<ExtendedLimitInformation>() == size_of ::<JOBOBJECT_EXTENDED_LIMIT_INFORMATION>());
+
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_extended_limit_information)\]
 /// JOBOBJECT_EXTENDED_LIMIT_INFORMATION
 #[derive(Clone, Copy, Debug, Default)]
@@ -36,6 +43,15 @@ const _ : () = assert!(size_of ::<ExtendedLimitInformation>() == size_of ::<JOBO
     pub peak_process_memory_used:       usize,  // bytes
     pub peak_job_memory_used:           usize,  // bytes
 }
+
+structure!(@assert layout ExtendedLimitInformation => JOBOBJECT_EXTENDED_LIMIT_INFORMATION {
+    basic_limit_information     == BasicLimitInformation,
+    io_info                     == IoInfo,
+    process_memory_limit        == ProcessMemoryLimit,
+    job_memory_limit            == JobMemoryLimit,
+    peak_process_memory_used    == PeakProcessMemoryUsed,
+    peak_job_memory_used        == PeakJobMemoryUsed,
+});
 
 
 

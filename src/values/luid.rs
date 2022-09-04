@@ -2,7 +2,6 @@ use winapi::shared::ntdef::LUID;
 
 use core::fmt::{self, Debug, Formatter};
 use core::hash::Hash;
-use core::mem::{size_of, align_of};
 
 
 
@@ -19,5 +18,4 @@ impl PartialOrd for Luid { fn partial_cmp(&self, other: &Self) -> Option<core::c
 impl Ord        for Luid { fn cmp(&self, other: &Self) -> core::cmp::Ordering { u64::from(*self).cmp(&u64::from(*other)) } }
 impl Hash       for Luid { fn hash<H: core::hash::Hasher>(&self, state: &mut H) { u64::from(*self).hash(state) } }
 
-const _ : () = assert!(size_of ::<LUID>() == size_of ::<Luid>());
-const _ : () = assert!(align_of::<LUID>() == align_of::<Luid>());
+structure!(@assert layout Luid => LUID {});

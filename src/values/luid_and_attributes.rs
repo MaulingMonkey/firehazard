@@ -1,7 +1,6 @@
+use crate::*;
 use winapi::um::winnt::LUID_AND_ATTRIBUTES;
-
 use core::fmt::{self, Debug, Formatter};
-use core::mem::{align_of, size_of};
 
 
 
@@ -11,8 +10,11 @@ use core::mem::{align_of, size_of};
     pub luid:       Luid,
     pub attributes: u32,
 }
-const _ : () = assert!(align_of::<LUID_AND_ATTRIBUTES>() == align_of::<LuidAndAttributes<crate::Luid>>());
-const _ : () = assert!(size_of ::<LUID_AND_ATTRIBUTES>() == size_of ::<LuidAndAttributes<crate::Luid>>());
+
+structure!(@assert layout LuidAndAttributes<Luid> => LUID_AND_ATTRIBUTES {
+    luid        == Luid,
+    attributes  == Attributes,
+});
 
 impl<Luid> LuidAndAttributes<Luid> {
     pub fn new(luid: impl Into<Luid>, attributes: u32) -> Self {

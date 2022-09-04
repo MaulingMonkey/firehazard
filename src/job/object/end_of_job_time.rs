@@ -1,7 +1,6 @@
 use crate::*;
 use winapi::um::winnt::*;
 use core::fmt::{self, Debug, Formatter};
-use core::mem::{align_of, size_of};
 
 
 
@@ -11,6 +10,12 @@ use core::mem::{align_of, size_of};
 #[repr(C)] pub struct EndOfJobTimeInformation {
     pub end_of_job_time_action: EndOfJobTimeAction,
 }
+
+structure!(@assert layout EndOfJobTimeInformation => JOBOBJECT_END_OF_JOB_TIME_INFORMATION {
+    end_of_job_time_action  == EndOfJobTimeAction,
+});
+
+structure!(@assert layout EndOfJobTimeAction => JOBOBJECT_END_OF_JOB_TIME_INFORMATION {});
 
 
 
@@ -39,12 +44,6 @@ impl Debug for EndOfJobTimeAction {
 }
 
 
-
-const _ : () = assert!(align_of::<EndOfJobTimeInformation>() == align_of::<JOBOBJECT_END_OF_JOB_TIME_INFORMATION>());
-const _ : () = assert!(size_of ::<EndOfJobTimeInformation>() == size_of ::<JOBOBJECT_END_OF_JOB_TIME_INFORMATION>());
-
-const _ : () = assert!(align_of::<EndOfJobTimeAction>() == align_of::<JOBOBJECT_END_OF_JOB_TIME_INFORMATION>());
-const _ : () = assert!(size_of ::<EndOfJobTimeAction>() == size_of ::<JOBOBJECT_END_OF_JOB_TIME_INFORMATION>());
 
 impl job::QueryInformation for JOBOBJECT_END_OF_JOB_TIME_INFORMATION    { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
 impl job::QueryInformation for job::object::EndOfJobTimeInformation     { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectEndOfJobTimeInformation) } } }

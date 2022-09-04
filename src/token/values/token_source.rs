@@ -1,7 +1,6 @@
 use crate::*;
 use abistr::*;
 use winapi::um::winnt::{TOKEN_SOURCE_LENGTH, TOKEN_SOURCE};
-use core::mem::{align_of, size_of};
 
 
 
@@ -12,8 +11,11 @@ use core::mem::{align_of, size_of};
     pub source_name:        CStrBuf<u8, TOKEN_SOURCE_LENGTH>,
     pub source_identifier:  Luid,
 }
-const _ : () = assert!(align_of::<Source>() == align_of::<TOKEN_SOURCE>());
-const _ : () = assert!(size_of ::<Source>() == size_of ::<TOKEN_SOURCE>());
+
+structure!(@assert layout token::Source => TOKEN_SOURCE {
+    source_name         == SourceName,
+    source_identifier   == SourceIdentifier,
+});
 
 impl AsRef<TOKEN_SOURCE> for Source { fn as_ref(&    self) -> &    TOKEN_SOURCE { unsafe { core::mem::transmute(self) } } }
 impl AsMut<TOKEN_SOURCE> for Source { fn as_mut(&mut self) -> &mut TOKEN_SOURCE { unsafe { core::mem::transmute(self) } } }

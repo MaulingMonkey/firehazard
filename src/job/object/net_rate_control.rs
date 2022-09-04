@@ -1,12 +1,8 @@
 use crate::*;
 use winapi::um::winnt::{JOBOBJECT_NET_RATE_CONTROL_INFORMATION, JobObjectNetRateControlInformation};
 use core::fmt::{self, Debug, Formatter};
-use core::mem::{align_of, size_of};
 
 
-
-const _ : () = assert!(align_of::<NetRateControlInformation>() == align_of::<JOBOBJECT_NET_RATE_CONTROL_INFORMATION>());
-const _ : () = assert!(size_of ::<NetRateControlInformation>() == size_of ::<JOBOBJECT_NET_RATE_CONTROL_INFORMATION>());
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_net_rate_control_information)\]
 /// JOBOBJECT_NET_RATE_CONTROL_INFORMATION
@@ -25,6 +21,12 @@ const _ : () = assert!(size_of ::<NetRateControlInformation>() == size_of ::<JOB
     /// Ignored unless [`control_flags`](Self::control_flags) has [`NET_RATE_CONTROL_ENABLE`] and [`NET_RATE_CONTROL_DSCP_TAG`] set?
     pub dscp_tag:       u8,
 }
+
+structure!(@assert layout NetRateControlInformation => JOBOBJECT_NET_RATE_CONTROL_INFORMATION {
+    max_bandwidth   == MaxBandwidth,
+    control_flags   == ControlFlags,
+    dscp_tag        == DscpTag,
+});
 
 // TODO: utility constructor/builder methods?
 

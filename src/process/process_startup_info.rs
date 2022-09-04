@@ -6,7 +6,7 @@ use winapi::shared::winerror::ERROR_INCORRECT_SIZE;
 use winapi::um::processthreadsapi::{STARTUPINFOA, STARTUPINFOW};
 use winapi::um::winbase::{STARTUPINFOEXA, STARTUPINFOEXW};
 
-use core::mem::{align_of, size_of, transmute};
+use core::mem::{size_of, transmute};
 
 
 
@@ -60,6 +60,48 @@ pub type StartupInfoExW<'s> = StartupInfoEx<'s, u16>;
     pub std_error:      Option<io::WriteHandle<'s>>,
 }
 
+structure!(@assert layout process::StartupInfoA => STARTUPINFOA {
+    cb              == cb,
+    _reserved       == lpReserved,
+    desktop         == lpDesktop,
+    title           == lpTitle,
+    x               == dwX,
+    y               == dwY,
+    x_size          == dwXSize,
+    y_size          == dwYSize,
+    x_count_chars   == dwXCountChars,
+    y_count_chars   == dwYCountChars,
+    fill_attribute  == dwFillAttribute,
+    flags           == dwFlags,
+    show_window     == wShowWindow,
+    _cb_reserved_2  == cbReserved2,
+    _lp_reserved_2  == lpReserved2,
+    std_input       == hStdInput,
+    std_output      == hStdOutput,
+    std_error       == hStdError,
+});
+
+structure!(@assert layout process::StartupInfoW => STARTUPINFOW {
+    cb              == cb,
+    _reserved       == lpReserved,
+    desktop         == lpDesktop,
+    title           == lpTitle,
+    x               == dwX,
+    y               == dwY,
+    x_size          == dwXSize,
+    y_size          == dwYSize,
+    x_count_chars   == dwXCountChars,
+    y_count_chars   == dwYCountChars,
+    fill_attribute  == dwFillAttribute,
+    flags           == dwFlags,
+    show_window     == wShowWindow,
+    _cb_reserved_2  == cbReserved2,
+    _lp_reserved_2  == lpReserved2,
+    std_input       == hStdInput,
+    std_output      == hStdOutput,
+    std_error       == hStdError,
+});
+
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-startupinfoexa)\]
 /// STARTUPINFOEX
 #[derive(Debug)]
@@ -68,15 +110,15 @@ pub type StartupInfoExW<'s> = StartupInfoEx<'s, u16>;
     pub attribute_list: Option<process::ThreadAttributeList<'s>>, // XXX: some borrowing option might be nicer, would re-enable Clone
 }
 
-const _ : () = assert!(align_of::<process::StartupInfoA>() == align_of::<STARTUPINFOA>());
-const _ : () = assert!(size_of ::<process::StartupInfoA>() == size_of ::<STARTUPINFOA>());
-const _ : () = assert!(align_of::<process::StartupInfoW>() == align_of::<STARTUPINFOW>());
-const _ : () = assert!(size_of ::<process::StartupInfoW>() == size_of ::<STARTUPINFOW>());
+structure!(@assert layout process::StartupInfoExA => STARTUPINFOEXA {
+    startup_info    == StartupInfo,
+    attribute_list  == lpAttributeList,
+});
 
-const _ : () = assert!(align_of::<process::StartupInfoExA>() == align_of::<STARTUPINFOEXA>());
-const _ : () = assert!(size_of ::<process::StartupInfoExA>() == size_of ::<STARTUPINFOEXA>());
-const _ : () = assert!(align_of::<process::StartupInfoExW>() == align_of::<STARTUPINFOEXW>());
-const _ : () = assert!(size_of ::<process::StartupInfoExW>() == size_of ::<STARTUPINFOEXW>());
+structure!(@assert layout process::StartupInfoExW => STARTUPINFOEXW {
+    startup_info    == StartupInfo,
+    attribute_list  == lpAttributeList,
+});
 
 impl AsRef<STARTUPINFOA> for StartupInfoA<'_> { fn as_ref(&self) -> &STARTUPINFOA { unsafe { transmute(self) } } }
 impl AsRef<STARTUPINFOW> for StartupInfoW<'_> { fn as_ref(&self) -> &STARTUPINFOW { unsafe { transmute(self) } } }

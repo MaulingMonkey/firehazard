@@ -3,7 +3,6 @@ use crate::*;
 use winapi::um::winnt::SID_AND_ATTRIBUTES;
 
 use core::fmt::{self, Debug, Formatter};
-use core::mem::{align_of, size_of};
 
 
 
@@ -13,8 +12,11 @@ use core::mem::{align_of, size_of};
     pub sid:        sid::Ptr<'a>,
     pub attributes: u32,
 }
-const _ : () = assert!(align_of::<SID_AND_ATTRIBUTES>() == align_of::<sid::AndAttributes>());
-const _ : () = assert!(size_of ::<SID_AND_ATTRIBUTES>() == size_of ::<sid::AndAttributes>());
+
+structure!(@assert layout sid::AndAttributes => SID_AND_ATTRIBUTES {
+    sid             == Sid,
+    attributes      == Attributes,
+});
 
 impl<'a> sid::AndAttributes<'a> {
     pub fn new(sid: impl Into<sid::Ptr<'a>>, attributes: u32) -> Self {

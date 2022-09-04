@@ -1,6 +1,5 @@
 use crate::*;
 use winapi::um::winnt::ACE_HEADER;
-use core::mem::{align_of, size_of};
 
 
 
@@ -18,5 +17,11 @@ use core::mem::{align_of, size_of};
     pub flags:  ace::Flags,
     pub size:   u16,
 }
-const _ : () = assert!(align_of::<ACE_HEADER>() <= align_of::<ace::Header>());
-const _ : () = assert!(size_of ::<ACE_HEADER>() == size_of ::<ace::Header>());
+
+const _ : () = assert!(core::mem::align_of::<ace::Header>() >= core::mem::align_of::<ACE_HEADER>()); // See "ABI Differences" above
+
+structure!(@assert layout -align ace::Header => ACE_HEADER {
+    ty      == AceType,
+    flags   == AceFlags,
+    size    == AceSize,
+});

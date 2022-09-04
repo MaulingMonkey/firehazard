@@ -1,6 +1,5 @@
 use crate::*;
 use winapi::um::winnt::IO_COUNTERS;
-use core::mem::{align_of, size_of};
 
 
 
@@ -16,5 +15,11 @@ use core::mem::{align_of, size_of};
     pub other_transfer_count:   u64,
 }
 
-const _ : () = assert!(align_of::<io::Counters>() == align_of::<IO_COUNTERS>());
-const _ : () = assert!(size_of ::<io::Counters>() == size_of ::<IO_COUNTERS>());
+structure!(@assert layout io::Counters => IO_COUNTERS {
+    read_operation_count    == ReadOperationCount,
+    write_operation_count   == WriteOperationCount,
+    other_operation_count   == OtherOperationCount,
+    read_transfer_count     == ReadTransferCount,
+    write_transfer_count    == WriteTransferCount,
+    other_transfer_count    == OtherTransferCount,
+});
