@@ -19,6 +19,10 @@ use core::ptr::{null_mut, null};
 
 
 
+/// Escape executable path + arguments in the format expected by typical applications that use [`CommandLineToArgv`](https://docs.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw) or similar to feed their main/WinMain argv arrays.
+/// Be aware that some applications - notably including `cmd.exe` - may have their own nonstandard freeform command line parsing logic.
+/// There's not much a generic crate like this can do to help with those - you're on your own with that.
+/// Good luck!
 #[cfg(std)]
 pub fn argv_to_command_line_0<A: AsRef<OsStr>>(exe: impl AsRef<Path>, args: impl IntoIterator<Item = A>) -> Vec<u16> {
     let mut cl = Vec::new();
@@ -26,8 +30,15 @@ pub fn argv_to_command_line_0<A: AsRef<OsStr>>(exe: impl AsRef<Path>, args: impl
     cl
 }
 
+/// Escape executable path - like [`argv_to_command_line_0`] - without any arguments.
 #[cfg(std)]
-pub fn argv_to_command_line_0_inplace<A: AsRef<OsStr>>(exe: impl AsRef<Path>, args: impl IntoIterator<Item = A>, command_line: &mut Vec<u16>) {
+pub fn exe_to_command_line_0<A: AsRef<OsStr>>(exe: impl AsRef<Path>) -> Vec<u16> {
+    let args : [&'static str; 0] = [];
+    argv_to_command_line_0(exe, args)
+}
+
+#[cfg(std)]
+fn argv_to_command_line_0_inplace<A: AsRef<OsStr>>(exe: impl AsRef<Path>, args: impl IntoIterator<Item = A>, command_line: &mut Vec<u16>) {
     const QUOTE     : u16 = b'\"' as u16;
     const BACKSLASH : u16 = b'\\' as u16;
     command_line.clear();
