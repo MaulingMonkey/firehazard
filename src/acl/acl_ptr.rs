@@ -56,8 +56,8 @@ impl Ptr<'_> {
 
     /// ### Safety
     /// *   `class` must be valid and must match `T`
-    unsafe fn get_acl_information<T>(&self, class: u32) -> T {
-        let mut info = unsafe { core::mem::zeroed::<T>() };
+    unsafe fn get_acl_information<T: Default>(&self, class: u32) -> T {
+        let mut info : T = Default::default();
         let success = 0 != unsafe { GetAclInformation(self.0, &mut info as *mut _ as *mut _, core::mem::size_of::<T>() as _, class) };
         assert!(success, "GetAclInformation failed with {:?}", Error::get_last());
         info

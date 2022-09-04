@@ -10,7 +10,7 @@ use winapi::um::libloaderapi::GetModuleHandleW;
 use winapi::um::wingdi::{CreateSolidBrush, RGB};
 use winapi::um::winuser::*;
 
-use std::mem::{zeroed, size_of};
+use std::mem::size_of;
 use std::ptr::{null_mut, null};
 use std::time::{Instant, Duration};
 
@@ -27,7 +27,7 @@ fn main() {
         .map(|_| Instant::now() + Duration::from_secs(1));
 
     loop {
-        let mut msg : MSG = unsafe { zeroed() };
+        let mut msg : MSG = Default::default();
         while unsafe { PeekMessageW(&mut msg, null_mut(), 0, 0, PM_REMOVE) } != 0 {
             match msg.message {
                 WM_QUIT => std::process::exit(msg.wParam as _),
@@ -78,7 +78,7 @@ fn register_window_class() -> ATOM {
         lpszClassName:  cstr16!("ui_basic_window").as_ptr(),
         lpfnWndProc:    Some(wndproc),
         hbrBackground:  bg,
-        .. zeroed()
+        .. Default::default()
     })};
     assert!(atom != 0, "RegisterClassExW failed with GetLastError()={:?}", Error::get_last());
 

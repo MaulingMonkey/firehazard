@@ -42,7 +42,7 @@ impl Value {
         // it appears PSID points to void, not SID, for whatever twisted reason.
 
         let system_name = null_mut();
-        let mut object_attributes = unsafe { core::mem::zeroed::<LSA_OBJECT_ATTRIBUTES>() };
+        let mut object_attributes = LSA_OBJECT_ATTRIBUTES::default();
         object_attributes.Length = core::mem::size_of_val(&object_attributes) as _;
         let desired_access = POLICY_LOOKUP_NAMES;
         let mut policy = null_mut();

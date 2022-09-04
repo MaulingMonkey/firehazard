@@ -11,7 +11,7 @@ use winapi::um::winnt::SECURITY_CAPABILITIES;
 
 use core::fmt::{self, Debug, Formatter};
 use core::marker::PhantomData;
-use core::mem::{zeroed, size_of_val};
+use core::mem::size_of_val;
 use core::ptr::null_mut;
 
 
@@ -36,7 +36,7 @@ impl<'a> ThreadAttributeList<'a> {
     pub fn with_attribute_capacity(attributes: u32) -> Result<Self, Error> {
         let mut bytes = 0;
         let _ = unsafe { InitializeProcThreadAttributeList(null_mut(), attributes, 0, &mut bytes) }; // fails w/ ERROR_INSUFFICIENT_BUFFER
-        let mut cb = CBox::<PROC_THREAD_ATTRIBUTE_LIST>::new_oversized(unsafe{zeroed()}, bytes);
+        let mut cb = CBox::<PROC_THREAD_ATTRIBUTE_LIST>::new_oversized(Default::default(), bytes);
         Error::get_last_if(FALSE == unsafe { InitializeProcThreadAttributeList(cb.as_mut_ptr(), attributes, 0, &mut bytes) })?;
         Ok(Self(cb, PhantomData))
     }

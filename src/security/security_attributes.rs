@@ -8,13 +8,11 @@ use core::ptr::null;
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa379560(v=vs.85))\]
 /// SECURITY_ATTRIBUTES
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Default)]
 #[repr(transparent)] pub struct Attributes<'sd> {
     attributes:  SECURITY_ATTRIBUTES,
     phantom:     PhantomData<security::Descriptor<'sd>>,
 }
-
-impl<'sd> Default for Attributes<'sd> { fn default() -> Self { unsafe { core::mem::zeroed() } } }
 
 impl<'sd> Attributes<'sd> {
     pub fn new(security_descriptor: Option<&'sd security::Descriptor<'sd>>, inherit_handle: bool) -> Self {

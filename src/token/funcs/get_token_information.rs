@@ -10,7 +10,6 @@ use winapi::shared::winerror::*;
 use winapi::um::securitybaseapi::GetTokenInformation;
 use winapi::um::winnt::*;
 
-use core::mem::zeroed;
 use core::ops::Deref;
 use core::ptr::null_mut;
 
@@ -238,10 +237,10 @@ unsafe fn raw_len(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS) ->
 ///
 /// ### Safety
 /// *   `class` might need to be a valid token information class?
-unsafe fn raw_bytes<T>(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS) -> Result<CBoxSized<T>, Error> {
+unsafe fn raw_bytes<T: Default>(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS) -> Result<CBoxSized<T>, Error> {
     let mut size = 0;
     let r_size = unsafe { raw_len(token, class)? };
-    let mut result = CBoxSized::<T>::new_oversized(unsafe{zeroed()}, usize::from32(r_size));
+    let mut result = CBoxSized::<T>::new_oversized(T::default(), usize::from32(r_size));
     Error::get_last_if(0 == unsafe { GetTokenInformation(token.as_handle(), class, result.as_mut_ptr().cast(), r_size, &mut size) })?;
     if size != r_size { return Err(Error(ERROR_INCORRECT_SIZE)) }
     Ok(result)
@@ -257,9 +256,9 @@ unsafe fn raw_bytes<T>(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLAS
 /// ### Errors
 /// *   `ERROR_INVALID_PARAMETER` / `87` - handle is wrong token type for query?
 /// *   `ERROR_INSUFFICIENT_BUFFER` / `122` - `R` is wrong type? or merely a header for a longer blob of data?
-unsafe fn raw_fixed<R: Copy>(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS) -> Result<R, Error> {
+unsafe fn raw_fixed<R: Copy + Default>(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS) -> Result<R, Error> {
     let mut size = 0;
-    let mut r = unsafe { core::mem::zeroed::<R>() };
+    let mut r = R::default();
     let r_size = u32::try_from(core::mem::size_of_val(&r)).map_err(|_| Error(ERROR_INSUFFICIENT_BUFFER))?;
     Error::get_last_if(0 == unsafe { GetTokenInformation(token.as_handle(), class, &mut r as *mut _ as *mut _, r_size, &mut size) })?;
     if size != r_size { return Err(Error(ERROR_INCORRECT_SIZE)) }
@@ -294,7 +293,7 @@ unsafe fn raw_bool(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS) -
 /// ### Safety
 /// *   `class` might need to be a valid token information class?
 /// *   `R` should probably be bytemuck::Zeroable or equivalent
-unsafe fn raw_header<H: Copy>(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS) -> Result<impl Deref<Target = H>, Error> {
+unsafe fn raw_header<H: Copy + Default>(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS) -> Result<impl Deref<Target = H>, Error> {
     let cbs = unsafe { raw_bytes::<H>(token, class)? };
     Ok(CBox::from(cbs))
 }

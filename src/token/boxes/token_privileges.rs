@@ -6,7 +6,7 @@ use crate::alloc::*;
 use winapi::um::winnt::TOKEN_PRIVILEGES;
 
 use core::fmt::{self, Debug, Formatter};
-use core::mem::{size_of, align_of, size_of_val, zeroed};
+use core::mem::{size_of, align_of, size_of_val};
 
 
 
@@ -49,7 +49,7 @@ impl From<&'_ [privilege::LuidAndAttributes]> for BoxTokenPrivileges {
     fn from(laa: &'_ [privilege::LuidAndAttributes]) -> Self {
         let len32 = u32::try_from(laa.len()).unwrap();
         let n_bytes = BoxTokenPrivileges::PRIVILEGES_OFFSET + size_of_val(laa).max(size_of::<privilege::LuidAndAttributes>());
-        let mut data = CBoxSized::<TOKEN_PRIVILEGES>::new_oversized(unsafe{zeroed()}, n_bytes);
+        let mut data = CBoxSized::<TOKEN_PRIVILEGES>::new_oversized(Default::default(), n_bytes);
         data.PrivilegeCount = len32;
         let mut data = BoxTokenPrivileges::from_raw(data);
         data.privileges_mut().copy_from_slice(laa);

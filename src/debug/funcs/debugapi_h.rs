@@ -7,7 +7,6 @@ use winapi::shared::minwindef::FALSE;
 use winapi::um::debugapi::*;
 use winapi::um::winbase::INFINITE;
 
-use core::mem::zeroed;
 use core::time::Duration;
 
 
@@ -123,7 +122,7 @@ pub fn output_debug_string_w(output_string: impl AsCStr<u16>) {
 /// WaitForDebugEvent
 pub fn wait_for_debug_event(timeout: impl Into<Option<Duration>>) -> Result<DebugEvent, Error> {
     let timeout_ms = timeout.into().map_or(INFINITE, |d| u32::try_from(d.as_millis()).unwrap_or(INFINITE).max(INFINITE-1));
-    let mut de = unsafe { zeroed() };
+    let mut de = Default::default();
     Error::get_last_if(FALSE == unsafe { WaitForDebugEvent(&mut de, timeout_ms) })?;
     Ok(unsafe { DebugEvent::from_raw(de) })
 }
@@ -132,7 +131,7 @@ pub fn wait_for_debug_event(timeout: impl Into<Option<Duration>>) -> Result<Debu
 /// WaitForDebugEventEx
 pub fn wait_for_debug_event_ex(timeout: impl Into<Option<Duration>>) -> Result<DebugEvent, Error> {
     let timeout_ms = timeout.into().map_or(INFINITE, |d| u32::try_from(d.as_millis()).unwrap_or(INFINITE).max(INFINITE-1));
-    let mut de = unsafe { zeroed() };
+    let mut de = Default::default();
     Error::get_last_if(FALSE == unsafe { WaitForDebugEventEx(&mut de, timeout_ms) })?;
     Ok(unsafe { DebugEvent::from_raw(de) })
 }

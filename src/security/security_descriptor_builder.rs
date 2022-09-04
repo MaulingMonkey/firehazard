@@ -6,7 +6,6 @@ use winapi::um::securitybaseapi::*;
 use winapi::um::winnt::*;
 
 use core::marker::PhantomData;
-use core::mem::zeroed;
 use core::ptr::null_mut;
 
 
@@ -23,7 +22,7 @@ impl DescriptorBuilder<'static> {
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-initializesecuritydescriptor)\]
     /// InitializeSecurityDescriptor
     fn new_revision(revision: u32) -> Result<Self, Error> {
-        let mut b = Self(Descriptor { desc: unsafe { zeroed() }, phantom: PhantomData });
+        let mut b = Self(Descriptor { desc: Default::default(), phantom: PhantomData });
         Error::get_last_if(FALSE == unsafe { InitializeSecurityDescriptor(b.as_pdesc(), revision) })?;
         Ok(b)
     }

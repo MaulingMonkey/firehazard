@@ -8,7 +8,7 @@ use core::fmt::{self, Debug, Formatter};
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-token_type)\]
 /// TOKEN_TYPE
-#[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Type(TOKEN_TYPE);
 
 impl Type {

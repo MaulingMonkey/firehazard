@@ -56,6 +56,9 @@ abistr.rev                  = "3d57e647dbbdc00f953dea779497758a226d8191"
 [target.'cfg(windows)'.dependencies]
 winapi.version = "0.3"
 winapi.features = [
+    # common
+    "impl-default",
+
     # shared
     "bcrypt",
     "sddl",

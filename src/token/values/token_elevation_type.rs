@@ -11,6 +11,8 @@ use core::fmt::{self, Debug, Formatter};
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct ElevationType(TOKEN_ELEVATION_TYPE);
 
+impl Default for ElevationType { fn default() -> Self { Self::Default } } // nonzero
+
 impl ElevationType {
     /// ### Safety
     ///

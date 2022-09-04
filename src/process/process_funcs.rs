@@ -15,7 +15,6 @@ use winapi::um::winbase::*;
 #[cfg(std)] use std::os::windows::prelude::*;
 #[cfg(std)] use std::path::Path;
 
-use core::mem::zeroed;
 use core::ptr::{null_mut, null};
 
 
@@ -95,7 +94,7 @@ pub fn create_process_a(
 ) -> Result<process::Information, Error> {
     if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be NUL terminated
     let creation_flags = creation_flags.into().into();
-    let mut process_information = unsafe { zeroed() };
+    let mut process_information = Default::default();
 
     Error::get_last_if(0 == unsafe { CreateProcessA(
         application_name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
@@ -129,7 +128,7 @@ pub fn create_process_w(
 ) -> Result<process::Information, Error> {
     if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be NUL terminated
     let creation_flags = creation_flags.into().into();
-    let mut process_information = unsafe { zeroed() };
+    let mut process_information = Default::default();
 
     Error::get_last_if(0 == unsafe { CreateProcessW(
         application_name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
@@ -177,7 +176,7 @@ pub fn create_process_as_user_a(
 ) -> Result<process::Information, Error> {
     if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be NUL terminated
     let creation_flags = creation_flags.into().into();
-    let mut process_information = unsafe { zeroed() };
+    let mut process_information = Default::default();
 
     extern "system" { fn CreateProcessAsUserA(
         hToken: HANDLE,
@@ -243,7 +242,7 @@ pub fn create_process_as_user_w(
 ) -> Result<process::Information, Error> {
     if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be NUL terminated
     let creation_flags = creation_flags.into().into();
-    let mut process_information = unsafe { zeroed() };
+    let mut process_information = Default::default();
 
     Error::get_last_if(0 == unsafe { CreateProcessAsUserW(
         token.as_handle(),
