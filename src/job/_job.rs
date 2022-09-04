@@ -17,6 +17,7 @@ pub mod object {
     pub mod limit;
     pub mod uilimit;
 
+    mod basic_accounting_information;   pub use basic_accounting_information::*;
     mod basic_ui_restrictions;          pub use basic_ui_restrictions::*;
     mod cpu_rate_control;               pub use cpu_rate_control::*;
     mod end_of_job_time;                pub use end_of_job_time::*;
