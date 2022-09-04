@@ -16,5 +16,5 @@ use core::mem::{align_of, size_of};
     pub other_transfer_count:   u64,
 }
 
-const _ALIGN_IO : () = assert!(align_of::<io::Counters>() == align_of::<IO_COUNTERS>());
-const _SIZE_IO  : () = assert!(size_of ::<io::Counters>() == size_of ::<IO_COUNTERS>());
+const _ : () = assert!(align_of::<io::Counters>() == align_of::<IO_COUNTERS>());
+const _ : () = assert!(size_of ::<io::Counters>() == size_of ::<IO_COUNTERS>());

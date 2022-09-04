@@ -18,5 +18,6 @@ impl Eq         for Luid {}
 impl PartialOrd for Luid { fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> { u64::from(*self).partial_cmp(&u64::from(*other)) } }
 impl Ord        for Luid { fn cmp(&self, other: &Self) -> core::cmp::Ordering { u64::from(*self).cmp(&u64::from(*other)) } }
 impl Hash       for Luid { fn hash<H: core::hash::Hasher>(&self, state: &mut H) { u64::from(*self).hash(state) } }
-const _LUID_SIZE  : () = assert!(size_of ::<LUID>() == size_of ::<Luid>());
-const _LUID_ALIGN : () = assert!(align_of::<LUID>() == align_of::<Luid>());
+
+const _ : () = assert!(size_of ::<LUID>() == size_of ::<Luid>());
+const _ : () = assert!(align_of::<LUID>() == align_of::<Luid>());

@@ -68,15 +68,15 @@ pub type StartupInfoExW<'s> = StartupInfoEx<'s, u16>;
     pub attribute_list: Option<process::ThreadAttributeList<'s>>, // XXX: some borrowing option might be nicer, would re-enable Clone
 }
 
-const _A_ALIGN : () = assert!(align_of::<process::StartupInfoA>() == align_of::<STARTUPINFOA>());
-const _A_SIZE  : () = assert!(size_of ::<process::StartupInfoA>() == size_of ::<STARTUPINFOA>());
-const _W_ALIGN : () = assert!(align_of::<process::StartupInfoW>() == align_of::<STARTUPINFOW>());
-const _W_SIZE  : () = assert!(size_of ::<process::StartupInfoW>() == size_of ::<STARTUPINFOW>());
+const _ : () = assert!(align_of::<process::StartupInfoA>() == align_of::<STARTUPINFOA>());
+const _ : () = assert!(size_of ::<process::StartupInfoA>() == size_of ::<STARTUPINFOA>());
+const _ : () = assert!(align_of::<process::StartupInfoW>() == align_of::<STARTUPINFOW>());
+const _ : () = assert!(size_of ::<process::StartupInfoW>() == size_of ::<STARTUPINFOW>());
 
-const _A_EX_ALIGN : () = assert!(align_of::<process::StartupInfoExA>() == align_of::<STARTUPINFOEXA>());
-const _A_EX_SIZE  : () = assert!(size_of ::<process::StartupInfoExA>() == size_of ::<STARTUPINFOEXA>());
-const _W_EX_ALIGN : () = assert!(align_of::<process::StartupInfoExW>() == align_of::<STARTUPINFOEXW>());
-const _W_EX_SIZE  : () = assert!(size_of ::<process::StartupInfoExW>() == size_of ::<STARTUPINFOEXW>());
+const _ : () = assert!(align_of::<process::StartupInfoExA>() == align_of::<STARTUPINFOEXA>());
+const _ : () = assert!(size_of ::<process::StartupInfoExA>() == size_of ::<STARTUPINFOEXA>());
+const _ : () = assert!(align_of::<process::StartupInfoExW>() == align_of::<STARTUPINFOEXW>());
+const _ : () = assert!(size_of ::<process::StartupInfoExW>() == size_of ::<STARTUPINFOEXW>());
 
 impl AsRef<STARTUPINFOA> for StartupInfoA<'_> { fn as_ref(&self) -> &STARTUPINFOA { unsafe { transmute(self) } } }
 impl AsRef<STARTUPINFOW> for StartupInfoW<'_> { fn as_ref(&self) -> &STARTUPINFOW { unsafe { transmute(self) } } }

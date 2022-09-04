@@ -40,11 +40,11 @@ impl Debug for EndOfJobTimeAction {
 
 
 
-const _ALIGN_INFO : () = assert!(align_of::<EndOfJobTimeInformation>() == align_of::<JOBOBJECT_END_OF_JOB_TIME_INFORMATION>());
-const _SIZE_INFO  : () = assert!(size_of ::<EndOfJobTimeInformation>() == size_of ::<JOBOBJECT_END_OF_JOB_TIME_INFORMATION>());
+const _ : () = assert!(align_of::<EndOfJobTimeInformation>() == align_of::<JOBOBJECT_END_OF_JOB_TIME_INFORMATION>());
+const _ : () = assert!(size_of ::<EndOfJobTimeInformation>() == size_of ::<JOBOBJECT_END_OF_JOB_TIME_INFORMATION>());
 
-const _ALIGN_ACT : () = assert!(align_of::<EndOfJobTimeAction>() == align_of::<JOBOBJECT_END_OF_JOB_TIME_INFORMATION>());
-const _SIZE_ACT  : () = assert!(size_of ::<EndOfJobTimeAction>() == size_of ::<JOBOBJECT_END_OF_JOB_TIME_INFORMATION>());
+const _ : () = assert!(align_of::<EndOfJobTimeAction>() == align_of::<JOBOBJECT_END_OF_JOB_TIME_INFORMATION>());
+const _ : () = assert!(size_of ::<EndOfJobTimeAction>() == size_of ::<JOBOBJECT_END_OF_JOB_TIME_INFORMATION>());
 
 impl job::QueryInformation for JOBOBJECT_END_OF_JOB_TIME_INFORMATION    { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
 impl job::QueryInformation for job::object::EndOfJobTimeInformation     { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectEndOfJobTimeInformation) } } }

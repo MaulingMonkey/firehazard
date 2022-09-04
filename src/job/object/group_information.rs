@@ -23,10 +23,10 @@ use core::mem::{align_of, size_of};
     #[doc(hidden)] pub _reserved: [u16; 3],
 }
 
-const _ALIGN1 : () = assert!(align_of::<GroupAffinity>() == align_of::<ntdef::GROUP_AFFINITY>());
-const _ALIGN2 : () = assert!(align_of::<GroupAffinity>() == align_of::<winnt::GROUP_AFFINITY>());
-const _SIZE1  : () = assert!(size_of ::<GroupAffinity>() == size_of ::<ntdef::GROUP_AFFINITY>());
-const _SIZE2  : () = assert!(size_of ::<GroupAffinity>() == size_of ::<winnt::GROUP_AFFINITY>());
+const _ : () = assert!(align_of::<GroupAffinity>() == align_of::<ntdef::GROUP_AFFINITY>());
+const _ : () = assert!(align_of::<GroupAffinity>() == align_of::<winnt::GROUP_AFFINITY>());
+const _ : () = assert!(size_of ::<GroupAffinity>() == size_of ::<ntdef::GROUP_AFFINITY>());
+const _ : () = assert!(size_of ::<GroupAffinity>() == size_of ::<winnt::GROUP_AFFINITY>());
 
 #[cfg(std)] impl job::QueryInformation for Vec<Group>                   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_vec(job, JobObjectGroupInformation  ) } } }
 #[cfg(std)] impl job::QueryInformation for Vec<GroupAffinity>           { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_vec(job, JobObjectGroupInformationEx) } } }

@@ -5,8 +5,8 @@ use core::mem::{align_of, size_of};
 
 
 
-const _ALIGN : () = assert!(align_of::<CpuRateControlInformation>() == align_of::<JOBOBJECT_CPU_RATE_CONTROL_INFORMATION>());
-const _SIZE  : () = assert!(size_of ::<CpuRateControlInformation>() == size_of ::<JOBOBJECT_CPU_RATE_CONTROL_INFORMATION>());
+const _ : () = assert!(align_of::<CpuRateControlInformation>() == align_of::<JOBOBJECT_CPU_RATE_CONTROL_INFORMATION>());
+const _ : () = assert!(size_of ::<CpuRateControlInformation>() == size_of ::<JOBOBJECT_CPU_RATE_CONTROL_INFORMATION>());
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information)\]
 /// JOBOBJECT_CPU_RATE_CONTROL_INFORMATION

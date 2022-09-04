@@ -4,8 +4,8 @@ use core::mem::{align_of, size_of};
 
 
 
-const _ALIGN_BASIC: () = assert!(align_of::<BasicLimitInformation>() == align_of::<JOBOBJECT_BASIC_LIMIT_INFORMATION>());
-const _SIZE_BASIC : () = assert!(size_of ::<BasicLimitInformation>() == size_of ::<JOBOBJECT_BASIC_LIMIT_INFORMATION>());
+const _ : () = assert!(align_of::<BasicLimitInformation>() == align_of::<JOBOBJECT_BASIC_LIMIT_INFORMATION>());
+const _ : () = assert!(size_of ::<BasicLimitInformation>() == size_of ::<JOBOBJECT_BASIC_LIMIT_INFORMATION>());
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_limit_information)\]
 /// JOBOBJECT_BASIC_LIMIT_INFORMATION
 #[derive(Clone, Copy, Debug, Default)]
@@ -23,8 +23,8 @@ const _SIZE_BASIC : () = assert!(size_of ::<BasicLimitInformation>() == size_of 
 
 
 
-const _ALIGN_EXT: () = assert!(align_of::<ExtendedLimitInformation>() == align_of::<JOBOBJECT_EXTENDED_LIMIT_INFORMATION>());
-const _SIZE_EXT : () = assert!(size_of ::<ExtendedLimitInformation>() == size_of ::<JOBOBJECT_EXTENDED_LIMIT_INFORMATION>());
+const _ : () = assert!(align_of::<ExtendedLimitInformation>() == align_of::<JOBOBJECT_EXTENDED_LIMIT_INFORMATION>());
+const _ : () = assert!(size_of ::<ExtendedLimitInformation>() == size_of ::<JOBOBJECT_EXTENDED_LIMIT_INFORMATION>());
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_extended_limit_information)\]
 /// JOBOBJECT_EXTENDED_LIMIT_INFORMATION
 #[derive(Clone, Copy, Debug, Default)]

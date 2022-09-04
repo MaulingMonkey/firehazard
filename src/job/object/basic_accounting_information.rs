@@ -4,8 +4,8 @@ use core::mem::{align_of, size_of};
 
 
 
-const _ALIGN_BASIC: () = assert!(align_of::<BasicAccountingInformation>() == align_of::<JOBOBJECT_BASIC_ACCOUNTING_INFORMATION>());
-const _SIZE_BASIC : () = assert!(size_of ::<BasicAccountingInformation>() == size_of ::<JOBOBJECT_BASIC_ACCOUNTING_INFORMATION>());
+const _ : () = assert!(align_of::<BasicAccountingInformation>() == align_of::<JOBOBJECT_BASIC_ACCOUNTING_INFORMATION>());
+const _ : () = assert!(size_of ::<BasicAccountingInformation>() == size_of ::<JOBOBJECT_BASIC_ACCOUNTING_INFORMATION>());
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_accounting_information)\]
 /// JOBOBJECT_BASIC_ACCOUNTING_INFORMATION
@@ -23,8 +23,8 @@ const _SIZE_BASIC : () = assert!(size_of ::<BasicAccountingInformation>() == siz
 
 
 
-const _ALIGN_BASIC_AND_IO : () = assert!(align_of::<BasicAndIoAccountingInformation>() == align_of::<JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION>());
-const _SIZE_BASIC_AND_IO  : () = assert!(size_of ::<BasicAndIoAccountingInformation>() == size_of ::<JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION>());
+const _ : () = assert!(align_of::<BasicAndIoAccountingInformation>() == align_of::<JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION>());
+const _ : () = assert!(size_of ::<BasicAndIoAccountingInformation>() == size_of ::<JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION>());
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_and_io_accounting_information)\]
 /// JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION
