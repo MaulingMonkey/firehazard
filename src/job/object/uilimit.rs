@@ -33,6 +33,7 @@ impl Debug for Flags {
             JOB_OBJECT_UILIMIT_READCLIPBOARD,
             JOB_OBJECT_UILIMIT_SYSTEMPARAMETERS,
             JOB_OBJECT_UILIMIT_WRITECLIPBOARD,
+            JOB_OBJECT_UILIMIT_IME,
         ])
     }
 }
