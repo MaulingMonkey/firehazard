@@ -53,6 +53,9 @@ abistr.default-features     = false
 abistr.git                  = "https://github.com/MaulingMonkey/abistr"
 abistr.rev                  = "3d57e647dbbdc00f953dea779497758a226d8191"
 
+bytemuck.version            = "1"
+bytemuck.features           = ["derive"]
+
 [target.'cfg(windows)'.dependencies]
 winapi.version = "0.3"
 winapi.features = [

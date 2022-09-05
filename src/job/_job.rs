@@ -23,15 +23,16 @@ pub mod object {
     pub const EXTENDED_LIMIT_VALID_FLAGS     : limit::FlagsMask = limit::FlagsMask(winapi::um::winnt::JOB_OBJECT_EXTENDED_LIMIT_VALID_FLAGS);
     pub const NOTIFICATION_LIMIT_VALID_FLAGS : limit::FlagsMask = limit::FlagsMask(winapi::um::winnt::JOB_OBJECT_NOTIFICATION_LIMIT_VALID_FLAGS);
 
-    mod basic_accounting_information;   pub use basic_accounting_information::*;
-    mod basic_ui_restrictions;          pub use basic_ui_restrictions::*;
-    mod cpu_rate_control;               pub use cpu_rate_control::*;
-    mod end_of_job_time;                pub use end_of_job_time::*;
-    mod group_information;              pub use group_information::*;
-    mod limit_information;              pub use limit_information::*;
-    mod limit_violation_information;    pub use limit_violation_information::*;
-    mod net_rate_control;               pub use net_rate_control::*;
-    mod notification_limit_information; pub use notification_limit_information::*;
-    mod rate_control_tolerance;         pub use rate_control_tolerance::*;
-    mod security_limit_information;     //pub use security_limit_information::*;
+    mod basic_accounting_information;       pub use basic_accounting_information::*;
+    #[cfg(std)] mod basic_process_id_list;  #[cfg(std)] pub use basic_process_id_list::*;
+    mod basic_ui_restrictions;              pub use basic_ui_restrictions::*;
+    mod cpu_rate_control;                   pub use cpu_rate_control::*;
+    mod end_of_job_time;                    pub use end_of_job_time::*;
+    mod group_information;                  pub use group_information::*;
+    mod limit_information;                  pub use limit_information::*;
+    mod limit_violation_information;        pub use limit_violation_information::*;
+    mod net_rate_control;                   pub use net_rate_control::*;
+    mod notification_limit_information;     pub use notification_limit_information::*;
+    mod rate_control_tolerance;             pub use rate_control_tolerance::*;
+    mod security_limit_information;         //pub use security_limit_information::*;
 }

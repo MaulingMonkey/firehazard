@@ -22,11 +22,32 @@ version = "0.0.0-git"
 source = "git+https://github.com/MaulingMonkey/abistr?rev=3d57e647dbbdc00f953dea779497758a226d8191#3d57e647dbbdc00f953dea779497758a226d8191"
 
 [[package]]
+name = "bytemuck"
+version = "1.12.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2f5715e491b5a1598fc2bef5a606847b5dc1d48ea625bd3c02c00de8285591da"
+dependencies = [
+ "bytemuck_derive",
+]
+
+[[package]]
+name = "bytemuck_derive"
+version = "1.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1b9e1f5fa78f69496407a27ae9ed989e3c3b072310286f5ef385525e4cbc24a9"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "firehazard"
 version = "0.0.0-2022-09-03"
 dependencies = [
  "abibool",
  "abistr",
+ "bytemuck",
  "winapi",
 ]
 
@@ -36,6 +57,41 @@ version = "0.0.0"
 dependencies = [
  "firehazard",
 ]
+
+[[package]]
+name = "proc-macro2"
+version = "1.0.43"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0a2ca2c61bc9f3d74d2886294ab7b9853abd9c1ad903a3ac7815c58989bb7bab"
+dependencies = [
+ "unicode-ident",
+]
+
+[[package]]
+name = "quote"
+version = "1.0.21"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbe448f377a7d6961e30f5955f9b8d106c3f5e449d493ee1b125c1d43c2b5179"
+dependencies = [
+ "proc-macro2",
+]
+
+[[package]]
+name = "syn"
+version = "1.0.99"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "58dbef6ec655055e20b86b15a8cc6d439cca19b667537ac6a1369572d151ab13"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "unicode-ident",
+]
+
+[[package]]
+name = "unicode-ident"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c4f5b37a154999a8f3f98cc23a628d850e154479cd94decf3414696e12e31aaf"
 
 [[package]]
 name = "winapi"
