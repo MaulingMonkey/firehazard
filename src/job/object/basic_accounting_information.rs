@@ -44,9 +44,9 @@ structure!(@assert layout BasicAndIoAccountingInformation => JOBOBJECT_BASIC_AND
 
 
 
-impl job::QueryInformation for JOBOBJECT_BASIC_ACCOUNTING_INFORMATION           { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicAccountingInformation) } } }
-impl job::QueryInformation for job::object::BasicAccountingInformation          { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicAccountingInformation) } } }
-impl job::QueryInformation for JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION    { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicAndIoAccountingInformation) } } }
-impl job::QueryInformation for job::object::BasicAndIoAccountingInformation     { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicAndIoAccountingInformation) } } }
+impl job::QueryInformationJobObject for JOBOBJECT_BASIC_ACCOUNTING_INFORMATION           { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicAccountingInformation) } } }
+impl job::QueryInformationJobObject for job::object::BasicAccountingInformation          { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicAccountingInformation) } } }
+impl job::QueryInformationJobObject for JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION    { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicAndIoAccountingInformation) } } }
+impl job::QueryInformationJobObject for job::object::BasicAndIoAccountingInformation     { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicAndIoAccountingInformation) } } }
 
-// not implemented: job::SetInformation
+// not implemented: job::SetInformationJobObject

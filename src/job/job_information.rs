@@ -10,12 +10,12 @@ use core::mem::{size_of, MaybeUninit};
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
-/// QueryInformationJobObject parameters
-pub trait QueryInformation : Sized                                          { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error>; }
+/// [`query_information_job_object`] result
+pub trait QueryInformationJobObject : Sized { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error>; }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
-/// SetInformationJobObject parameters
-pub trait SetInformation                                            { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error>; }
+/// [`set_information_job_object`] parameter
+pub trait SetInformationJobObject { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error>; }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
 /// QueryInformationJobObject

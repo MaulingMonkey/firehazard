@@ -33,5 +33,5 @@ structure!(@assert layout SecurityLimitInformation => JOBOBJECT_SECURITY_LIMIT_I
     restricted_sids         == RestrictedSids,
 });
 
-//impl job::QueryInformation for JOBOBJECT_SECURITY_LIMIT_INFORMATION   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_header(job, JobObjectSecurityLimitInformation) } } } // self-referential pointers? (sids)
-//impl job::SetInformation for JOBOBJECT_SECURITY_LIMIT_INFORMATION     { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectSecurityLimitInformation, &self) } } } // interior pointers
+//impl job::QueryInformationJobObject for JOBOBJECT_SECURITY_LIMIT_INFORMATION   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { query_header(job, JobObjectSecurityLimitInformation) } } } // self-referential pointers? (sids)
+//impl job::SetInformationJobObject for JOBOBJECT_SECURITY_LIMIT_INFORMATION     { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectSecurityLimitInformation, &self) } } } // interior pointers

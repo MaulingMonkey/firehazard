@@ -45,10 +45,10 @@ impl Debug for EndOfJobTimeAction {
 
 
 
-impl job::QueryInformation for JOBOBJECT_END_OF_JOB_TIME_INFORMATION    { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
-impl job::QueryInformation for job::object::EndOfJobTimeInformation     { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
-impl job::QueryInformation for job::object::EndOfJobTimeAction          { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
+impl job::QueryInformationJobObject for JOBOBJECT_END_OF_JOB_TIME_INFORMATION    { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
+impl job::QueryInformationJobObject for job::object::EndOfJobTimeInformation     { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
+impl job::QueryInformationJobObject for job::object::EndOfJobTimeAction          { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
 
-impl job::SetInformation for JOBOBJECT_END_OF_JOB_TIME_INFORMATION      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectEndOfJobTimeInformation, &self) } } }
-impl job::SetInformation for job::object::EndOfJobTimeInformation       { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectEndOfJobTimeInformation, &self) } } }
-impl job::SetInformation for job::object::EndOfJobTimeAction            { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectEndOfJobTimeInformation, &self) } } }
+impl job::SetInformationJobObject for JOBOBJECT_END_OF_JOB_TIME_INFORMATION      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectEndOfJobTimeInformation, &self) } } }
+impl job::SetInformationJobObject for job::object::EndOfJobTimeInformation       { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectEndOfJobTimeInformation, &self) } } }
+impl job::SetInformationJobObject for job::object::EndOfJobTimeAction            { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectEndOfJobTimeInformation, &self) } } }

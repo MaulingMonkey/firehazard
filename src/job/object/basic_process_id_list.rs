@@ -17,7 +17,7 @@ pub struct BasicProcessIdList {
     pub process_id_list:                Vec<usize>,
 }
 
-impl job::QueryInformation for job::object::BasicProcessIdList { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> {
+impl job::QueryInformationJobObject for job::object::BasicProcessIdList { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> {
     let mut process_id_list = unsafe { job::query_vec::<usize>(job, JobObjectBasicProcessIdList) }?;
     let mut header = Header::zeroed();
     let header_bytes = size_of_val(&header);

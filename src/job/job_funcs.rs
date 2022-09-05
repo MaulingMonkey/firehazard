@@ -124,13 +124,12 @@ pub fn open_job_object_w(desired_access: impl Into<access::Mask>, inherit_handle
 ///
 /// ### Example
 /// ```
-/// # use firehazard::*;
-/// # use winapi::shared::winerror::*;
-/// # use winapi::um::winnt::*;
+/// use firehazard::{*, job::object::BasicUiRestrictions};
+///
 /// let job = create_job_object_w(None, ()).unwrap();
-/// let restrictions : JOBOBJECT_BASIC_UI_RESTRICTIONS = query_information_job_object(&job).unwrap();
+/// let restrictions : BasicUiRestrictions = query_information_job_object(&job).unwrap();
 /// ```
-pub fn query_information_job_object<Info: job::QueryInformation>(job: &job::OwnedHandle) -> Result<Info, Error> { Info::query_from(job) }
+pub fn query_information_job_object<Info: job::QueryInformationJobObject>(job: &job::OwnedHandle) -> Result<Info, Error> { Info::query_from(job) }
 
 // "Starting with Windows 10, version 1607, this function is no longer supported."
 // \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryioratecontrolinformationjobobject)\]
@@ -139,27 +138,30 @@ pub fn query_information_job_object<Info: job::QueryInformation>(job: &job::Owne
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
 /// SetInformationJobObject
 ///
-/// ### Example
+/// ### Examples
 /// ```
-/// # use firehazard::*;
 /// # use winapi::shared::winerror::*;
+/// use firehazard::{*, job::object::{uilimit, BasicUiRestrictions}};
 /// let mut job = create_job_object_w(None, ()).unwrap();
 ///
-/// let ui_restrictions_class = unsafe { job::object::uilimit::Flags::from_unchecked(!0) };
-/// assert_eq!(ERROR_INVALID_PARAMETER, set_information_job_object(&mut job, job::object::BasicUiRestrictions { ui_restrictions_class }).unwrap_err());
-///
-/// set_information_job_object(&mut job, job::object::BasicUiRestrictions { ui_restrictions_class: ()
-///     | job::object::uilimit::DESKTOP
-///     | job::object::uilimit::DISPLAYSETTINGS
-///     | job::object::uilimit::EXITWINDOWS
-///     | job::object::uilimit::GLOBALATOMS
-///     | job::object::uilimit::HANDLES
-///     | job::object::uilimit::READCLIPBOARD
-///     | job::object::uilimit::SYSTEMPARAMETERS
-///     | job::object::uilimit::WRITECLIPBOARD
+/// set_information_job_object(&mut job, BasicUiRestrictions {
+///     ui_restrictions_class: ()
+///         | uilimit::DESKTOP
+///         | uilimit::DISPLAYSETTINGS
+///         | uilimit::EXITWINDOWS
+///         | uilimit::GLOBALATOMS
+///         | uilimit::HANDLES
+///         | uilimit::READCLIPBOARD
+///         | uilimit::SYSTEMPARAMETERS
+///         | uilimit::WRITECLIPBOARD
 /// }).unwrap();
+///
+/// let err = set_information_job_object(&mut job, BasicUiRestrictions {
+///     ui_restrictions_class: unsafe { uilimit::Flags::from_unchecked(!0) }
+/// }).unwrap_err();
+/// assert_eq!(ERROR_INVALID_PARAMETER, err);
 /// ```
-pub fn set_information_job_object(job: &job::OwnedHandle, information: impl job::SetInformation) -> Result<(), Error> { information.set_on(job) }
+pub fn set_information_job_object(job: &job::OwnedHandle, information: impl job::SetInformationJobObject) -> Result<(), Error> { information.set_on(job) }
 
 // "Starting with Windows 10, version 1607, this function is no longer supported."
 // \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setioratecontrolinformationjobobject)\]

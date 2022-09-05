@@ -63,12 +63,12 @@ structure!(@assert layout NotificationLimitInformation2 => JOBOBJECT_NOTIFICATIO
 
 
 
-impl job::QueryInformation for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION     { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectNotificationLimitInformation) } } }
-impl job::QueryInformation for job::object::NotificationLimitInformation    { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectNotificationLimitInformation) } } }
-impl job::QueryInformation for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION_2   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectNotificationLimitInformation2) } } }
-impl job::QueryInformation for job::object::NotificationLimitInformation2   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectNotificationLimitInformation2) } } }
+impl job::QueryInformationJobObject for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION     { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectNotificationLimitInformation) } } }
+impl job::QueryInformationJobObject for job::object::NotificationLimitInformation    { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectNotificationLimitInformation) } } }
+impl job::QueryInformationJobObject for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION_2   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectNotificationLimitInformation2) } } }
+impl job::QueryInformationJobObject for job::object::NotificationLimitInformation2   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectNotificationLimitInformation2) } } }
 
-impl job::SetInformation for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION       { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectNotificationLimitInformation, &self) } } }
-impl job::SetInformation for job::object::NotificationLimitInformation      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectNotificationLimitInformation, &self) } } }
-impl job::SetInformation for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION_2     { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectNotificationLimitInformation2, &self) } } }
-impl job::SetInformation for job::object::NotificationLimitInformation2     { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectNotificationLimitInformation2, &self) } } }
+impl job::SetInformationJobObject for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION       { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectNotificationLimitInformation, &self) } } }
+impl job::SetInformationJobObject for job::object::NotificationLimitInformation      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectNotificationLimitInformation, &self) } } }
+impl job::SetInformationJobObject for JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION_2     { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectNotificationLimitInformation2, &self) } } }
+impl job::SetInformationJobObject for job::object::NotificationLimitInformation2     { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectNotificationLimitInformation2, &self) } } }
