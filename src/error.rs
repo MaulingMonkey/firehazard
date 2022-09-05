@@ -35,6 +35,8 @@ impl Error {
             ERROR_INVALID_PARAMETER         => "ERROR_INVALID_PARAMETER",       // 87
             ERROR_EXCL_SEM_ALREADY_OWNED    => "ERROR_EXCL_SEM_ALREADY_OWNED",  // 101
             ERROR_INSUFFICIENT_BUFFER       => "ERROR_INSUFFICIENT_BUFFER",     // 122
+            ERROR_BAD_ARGUMENTS             => "ERROR_BAD_ARGUMENTS",           // 160
+            ERROR_BAD_PATHNAME              => "ERROR_BAD_PATHNAME",            // 161
             ERROR_BUSY                      => "ERROR_BUSY",                    // 170
             ERROR_PARTIAL_COPY              => "ERROR_PARTIAL_COPY",            // 299
             ERROR_NO_TOKEN                  => "ERROR_NO_TOKEN",                // 1008
