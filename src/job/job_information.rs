@@ -18,9 +18,6 @@ pub trait QueryInformation : Sized                                          { fn
 /// SetInformationJobObject parameters
 pub trait SetInformation                                            { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error>; }
 
-impl SetInformation for JOBOBJECT_ASSOCIATE_COMPLETION_PORT         { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { set(job, JobObjectAssociateCompletionPortInformation, &self) } } }
-
-
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
 /// QueryInformationJobObject
 pub(super) unsafe fn query_fixed<T>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS) -> Result<T, Error> {
