@@ -21,6 +21,10 @@ pub type HANDLENN = NonNull<c_void>;
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
 /// CloseHandle
 ///
+/// Explicitly close a file handle.  This is generally not necessary - owned handle types will automatically close
+/// themselves when dropped - but for those niche use cases where you want to inspect the error code by closing said
+/// handle yourself - perhaps as part of a 1:1, no behavior changes port of some existing code? - this function is provided.
+///
 /// ### Example
 /// ```
 /// # #[cfg(std)] {
@@ -30,6 +34,7 @@ pub type HANDLENN = NonNull<c_void>;
 /// let dangling = unsafe { thread::OwnedHandle::from_raw(thread.as_handle()).unwrap() };
 /// let _ : ()    = close_handle( thread ).unwrap();
 /// let e : Error = close_handle(dangling).unwrap_err();
+/// // strict handle checks, if enabled, will kill the process before reaching this code:
 /// assert_eq!(ERROR_INVALID_HANDLE, e);
 /// # }
 /// ```
