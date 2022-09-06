@@ -13,16 +13,71 @@ use core::ptr::null;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopa)\]
-/// CreateDesktopA
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-closedesktop)\]
+/// CloseDesktop
+///
+/// Explicitly close a desktop handle.
+/// This is generally not necessary - owned handle types will automatically close themselves when dropped.
+/// While there is a semi-regular error, `ERROR_BUSY`, that will be returned if you try to close a handle that's bound
+/// with `SetThreadDesktop`, [`with_thread_desktop`] prohibits this at compile time by borrowing said handle.
+/// So, this error should only really happen if you're bypassing this crate and using C++ - or FFI - to `SetThreadDesktop`.
+/// It is *not* an error for *another* handle to the same desktop to be active on the current thread.
+///
+/// Note the awkward error type: ([desktop::OwnedHandle], [Error])
 ///
 /// ### Example
 /// ```
 /// # use firehazard::*;
 /// # use firehazard::access::*;
 /// # use abistr::cstr;
-/// let desktop = create_desktop_a(cstr!("PlaygroundDesktop"), (), None, None, GENERIC_ALL, None).unwrap();
-/// # let desktop = create_desktop_a(cstr!("PlaygroundDesktop"), (), None, None, GENERIC_ALL, None).unwrap();
+/// # use winapi::shared::winerror::*;
+/// let desktop1 = create_desktop_a(cstr!("close_desktop_1"), (), None, None, GENERIC_ALL, None).unwrap();
+/// close_desktop(desktop1).unwrap();
+///
+/// let desktop2a   = create_desktop_a(cstr!("close_desktop_2"), (), None, None, GENERIC_ALL, None).unwrap();
+/// let desktop2bee = open_desktop_a(  cstr!("close_desktop_2"), None, false, GENERIC_ALL).unwrap();
+/// with_thread_desktop(&desktop2a, || {
+///     close_desktop(desktop2bee).unwrap(); // closeable
+///
+///     // compile error - borrowed by with_thread_desktop:
+///     // close_desktop(desktop2a).unwrap_err();
+///
+///     // cursed as heck - 2nd owner of same handle, not panic safe, evil demo purpouses only:
+///     let desktop2a = unsafe { desktop::OwnedHandle::from_raw_nn(desktop2a.as_handle_nn()) };
+///     let (desktop2a, error) = close_desktop(desktop2a).unwrap_err();
+///     std::mem::forget(desktop2a); // uncurse: eliminate 2nd owner of same handle
+///     assert_eq!(ERROR_BUSY, error); // handle in use by current thread
+/// }).unwrap();
+/// let _ : () = close_desktop(desktop2a).unwrap();
+///
+/// // No, you can't use `close_handle`:
+/// let desktop = create_desktop_a(cstr!("close_desktop_3"), (), None, None, GENERIC_ALL, None).unwrap();
+/// let dupe = unsafe { desktop::OwnedHandle::from_raw_nn(desktop.as_handle_nn()) };
+/// assert_eq!(ERROR_INVALID_HANDLE, close_handle(dupe).unwrap_err());
+/// let _ : () = close_desktop(desktop).unwrap();
+/// ```
+pub fn close_desktop(desktop: impl Into<desktop::OwnedHandle>) -> Result<(), (desktop::OwnedHandle, Error)> {
+    let desktop = desktop.into();
+    if FALSE != unsafe { CloseDesktop(desktop.as_handle()) } {
+        core::mem::forget(desktop);
+        Ok(())
+    } else {
+        Err((desktop, Error::get_last()))
+    }
+}
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopa)\]
+/// CreateDesktopA
+///
+/// Create or open an existing desktop.
+///
+/// ### Example
+/// ```
+/// # use firehazard::*;
+/// # use firehazard::access::*;
+/// # use abistr::cstr;
+/// let a = create_desktop_a(cstr!("create_desktop_a"), (), None, None, GENERIC_ALL, None).unwrap();
+/// let b = create_desktop_a(cstr!("create_desktop_a"), (), None, None, GENERIC_ALL, None).unwrap();
 /// ```
 pub fn create_desktop_a(
     desktop:        impl TryIntoAsCStr,
@@ -47,13 +102,15 @@ pub fn create_desktop_a(
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopw)\]
 /// CreateDesktopW
 ///
+/// Create or open an existing desktop.
+///
 /// ### Example
 /// ```
 /// # use firehazard::*;
 /// # use firehazard::access::*;
 /// # use abistr::cstr16;
-/// let desktop = create_desktop_w(cstr16!("PlaygroundDesktop"), (), None, None, GENERIC_ALL, None).unwrap();
-/// # let desktop = create_desktop_w(cstr16!("PlaygroundDesktop"), (), None, None, GENERIC_ALL, None).unwrap();
+/// let a = create_desktop_w(cstr16!("create_desktop_w"), (), None, None, GENERIC_ALL, None).unwrap();
+/// # let b = create_desktop_w(cstr16!("create_desktop_w"), (), None, None, GENERIC_ALL, None).unwrap();
 /// ```
 pub fn create_desktop_w(
     desktop:        impl TryIntoAsCStr<u16>,
@@ -198,6 +255,8 @@ pub fn open_thread_desktop(thread_id: thread::Id) -> Result<desktop::OwnedHandle
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-opendesktopa)\]
 /// OpenDesktopA
 ///
+/// Open an existing desktop.
+///
 /// ### Example
 /// ```
 /// # use firehazard::*;
@@ -223,6 +282,8 @@ pub fn open_desktop_a(
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-opendesktopw)\]
 /// OpenDesktopW
+///
+/// Open an existing desktop.
 ///
 /// ### Example
 /// ```
@@ -269,6 +330,8 @@ pub fn open_input_desktop(
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-switchdesktop)\]
 /// SwitchDesktop
 ///
+/// Make the specified desktop the visible desktop.
+///
 /// ### Example
 /// ```no_run
 /// # use firehazard::*;
@@ -291,8 +354,10 @@ pub fn switch_desktop(desktop: &desktop::OwnedHandle) -> Result<(), Error> {
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setthreaddesktop)\]
 /// SetThreadDesktop x2 + GetThreadDesktop
 ///
+/// Temporarilly set the thread's desktop.
+///
 /// ### ⚠️ Warning ⚠️
-/// New child processes appear to inherit the process's initial desktop, not the thread's current desktop.
+/// New child processes appear to inherit the **process**'s initial desktop, not the thread's current desktop.
 /// To spawn a child process on a new desktop, instead specify [process::StartupInfoW::desktop].
 ///
 /// ### Example
