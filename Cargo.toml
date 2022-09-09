@@ -6,7 +6,7 @@ exclude                     = ["crates/no-std"] # separate workspace
 
 [package]
 name                        = "firehazard"
-version                     = "0.0.0-2022-09-03"
+version                     = "0.0.0-2022-09-09"
 # rust-version              = "1.63" # TODO: verify or downlevel
 description                 = "Unopinionated low level API bindings focused on soundness, safety, and stronger types over raw FFI."
 authors                     = ["MaulingMonkey <git@maulingmonkey.com>"]
@@ -49,9 +49,9 @@ abibool                     = "0.5.3"
 #abibool.rev                 = "7998497f56ec339d1cf2ea70532d55550b2380f3"
 
 abistr.default-features     = false
-#abistr.version              = "0.2.0-rc3"
-abistr.git                  = "https://github.com/MaulingMonkey/abistr"
-abistr.rev                  = "3d57e647dbbdc00f953dea779497758a226d8191"
+abistr.version              = "0.2.0-rc3"
+#abistr.git                  = "https://github.com/MaulingMonkey/abistr"
+#abistr.rev                  = "3d57e647dbbdc00f953dea779497758a226d8191"
 
 bytemuck.version            = "1"
 bytemuck.features           = ["derive"]

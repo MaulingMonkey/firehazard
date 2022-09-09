@@ -10,8 +10,9 @@ checksum = "0bd30f59e066010fda3421085177545205e1fd063de54700e9c7a6ceffad2e5e"
 
 [[package]]
 name = "abistr"
-version = "0.0.0-git"
-source = "git+https://github.com/MaulingMonkey/abistr?rev=3d57e647dbbdc00f953dea779497758a226d8191#3d57e647dbbdc00f953dea779497758a226d8191"
+version = "0.2.0-rc3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e7de73941ad2564b82f4ac974b9df97f7033adf8773074cbb24cb1d358519f52"
 dependencies = [
  "abistr-macros",
  "widestring",
@@ -19,8 +20,9 @@ dependencies = [
 
 [[package]]
 name = "abistr-macros"
-version = "0.0.0-git"
-source = "git+https://github.com/MaulingMonkey/abistr?rev=3d57e647dbbdc00f953dea779497758a226d8191#3d57e647dbbdc00f953dea779497758a226d8191"
+version = "0.2.0-rc3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8aeb952f369a5255b28bd4d57984d84edc2d3b5ee72c93427b47b703e1df8e15"
 
 [[package]]
 name = "addr2line"
@@ -614,7 +616,7 @@ dependencies = [
 
 [[package]]
 name = "firehazard"
-version = "0.0.0-2022-09-03"
+version = "0.0.0-2022-09-09"
 dependencies = [
  "abibool",
  "abistr",
