@@ -10,6 +10,10 @@ fn main() {
 
     if std { println!("cargo:rustc-cfg=std"); }
 
+    if cfg!(windows) { windows_only() }
+}
+
+fn windows_only() {
     // https://en.wikipedia.org/wiki/Microsoft_Visual_Studio#History
     let vsv = std::env::var("VisualStudioVersion").unwrap_or_default();
     let (vs_major, _vs_minor_etc) = vsv.split_once('.').unwrap_or((vsv.as_str(), ""));
