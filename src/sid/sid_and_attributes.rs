@@ -2,15 +2,13 @@ use crate::*;
 
 use winapi::um::winnt::SID_AND_ATTRIBUTES;
 
-use core::fmt::{self, Debug, Formatter};
-
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid_and_attributes)\] ~ SID_AND_ATTRIBUTES ~ (sid::Ptr, u32)
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 #[repr(C)] pub struct AndAttributes<'a> {
     pub sid:        sid::Ptr<'a>,
-    pub attributes: u32,
+    pub attributes: sid::Attributes,
 }
 
 structure!(@assert layout sid::AndAttributes => SID_AND_ATTRIBUTES {
@@ -19,22 +17,11 @@ structure!(@assert layout sid::AndAttributes => SID_AND_ATTRIBUTES {
 });
 
 impl<'a> sid::AndAttributes<'a> {
-    pub fn new(sid: impl Into<sid::Ptr<'a>>, attributes: u32) -> Self {
-        Self { sid: sid.into(), attributes }
+    pub fn new(sid: impl Into<sid::Ptr<'a>>, attributes: impl Into<sid::Attributes>) -> Self {
+        Self { sid: sid.into(), attributes: attributes.into() }
     }
 }
 
 // safe wrapper type -> unsafe raw winapi type (1-way)
 impl<'a> AsRef<SID_AND_ATTRIBUTES> for sid::AndAttributes<'a> { fn as_ref(&self) -> &SID_AND_ATTRIBUTES { unsafe { core::mem::transmute(self) } } }
 impl<'a> From<sid::AndAttributes<'a>> for SID_AND_ATTRIBUTES { fn from(ts: sid::AndAttributes<'a>) -> Self { *ts.as_ref() } }
-
-impl Debug for sid::AndAttributes<'_> {
-    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-        struct AsHex(u32);
-        impl Debug for AsHex { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "0x{:08x}", self.0) } }
-        fmt.debug_struct("sid::AndAttributes")
-            .field("sid", &self.sid)
-            .field("attributes", &AsHex(self.attributes))
-            .finish()
-    }
-}

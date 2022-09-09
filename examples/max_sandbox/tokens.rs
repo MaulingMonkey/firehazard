@@ -17,7 +17,7 @@ pub fn create(target: &crate::settings::Target) -> Tokens {
         None,
         |saa| !target.spawn.enabled.iter().any(|e| *saa.sid == **e),
         |p| !target.spawn.privileges.contains(&p.luid),
-        Some(&target.spawn.restricted.as_ref().unwrap_or(&all_group_sids).iter().copied().map(|r| sid::AndAttributes::new(r, 0)).collect::<Vec<_>>()[..]),
+        Some(&target.spawn.restricted.as_ref().unwrap_or(&all_group_sids).iter().copied().map(|r| sid::AndAttributes::new(r, None)).collect::<Vec<_>>()[..]),
     ).unwrap();
 
     let restricted = create_restricted_token_filter(
@@ -25,11 +25,11 @@ pub fn create(target: &crate::settings::Target) -> Tokens {
         None,
         |saa| !target.lockdown.enabled.iter().any(|e| *saa.sid == **e),
         |p| !target.lockdown.privileges.contains(&p.luid),
-        Some(&target.lockdown.restricted.as_ref().unwrap_or(&all_group_sids).iter().copied().map(|r| sid::AndAttributes::new(r, 0)).collect::<Vec<_>>()[..]),
+        Some(&target.lockdown.restricted.as_ref().unwrap_or(&all_group_sids).iter().copied().map(|r| sid::AndAttributes::new(r, None)).collect::<Vec<_>>()[..]),
     ).unwrap();
 
-    permissive.set_integrity_level(sid::AndAttributes::new(&target.spawn.integrity, 0)).unwrap();
-    restricted.set_integrity_level(sid::AndAttributes::new(&target.spawn.integrity, 0)).unwrap(); // lower child token to target.lockdown.integrity post-spawn
+    permissive.set_integrity_level(sid::AndAttributes::new(&target.spawn.integrity, None)).unwrap();
+    restricted.set_integrity_level(sid::AndAttributes::new(&target.spawn.integrity, None)).unwrap(); // lower child token to target.lockdown.integrity post-spawn
     let permissive = duplicate_token_ex(&permissive, token::ALL_ACCESS, None, security::Impersonation, token::Impersonation).unwrap(); // primary -> impersonation token
 
     if false { // the need for this is currently being eliminated via abuse of the debugger APIs
