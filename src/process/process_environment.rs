@@ -30,9 +30,9 @@ unsafe impl TryIntoEnvironment for &'_ [u8] {
 }
 
 // Encoding is arguably confused here... but I'm pretty sure I'm okay with that?
-            unsafe impl TryIntoEnvironment for &'_ str    { fn as_env_ptr(&self, expect_unicode: bool) -> Result<LPVOID, Error> { TryIntoEnvironment::as_env_ptr(&self.as_bytes(), expect_unicode) } }
-#[cfg(std)] unsafe impl TryIntoEnvironment for &'_ String { fn as_env_ptr(&self, expect_unicode: bool) -> Result<LPVOID, Error> { TryIntoEnvironment::as_env_ptr(&self.as_bytes(), expect_unicode) } }
-#[cfg(std)] unsafe impl TryIntoEnvironment for String     { fn as_env_ptr(&self, expect_unicode: bool) -> Result<LPVOID, Error> { TryIntoEnvironment::as_env_ptr(&self.as_bytes(), expect_unicode) } }
+            unsafe impl TryIntoEnvironment for &'_ str                  { fn as_env_ptr(&self, expect_unicode: bool) -> Result<LPVOID, Error> { TryIntoEnvironment::as_env_ptr(&self.as_bytes(), expect_unicode) } }
+#[cfg(std)] unsafe impl TryIntoEnvironment for &'_ std::string::String  { fn as_env_ptr(&self, expect_unicode: bool) -> Result<LPVOID, Error> { TryIntoEnvironment::as_env_ptr(&self.as_bytes(), expect_unicode) } }
+#[cfg(std)] unsafe impl TryIntoEnvironment for std::string::String      { fn as_env_ptr(&self, expect_unicode: bool) -> Result<LPVOID, Error> { TryIntoEnvironment::as_env_ptr(&self.as_bytes(), expect_unicode) } }
 
 unsafe impl TryIntoEnvironment for &'_ [u16] {
     fn as_env_ptr(&self, expect_unicode: bool) -> Result<LPVOID, Error> {

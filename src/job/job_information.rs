@@ -33,10 +33,10 @@ pub(super) unsafe fn query_fixed<T>(job: &job::OwnedHandle, class: JOBOBJECTINFO
 #[cfg(std)]
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
 /// QueryInformationJobObject
-pub(super) unsafe fn query_vec<T>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS) -> Result<Vec<T>, Error> {
+pub(super) unsafe fn query_vec<T>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS) -> Result<std::vec::Vec<T>, Error> {
     let mut bytes = 0;
     match Error::get_last_if(FALSE == unsafe { QueryInformationJobObject(job.as_handle(), class, core::ptr::null_mut(), 0, &mut bytes) }) {
-        Ok(()) if bytes == 0                    => return Ok(Vec::new()),
+        Ok(()) if bytes == 0                    => return Ok(std::vec::Vec::new()),
         Ok(())                                  => {},
         Err(Error(ERROR_INSUFFICIENT_BUFFER))   => {}, // seen for e.g. JobObjectGroupInformationEx (set bytes)
         Err(Error(ERROR_BAD_LENGTH))            => {}, // seen for e.g. JobObjectGroupInformation (doesn't set bytes)
@@ -44,7 +44,7 @@ pub(super) unsafe fn query_vec<T>(job: &job::OwnedHandle, class: JOBOBJECTINFOCL
     }
 
     let capacity = 1.max(usize::from32(bytes) / size_of::<T>());
-    let mut vec = Vec::<T>::new();
+    let mut vec = std::vec::Vec::<T>::new();
     loop {
         vec.reserve(vec.capacity().max(capacity));
         let capacity = u32::try_from(vec.capacity() * size_of::<T>()).unwrap_or(!0u32);

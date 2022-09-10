@@ -1,5 +1,3 @@
-#![cfg_attr(not(std), allow(unused_imports))]
-
 use crate::*;
 
 use winapi::shared::winerror::*;
@@ -35,7 +33,7 @@ impl Value {
     fn as_tuple(&self) -> (u8, [u8; 6], &[u32]) { (self.revision(), self.authority(), self.subauthorities()) }
 
     /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/ntsecapi/nf-ntsecapi-lsalookupsids2)\] LsaLookupSids2
-    #[cfg(std)] pub fn lsa_lookup_sids2(&self) -> Result<String, Error> {
+    #[cfg(std)] pub fn lsa_lookup_sids2(&self) -> Result<std::string::String, Error> {
         if self.0.is_null() { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) }
         // .cast() spam notes:
         // it appears PLSA_HANDLE points to void, not LSA_HANDLE, for whatever twisted reason.
@@ -67,7 +65,7 @@ impl Value {
             //dbg!(domains.len());
             //dbg!(name.DomainIndex);
             //dbg!(name.Use);
-            String::from_utf16_lossy(name_name)
+            std::string::String::from_utf16_lossy(name_name)
         };
 
         assert_eq!(STATUS_SUCCESS, unsafe { LsaFreeMemory(domains.cast()) });
@@ -97,5 +95,5 @@ impl Debug for Value {
 }
 
 #[cfg(std)] #[test] fn debug_fmt() {
-    assert_eq!("S-1-2-3-4-5-6-7", format!("{:?}", sid!(S-1-2-3-4-5-6-7)));
+    assert_eq!("S-1-2-3-4-5-6-7", std::format!("{:?}", sid!(S-1-2-3-4-5-6-7)));
 }

@@ -8,6 +8,7 @@ use winapi::um::namedpipeapi::*;
 #[cfg(std)] use std::ffi::*;
 #[cfg(std)] use std::os::windows::prelude::OsStringExt;
 #[cfg(std)] use std::path::*;
+#[cfg(std)] use std::vec;
 
 use core::ptr::{null_mut, NonNull};
 

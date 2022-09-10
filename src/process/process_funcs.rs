@@ -14,6 +14,7 @@ use winapi::um::winbase::*;
 #[cfg(std)] use std::ffi::OsStr;
 #[cfg(std)] use std::os::windows::prelude::*;
 #[cfg(std)] use std::path::Path;
+#[cfg(std)] use std::vec::Vec;
 
 use core::ptr::{null_mut, null};
 

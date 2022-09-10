@@ -14,7 +14,7 @@ use core::mem::size_of_val;
 pub struct BasicProcessIdList {
     pub number_of_assigned_processes:   u32,
     pub number_of_process_ids_in_list:  u32,
-    pub process_id_list:                Vec<usize>,
+    pub process_id_list:                std::vec::Vec<usize>,
 }
 
 impl job::QueryInformationJobObject for job::object::BasicProcessIdList { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> {

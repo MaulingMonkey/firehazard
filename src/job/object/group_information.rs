@@ -34,10 +34,10 @@ structure!(@assert layout GroupAffinity => winnt::GROUP_AFFINITY {
     _reserved   == Reserved,
 });
 
-#[cfg(std)] impl job::QueryInformationJobObject for Vec<Group>                   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_vec(job, JobObjectGroupInformation  ) } } }
-#[cfg(std)] impl job::QueryInformationJobObject for Vec<GroupAffinity>           { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_vec(job, JobObjectGroupInformationEx) } } }
-#[cfg(std)] impl job::QueryInformationJobObject for Vec<ntdef::GROUP_AFFINITY>   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_vec(job, JobObjectGroupInformationEx) } } }
-#[cfg(std)] impl job::QueryInformationJobObject for Vec<winnt::GROUP_AFFINITY>   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_vec(job, JobObjectGroupInformationEx) } } }
+#[cfg(std)] impl job::QueryInformationJobObject for std::vec::Vec<Group>                   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_vec(job, JobObjectGroupInformation  ) } } }
+#[cfg(std)] impl job::QueryInformationJobObject for std::vec::Vec<GroupAffinity>           { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_vec(job, JobObjectGroupInformationEx) } } }
+#[cfg(std)] impl job::QueryInformationJobObject for std::vec::Vec<ntdef::GROUP_AFFINITY>   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_vec(job, JobObjectGroupInformationEx) } } }
+#[cfg(std)] impl job::QueryInformationJobObject for std::vec::Vec<winnt::GROUP_AFFINITY>   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_vec(job, JobObjectGroupInformationEx) } } }
 
 //impl job::SetInformationJobObject for &'_ [u16]                      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectGroupInformation, self) } } }
 impl job::SetInformationJobObject for &'_ [Group]                    { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectGroupInformation, self) } } }
@@ -53,31 +53,31 @@ impl job::SetInformationJobObject for &'_ [winnt::GROUP_AFFINITY]    { fn set_on
     assert_eq!(ERROR_INVALID_PARAMETER, err);
 }
 
-#[test] fn group_0() {
+#[cfg(std)] #[test] fn group_0() {
     let job = create_job_object_a(None, ()).unwrap();
     set_information_job_object(&job, &[Group(0)][..]).unwrap();
 
-    let groups : Vec<Group> = query_information_job_object(&job).unwrap();
+    let groups : std::vec::Vec<Group> = query_information_job_object(&job).unwrap();
     assert_eq!(1, groups.len());
     assert_eq!(groups[0].0, 0);
 }
 
-#[test] fn group_0_affinity() {
+#[cfg(std)] #[test] fn group_0_affinity() {
     let job = create_job_object_a(None, ()).unwrap();
     set_information_job_object(&job, &[GroupAffinity { group: 0, mask: 0b1, ..Default::default() }][..]).unwrap();
 
-    let groups : Vec<GroupAffinity> = query_information_job_object(&job).unwrap();
+    let groups : std::vec::Vec<GroupAffinity> = query_information_job_object(&job).unwrap();
     assert_eq!(1, groups.len());
     assert!(groups[0].mask == 0b1);
 }
 
-#[test] fn default_job_groups() {
+#[cfg(std)] #[test] fn default_job_groups() {
     let job = create_job_object_a(None, ()).unwrap();
 
-    let groups : Vec<Group> = query_information_job_object(&job).unwrap();
+    let groups : std::vec::Vec<Group> = query_information_job_object(&job).unwrap();
     assert_eq!(0, groups.len());
 
-    let groups : Vec<GroupAffinity> = query_information_job_object(&job).unwrap();
+    let groups : std::vec::Vec<GroupAffinity> = query_information_job_object(&job).unwrap();
     assert!(!groups.is_empty());
     assert!(groups[0].mask != 0);
 }
