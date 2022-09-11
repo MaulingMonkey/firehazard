@@ -36,6 +36,5 @@ mod error;                              pub use error::*;
 
 pub use values::*;
 mod values {
-    mod luid_and_attributes;        pub use luid_and_attributes::*;
     mod luid;                       pub use luid::*;
 }

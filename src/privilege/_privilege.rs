@@ -1,11 +1,9 @@
 #![doc = include_str!("_privilege.md")]
 
 #[allow(unused_imports)] use crate::privilege; // doc purpouses
+mod privilege_attributes;           pub use privilege_attributes::*;
 mod privilege_luid;                 pub use privilege_luid::*;
 mod privilege_name;                 pub use privilege_name::*;
-
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\] LUID_AND_ATTRIBUTES, in the context of TOKEN_PRIVILEGES specifically
-pub type LuidAndAttributes = crate::LuidAndAttributes<crate::privilege::Luid>;
 
 
 

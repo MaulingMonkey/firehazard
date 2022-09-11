@@ -23,3 +23,24 @@ impl Debug for privilege::Luid {
         }
     }
 }
+
+
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\]
+/// LUID_AND_ATTRIBUTES, in the context of TOKEN_PRIVILEGES specifically
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(C)] pub struct LuidAndAttributes {
+    pub luid:       privilege::Luid,
+    pub attributes: privilege::Attributes,
+}
+
+structure!(@assert layout LuidAndAttributes => winapi::um::winnt::LUID_AND_ATTRIBUTES {
+    luid        == Luid,
+    attributes  == Attributes,
+});
+
+impl LuidAndAttributes {
+    pub fn new(luid: impl Into<privilege::Luid>, attributes: impl Into<privilege::Attributes>) -> Self {
+        Self { luid: luid.into(), attributes: attributes.into() }
+    }
+}

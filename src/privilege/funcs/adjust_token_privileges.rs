@@ -1,7 +1,6 @@
 use crate::*;
 
 use winapi::um::securitybaseapi::AdjustTokenPrivileges;
-use winapi::um::winnt::*;
 
 use core::convert::Infallible;
 use core::ptr::null_mut;
@@ -14,8 +13,8 @@ use core::ptr::null_mut;
 /// &nbsp;
 pub fn adjust_token_privileges_enable_if(token: &token::OwnedHandle, mut cond: impl FnMut(privilege::Luid) -> bool) -> Result<(), Error> {
     adjust_token_privileges_each(token, move |p| {
-        let prev = p.attributes & SE_PRIVILEGE_ENABLED;
-        p.attributes = if cond(p.luid) { SE_PRIVILEGE_ENABLED } else { 0 };
+        let prev = p.attributes & privilege::ENABLED;
+        p.attributes = if cond(p.luid) { privilege::ENABLED } else { privilege::Attributes::default() };
         p.attributes != prev
     })
 }
@@ -26,8 +25,8 @@ pub fn adjust_token_privileges_enable_if(token: &token::OwnedHandle, mut cond: i
 /// &nbsp;
 pub fn adjust_token_privileges_disable_if(token: &token::OwnedHandle, mut cond: impl FnMut(privilege::Luid) -> bool) -> Result<(), Error> {
     adjust_token_privileges_each(token, move |p| {
-        let prev = p.attributes & SE_PRIVILEGE_ENABLED;
-        p.attributes = if cond(p.luid) { 0 } else { SE_PRIVILEGE_ENABLED };
+        let prev = p.attributes & privilege::ENABLED;
+        p.attributes = if cond(p.luid) { privilege::Attributes::default() } else { privilege::ENABLED };
         p.attributes != prev
     })
 }
@@ -38,8 +37,8 @@ pub fn adjust_token_privileges_disable_if(token: &token::OwnedHandle, mut cond: 
 /// &nbsp;
 pub fn adjust_token_privileges_retain_if(token: &token::OwnedHandle, mut cond: impl FnMut(privilege::Luid) -> bool) -> Result<(), Error> {
     adjust_token_privileges_each(token, move |p| {
-        let prev = p.attributes & SE_PRIVILEGE_ENABLED;
-        p.attributes = if cond(p.luid) { prev } else { SE_PRIVILEGE_REMOVED };
+        let prev = p.attributes & privilege::ENABLED;
+        p.attributes = if cond(p.luid) { prev } else { privilege::REMOVED };
         p.attributes != prev
     })
 }
@@ -50,8 +49,8 @@ pub fn adjust_token_privileges_retain_if(token: &token::OwnedHandle, mut cond: i
 /// &nbsp;
 pub fn adjust_token_privileges_remove_if(token: &token::OwnedHandle, mut cond: impl FnMut(privilege::Luid) -> bool) -> Result<(), Error> {
     adjust_token_privileges_each(token, move |p| {
-        let prev = p.attributes & SE_PRIVILEGE_ENABLED;
-        p.attributes = if cond(p.luid) { SE_PRIVILEGE_REMOVED } else { prev };
+        let prev = p.attributes & privilege::ENABLED;
+        p.attributes = if cond(p.luid) { privilege::REMOVED } else { prev };
         p.attributes != prev
     })
 }
