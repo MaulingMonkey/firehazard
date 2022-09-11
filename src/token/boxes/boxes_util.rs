@@ -25,6 +25,11 @@ use core::mem::{size_of, align_of};
     bytes_avail
 }
 
+#[track_caller] pub fn assert_valid_sid_or_null<T, A: Allocator>(cbs: &CBoxSized<T, A>, sid: PSID) {
+    if sid.is_null() { return }
+    assert_valid_sid(cbs, sid)
+}
+
 #[track_caller] pub fn assert_valid_sid<T, A: Allocator>(cbs: &CBoxSized<T, A>, sid: PSID) {
     let p = cbs.as_ptr() as usize;
     let pend = p + cbs.bytes(); // shouldn't be possible for this to overflow since p .. p+bytes is a contiguous allocation

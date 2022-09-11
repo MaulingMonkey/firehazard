@@ -1,4 +1,4 @@
-use super::assert_valid_sid;
+use super::assert_valid_sid_or_null;
 use crate::*;
 use crate::alloc::*;
 
@@ -13,7 +13,7 @@ use core::fmt::{self, Debug, Formatter};
 
 impl BoxTokenAppcontainerInformation {
     pub fn from_raw(cbs: CBoxSized<TOKEN_APPCONTAINER_INFORMATION>) -> Self {
-        assert_valid_sid(&cbs, cbs.TokenAppContainer); // REQUIRED FOR SOUNDNESS
+        assert_valid_sid_or_null(&cbs, cbs.TokenAppContainer); // REQUIRED FOR SOUNDNESS
         Self(cbs.into())
     }
 
