@@ -9,9 +9,6 @@ use winapi::um::fileapi::{ReadFile, WriteFile};
 use core::marker::PhantomData;
 use core::ptr::null_mut;
 
-// TODO: consider implementing std::os::windows::io::* interop traits
-// https://doc.rust-lang.org/std/os/windows/io/index.html
-
 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea)\] Owned non-null file `HANDLE`
@@ -70,17 +67,6 @@ impl io::Read   for FileHandle<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::
 impl io::Read   for ReadPipe        { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0, buf) } } }
 impl io::Read   for ReadHandle<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0, buf) } } }
 
-impl io::Write  for File            { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
-impl io::Write  for FileHandle<'_>  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
-impl io::Write  for WritePipe       { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
-impl io::Write  for WriteHandle<'_> { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
-
-#[cfg(std)] impl From<std::fs::File> for File { fn from(file: std::fs::File ) -> Self { Self(HANDLENN::new(file.into_raw_handle().cast()).unwrap()) } }
-#[cfg(std)] impl From<File> for std::fs::File { fn from(file: File          ) -> Self { unsafe { std::fs::File::from_raw_handle(file.into_handle().cast()) } } }
-
-
-
-
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-readfile)\] ReadFile
 unsafe fn read_file(h: HANDLENN, buf: &mut [u8]) -> io::Result<usize> {
     let mut read = 0;
@@ -88,9 +74,43 @@ unsafe fn read_file(h: HANDLENN, buf: &mut [u8]) -> io::Result<usize> {
     Ok(usize::from32(read))
 }
 
+impl io::Write  for File            { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl io::Write  for FileHandle<'_>  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl io::Write  for WritePipe       { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl io::Write  for WriteHandle<'_> { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-writefile)\] WriteFile
 unsafe fn write_file(h: HANDLENN, buf: &[u8]) -> io::Result<usize> {
     let mut written = 0;
     Error::get_last_if(FALSE == unsafe { WriteFile(h.as_ptr(), buf.as_ptr().cast(), buf.len().try_into().unwrap_or(!0u32), &mut written, null_mut()) })?;
     Ok(usize::from32(written))
 }
+
+#[cfg(std)] impl From<std::fs::File> for File { fn from(file: std::fs::File ) -> Self { Self(HANDLENN::new(file.into_raw_handle()).unwrap()) } }
+#[cfg(std)] impl From<File> for std::fs::File { fn from(file: File          ) -> Self { unsafe { std::fs::File::from_raw_handle(file.into_handle()) } } }
+
+#[cfg(std)] impl std::os::windows::io::FromRawHandle for File           { unsafe fn from_raw_handle(handle: RawHandle) -> Self { Self(HANDLENN::new(handle).unwrap()) } }
+#[cfg(std)] impl std::os::windows::io::FromRawHandle for ReadPipe       { unsafe fn from_raw_handle(handle: RawHandle) -> Self { Self(HANDLENN::new(handle).unwrap()) } }
+#[cfg(std)] impl std::os::windows::io::FromRawHandle for WritePipe      { unsafe fn from_raw_handle(handle: RawHandle) -> Self { Self(HANDLENN::new(handle).unwrap()) } }
+
+#[cfg(std)] impl std::os::windows::io::IntoRawHandle for File           { fn into_raw_handle(self) -> RawHandle { self.into_handle() } }
+#[cfg(std)] impl std::os::windows::io::IntoRawHandle for ReadPipe       { fn into_raw_handle(self) -> RawHandle { self.into_handle() } }
+#[cfg(std)] impl std::os::windows::io::IntoRawHandle for WritePipe      { fn into_raw_handle(self) -> RawHandle { self.into_handle() } }
+
+#[cfg(std)] impl std::os::windows::io::AsRawHandle for File             { fn as_raw_handle(&self) -> RawHandle { self.0.as_ptr() } }
+#[cfg(std)] impl std::os::windows::io::AsRawHandle for ReadPipe         { fn as_raw_handle(&self) -> RawHandle { self.0.as_ptr() } }
+#[cfg(std)] impl std::os::windows::io::AsRawHandle for WritePipe        { fn as_raw_handle(&self) -> RawHandle { self.0.as_ptr() } }
+#[cfg(std)] impl std::os::windows::io::AsRawHandle for FileHandle<'_>   { fn as_raw_handle(&self) -> RawHandle { self.0.as_ptr() } }
+#[cfg(std)] impl std::os::windows::io::AsRawHandle for ReadHandle<'_>   { fn as_raw_handle(&self) -> RawHandle { self.0.as_ptr() } }
+#[cfg(std)] impl std::os::windows::io::AsRawHandle for WriteHandle<'_>  { fn as_raw_handle(&self) -> RawHandle { self.0.as_ptr() } }
+
+#[cfg(std)] impl std::os::windows::io::AsHandle for File                { fn as_handle(&self) -> BorrowedHandle { unsafe { BorrowedHandle::borrow_raw(self.0.as_ptr()) } } }
+#[cfg(std)] impl std::os::windows::io::AsHandle for ReadPipe            { fn as_handle(&self) -> BorrowedHandle { unsafe { BorrowedHandle::borrow_raw(self.0.as_ptr()) } } }
+#[cfg(std)] impl std::os::windows::io::AsHandle for WritePipe           { fn as_handle(&self) -> BorrowedHandle { unsafe { BorrowedHandle::borrow_raw(self.0.as_ptr()) } } }
+#[cfg(std)] impl std::os::windows::io::AsHandle for FileHandle<'_>      { fn as_handle(&self) -> BorrowedHandle { unsafe { BorrowedHandle::borrow_raw(self.0.as_ptr()) } } }
+#[cfg(std)] impl std::os::windows::io::AsHandle for ReadHandle<'_>      { fn as_handle(&self) -> BorrowedHandle { unsafe { BorrowedHandle::borrow_raw(self.0.as_ptr()) } } }
+#[cfg(std)] impl std::os::windows::io::AsHandle for WriteHandle<'_>     { fn as_handle(&self) -> BorrowedHandle { unsafe { BorrowedHandle::borrow_raw(self.0.as_ptr()) } } }
+
+// It might be appropriate to impl TryFrom<OwnedHandle> for File, ReadPipe, WritePipe?
+// Constructing `std::os::windows::io::NullHandleError` is awkward though.
+// Deferring until I have a concrete use case, if I ever do.
