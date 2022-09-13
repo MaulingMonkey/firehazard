@@ -65,15 +65,17 @@ pub trait FromLocalHandle<H=c_void> : Sized {
 }
 
 /// Some kind of wrapper around a HANDLE owned by the current/local process.
-pub trait AsLocalHandle<H=HANDLE> {
+pub trait AsLocalHandle<H=HANDLE> : Sized {
     /// [`winapi`]-friendly HANDLE
     fn as_handle(&self) -> H;
+    fn into_handle(self) -> H { let h = self.as_handle(); core::mem::forget(self); h }
 }
 
 /// Some kind of wrapper around a non-null HANDLE owned by the current/local process.
 pub trait AsLocalHandleNN<H=c_void> : AsLocalHandle<*mut H> {
     /// HANDLE, but [NonNull].
     fn as_handle_nn(&self) -> NonNull<H>;
+    fn into_handle_nn(self) -> NonNull<H> { let h = self.as_handle_nn(); core::mem::forget(self); h }
 }
 
 impl<H, T: AsLocalHandleNN<H>> AsLocalHandle<*mut H> for T { fn as_handle(&self) -> *mut H { self.as_handle_nn().as_ptr() } }

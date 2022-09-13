@@ -76,7 +76,7 @@ impl io::Write  for WritePipe       { fn write(&mut self, buf: &[u8]) -> io::Res
 impl io::Write  for WriteHandle<'_> { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
 
 #[cfg(std)] impl From<std::fs::File> for File { fn from(file: std::fs::File ) -> Self { Self(HANDLENN::new(file.into_raw_handle().cast()).unwrap()) } }
-#[cfg(std)] impl From<File> for std::fs::File { fn from(file: File          ) -> Self { unsafe { std::fs::File::from_raw_handle(file.as_handle().cast()) } } }
+#[cfg(std)] impl From<File> for std::fs::File { fn from(file: File          ) -> Self { unsafe { std::fs::File::from_raw_handle(file.into_handle().cast()) } } }
 
 
 
