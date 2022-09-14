@@ -6,6 +6,7 @@
 
 mod sid_and_attributes;                 pub use sid_and_attributes::*;
 mod sid_attributes;                     pub use sid_attributes::*;
+mod sid_constants;                      pub use sid_constants::*;
 mod sid_ptr;                            pub use sid_ptr::*;
 mod sid_box;                            pub use sid_box::*;
 mod sid_static;                         pub use sid_static::*;

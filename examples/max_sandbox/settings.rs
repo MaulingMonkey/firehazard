@@ -18,7 +18,7 @@ impl Default for Token {
             integrity:  Default::default(),
             privileges: Default::default(),
             enabled:    Default::default(),
-            restricted: Some(vec![sid!(S-1-0-0)]),
+            restricted: Some(vec![sid::NULL]),
         }
     }
 }
@@ -57,9 +57,6 @@ impl Target {
         let all         = Box::leak(Box::new(sandbox_process_token.groups_and_privileges().unwrap())).sids().iter().map(|s| s.sid).collect::<Vec<_>>();
         let user        = Box::leak(Box::new(sandbox_process_token.user().unwrap())).user().sid;
         let session     = Box::leak(Box::new(sandbox_process_token.logon_sid().unwrap())).groups().iter().next().unwrap().sid;
-        let users       = sid!(S-1-5-32-545);
-        let everyone    = sid!(S-1-1-0);
-        let null        = sid!(S-1-0-0);
 
         let self_exe = std::path::PathBuf::from(std::env::args_os().next().expect("args[0] / exe"));
         let dir = self_exe.parent().unwrap();
@@ -78,8 +75,8 @@ impl Target {
                 spawn: Token {
                     // Minimal permissions to access e.g. `/KnownDlls` / `kernel32.dll` for init
                     privileges: [se_change_notify_privilege].into_iter().collect(),
-                    enabled:    vec![everyone],
-                    restricted: Some(vec![everyone]),
+                    enabled:    vec![sid::WORLD],
+                    restricted: Some(vec![sid::WORLD]),
                     .. Default::default()
                 },
                 lockdown: Token {
@@ -95,8 +92,8 @@ impl Target {
                 spawn: Token {
                     // Minimal permissions to access e.g. `/KnownDlls` / `kernel32.dll` for init
                     privileges: [se_change_notify_privilege].into_iter().collect(),
-                    enabled:    vec![everyone],
-                    restricted: Some(vec![everyone]),
+                    enabled:    vec![sid::WORLD],
+                    restricted: Some(vec![sid::WORLD]),
                     .. Default::default()
                 },
                 lockdown: Token {
@@ -109,8 +106,8 @@ impl Target {
                 spawn: Token {
                     integrity:  sid::integrity::Low,
                     privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
-                    enabled:    vec![user, users, everyone, session],
-                    restricted: Some(vec![user, users, everyone, session]),
+                    enabled:    vec![user, sid::builtin::alias::USERS, sid::WORLD, session],
+                    restricted: Some(vec![user, sid::builtin::alias::USERS, sid::WORLD, session]),
                     .. Default::default()
                 },
                 lockdown: Token {
@@ -142,8 +139,8 @@ impl Target {
                 spawn: Token {
                     integrity:  sid::integrity::Low,
                     privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
-                    enabled:    vec![user, users, everyone, session],
-                    restricted: Some(vec![user, users, everyone, session]),
+                    enabled:    vec![user, sid::builtin::alias::USERS, sid::WORLD, session],
+                    restricted: Some(vec![user, sid::builtin::alias::USERS, sid::WORLD, session]),
                     .. Default::default()
                 },
                 lockdown: Token {
@@ -162,8 +159,8 @@ impl Target {
                 spawn: Token {
                     integrity:  sid::integrity::Low,
                     privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
-                    enabled:    vec![user, users, everyone, session],
-                    restricted: Some(vec![user, users, everyone, session]),
+                    enabled:    vec![user, sid::builtin::alias::USERS, sid::WORLD, session],
+                    restricted: Some(vec![user, sid::builtin::alias::USERS, sid::WORLD, session]),
                     .. Default::default()
                 },
                 lockdown: Token {
@@ -181,8 +178,8 @@ impl Target {
                 spawn: Token {
                     integrity:  sid::integrity::Low,
                     privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
-                    enabled:    vec![user, users, everyone, session],
-                    restricted: Some(vec![user, users, everyone, session]),
+                    enabled:    vec![user, sid::builtin::alias::USERS, sid::WORLD, session],
+                    restricted: Some(vec![user, sid::builtin::alias::USERS, sid::WORLD, session]),
                     .. Default::default()
                 },
                 lockdown: Token {
