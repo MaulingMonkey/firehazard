@@ -5,7 +5,7 @@ use winapi::shared::ntstatus::STATUS_SUCCESS;
 use winapi::um::lsalookup::{LSA_OBJECT_ATTRIBUTES, LSA_REFERENCED_DOMAIN_LIST, LSA_TRANSLATED_NAME};
 use winapi::um::ntlsa::*;
 use winapi::um::securitybaseapi::EqualSid;
-use winapi::um::winnt::{SID, PSID};
+use winapi::um::winnt::*;
 
 use core::fmt::{self, Debug, Formatter};
 use core::hash::Hash;
@@ -59,13 +59,37 @@ impl Value {
 
         let result = {
             let domains : &LSA_REFERENCED_DOMAIN_LIST = unsafe { &*domains };
-            let _domains = unsafe { core::slice::from_raw_parts(domains.Domains, usize::from32(domains.Entries)) };
+            let domains = unsafe { core::slice::from_raw_parts(domains.Domains, usize::from32(domains.Entries)) };
             let name : &LSA_TRANSLATED_NAME = unsafe { &*names };
-            let name_name = unsafe { core::slice::from_raw_parts(name.Name.Buffer, (name.Name.Length/2).into()) }; // Length is in *bytes*, Buffer is *wchar_t* s
-            //dbg!(domains.len());
-            //dbg!(name.DomainIndex);
-            //dbg!(name.Use);
-            std::string::String::from_utf16_lossy(name_name)
+            let valid_domain_index  = ![SidTypeInvalid, SidTypeUnknown, SidTypeWellKnownGroup]  .contains(&name.Use); // name.DomainIndex   is valid
+            let valid_name          = ![SidTypeDomain, SidTypeInvalid, SidTypeUnknown]          .contains(&name.Use); // name.Name          is valid
+
+            let mut r = std::string::String::new();
+            fn append_utf16_lossy(r: &mut std::string::String, utf16: &[u16]) {
+                r.reserve(utf16.len());
+                for ch in char::decode_utf16(utf16.iter().copied()) {
+                    let ch = ch.unwrap_or(char::REPLACEMENT_CHARACTER);
+                    r.push(ch);
+                }
+            }
+
+            if valid_domain_index { // name.DomainIndex is valid
+                if let Some(domain) = domains.get(name.DomainIndex as isize as usize) {
+                    let name = unsafe { core::slice::from_raw_parts(domain.Name.Buffer, (domain.Name.Length/2).into()) };
+                    append_utf16_lossy(&mut r, name);
+                }
+            }
+
+            if valid_domain_index && valid_name {
+                r.push('\\');
+            }
+
+            if valid_name { // name.Name is valid
+                let name = unsafe { core::slice::from_raw_parts(name.Name.Buffer, (name.Name.Length/2).into()) }; // Length is in *bytes*, Buffer is *wchar_t* s
+                append_utf16_lossy(&mut r, name);
+            }
+
+            r
         };
 
         assert_eq!(STATUS_SUCCESS, unsafe { LsaFreeMemory(domains.cast()) });
