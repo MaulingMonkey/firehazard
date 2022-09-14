@@ -9,7 +9,7 @@ Privilege related types and functions
 
 Convert with:
 *   [`lookup_privilege_value_a`]: <code>&[str] -> [Luid]</code>
-*   [`lookup_privilege_name_a`]: <code>[Luid] -> [String]</code>
+*   [`lookup_privilege_name_a`]: <code>[Luid] -> [String](std::string::String)</code>
 
 An access token has 3 possible states for any given privilege.  Using `SeShutdownPrivilege` as an example:
 
