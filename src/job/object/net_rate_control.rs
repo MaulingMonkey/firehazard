@@ -28,7 +28,23 @@ structure!(@assert layout NetRateControlInformation => JOBOBJECT_NET_RATE_CONTRO
     dscp_tag        == DscpTag,
 });
 
-// TODO: utility constructor/builder methods?
+impl NetRateControlInformation {
+    /// control_flags: 0
+    pub fn disabled() -> Self { Self { control_flags: None.into(), max_bandwidth: 0, dscp_tag: 0 } }
+
+    /// control_flags: [`NET_RATE_CONTROL_ENABLE`] | [`NET_RATE_CONTROL_MAX_BANDWIDTH`]
+    pub fn enable_max_bandwidth(max_bandwidth: u64) -> Self { Self { control_flags: NET_RATE_CONTROL_ENABLE | NET_RATE_CONTROL_MAX_BANDWIDTH, max_bandwidth, dscp_tag: 0 } }
+
+    /// control_flags: [`NET_RATE_CONTROL_ENABLE`] | [`NET_RATE_CONTROL_DSCP_TAG`]
+    pub fn enable_dscp_tag(dscp_tag: u8)            -> Self { Self { control_flags: NET_RATE_CONTROL_ENABLE | NET_RATE_CONTROL_DSCP_TAG, max_bandwidth: 0, dscp_tag } }
+
+    /// control_flags: [`NET_RATE_CONTROL_ENABLE`] | [`NET_RATE_CONTROL_MAX_BANDWIDTH`] | [`NET_RATE_CONTROL_DSCP_TAG`]
+    pub fn enable_max_bandwidth_dscp_tag(max_bandwidth: u64, dscp_tag: u8) -> Self { Self {
+        max_bandwidth,
+        control_flags: NET_RATE_CONTROL_ENABLE | NET_RATE_CONTROL_MAX_BANDWIDTH | NET_RATE_CONTROL_DSCP_TAG,
+        dscp_tag
+    }}
+}
 
 
 

@@ -35,12 +35,7 @@ pub fn create() -> job::OwnedHandle {
     // TODO: JobObjectGroupInformation processor groups?
     // TODO: JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2 limits?
 
-    set_information_job_object(&mut job, job::object::NetRateControlInformation {
-        max_bandwidth:  0, // limit network egress
-        control_flags:  job::object::NET_RATE_CONTROL_ENABLE | job::object::NET_RATE_CONTROL_MAX_BANDWIDTH,
-        .. Default::default()
-    }).unwrap();
-
+    set_information_job_object(&mut job, job::object::NetRateControlInformation::enable_max_bandwidth(0)).unwrap();
     set_information_job_object(&mut job, job::object::CpuRateControlInformation::from_weight(5, false, false)).unwrap();
 
     // TODO: JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION[_2] ?
