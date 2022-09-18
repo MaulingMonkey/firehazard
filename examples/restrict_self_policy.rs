@@ -64,14 +64,15 @@ fn main() {
         .. Default::default()
     }).unwrap();
 
-    let mut policy = PROCESS_MITIGATION_PAYLOAD_RESTRICTION_POLICY { Flags: 0 };
-    policy.set_EnableExportAddressFilter(1);
-    policy.set_EnableExportAddressFilterPlus(1);
-    policy.set_EnableImportAddressFilter(1);
-    policy.set_EnableRopCallerCheck(1);
-    policy.set_EnableRopSimExec(1);
-    policy.set_EnableRopStackPivot(1);
-    //set_process_mitigation_policy(policy).unwrap(); // ERROR_INVALID_PARAMETER no matter the flags set
+    set_process_mitigation_policy(process::mitigation::PayloadRestrictionPolicy {
+        enable_export_address_filter:       true,
+        enable_export_address_filter_plus:  true,
+        enable_import_address_filter:       true,
+        enable_rop_caller_check:            true,
+        enable_rop_sim_exec:                true,
+        enable_rop_stack_pivot:             true,
+        .. Default::default()
+    }).unwrap_err(); // ERROR_INVALID_PARAMETER no matter the flags set
 
     let mut policy = PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY { Flags: 0 };
     policy.set_HandleExceptionsPermanentlyEnabled(1);

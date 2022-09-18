@@ -9,6 +9,7 @@ mod dynamic_code_policy;            pub use dynamic_code_policy::*;
 mod extension_point_disable_policy; pub use extension_point_disable_policy::*;
 mod font_disable_policy;            pub use font_disable_policy::*;
 mod image_load_policy;              pub use image_load_policy::*;
+mod payload_restriction_policy;     pub use payload_restriction_policy::*;
 mod winapi;
 
 
