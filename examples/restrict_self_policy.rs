@@ -76,6 +76,11 @@ fn main() {
         .. Default::default()
     }).unwrap_err(); // ERROR_INVALID_PARAMETER no matter the flags set
 
+    set_process_mitigation_policy(process::mitigation::RedirectionTrustPolicy {
+        enforce_redirection_trust: true,
+        .. Default::default()
+    }).unwrap();
+
     set_process_mitigation_policy(process::mitigation::StrictHandleCheckPolicy {
         handle_exceptions_permanently_enabled:          true,
         raise_exception_on_invalid_handle_reference:    true,

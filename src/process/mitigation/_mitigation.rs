@@ -13,6 +13,7 @@ mod extension_point_disable_policy; pub use extension_point_disable_policy::*;
 mod font_disable_policy;            pub use font_disable_policy::*;
 mod image_load_policy;              pub use image_load_policy::*;
 mod payload_restriction_policy;     pub use payload_restriction_policy::*;
+mod redirection_trust_policy;       pub use redirection_trust_policy::*;
 mod sehop_policy;                   pub use sehop_policy::*;
 mod side_channel_isolation_policy;  pub use side_channel_isolation_policy::*;
 mod strict_handle_check_policy;     pub use strict_handle_check_policy::*;
@@ -22,7 +23,6 @@ mod user_pointer_auth_policy;       pub use user_pointer_auth_policy::*;
 mod user_shadow_stack_policy;       pub use user_shadow_stack_policy::*;
 
 // TODO: PROCESS_MITIGATION_OPTIONS_MASK
-// TODO: PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY
 
 
 
