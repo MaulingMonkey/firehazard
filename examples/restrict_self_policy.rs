@@ -51,9 +51,11 @@ fn main() {
         .. Default::default()
     }).unwrap();
 
-    let mut policy = PROCESS_MITIGATION_FONT_DISABLE_POLICY { Flags: 0 };
-    policy.set_DisableNonSystemFonts(1);
-    set_process_mitigation_policy(policy).unwrap();
+    set_process_mitigation_policy(process::mitigation::FontDisablePolicy {
+        disable_non_system_fonts:       true,
+        audit_non_system_font_loading:  false,
+        .. Default::default()
+    }).unwrap();
 
     let mut policy = PROCESS_MITIGATION_IMAGE_LOAD_POLICY { Flags: 0 };
     policy.set_NoRemoteImages(1);
