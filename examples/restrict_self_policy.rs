@@ -105,9 +105,20 @@ fn main() {
         .. Default::default()
     }).unwrap_err(); // ERROR_INVALID_PARAMETER regardless of settings - older windows?
 
+    set_process_mitigation_policy(process::mitigation::UserShadowStackPolicy {
+        block_non_cet_binaries:                 true,
+        block_non_cet_binaries_non_ehcont:      false,
+        cet_dynamic_apis_out_of_proc_only:      true,
+        enable_user_shadow_stack:               true,
+        enable_user_shadow_stack_strict_mode:   true,
+        set_context_ip_validation:              true,
+        set_context_ip_validation_relaxed_mode: false,
+        // audit_*: false
+        .. Default::default()
+    }).unwrap_err(); // ERROR_ACCESS_DENIED
+
     // TODO:
     // PROCESS_MITIGATION_OPTIONS_MASK
-    // PROCESS_MITIGATION_USER_SHADOW_STACK_POLICY
     // PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY
     // PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY
 }
