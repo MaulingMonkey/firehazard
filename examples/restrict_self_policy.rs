@@ -80,9 +80,10 @@ fn main() {
         .. Default::default()
     }).unwrap();
 
-    let mut policy = PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY { Flags: 0 };
-    policy.set_DisallowWin32kSystemCalls(1);
-    set_process_mitigation_policy(policy).unwrap();
+    set_process_mitigation_policy(process::mitigation::SystemCallDisablePolicy {
+        disallow_win32k_system_calls: true,
+        .. Default::default()
+    }).unwrap();
 
     let mut policy = PROCESS_MITIGATION_SYSTEM_CALL_FILTER_POLICY { Flags: 0 };
     policy.set_FilterId(0);
