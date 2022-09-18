@@ -24,11 +24,12 @@ fn main() {
     policy.set_AllowSecureProcessCreation(0);
     set_process_mitigation_policy(policy).unwrap();
 
-    let mut policy = PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY { Flags: 0 };
-    policy.set_EnableControlFlowGuard(1);   // "This field cannot be changed via SetProcessMitigationPolicy."
-    policy.set_EnableExportSuppression(1);  // "This field cannot be changed via SetProcessMitigationPolicy."
-    policy.set_StrictMode(1);               // "If TRUE, all DLLs that are loaded must enable CFG. If a DLL does not enable CFG then the image will fail to load. This policy can be enabled after a process has started by calling SetProcessMitigationPolicy. It cannot be disabled once enabled."
-    //set_process_mitigation_policy(policy).unwrap(); // ERROR_ACCESS_DENIED no matter what I pass - baked into executable perhaps?
+    set_process_mitigation_policy(process::mitigation::ControlFlowGuardPolicy {
+        enable_control_flow_guard:  false,  // "This field cannot be changed via SetProcessMitigationPolicy."
+        enable_export_suppression:  false,  // "This field cannot be changed via SetProcessMitigationPolicy."
+        strict_mode:                true,   // "If TRUE, all DLLs that are loaded must enable CFG. If a DLL does not enable CFG then the image will fail to load. This policy can be enabled after a process has started by calling SetProcessMitigationPolicy. It cannot be disabled once enabled."
+        .. Default::default()
+    }).unwrap_err(); // ERROR_ACCESS_DENIED no matter what I pass - baked into executable perhaps?
 
     let mut policy = PROCESS_MITIGATION_DEP_POLICY { Flags: 0, Permanent: 0 };
     policy.set_Enable(1);

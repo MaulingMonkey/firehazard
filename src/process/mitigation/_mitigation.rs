@@ -2,6 +2,7 @@
 
 mod aslr_policy;                    pub use aslr_policy::*;
 mod binary_signature_policy;        pub use binary_signature_policy::*;
+mod control_flow_guard_policy;      pub use control_flow_guard_policy::*;
 mod dep_policy;                     pub use dep_policy::*;
 mod dynamic_code_policy;            pub use dynamic_code_policy::*;
 mod winapi;
