@@ -46,9 +46,10 @@ fn main() {
         .. Default::default()
     }).unwrap();
 
-    let mut policy = PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY { Flags: 0 };
-    policy.set_DisableExtensionPoints(1);
-    set_process_mitigation_policy(policy).unwrap();
+    set_process_mitigation_policy(process::mitigation::ExtensionPointDisablePolicy {
+        disable_extension_points: true,
+        .. Default::default()
+    }).unwrap();
 
     let mut policy = PROCESS_MITIGATION_FONT_DISABLE_POLICY { Flags: 0 };
     policy.set_DisableNonSystemFonts(1);
