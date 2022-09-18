@@ -10,10 +10,12 @@ fn main() {
 
     if std { println!("cargo:rustc-cfg=std"); }
 
-    if cfg!(windows) { windows_only() }
+    if std::env::var_os("CARGO_CFG_TARGET_ENV").map_or(false, |env| env == "msvc") { msvc_only() }
 }
 
-fn windows_only() {
+fn msvc_only() {
+    let windows = std::env::var_os("CARGO_CFG_WINDOWS").is_some(); // else non-windows MSVC target (MacOS / System 9?)
+
     // https://en.wikipedia.org/wiki/Microsoft_Visual_Studio#History
     let vsv = std::env::var("VisualStudioVersion").unwrap_or_default();
     let (vs_major, _vs_minor_etc) = vsv.split_once('.').unwrap_or((vsv.as_str(), ""));
@@ -31,15 +33,21 @@ fn windows_only() {
 
     println!("cargo:rustc-link-arg=/WX"); // Error out on linker warnings
 
-    // UWP / Microsoft Store isolation
-    // Not 100% sure what the linker flag alone does.
-    // https://learn.microsoft.com/en-us/cpp/build/reference/appcontainer-windows-store-app
-    println!("cargo:rustc-link-arg=/APPCONTAINER");
+    if windows {
+        // UWP / Microsoft Store isolation
+        // Not 100% sure what the linker flag alone does.
+        // https://learn.microsoft.com/en-us/cpp/build/reference/appcontainer-windows-store-app
+        println!("cargo:rustc-link-arg=/APPCONTAINER");
+    }
 
-    // Delay Load Import
-    // Might be useful for DLLs that cause explosions (`user32.dll`?)
-    // https://learn.microsoft.com/en-us/cpp/build/reference/delayload-delay-load-import
-    //println!("cargo:rustc-link-arg=/DELAYLOAD:some.dll");
+    if false { // demo only for now
+        // Delay Load Import
+        // Might be useful for DLLs that cause explosions (`user32.dll`?)
+        // https://learn.microsoft.com/en-us/cpp/build/reference/delayload-delay-load-import
+        println!("cargo:rustc-link-arg=/DELAYLOAD:advapi32.dll");   // SystemFunction036 aka RtlGenRandom
+        println!("cargo:rustc-link-arg=/DELAYLOAD:bcrypt.dll");     // BCryptGenRandom
+        println!("cargo:rustc-link-arg=delayimp.lib");
+    }
 
     if _vs_2019 {
         // CET Shadow Stack compatible.  Requires VS2019+
