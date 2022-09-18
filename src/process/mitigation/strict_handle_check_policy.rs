@@ -16,17 +16,17 @@ pub struct StrictHandleCheckPolicy {
 }
 
 unsafe impl IntoPolicy for PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY {
-    type Policy = Self;
+    type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::StrictHandleCheckPolicy }
-    fn into_policy(self) -> Self::Policy { self }
-    fn from_policy(p: Self::Policy) -> Self { p }
+    fn into_policy(self) -> Self::Raw { self }
+    fn from_policy(p: Self::Raw) -> Self { p }
 }
 
 unsafe impl IntoPolicy for StrictHandleCheckPolicy {
-    type Policy = PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY;
+    type Raw = PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY;
     fn ty() -> process::mitigation::Policy { process::StrictHandleCheckPolicy }
-    fn into_policy(self) -> Self::Policy { self.into() }
-    fn from_policy(p: Self::Policy) -> Self { p.into() }
+    fn into_policy(self) -> Self::Raw { self.into() }
+    fn from_policy(p: Self::Raw) -> Self { p.into() }
 }
 
 impl From<StrictHandleCheckPolicy> for PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY {

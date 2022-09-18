@@ -17,17 +17,17 @@ pub struct BinarySignaturePolicy {
 }
 
 unsafe impl IntoPolicy for PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY {
-    type Policy = Self;
+    type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::SignaturePolicy }
-    fn into_policy(self) -> Self::Policy { self }
-    fn from_policy(p: Self::Policy) -> Self { p }
+    fn into_policy(self) -> Self::Raw { self }
+    fn from_policy(p: Self::Raw) -> Self { p }
 }
 
 unsafe impl IntoPolicy for BinarySignaturePolicy {
-    type Policy = PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY;
+    type Raw = PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY;
     fn ty() -> process::mitigation::Policy { process::SignaturePolicy }
-    fn into_policy(self) -> Self::Policy { self.into() }
-    fn from_policy(p: Self::Policy) -> Self { p.into() }
+    fn into_policy(self) -> Self::Raw { self.into() }
+    fn from_policy(p: Self::Raw) -> Self { p.into() }
 }
 
 impl From<BinarySignaturePolicy> for PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY {

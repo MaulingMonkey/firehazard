@@ -26,17 +26,17 @@ pub struct PayloadRestrictionPolicy {
 }
 
 unsafe impl IntoPolicy for PROCESS_MITIGATION_PAYLOAD_RESTRICTION_POLICY {
-    type Policy = Self;
+    type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::PayloadRestrictionPolicy }
-    fn into_policy(self) -> Self::Policy { self }
-    fn from_policy(p: Self::Policy) -> Self { p }
+    fn into_policy(self) -> Self::Raw { self }
+    fn from_policy(p: Self::Raw) -> Self { p }
 }
 
 unsafe impl IntoPolicy for PayloadRestrictionPolicy {
-    type Policy = PROCESS_MITIGATION_PAYLOAD_RESTRICTION_POLICY;
+    type Raw = PROCESS_MITIGATION_PAYLOAD_RESTRICTION_POLICY;
     fn ty() -> process::mitigation::Policy { process::PayloadRestrictionPolicy }
-    fn into_policy(self) -> Self::Policy { self.into() }
-    fn from_policy(p: Self::Policy) -> Self { p.into() }
+    fn into_policy(self) -> Self::Raw { self.into() }
+    fn from_policy(p: Self::Raw) -> Self { p.into() }
 }
 
 impl From<PayloadRestrictionPolicy> for PROCESS_MITIGATION_PAYLOAD_RESTRICTION_POLICY {

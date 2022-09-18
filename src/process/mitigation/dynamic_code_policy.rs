@@ -17,17 +17,17 @@ pub struct DynamicCodePolicy {
 }
 
 unsafe impl IntoPolicy for PROCESS_MITIGATION_DYNAMIC_CODE_POLICY {
-    type Policy = Self;
+    type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::DynamicCodePolicy }
-    fn into_policy(self) -> Self::Policy { self }
-    fn from_policy(p: Self::Policy) -> Self { p }
+    fn into_policy(self) -> Self::Raw { self }
+    fn from_policy(p: Self::Raw) -> Self { p }
 }
 
 unsafe impl IntoPolicy for DynamicCodePolicy {
-    type Policy = PROCESS_MITIGATION_DYNAMIC_CODE_POLICY;
+    type Raw = PROCESS_MITIGATION_DYNAMIC_CODE_POLICY;
     fn ty() -> process::mitigation::Policy { process::DynamicCodePolicy }
-    fn into_policy(self) -> Self::Policy { self.into() }
-    fn from_policy(p: Self::Policy) -> Self { p.into() }
+    fn into_policy(self) -> Self::Raw { self.into() }
+    fn from_policy(p: Self::Raw) -> Self { p.into() }
 }
 
 impl From<DynamicCodePolicy> for PROCESS_MITIGATION_DYNAMIC_CODE_POLICY {

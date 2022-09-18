@@ -17,17 +17,17 @@ pub struct DepPolicy {
 }
 
 unsafe impl IntoPolicy for PROCESS_MITIGATION_DEP_POLICY {
-    type Policy = Self;
+    type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::DEPPolicy }
-    fn into_policy(self) -> Self::Policy { self }
-    fn from_policy(p: Self::Policy) -> Self { p }
+    fn into_policy(self) -> Self::Raw { self }
+    fn from_policy(p: Self::Raw) -> Self { p }
 }
 
 unsafe impl IntoPolicy for DepPolicy {
-    type Policy = PROCESS_MITIGATION_DEP_POLICY;
+    type Raw = PROCESS_MITIGATION_DEP_POLICY;
     fn ty() -> process::mitigation::Policy { process::DEPPolicy }
-    fn into_policy(self) -> Self::Policy { self.into() }
-    fn from_policy(p: Self::Policy) -> Self { p.into() }
+    fn into_policy(self) -> Self::Raw { self.into() }
+    fn from_policy(p: Self::Raw) -> Self { p.into() }
 }
 
 impl From<DepPolicy> for PROCESS_MITIGATION_DEP_POLICY {

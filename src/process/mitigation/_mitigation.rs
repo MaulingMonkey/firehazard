@@ -57,12 +57,12 @@ mod user_shadow_stack_policy;       pub use user_shadow_stack_policy::*;
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setprocessmitigationpolicy)\] SetProcessMitigationPolicy parameters
 ///
 /// ### Safety
-/// [`IntoPolicy::Policy`] must be ABI-compatible with whatever policy enumerand [`IntoPolicy::ty`] returns.
+/// [`IntoPolicy::Raw`] must be ABI-compatible with whatever policy enumerand [`IntoPolicy::ty`] returns.
 pub unsafe trait IntoPolicy {
     /// POD-ish type that will be passed directly to SetProcessMitigationPolicy
-    type Policy : Default;
+    type Raw : Default;
 
     fn ty() -> Policy;
-    fn into_policy(self) -> Self::Policy;
-    fn from_policy(p: Self::Policy) -> Self;
+    fn into_policy(self) -> Self::Raw;
+    fn from_policy(p: Self::Raw) -> Self;
 }
