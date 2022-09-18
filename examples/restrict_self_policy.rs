@@ -33,10 +33,12 @@ fn main() {
         .. Default::default()
     }).unwrap_err(); // ERROR_ACCESS_DENIED no matter what I pass - baked into executable perhaps?
 
-    let mut policy = PROCESS_MITIGATION_DEP_POLICY { Flags: 0, Permanent: 0 };
-    policy.set_Enable(1);
-    policy.set_DisableAtlThunkEmulation(1);
-    policy.Permanent = 1;
+    let policy = process::mitigation::DepPolicy {
+        enable:                         true,
+        disable_atl_thunk_emulation:    true,
+        permanent:                      true,
+        .. Default::default()
+    };
     assert_eq!(core::mem::size_of::<usize>()==8, set_process_mitigation_policy(policy).is_err()); // ERROR_NOT_SUPPORTED - possibly because it's force-enabled on x64?
 
     set_process_mitigation_policy(process::mitigation::DynamicCodePolicy {

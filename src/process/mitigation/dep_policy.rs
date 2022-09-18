@@ -12,6 +12,7 @@ use winapi::um::winnt::*;
 pub struct DepPolicy {
     pub enable:                         bool,
     pub disable_atl_thunk_emulation:    bool,
+    pub permanent:                      bool,
     #[doc(hidden)] pub _reserved_flags: ()
 }
 
@@ -30,6 +31,7 @@ impl From<DepPolicy> for PROCESS_MITIGATION_DEP_POLICY {
         let mut o = PROCESS_MITIGATION_DEP_POLICY::default();
         o.set_Enable(i.enable as u32);
         o.set_DisableAtlThunkEmulation(i.disable_atl_thunk_emulation as u32);
+        o.Permanent = i.permanent as _;
         o
     }
 }
