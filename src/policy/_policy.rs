@@ -18,8 +18,3 @@ pub unsafe trait IntoPolicy {
     fn into_policy(self) -> Self::Policy;
     fn from_policy(p: Self::Policy) -> Self;
 }
-
-pub use funcs::*;
-pub(crate) mod funcs {
-    include!("funcs/heap_enable_termination_on_corruption.rs");
-}

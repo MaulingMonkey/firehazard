@@ -1,5 +1,3 @@
-// bit of an oddball place for this, but meh
-
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapsetinformation)\]
 /// HeapSetInformation(0, HeapEnableTerminationOnCorruption, 0, 0)
 ///
