@@ -74,10 +74,11 @@ fn main() {
         .. Default::default()
     }).unwrap_err(); // ERROR_INVALID_PARAMETER no matter the flags set
 
-    let mut policy = PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY { Flags: 0 };
-    policy.set_HandleExceptionsPermanentlyEnabled(1);
-    policy.set_RaiseExceptionOnInvalidHandleReference(1);
-    set_process_mitigation_policy(policy).unwrap();
+    set_process_mitigation_policy(process::mitigation::StrictHandleCheckPolicy {
+        handle_exceptions_permanently_enabled:          true,
+        raise_exception_on_invalid_handle_reference:    true,
+        .. Default::default()
+    }).unwrap();
 
     let mut policy = PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY { Flags: 0 };
     policy.set_DisallowWin32kSystemCalls(1);
