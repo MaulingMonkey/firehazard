@@ -100,10 +100,14 @@ fn main() {
         .. Default::default()
     }).unwrap();
 
+    set_process_mitigation_policy(process::mitigation::SehopPolicy { // "Structured Exception Handling Overwrite Protection"
+        enable_sehop: true,
+        .. Default::default()
+    }).unwrap_err(); // ERROR_INVALID_PARAMETER regardless of settings - older windows?
+
     // TODO:
     // PROCESS_MITIGATION_OPTIONS_MASK
     // PROCESS_MITIGATION_USER_SHADOW_STACK_POLICY
     // PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY
     // PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY
-    // PROCESS_MITIGATION_SEHO_POLICY
 }
