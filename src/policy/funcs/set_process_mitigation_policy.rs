@@ -6,5 +6,5 @@ pub fn set_process_mitigation_policy<P: crate::policy::IntoPolicy>(policy: P) ->
     use core::mem::size_of_val;
 
     let (ty, value) = policy.into();
-    Error::get_last_if(0 == unsafe { SetProcessMitigationPolicy(ty, &value as *const P::Policy as *mut _, size_of_val(&value)) })
+    Error::get_last_if(0 == unsafe { SetProcessMitigationPolicy(ty as u32, &value as *const P::Policy as *mut _, size_of_val(&value)) })
 }
