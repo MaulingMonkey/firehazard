@@ -105,6 +105,11 @@ fn main() {
         .. Default::default()
     }).unwrap_err(); // ERROR_INVALID_PARAMETER regardless of settings - older windows?
 
+    set_process_mitigation_policy(process::mitigation::UserPointerAuthPolicy {
+        enable_pointer_auth_user_ip: true,
+        .. Default::default()
+    }).unwrap_err(); // ERROR_INVALID_PARAMETER - not new enough windows?
+
     set_process_mitigation_policy(process::mitigation::UserShadowStackPolicy {
         block_non_cet_binaries:                 true,
         cet_dynamic_apis_out_of_proc_only:      true,
