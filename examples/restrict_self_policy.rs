@@ -31,7 +31,7 @@ fn main() {
         enable_export_suppression:  false,  // "This field cannot be changed via SetProcessMitigationPolicy."
         strict_mode:                true,   // "If TRUE, all DLLs that are loaded must enable CFG. If a DLL does not enable CFG then the image will fail to load. This policy can be enabled after a process has started by calling SetProcessMitigationPolicy. It cannot be disabled once enabled."
         .. Default::default()
-    }).unwrap_err(); // ERROR_ACCESS_DENIED no matter what I pass - baked into executable perhaps?
+    }).unwrap();
 
     let policy = process::mitigation::DepPolicy {
         enable:                         true,
@@ -89,7 +89,7 @@ fn main() {
 
     let mut policy = PROCESS_MITIGATION_SYSTEM_CALL_FILTER_POLICY { Flags: 0 };
     policy.set_FilterId(0);
-    set_process_mitigation_policy(policy).unwrap(); // XXX: "This structure is not supported."
+    set_process_mitigation_policy(policy).unwrap_err(); // ERROR_INVALID_PARAMETER - n.b. docs: "This structure is not supported."
 
     // TODO:
     // PROCESS_MITIGATION_OPTIONS_MASK
