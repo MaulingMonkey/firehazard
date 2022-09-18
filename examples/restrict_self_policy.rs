@@ -36,11 +36,12 @@ fn main() {
     policy.Permanent = 1;
     assert_eq!(core::mem::size_of::<usize>()==8, set_process_mitigation_policy(policy).is_err()); // ERROR_NOT_SUPPORTED - possibly because it's force-enabled on x64?
 
-    let mut policy = PROCESS_MITIGATION_DYNAMIC_CODE_POLICY { Flags: 0 };
-    policy.set_ProhibitDynamicCode(1);
-    policy.set_AllowThreadOptOut(0);
-    policy.set_AllowRemoteDowngrade(0);
-    set_process_mitigation_policy(policy).unwrap();
+    set_process_mitigation_policy(process::mitigation::DynamicCodePolicy {
+        prohibit_dynamic_code:  true,
+        allow_thread_opt_out:   false,
+        allow_remote_downgrade: false,
+        .. Default::default()
+    }).unwrap();
 
     let mut policy = PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY { Flags: 0 };
     policy.set_DisableExtensionPoints(1);
