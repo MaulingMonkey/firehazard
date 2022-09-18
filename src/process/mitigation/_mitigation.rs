@@ -8,6 +8,7 @@ mod dep_policy;                     pub use dep_policy::*;
 mod dynamic_code_policy;            pub use dynamic_code_policy::*;
 mod extension_point_disable_policy; pub use extension_point_disable_policy::*;
 mod font_disable_policy;            pub use font_disable_policy::*;
+mod image_load_policy;              pub use image_load_policy::*;
 mod winapi;
 
 

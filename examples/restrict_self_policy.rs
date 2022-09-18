@@ -57,11 +57,12 @@ fn main() {
         .. Default::default()
     }).unwrap();
 
-    let mut policy = PROCESS_MITIGATION_IMAGE_LOAD_POLICY { Flags: 0 };
-    policy.set_NoRemoteImages(1);
-    policy.set_NoLowMandatoryLabelImages(1);
-    policy.set_PreferSystem32Images(1);
-    set_process_mitigation_policy(policy).unwrap();
+    set_process_mitigation_policy(process::mitigation::ImageLoadPolicy {
+        no_remote_images:               true,
+        no_low_mandatory_label_images:  true,
+        prefer_system32_images:         true,
+        .. Default::default()
+    }).unwrap();
 
     let mut policy = PROCESS_MITIGATION_PAYLOAD_RESTRICTION_POLICY { Flags: 0 };
     policy.set_EnableExportAddressFilter(1);
