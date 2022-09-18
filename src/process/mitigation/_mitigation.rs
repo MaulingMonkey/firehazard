@@ -18,7 +18,7 @@ mod winapi;
 
 
 
-/// \[[docs.microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-process_mitigation_policy)\]
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-process_mitigation_policy)\]
 /// PROCESS_MITIGATION_POLICY
 ///
 /// `C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h`
