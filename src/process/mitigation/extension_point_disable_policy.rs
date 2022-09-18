@@ -16,18 +16,30 @@ pub struct ExtensionPointDisablePolicy {
 
 unsafe impl IntoPolicy for PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY {
     type Policy = Self;
-    fn into_policy(self) -> (process::mitigation::Policy, Self::Policy) { (process::ExtensionPointDisablePolicy, self) }
+    fn ty() -> process::mitigation::Policy { process::ExtensionPointDisablePolicy }
+    fn into_policy(self) -> Self::Policy { self }
+    fn from_policy(p: Self::Policy) -> Self { p }
 }
 
 unsafe impl IntoPolicy for ExtensionPointDisablePolicy {
     type Policy = PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY;
-    fn into_policy(self) -> (process::mitigation::Policy, Self::Policy) { (process::ExtensionPointDisablePolicy, self.into()) }
+    fn ty() -> process::mitigation::Policy { process::ExtensionPointDisablePolicy }
+    fn into_policy(self) -> Self::Policy { self.into() }
+    fn from_policy(p: Self::Policy) -> Self { p.into() }
 }
 
 impl From<ExtensionPointDisablePolicy> for PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY {
     fn from(i: ExtensionPointDisablePolicy) -> Self {
-        let mut o = PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY::default();
+        let mut o = Self::default();
         o.set_DisableExtensionPoints(i.disable_extension_points as u32);
+        o
+    }
+}
+
+impl From<PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY> for ExtensionPointDisablePolicy {
+    fn from(i: PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY) -> Self {
+        let mut o = Self::default();
+        o.disable_extension_points = i.DisableExtensionPoints() != 0;
         o
     }
 }

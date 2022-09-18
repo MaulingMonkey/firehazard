@@ -18,20 +18,34 @@ pub struct BinarySignaturePolicy {
 
 unsafe impl IntoPolicy for PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY {
     type Policy = Self;
-    fn into_policy(self) -> (process::mitigation::Policy, Self::Policy) { (process::SignaturePolicy, self) }
+    fn ty() -> process::mitigation::Policy { process::SignaturePolicy }
+    fn into_policy(self) -> Self::Policy { self }
+    fn from_policy(p: Self::Policy) -> Self { p }
 }
 
 unsafe impl IntoPolicy for BinarySignaturePolicy {
     type Policy = PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY;
-    fn into_policy(self) -> (process::mitigation::Policy, Self::Policy) { (process::SignaturePolicy, self.into()) }
+    fn ty() -> process::mitigation::Policy { process::SignaturePolicy }
+    fn into_policy(self) -> Self::Policy { self.into() }
+    fn from_policy(p: Self::Policy) -> Self { p.into() }
 }
 
 impl From<BinarySignaturePolicy> for PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY {
     fn from(i: BinarySignaturePolicy) -> Self {
-        let mut o = PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY::default();
-        o.set_MicrosoftSignedOnly(i.microsoft_signed_only as u32);
-        o.set_StoreSignedOnly(i.store_signed_only as u32);
-        o.set_MitigationOptIn(i.mitigation_opt_in as u32);
+        let mut o = Self::default();
+        o.set_MicrosoftSignedOnly   (i.microsoft_signed_only    as u32);
+        o.set_StoreSignedOnly       (i.store_signed_only        as u32);
+        o.set_MitigationOptIn       (i.mitigation_opt_in        as u32);
+        o
+    }
+}
+
+impl From<PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY> for BinarySignaturePolicy {
+    fn from(i: PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY) -> Self {
+        let mut o = Self::default();
+        o.microsoft_signed_only = i.MicrosoftSignedOnly()   != 0;
+        o.store_signed_only     = i.StoreSignedOnly()       != 0;
+        o.mitigation_opt_in     = i.MitigationOptIn()       != 0;
         o
     }
 }

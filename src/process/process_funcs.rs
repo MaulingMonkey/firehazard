@@ -16,7 +16,7 @@ use winapi::um::winbase::*;
 #[cfg(std)] use std::path::Path;
 #[cfg(std)] use std::vec::Vec;
 
-use core::mem::size_of_val;
+use core::mem::size_of;
 use core::ptr::{null_mut, null};
 
 
@@ -304,6 +304,14 @@ pub fn get_exit_code_process<'a>(process: impl AsRef<process::Handle<'a>>) -> Re
     Ok(exit_code)
 }
 
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\]
+/// GetProcessMitigationPolicy
+pub fn get_process_mitigation_policy<'a, P: policy::IntoPolicy>(process: impl AsRef<process::PsuedoHandle<'a>>) -> Result<P, Error> {
+    let mut p = P::Policy::default();
+    Error::get_last_if(0 == unsafe { GetProcessMitigationPolicy(process.as_ref().as_handle(), P::ty() as u32, &mut p as *mut P::Policy as *mut _, size_of::<P::Policy>()) })?;
+    Ok(P::from_policy(p))
+}
+
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(process, 0) == WAIT_TIMEOUT
 pub fn is_process_running<'a>(process: impl AsRef<process::Handle<'a>>) -> bool {
     WAIT_TIMEOUT == unsafe { WaitForSingleObject(process.as_ref().as_handle(), 0) }
@@ -312,8 +320,7 @@ pub fn is_process_running<'a>(process: impl AsRef<process::Handle<'a>>) -> bool 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setprocessmitigationpolicy)\]
 /// SetProcessMitigationPolicy
 pub fn set_process_mitigation_policy<P: policy::IntoPolicy>(policy: P) -> Result<(), Error> {
-    let (ty, value) = policy.into_policy();
-    Error::get_last_if(0 == unsafe { SetProcessMitigationPolicy(ty as u32, &value as *const P::Policy as *mut _, size_of_val(&value)) })
+    Error::get_last_if(0 == unsafe { SetProcessMitigationPolicy(P::ty() as u32, &policy.into_policy() as *const P::Policy as *mut _, size_of::<P::Policy>()) })
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(process, INFINITE) +<br>

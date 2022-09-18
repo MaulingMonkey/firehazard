@@ -17,19 +17,32 @@ pub struct FontDisablePolicy {
 
 unsafe impl IntoPolicy for PROCESS_MITIGATION_FONT_DISABLE_POLICY {
     type Policy = Self;
-    fn into_policy(self) -> (process::mitigation::Policy, Self::Policy) { (process::FontDisablePolicy, self) }
+    fn ty() -> process::mitigation::Policy { process::FontDisablePolicy }
+    fn into_policy(self) -> Self::Policy { self }
+    fn from_policy(p: Self::Policy) -> Self { p }
 }
 
 unsafe impl IntoPolicy for FontDisablePolicy {
     type Policy = PROCESS_MITIGATION_FONT_DISABLE_POLICY;
-    fn into_policy(self) -> (process::mitigation::Policy, Self::Policy) { (process::FontDisablePolicy, self.into()) }
+    fn ty() -> process::mitigation::Policy { process::FontDisablePolicy }
+    fn into_policy(self) -> Self::Policy { self.into() }
+    fn from_policy(p: Self::Policy) -> Self { p.into() }
 }
 
 impl From<FontDisablePolicy> for PROCESS_MITIGATION_FONT_DISABLE_POLICY {
     fn from(i: FontDisablePolicy) -> Self {
-        let mut o = PROCESS_MITIGATION_FONT_DISABLE_POLICY::default();
-        o.set_DisableNonSystemFonts(i.disable_non_system_fonts as u32);
-        o.set_AuditNonSystemFontLoading(i.audit_non_system_font_loading as u32);
+        let mut o = Self::default();
+        o.set_DisableNonSystemFonts     (i.disable_non_system_fonts         as u32);
+        o.set_AuditNonSystemFontLoading (i.audit_non_system_font_loading    as u32);
+        o
+    }
+}
+
+impl From<PROCESS_MITIGATION_FONT_DISABLE_POLICY> for FontDisablePolicy {
+    fn from(i: PROCESS_MITIGATION_FONT_DISABLE_POLICY) -> Self {
+        let mut o = Self::default();
+        o.disable_non_system_fonts      = i.DisableNonSystemFonts()     != 0;
+        o.audit_non_system_font_loading = i.AuditNonSystemFontLoading() != 0;
         o
     }
 }

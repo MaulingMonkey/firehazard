@@ -17,19 +17,32 @@ pub struct StrictHandleCheckPolicy {
 
 unsafe impl IntoPolicy for PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY {
     type Policy = Self;
-    fn into_policy(self) -> (process::mitigation::Policy, Self::Policy) { (process::StrictHandleCheckPolicy, self) }
+    fn ty() -> process::mitigation::Policy { process::StrictHandleCheckPolicy }
+    fn into_policy(self) -> Self::Policy { self }
+    fn from_policy(p: Self::Policy) -> Self { p }
 }
 
 unsafe impl IntoPolicy for StrictHandleCheckPolicy {
     type Policy = PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY;
-    fn into_policy(self) -> (process::mitigation::Policy, Self::Policy) { (process::StrictHandleCheckPolicy, self.into()) }
+    fn ty() -> process::mitigation::Policy { process::StrictHandleCheckPolicy }
+    fn into_policy(self) -> Self::Policy { self.into() }
+    fn from_policy(p: Self::Policy) -> Self { p.into() }
 }
 
 impl From<StrictHandleCheckPolicy> for PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY {
     fn from(i: StrictHandleCheckPolicy) -> Self {
-        let mut o = PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY::default();
+        let mut o = Self::default();
         o.set_RaiseExceptionOnInvalidHandleReference    (i.raise_exception_on_invalid_handle_reference  as u32);
         o.set_HandleExceptionsPermanentlyEnabled        (i.handle_exceptions_permanently_enabled        as u32);
+        o
+    }
+}
+
+impl From<PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY> for StrictHandleCheckPolicy {
+    fn from(i: PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY) -> Self {
+        let mut o = Self::default();
+        o.raise_exception_on_invalid_handle_reference   = i.RaiseExceptionOnInvalidHandleReference()    != 0;
+        o.handle_exceptions_permanently_enabled         = i.HandleExceptionsPermanentlyEnabled()        != 0;
         o
     }
 }

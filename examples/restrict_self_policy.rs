@@ -107,15 +107,15 @@ fn main() {
 
     set_process_mitigation_policy(process::mitigation::UserShadowStackPolicy {
         block_non_cet_binaries:                 true,
-        block_non_cet_binaries_non_ehcont:      false,
         cet_dynamic_apis_out_of_proc_only:      true,
-        enable_user_shadow_stack:               true,
-        enable_user_shadow_stack_strict_mode:   true,
-        set_context_ip_validation:              true,
-        set_context_ip_validation_relaxed_mode: false,
-        // audit_*: false
-        .. Default::default()
-    }).unwrap_err(); // ERROR_ACCESS_DENIED
+        //enable_user_shadow_stack:               true, // ERROR_ACCESS_DENIED
+        //enable_user_shadow_stack_strict_mode:   true, // ERROR_ACCESS_DENIED
+        //set_context_ip_validation:              true, // ERROR_ACCESS_DENIED
+        audit_block_non_cet_binaries:           false,
+        audit_set_context_ip_validation:        false,
+        audit_user_shadow_stack:                false,
+        .. get_process_mitigation_policy(get_current_process()).unwrap()
+    }).unwrap();
 
     // TODO:
     // PROCESS_MITIGATION_OPTIONS_MASK

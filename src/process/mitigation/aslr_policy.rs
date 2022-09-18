@@ -19,21 +19,36 @@ pub struct AslrPolicy {
 
 unsafe impl IntoPolicy for PROCESS_MITIGATION_ASLR_POLICY {
     type Policy = Self;
-    fn into_policy(self) -> (process::mitigation::Policy, Self::Policy) { (process::ASLRPolicy, self) }
+    fn ty() -> process::mitigation::Policy { process::ASLRPolicy }
+    fn into_policy(self) -> Self::Policy { self }
+    fn from_policy(p: Self::Policy) -> Self { p }
 }
 
 unsafe impl IntoPolicy for AslrPolicy {
     type Policy = PROCESS_MITIGATION_ASLR_POLICY;
-    fn into_policy(self) -> (process::mitigation::Policy, Self::Policy) { (process::ASLRPolicy, self.into()) }
+    fn ty() -> process::mitigation::Policy { process::ASLRPolicy }
+    fn into_policy(self) -> Self::Policy { self.into() }
+    fn from_policy(p: Self::Policy) -> Self { p.into() }
 }
 
 impl From<AslrPolicy> for PROCESS_MITIGATION_ASLR_POLICY {
     fn from(i: AslrPolicy) -> Self {
-        let mut o = PROCESS_MITIGATION_ASLR_POLICY::default();
-        o.set_EnableBottomUpRandomization(i.enable_bottom_up_randomization as u32);
-        o.set_EnableForceRelocateImages(i.enable_force_relocate_images as u32);
-        o.set_EnableHighEntropy(i.enable_high_entropy as u32);
-        o.set_DisallowStrippedImages(i.disallow_stripped_images as u32);
+        let mut o = Self::default();
+        o.set_EnableBottomUpRandomization   (i.enable_bottom_up_randomization   as u32);
+        o.set_EnableForceRelocateImages     (i.enable_force_relocate_images     as u32);
+        o.set_EnableHighEntropy             (i.enable_high_entropy              as u32);
+        o.set_DisallowStrippedImages        (i.disallow_stripped_images         as u32);
+        o
+    }
+}
+
+impl From<PROCESS_MITIGATION_ASLR_POLICY> for AslrPolicy {
+    fn from(i: PROCESS_MITIGATION_ASLR_POLICY) -> Self {
+        let mut o = Self::default();
+        o.enable_bottom_up_randomization    = i.EnableBottomUpRandomization()   != 0;
+        o.enable_force_relocate_images      = i.EnableForceRelocateImages()     != 0;
+        o.enable_high_entropy               = i.EnableHighEntropy()             != 0;
+        o.disallow_stripped_images          = i.DisallowStrippedImages()        != 0;
         o
     }
 }

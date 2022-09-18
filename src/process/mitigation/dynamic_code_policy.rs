@@ -18,20 +18,34 @@ pub struct DynamicCodePolicy {
 
 unsafe impl IntoPolicy for PROCESS_MITIGATION_DYNAMIC_CODE_POLICY {
     type Policy = Self;
-    fn into_policy(self) -> (process::mitigation::Policy, Self::Policy) { (process::DynamicCodePolicy, self) }
+    fn ty() -> process::mitigation::Policy { process::DynamicCodePolicy }
+    fn into_policy(self) -> Self::Policy { self }
+    fn from_policy(p: Self::Policy) -> Self { p }
 }
 
 unsafe impl IntoPolicy for DynamicCodePolicy {
     type Policy = PROCESS_MITIGATION_DYNAMIC_CODE_POLICY;
-    fn into_policy(self) -> (process::mitigation::Policy, Self::Policy) { (process::DynamicCodePolicy, self.into()) }
+    fn ty() -> process::mitigation::Policy { process::DynamicCodePolicy }
+    fn into_policy(self) -> Self::Policy { self.into() }
+    fn from_policy(p: Self::Policy) -> Self { p.into() }
 }
 
 impl From<DynamicCodePolicy> for PROCESS_MITIGATION_DYNAMIC_CODE_POLICY {
     fn from(i: DynamicCodePolicy) -> Self {
-        let mut o = PROCESS_MITIGATION_DYNAMIC_CODE_POLICY::default();
-        o.set_ProhibitDynamicCode(i.prohibit_dynamic_code as u32);
-        o.set_AllowThreadOptOut(i.allow_thread_opt_out as u32);
-        o.set_AllowRemoteDowngrade(i.allow_remote_downgrade as u32);
+        let mut o = Self::default();
+        o.set_ProhibitDynamicCode   (i.prohibit_dynamic_code    as u32);
+        o.set_AllowThreadOptOut     (i.allow_thread_opt_out     as u32);
+        o.set_AllowRemoteDowngrade  (i.allow_remote_downgrade   as u32);
+        o
+    }
+}
+
+impl From<PROCESS_MITIGATION_DYNAMIC_CODE_POLICY> for DynamicCodePolicy {
+    fn from(i: PROCESS_MITIGATION_DYNAMIC_CODE_POLICY) -> Self {
+        let mut o = Self::default();
+        o.prohibit_dynamic_code     = i.ProhibitDynamicCode()   != 0;
+        o.allow_thread_opt_out      = i.AllowThreadOptOut()     != 0;
+        o.allow_remote_downgrade    = i.AllowRemoteDowngrade()  != 0;
         o
     }
 }

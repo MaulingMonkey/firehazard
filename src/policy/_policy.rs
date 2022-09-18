@@ -5,16 +5,18 @@ use crate::*;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setprocessmitigationpolicy)\]
-/// SetProcessMitigationPolicy parameters
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\] GetProcessMitigationPolicy /<br>
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setprocessmitigationpolicy)\] SetProcessMitigationPolicy parameters
 ///
 /// ### Safety
-/// [`IntoPolicy::Policy`] must be ABI-compatible with whatever policy enumerand [`IntoPolicy::into`] returns.
+/// [`IntoPolicy::Policy`] must be ABI-compatible with whatever policy enumerand [`IntoPolicy::ty`] returns.
 pub unsafe trait IntoPolicy {
     /// POD-ish type that will be passed directly to SetProcessMitigationPolicy
-    type Policy;
+    type Policy : Default;
 
-    fn into_policy(self) -> (process::mitigation::Policy, Self::Policy);
+    fn ty() -> process::mitigation::Policy;
+    fn into_policy(self) -> Self::Policy;
+    fn from_policy(p: Self::Policy) -> Self;
 }
 
 pub use funcs::*;
