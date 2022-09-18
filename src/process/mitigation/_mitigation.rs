@@ -12,6 +12,7 @@ mod dynamic_code_policy;            pub use dynamic_code_policy::*;
 mod extension_point_disable_policy; pub use extension_point_disable_policy::*;
 mod font_disable_policy;            pub use font_disable_policy::*;
 mod image_load_policy;              pub use image_load_policy::*;
+mod mitigation_options_mask;        pub use mitigation_options_mask::*;
 mod payload_restriction_policy;     pub use payload_restriction_policy::*;
 mod redirection_trust_policy;       pub use redirection_trust_policy::*;
 mod sehop_policy;                   pub use sehop_policy::*;
@@ -21,8 +22,6 @@ mod system_call_disable_policy;     pub use system_call_disable_policy::*;
 mod system_call_filter_policy;
 mod user_pointer_auth_policy;       pub use user_pointer_auth_policy::*;
 mod user_shadow_stack_policy;       pub use user_shadow_stack_policy::*;
-
-// TODO: PROCESS_MITIGATION_OPTIONS_MASK
 
 
 

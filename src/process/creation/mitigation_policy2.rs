@@ -155,6 +155,12 @@ pub mod restrict_core_sharing {
 
 impl Debug for MitigationPolicyFlags2 {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+        Debug::fmt(&MitigationPolicyFlags2Mask(self.0), fmt)
+    }
+}
+
+impl Debug for MitigationPolicyFlags2Mask {
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         flags!(self.0, fmt, "0x{:016X}", [
             PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_AUDIT,
             PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_ALWAYS_OFF,

@@ -4,6 +4,9 @@ use winapi::um::winnt::*;
 fn main() {
     heap_enable_termination_on_corruption().unwrap();
 
+    let mask : process::mitigation::OptionsMask = get_process_mitigation_policy(get_current_process()).unwrap();
+    dbg!(mask);
+
     set_process_mitigation_policy(process::mitigation::AslrPolicy {
         disallow_stripped_images:       true,
         enable_bottom_up_randomization: true,
@@ -126,9 +129,4 @@ fn main() {
         audit_user_shadow_stack:                false,
         .. get_process_mitigation_policy(get_current_process()).unwrap()
     }).unwrap();
-
-    // TODO:
-    // PROCESS_MITIGATION_OPTIONS_MASK
-    // PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY
-    // PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY
 }

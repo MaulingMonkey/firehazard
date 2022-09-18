@@ -218,6 +218,12 @@ pub mod image_load_prefer_system32 {
 
 impl Debug for MitigationPolicyFlags1 {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+        Debug::fmt(&MitigationPolicyFlags1Mask(self.0), fmt)
+    }
+}
+
+impl Debug for MitigationPolicyFlags1Mask {
+    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         flags!(self.0, fmt, "0x{:016X}", [
             PROCESS_CREATION_MITIGATION_POLICY_DEP_ENABLE,
             PROCESS_CREATION_MITIGATION_POLICY_DEP_ATL_THUNK_ENABLE,
