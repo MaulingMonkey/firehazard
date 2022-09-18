@@ -16,6 +16,7 @@ use winapi::um::winbase::*;
 #[cfg(std)] use std::path::Path;
 #[cfg(std)] use std::vec::Vec;
 
+use core::mem::size_of_val;
 use core::ptr::{null_mut, null};
 
 
@@ -306,6 +307,13 @@ pub fn get_exit_code_process<'a>(process: impl AsRef<process::Handle<'a>>) -> Re
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(process, 0) == WAIT_TIMEOUT
 pub fn is_process_running<'a>(process: impl AsRef<process::Handle<'a>>) -> bool {
     WAIT_TIMEOUT == unsafe { WaitForSingleObject(process.as_ref().as_handle(), 0) }
+}
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setprocessmitigationpolicy)\]
+/// SetProcessMitigationPolicy
+pub fn set_process_mitigation_policy<P: policy::IntoPolicy>(policy: P) -> Result<(), Error> {
+    let (ty, value) = policy.into_policy();
+    Error::get_last_if(0 == unsafe { SetProcessMitigationPolicy(ty as u32, &value as *const P::Policy as *mut _, size_of_val(&value)) })
 }
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(process, INFINITE) +<br>
