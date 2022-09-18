@@ -91,9 +91,17 @@ fn main() {
     policy.set_FilterId(0);
     set_process_mitigation_policy(policy).unwrap_err(); // ERROR_INVALID_PARAMETER - n.b. docs: "This structure is not supported."
 
+    set_process_mitigation_policy(process::mitigation::SideChannelIsolationPolicy {
+        disable_page_combine:               true,
+        isolate_security_domain:            true,
+        //restrict_core_sharing:              true, // ERROR_INVALID_PARAMETER - n.b. poorly documented
+        smt_branch_target_isolation:        true,
+        speculative_store_bypass_disable:   true,
+        .. Default::default()
+    }).unwrap();
+
     // TODO:
     // PROCESS_MITIGATION_OPTIONS_MASK
-    // PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY
     // PROCESS_MITIGATION_USER_SHADOW_STACK_POLICY
     // PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY
     // PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY

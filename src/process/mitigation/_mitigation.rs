@@ -10,6 +10,7 @@ mod extension_point_disable_policy; pub use extension_point_disable_policy::*;
 mod font_disable_policy;            pub use font_disable_policy::*;
 mod image_load_policy;              pub use image_load_policy::*;
 mod payload_restriction_policy;     pub use payload_restriction_policy::*;
+mod side_channel_isolation_policy;  pub use side_channel_isolation_policy::*;
 mod strict_handle_check_policy;     pub use strict_handle_check_policy::*;
 mod system_call_disable_policy;     pub use system_call_disable_policy::*;
 mod winapi;
