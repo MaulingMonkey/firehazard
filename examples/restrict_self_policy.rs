@@ -19,10 +19,12 @@ fn main() {
         .. Default::default()
     }).unwrap();
 
-    let mut policy = PROCESS_MITIGATION_CHILD_PROCESS_POLICY { Flags: 0 };
-    policy.set_NoChildProcessCreation(1);
-    policy.set_AllowSecureProcessCreation(0);
-    set_process_mitigation_policy(policy).unwrap();
+    set_process_mitigation_policy(process::mitigation::ChildProcessPolicy {
+        no_child_process_creation:          true,
+        allow_secure_process_creation:      false,
+        audit_no_child_process_creation:    false,
+        .. Default::default()
+    }).unwrap();
 
     set_process_mitigation_policy(process::mitigation::ControlFlowGuardPolicy {
         enable_control_flow_guard:  false,  // "This field cannot be changed via SetProcessMitigationPolicy."
