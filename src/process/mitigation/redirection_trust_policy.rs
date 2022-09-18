@@ -14,18 +14,24 @@ pub struct RedirectionTrustPolicy {
     #[doc(hidden)] pub _reserved_flags: ()
 }
 
-unsafe impl IntoPolicy for PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY {
+unsafe impl GetPolicy for PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY {
     type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::RedirectionTrustPolicy }
-    fn into_policy(self) -> Self::Raw { self }
     fn from_policy(p: Self::Raw) -> Self { p }
 }
 
-unsafe impl IntoPolicy for RedirectionTrustPolicy {
+impl SetPolicy for PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY {
+    fn into_policy(self) -> Self::Raw { self }
+}
+
+unsafe impl GetPolicy for RedirectionTrustPolicy {
     type Raw = u32; // XXX
     fn ty() -> process::mitigation::Policy { process::RedirectionTrustPolicy }
-    fn into_policy(self) -> Self::Raw { PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY::from(self).Flags }
     fn from_policy(p: Self::Raw) -> Self { PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY { Flags: p }.into() }
+}
+
+impl SetPolicy for RedirectionTrustPolicy {
+    fn into_policy(self) -> Self::Raw { PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY::from(self).Flags }
 }
 
 impl From<RedirectionTrustPolicy> for PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY {

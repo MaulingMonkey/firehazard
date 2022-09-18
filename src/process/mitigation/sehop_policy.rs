@@ -13,18 +13,24 @@ pub struct SehopPolicy {
     #[doc(hidden)] pub _reserved_flags: ()
 }
 
-unsafe impl IntoPolicy for PROCESS_MITIGATION_SEHOP_POLICY {
+unsafe impl GetPolicy for PROCESS_MITIGATION_SEHOP_POLICY {
     type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::SEHOPPolicy }
-    fn into_policy(self) -> Self::Raw { self }
     fn from_policy(p: Self::Raw) -> Self { p }
 }
 
-unsafe impl IntoPolicy for SehopPolicy {
+impl SetPolicy for PROCESS_MITIGATION_SEHOP_POLICY {
+    fn into_policy(self) -> Self::Raw { self }
+}
+
+unsafe impl GetPolicy for SehopPolicy {
     type Raw = u32; // XXX
     fn ty() -> process::mitigation::Policy { process::SEHOPPolicy }
-    fn into_policy(self) -> Self::Raw { PROCESS_MITIGATION_SEHOP_POLICY::from(self).Flags }
     fn from_policy(p: Self::Raw) -> Self { PROCESS_MITIGATION_SEHOP_POLICY { Flags: p }.into() }
+}
+
+impl SetPolicy for SehopPolicy {
+    fn into_policy(self) -> Self::Raw { PROCESS_MITIGATION_SEHOP_POLICY::from(self).Flags }
 }
 
 impl From<SehopPolicy> for PROCESS_MITIGATION_SEHOP_POLICY {

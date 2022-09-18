@@ -14,18 +14,24 @@ pub struct SystemCallDisablePolicy {
     #[doc(hidden)] pub _reserved_flags: ()
 }
 
-unsafe impl IntoPolicy for PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY {
+unsafe impl GetPolicy for PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY {
     type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::SystemCallDisablePolicy }
-    fn into_policy(self) -> Self::Raw { self }
     fn from_policy(p: Self::Raw) -> Self { p }
 }
 
-unsafe impl IntoPolicy for SystemCallDisablePolicy {
+impl SetPolicy for PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY {
+    fn into_policy(self) -> Self::Raw { self }
+}
+
+unsafe impl GetPolicy for SystemCallDisablePolicy {
     type Raw = PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY;
     fn ty() -> process::mitigation::Policy { process::SystemCallDisablePolicy }
-    fn into_policy(self) -> Self::Raw { self.into() }
     fn from_policy(p: Self::Raw) -> Self { p.into() }
+}
+
+impl SetPolicy for SystemCallDisablePolicy {
+    fn into_policy(self) -> Self::Raw { self.into() }
 }
 
 impl From<SystemCallDisablePolicy> for PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY {

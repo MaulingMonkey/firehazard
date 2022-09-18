@@ -16,18 +16,24 @@ pub struct DepPolicy {
     #[doc(hidden)] pub _reserved_flags: ()
 }
 
-unsafe impl IntoPolicy for PROCESS_MITIGATION_DEP_POLICY {
+unsafe impl GetPolicy for PROCESS_MITIGATION_DEP_POLICY {
     type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::DEPPolicy }
-    fn into_policy(self) -> Self::Raw { self }
     fn from_policy(p: Self::Raw) -> Self { p }
 }
 
-unsafe impl IntoPolicy for DepPolicy {
+impl SetPolicy for PROCESS_MITIGATION_DEP_POLICY {
+    fn into_policy(self) -> Self::Raw { self }
+}
+
+unsafe impl GetPolicy for DepPolicy {
     type Raw = PROCESS_MITIGATION_DEP_POLICY;
     fn ty() -> process::mitigation::Policy { process::DEPPolicy }
-    fn into_policy(self) -> Self::Raw { self.into() }
     fn from_policy(p: Self::Raw) -> Self { p.into() }
+}
+
+impl SetPolicy for DepPolicy {
+    fn into_policy(self) -> Self::Raw { self.into() }
 }
 
 impl From<DepPolicy> for PROCESS_MITIGATION_DEP_POLICY {

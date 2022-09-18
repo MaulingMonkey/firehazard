@@ -13,9 +13,10 @@ use crate::*;
 /// When interpreting said bits, many values are `..._RESERVED` and should not be used as is - so I've chosen [`process::creation::MitigationPolicyMask`] is the least awkward fit.
 pub type OptionsMask = process::creation::MitigationPolicyMask;
 
-unsafe impl IntoPolicy for OptionsMask {
+unsafe impl GetPolicy for OptionsMask {
     type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::MitigationOptionsMask }
-    fn into_policy(self) -> Self::Raw { self }
     fn from_policy(p: Self::Raw) -> Self { p }
 }
+
+// intentionally omitted: impl SetPolicy for OptionsMask

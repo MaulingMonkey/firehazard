@@ -15,18 +15,24 @@ pub struct FontDisablePolicy {
     #[doc(hidden)] pub _reserved_flags: ()
 }
 
-unsafe impl IntoPolicy for PROCESS_MITIGATION_FONT_DISABLE_POLICY {
+unsafe impl GetPolicy for PROCESS_MITIGATION_FONT_DISABLE_POLICY {
     type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::FontDisablePolicy }
-    fn into_policy(self) -> Self::Raw { self }
     fn from_policy(p: Self::Raw) -> Self { p }
 }
 
-unsafe impl IntoPolicy for FontDisablePolicy {
+impl SetPolicy for PROCESS_MITIGATION_FONT_DISABLE_POLICY {
+    fn into_policy(self) -> Self::Raw { self }
+}
+
+unsafe impl GetPolicy for FontDisablePolicy {
     type Raw = PROCESS_MITIGATION_FONT_DISABLE_POLICY;
     fn ty() -> process::mitigation::Policy { process::FontDisablePolicy }
-    fn into_policy(self) -> Self::Raw { self.into() }
     fn from_policy(p: Self::Raw) -> Self { p.into() }
+}
+
+impl SetPolicy for FontDisablePolicy {
+    fn into_policy(self) -> Self::Raw { self.into() }
 }
 
 impl From<FontDisablePolicy> for PROCESS_MITIGATION_FONT_DISABLE_POLICY {

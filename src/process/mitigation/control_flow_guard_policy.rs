@@ -16,18 +16,24 @@ pub struct ControlFlowGuardPolicy {
     #[doc(hidden)] pub _reserved_flags: ()
 }
 
-unsafe impl IntoPolicy for PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY {
+unsafe impl GetPolicy for PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY {
     type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::ControlFlowGuardPolicy }
-    fn into_policy(self) -> Self::Raw { self }
     fn from_policy(p: Self::Raw) -> Self { p }
 }
 
-unsafe impl IntoPolicy for ControlFlowGuardPolicy {
+impl SetPolicy for PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY {
+    fn into_policy(self) -> Self::Raw { self }
+}
+
+unsafe impl GetPolicy for ControlFlowGuardPolicy {
     type Raw = PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY;
     fn ty() -> process::mitigation::Policy { process::ControlFlowGuardPolicy }
-    fn into_policy(self) -> Self::Raw { self.into() }
     fn from_policy(p: Self::Raw) -> Self { p.into() }
+}
+
+impl SetPolicy for ControlFlowGuardPolicy {
+    fn into_policy(self) -> Self::Raw { self.into() }
 }
 
 impl From<ControlFlowGuardPolicy> for PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY {

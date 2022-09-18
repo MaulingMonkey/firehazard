@@ -52,16 +52,23 @@ mod user_shadow_stack_policy;       pub use user_shadow_stack_policy::*;
     //MaxProcessMitigationPolicy
 }
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\] GetProcessMitigationPolicy /<br>
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setprocessmitigationpolicy)\] SetProcessMitigationPolicy parameters
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\] GetProcessMitigationPolicy parameters
 ///
 /// ### Safety
-/// [`IntoPolicy::Raw`] must be ABI-compatible with whatever policy enumerand [`IntoPolicy::ty`] returns.
-pub unsafe trait IntoPolicy {
-    /// POD-ish type that will be passed directly to SetProcessMitigationPolicy
+/// `Self::Raw` must be ABI-compatible with whatever policy enumerand `GetPolicy::ty()` specifies.
+pub unsafe trait GetPolicy {
+    /// POD type that will be requested from GetProcessMitigationPolicy.
+    /// If [`winapi`] implemented [`bytemuck::Pod`], I would require it.
     type Raw : Default;
 
+    /// Specifies the type of [`GetPolicy::Raw`]
     fn ty() -> Policy;
-    fn into_policy(self) -> Self::Raw;
+
+    /// Constructs `Self` from `Self::Raw`
     fn from_policy(p: Self::Raw) -> Self;
+}
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setprocessmitigationpolicy)\] SetProcessMitigationPolicy parameters
+pub trait SetPolicy : GetPolicy {
+    fn into_policy(self) -> Self::Raw;
 }

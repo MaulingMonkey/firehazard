@@ -16,18 +16,24 @@ pub struct ImageLoadPolicy {
     #[doc(hidden)] pub _reserved_flags: ()
 }
 
-unsafe impl IntoPolicy for PROCESS_MITIGATION_IMAGE_LOAD_POLICY {
+unsafe impl GetPolicy for PROCESS_MITIGATION_IMAGE_LOAD_POLICY {
     type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::ImageLoadPolicy }
-    fn into_policy(self) -> Self::Raw { self }
     fn from_policy(p: Self::Raw) -> Self { p }
 }
 
-unsafe impl IntoPolicy for ImageLoadPolicy {
+impl SetPolicy for PROCESS_MITIGATION_IMAGE_LOAD_POLICY {
+    fn into_policy(self) -> Self::Raw { self }
+}
+
+unsafe impl GetPolicy for ImageLoadPolicy {
     type Raw = PROCESS_MITIGATION_IMAGE_LOAD_POLICY;
     fn ty() -> process::mitigation::Policy { process::ImageLoadPolicy }
-    fn into_policy(self) -> Self::Raw { self.into() }
     fn from_policy(p: Self::Raw) -> Self { p.into() }
+}
+
+impl SetPolicy for ImageLoadPolicy {
+    fn into_policy(self) -> Self::Raw { self.into() }
 }
 
 impl From<ImageLoadPolicy> for PROCESS_MITIGATION_IMAGE_LOAD_POLICY {

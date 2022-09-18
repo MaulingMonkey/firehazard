@@ -14,18 +14,24 @@ pub struct ExtensionPointDisablePolicy {
     #[doc(hidden)] pub _reserved_flags: ()
 }
 
-unsafe impl IntoPolicy for PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY {
+unsafe impl GetPolicy for PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY {
     type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::ExtensionPointDisablePolicy }
-    fn into_policy(self) -> Self::Raw { self }
     fn from_policy(p: Self::Raw) -> Self { p }
 }
 
-unsafe impl IntoPolicy for ExtensionPointDisablePolicy {
+impl SetPolicy for PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY {
+    fn into_policy(self) -> Self::Raw { self }
+}
+
+unsafe impl GetPolicy for ExtensionPointDisablePolicy {
     type Raw = PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY;
     fn ty() -> process::mitigation::Policy { process::ExtensionPointDisablePolicy }
-    fn into_policy(self) -> Self::Raw { self.into() }
     fn from_policy(p: Self::Raw) -> Self { p.into() }
+}
+
+impl SetPolicy for ExtensionPointDisablePolicy {
+    fn into_policy(self) -> Self::Raw { self.into() }
 }
 
 impl From<ExtensionPointDisablePolicy> for PROCESS_MITIGATION_EXTENSION_POINT_DISABLE_POLICY {

@@ -17,18 +17,24 @@ pub struct SideChannelIsolationPolicy {
     #[doc(hidden)] pub _reserved_flags: ()
 }
 
-unsafe impl IntoPolicy for PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY {
+unsafe impl GetPolicy for PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY {
     type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::SideChannelIsolationPolicy }
-    fn into_policy(self) -> Self::Raw { self }
     fn from_policy(p: Self::Raw) -> Self { p }
 }
 
-unsafe impl IntoPolicy for SideChannelIsolationPolicy {
+impl SetPolicy for PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY {
+    fn into_policy(self) -> Self::Raw { self }
+}
+
+unsafe impl GetPolicy for SideChannelIsolationPolicy {
     type Raw = u32; // XXX
     fn ty() -> process::mitigation::Policy { process::SideChannelIsolationPolicy }
-    fn into_policy(self) -> Self::Raw { PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY::from(self).Flags }
     fn from_policy(p: Self::Raw) -> Self { PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY { Flags: p }.into() }
+}
+
+impl SetPolicy for SideChannelIsolationPolicy {
+    fn into_policy(self) -> Self::Raw { PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY::from(self).Flags }
 }
 
 impl From<SideChannelIsolationPolicy> for PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY {

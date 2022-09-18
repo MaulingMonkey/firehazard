@@ -13,18 +13,24 @@ pub struct UserPointerAuthPolicy {
     #[doc(hidden)] pub _reserved_flags: ()
 }
 
-unsafe impl IntoPolicy for PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY {
+unsafe impl GetPolicy for PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY {
     type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::UserPointerAuthPolicy }
-    fn into_policy(self) -> Self::Raw { self }
     fn from_policy(p: Self::Raw) -> Self { p }
 }
 
-unsafe impl IntoPolicy for UserPointerAuthPolicy {
+impl SetPolicy for PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY {
+    fn into_policy(self) -> Self::Raw { self }
+}
+
+unsafe impl GetPolicy for UserPointerAuthPolicy {
     type Raw = u32; // XXX
     fn ty() -> process::mitigation::Policy { process::UserPointerAuthPolicy }
-    fn into_policy(self) -> Self::Raw { PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY::from(self).Flags }
     fn from_policy(p: Self::Raw) -> Self { PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY { Flags: p }.into() }
+}
+
+impl SetPolicy for UserPointerAuthPolicy {
+    fn into_policy(self) -> Self::Raw { PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY::from(self).Flags }
 }
 
 impl From<UserPointerAuthPolicy> for PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY {

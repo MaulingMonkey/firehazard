@@ -17,18 +17,24 @@ pub struct AslrPolicy {
     #[doc(hidden)] pub _reserved_flags:     ()
 }
 
-unsafe impl IntoPolicy for PROCESS_MITIGATION_ASLR_POLICY {
+unsafe impl GetPolicy for PROCESS_MITIGATION_ASLR_POLICY {
     type Raw = Self;
     fn ty() -> process::mitigation::Policy { process::ASLRPolicy }
-    fn into_policy(self) -> Self::Raw { self }
     fn from_policy(p: Self::Raw) -> Self { p }
 }
 
-unsafe impl IntoPolicy for AslrPolicy {
+impl SetPolicy for PROCESS_MITIGATION_ASLR_POLICY {
+    fn into_policy(self) -> Self::Raw { self }
+}
+
+unsafe impl GetPolicy for AslrPolicy {
     type Raw = PROCESS_MITIGATION_ASLR_POLICY;
     fn ty() -> process::mitigation::Policy { process::ASLRPolicy }
-    fn into_policy(self) -> Self::Raw { self.into() }
     fn from_policy(p: Self::Raw) -> Self { p.into() }
+}
+
+impl SetPolicy for AslrPolicy {
+    fn into_policy(self) -> Self::Raw { self.into() }
 }
 
 impl From<AslrPolicy> for PROCESS_MITIGATION_ASLR_POLICY {
