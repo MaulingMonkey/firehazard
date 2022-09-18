@@ -1,4 +1,7 @@
+//! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\]
 //! PROCESS_MITIGATION_\*
+//!
+//! Process mitigation policy types and functions
 
 mod aslr_policy;                    pub use aslr_policy::*;
 mod binary_signature_policy;        pub use binary_signature_policy::*;
@@ -14,8 +17,12 @@ mod sehop_policy;                   pub use sehop_policy::*;
 mod side_channel_isolation_policy;  pub use side_channel_isolation_policy::*;
 mod strict_handle_check_policy;     pub use strict_handle_check_policy::*;
 mod system_call_disable_policy;     pub use system_call_disable_policy::*;
+mod system_call_filter_policy;
 mod user_shadow_stack_policy;       pub use user_shadow_stack_policy::*;
-mod winapi;
+
+// TODO: PROCESS_MITIGATION_OPTIONS_MASK
+// TODO: PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY
+// TODO: PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY
 
 
 
@@ -44,4 +51,18 @@ mod winapi;
     /* Process */ UserPointerAuthPolicy,
     /* Process */ SEHOPPolicy,
     //MaxProcessMitigationPolicy
+}
+
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\] GetProcessMitigationPolicy /<br>
+/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setprocessmitigationpolicy)\] SetProcessMitigationPolicy parameters
+///
+/// ### Safety
+/// [`IntoPolicy::Policy`] must be ABI-compatible with whatever policy enumerand [`IntoPolicy::ty`] returns.
+pub unsafe trait IntoPolicy {
+    /// POD-ish type that will be passed directly to SetProcessMitigationPolicy
+    type Policy : Default;
+
+    fn ty() -> Policy;
+    fn into_policy(self) -> Self::Policy;
+    fn from_policy(p: Self::Policy) -> Self;
 }

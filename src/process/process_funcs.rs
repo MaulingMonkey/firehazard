@@ -306,7 +306,7 @@ pub fn get_exit_code_process<'a>(process: impl AsRef<process::Handle<'a>>) -> Re
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\]
 /// GetProcessMitigationPolicy
-pub fn get_process_mitigation_policy<'a, P: policy::IntoPolicy>(process: impl AsRef<process::PsuedoHandle<'a>>) -> Result<P, Error> {
+pub fn get_process_mitigation_policy<'a, P: process::mitigation::IntoPolicy>(process: impl AsRef<process::PsuedoHandle<'a>>) -> Result<P, Error> {
     let mut p = P::Policy::default();
     Error::get_last_if(0 == unsafe { GetProcessMitigationPolicy(process.as_ref().as_handle(), P::ty() as u32, &mut p as *mut P::Policy as *mut _, size_of::<P::Policy>()) })?;
     Ok(P::from_policy(p))
@@ -319,7 +319,7 @@ pub fn is_process_running<'a>(process: impl AsRef<process::Handle<'a>>) -> bool 
 
 /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setprocessmitigationpolicy)\]
 /// SetProcessMitigationPolicy
-pub fn set_process_mitigation_policy<P: policy::IntoPolicy>(policy: P) -> Result<(), Error> {
+pub fn set_process_mitigation_policy<P: process::mitigation::IntoPolicy>(policy: P) -> Result<(), Error> {
     Error::get_last_if(0 == unsafe { SetProcessMitigationPolicy(P::ty() as u32, &policy.into_policy() as *const P::Policy as *mut _, size_of::<P::Policy>()) })
 }
 
