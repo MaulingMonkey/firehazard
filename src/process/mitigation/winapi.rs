@@ -4,7 +4,6 @@ use winapi::um::winnt::*;
 
 
 
-unsafe impl IntoPolicy for PROCESS_MITIGATION_ASLR_POLICY                       { type Policy = Self; fn into_policy(self) -> (process::mitigation::Policy, Self::Policy) { (process::ASLRPolicy,                  self) } }
 unsafe impl IntoPolicy for PROCESS_MITIGATION_DYNAMIC_CODE_POLICY               { type Policy = Self; fn into_policy(self) -> (process::mitigation::Policy, Self::Policy) { (process::DynamicCodePolicy,           self) } }
 unsafe impl IntoPolicy for PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY        { type Policy = Self; fn into_policy(self) -> (process::mitigation::Policy, Self::Policy) { (process::StrictHandleCheckPolicy,     self) } }
 unsafe impl IntoPolicy for PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY        { type Policy = Self; fn into_policy(self) -> (process::mitigation::Policy, Self::Policy) { (process::SystemCallDisablePolicy,     self) } }

@@ -9,11 +9,10 @@ use winapi::um::winnt::*;
 /// ~ [PROCESS_MITIGATION_DEP_POLICY]
 #[derive(Clone, Copy, Debug)]
 #[derive(Default, Zeroable)]
-#[non_exhaustive]
 pub struct DepPolicy {
     pub enable:                         bool,
     pub disable_atl_thunk_emulation:    bool,
-    // reserved_flags: ...
+    #[doc(hidden)] pub _reserved_flags: (),
 }
 
 unsafe impl IntoPolicy for PROCESS_MITIGATION_DEP_POLICY {

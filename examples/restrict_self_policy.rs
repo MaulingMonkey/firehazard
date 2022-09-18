@@ -4,12 +4,13 @@ use winapi::um::winnt::*;
 fn main() {
     heap_enable_termination_on_corruption().unwrap();
 
-    let mut policy = PROCESS_MITIGATION_ASLR_POLICY { Flags: 0 };
-    policy.set_DisallowStrippedImages(1);
-    policy.set_EnableBottomUpRandomization(1);
-    policy.set_EnableForceRelocateImages(1);
-    policy.set_EnableHighEntropy(1);
-    set_process_mitigation_policy(policy).unwrap();
+    set_process_mitigation_policy(process::mitigation::AslrPolicy {
+        disallow_stripped_images:       true,
+        enable_bottom_up_randomization: true,
+        enable_force_relocate_images:   true,
+        enable_high_entropy:            true,
+        .. Default::default()
+    }).unwrap();
 
     let mut policy = PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY { Flags: 0 };
     policy.set_MicrosoftSignedOnly(1);  // but this doesn't include our exe?
