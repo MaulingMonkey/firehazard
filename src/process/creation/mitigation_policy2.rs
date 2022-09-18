@@ -1,4 +1,4 @@
-//! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\] UpdateProcThreadAttribute value constants for use with<br>
+//! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\] UpdateProcThreadAttribute value constants for use with<br>
 //! PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY
 
 use crate::process::creation::{MitigationPolicyFlags2, MitigationPolicyFlags2Mask};

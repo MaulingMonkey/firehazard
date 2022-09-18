@@ -1,5 +1,5 @@
-//! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl)\]
-//! [`ACL`](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl)
+//! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl)\]
+//! [`ACL`](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl)
 //! related types and manipulation functions
 
 mod acl_builder;                        pub use acl_builder::*;

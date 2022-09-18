@@ -4,7 +4,7 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_end_of_job_time_information)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_end_of_job_time_information)\]
 /// JOBOBJECT_END_OF_JOB_TIME_INFORMATION
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)] pub struct EndOfJobTimeInformation {
@@ -19,16 +19,16 @@ structure!(@assert layout EndOfJobTimeAction => JOBOBJECT_END_OF_JOB_TIME_INFORM
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_end_of_job_time_information)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_end_of_job_time_information)\]
 /// JOBOBJECT_END_OF_JOB_TIME_INFORMATION::EndOfJobTimeAction
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct EndOfJobTimeAction(u32);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_end_of_job_time_information)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_end_of_job_time_information)\]
 /// JOB_OBJECT_TERMINATE_AT_END_OF_JOB
 pub const TERMINATE_AT_END_OF_JOB : EndOfJobTimeAction = EndOfJobTimeAction(winapi::um::winnt::JOB_OBJECT_TERMINATE_AT_END_OF_JOB);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_end_of_job_time_information)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_end_of_job_time_information)\]
 /// JOB_OBJECT_POST_AT_END_OF_JOB
 pub const POST_AT_END_OF_JOB : EndOfJobTimeAction = EndOfJobTimeAction(winapi::um::winnt::JOB_OBJECT_POST_AT_END_OF_JOB);
 

@@ -5,7 +5,7 @@ use core::mem::size_of_val;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_process_id_list)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_process_id_list)\]
 /// JOBOBJECT_BASIC_PROCESS_ID_LIST
 ///
 /// ### Errata
@@ -34,7 +34,7 @@ impl job::QueryInformationJobObject for job::object::BasicProcessIdList { fn que
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_process_id_list)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_process_id_list)\]
 /// JOBOBJECT_BASIC_PROCESS_ID_LIST minus the trailing "any length" `ULONG_PTR ProcessIdList[1];`
 #[derive(Clone, Copy, Debug)]
 #[derive(Pod, Zeroable)]

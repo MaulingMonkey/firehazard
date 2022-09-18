@@ -4,7 +4,7 @@ use core::mem::{transmute};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-process_information)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-process_information)\]
 /// PROCESS_INFORMATION
 #[derive(Debug)]
 #[repr(C)] pub struct Information {

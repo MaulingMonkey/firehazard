@@ -4,14 +4,14 @@ use winapi::um::winnt::{self, JobObjectGroupInformation, JobObjectGroupInformati
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
 /// ~ WORD / USHORT referencing a processor group
 ///
 /// get/set via `JobObjectGroupInformationEx`
 #[derive(Clone, Copy, Default, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Group(u16);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-group_affinity)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-group_affinity)\]
 /// GROUP_AFFINITY referencing a processor group and processor/core mask
 ///
 /// get/set via `JobObjectGroupInformationEx`

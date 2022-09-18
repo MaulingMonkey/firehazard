@@ -2,12 +2,12 @@ use core::fmt::{self, Debug, Display, Formatter};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members)\]
 /// ACE_HEADER::AceFlags Mask
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct FlagsMask(u8);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members)\]
 /// ACE_HEADER::AceFlags
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Flags(u8);
@@ -70,7 +70,7 @@ macro_rules! table { ( $( $short:literal $sddl:ident $flag:tt )* ) => {
     ),*]
 }}
 
-/// https://docs.microsoft.com/en-us/windows/win32/secauthz/ace-strings
+/// https://learn.microsoft.com/en-us/windows/win32/secauthz/ace-strings
 const SHORT_FLAG_LONG : &'static [(&'static str, u8, &'static str)] = table! [
     // str  sddl.h                      aceflag
     "CI"    SDDL_CONTAINER_INHERIT      CONTAINER_INHERIT_ACE

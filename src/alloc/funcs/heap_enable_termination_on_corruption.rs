@@ -1,4 +1,4 @@
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapsetinformation)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapsetinformation)\]
 /// HeapSetInformation(0, HeapEnableTerminationOnCorruption, 0, 0)
 ///
 /// ### Example

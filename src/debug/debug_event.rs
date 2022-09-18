@@ -6,7 +6,7 @@ use core::ops::Deref;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/minwinbase/ns-minwinbase-debug_event)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/minwinbase/ns-minwinbase-debug_event)\]
 /// DEBUG_EVENT
 #[repr(transparent)]
 pub struct DebugEvent(DEBUG_EVENT);
@@ -35,7 +35,7 @@ impl Deref for DebugEvent { type Target = DEBUG_EVENT; fn deref(&self) -> &Self:
 impl AsRef<DEBUG_EVENT> for DebugEvent { fn as_ref(&self) -> &DEBUG_EVENT { &self.0 } }
 impl From<DebugEvent> for DEBUG_EVENT { fn from(de: DebugEvent) -> Self { de.0 } }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/minwinbase/ns-minwinbase-debug_event)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/minwinbase/ns-minwinbase-debug_event)\]
 /// ~ DEBUG_EVENT::u
 pub enum DebugEventU {
     Exception(EXCEPTION_DEBUG_INFO),

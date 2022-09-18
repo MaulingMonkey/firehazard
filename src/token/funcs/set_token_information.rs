@@ -1,4 +1,4 @@
-//! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\]
+//! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\]
 //! SetTokenInformation
 //!
 //! ### Errors
@@ -12,23 +12,23 @@ use winapi::um::winnt::*;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\] `SetTokenInformation(self, TokenDefaultDacl, ...)`
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\] `SetTokenInformation(self, TokenDefaultDacl, ...)`
 pub fn default_dacl<'acl>(token: &token::OwnedHandle, dacl: impl Into<acl::Ptr<'acl>>) -> Result<(), Error> { unsafe { raw_fixed(token, TokenDefaultDacl, &TOKEN_DEFAULT_DACL { DefaultDacl: dacl.into().as_pacl() }) } }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\] `SetTokenInformation(self, TokenIntegrityLevel, ...)`
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\] `SetTokenInformation(self, TokenIntegrityLevel, ...)`
 pub fn integrity_level(token: &token::OwnedHandle, saa: sid::AndAttributes) -> Result<(), Error> { unsafe { raw_fixed(token, TokenIntegrityLevel, &saa) } }
 
 impl token::OwnedHandle {
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\] `SetTokenInformation(self, TokenDefaultDacl, ...)`
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\] `SetTokenInformation(self, TokenDefaultDacl, ...)`
     pub fn set_default_dacl<'acl>(&self, dacl: impl Into<acl::Ptr<'acl>>) -> Result<(), Error> { default_dacl(self, dacl) }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\] `SetTokenInformation(self, TokenIntegrityLevel, ...)`
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\] `SetTokenInformation(self, TokenIntegrityLevel, ...)`
     pub fn set_integrity_level(&self, saa: sid::AndAttributes) -> Result<(), Error> { integrity_level(self, saa) }
 }
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\]
 /// `SetTokenInformation(self, class, slice, size_of_val(&slice))`
 ///
 /// Set the token information as a raw byte buffer.
@@ -42,7 +42,7 @@ unsafe fn raw_slice<E>(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLAS
     Error::get_last_if(0 == unsafe { SetTokenInformation(token.as_handle(), class, slice.as_ptr() as *mut _, len32) })
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-gettokeninformation)\]
 /// `SetTokenInformation(self, class, value, size_of_val(value))`
 ///
 /// Set the token information as a raw byte buffer.

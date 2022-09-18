@@ -1,4 +1,4 @@
-//! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
+//! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
 //! Generic Kernel Object `HANDLE` wrapping types and functions.
 //!
 //! Most crate-local handle types are [`core::ptr::NonNull`] wrappers that, if wrapped in an [`Option`], are ABI-compatible with [`HANDLE`].
@@ -34,8 +34,8 @@
 //! | ~~[Timer]~~                                   |                                                                           |                                                               |                           |
 //! | [Update Resource]                             |                                                                           |                                                               |                           | Code patching
 //! | [Window Station]                              | [winsta::OwnedHandle]                                                     |                                                               |                           | Access restriction
-//! | ~~[GDI Objects](https://docs.microsoft.com/en-us/windows/win32/sysinfo/gdi-objects)~~
-//! | ~~[User Objects](https://docs.microsoft.com/en-us/windows/win32/sysinfo/user-objects)~~
+//! | ~~[GDI Objects](https://learn.microsoft.com/en-us/windows/win32/sysinfo/gdi-objects)~~
+//! | ~~[User Objects](https://learn.microsoft.com/en-us/windows/win32/sysinfo/user-objects)~~
 //!
 //! Crossed out kernel types are unlikely to ever be supported.
 //! Empty owned columns might gain support in the future.
@@ -47,32 +47,32 @@
 //! [minidl::Library]:                  https://docs.rs/minidl/latest/minidl/struct.Library.html
 //! [dlopen::raw::Library]:             https://docs.rs/dlopen/latest/dlopen/raw/struct.Library.html
 //!
-//! [Access Token]:                     https://docs.microsoft.com/en-us/windows/win32/secauthz/access-tokens
-//! [Change Notification]:              https://docs.microsoft.com/en-us/windows/win32/fileio/obtaining-directory-change-notifications
-//! [Communications Device]:            https://docs.microsoft.com/en-us/windows/win32/devio/communications-resources
-//! [Console Input Buffer]:             https://docs.microsoft.com/en-us/windows/console/console-input-buffer
-//! [Console Screen Buffer]:            https://docs.microsoft.com/en-us/windows/console/console-screen-buffers
-//! [Desktop]:                          https://docs.microsoft.com/en-us/windows/win32/winstation/desktops
-//! [Event]:                            https://docs.microsoft.com/en-us/windows/win32/sync/event-objects
-//! [Event Log]:                        https://docs.microsoft.com/en-us/windows/win32/eventlog/event-logging
-//! [File]:                             https://docs.microsoft.com/en-us/windows/win32/fileio/file-objects
-//! [File Mapping]:                     https://docs.microsoft.com/en-us/windows/win32/memory/file-mapping
-//! [Find File]:                        https://docs.microsoft.com/en-us/windows/win32/fileio/listing-the-files-in-a-directory
-//! [Heap]:                             https://docs.microsoft.com/en-us/windows/win32/memory/heap-functions
-//! [I/O Completion Port]:              https://docs.microsoft.com/en-us/windows/win32/fileio/i-o-completion-ports
-//! [Job]:                              https://docs.microsoft.com/en-us/windows/win32/procthread/job-objects
-//! [Mailslot]:                         https://docs.microsoft.com/en-us/windows/win32/ipc/mailslots
-//! [Memory Resource Notification]:     https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-creatememoryresourcenotification
-//! [Module]:                           https://docs.microsoft.com/en-us/windows/win32/psapi/module-information
-//! [Mutex]:                            https://docs.microsoft.com/en-us/windows/win32/sync/mutex-objects
-//! [Pipe]:                             https://docs.microsoft.com/en-us/windows/win32/ipc/about-pipes
-//! [Process]:                          https://docs.microsoft.com/en-us/windows/win32/procthread/about-processes-and-threads
-//! [Semaphore]:                        https://docs.microsoft.com/en-us/windows/win32/sync/semaphore-objects
-//! [Socket]:                           https://docs.microsoft.com/en-us/windows/win32/winsock/getting-started-with-winsock
-//! [Thread]:                           https://docs.microsoft.com/en-us/windows/win32/procthread/about-processes-and-threads
-//! [Timer]:                            https://docs.microsoft.com/en-us/windows/win32/sync/waitable-timer-objects
-//! [Update Resource]:                  https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-updateresourcea
-//! [Window Station]:                   https://docs.microsoft.com/en-us/windows/win32/winstation/window-stations
+//! [Access Token]:                     https://learn.microsoft.com/en-us/windows/win32/secauthz/access-tokens
+//! [Change Notification]:              https://learn.microsoft.com/en-us/windows/win32/fileio/obtaining-directory-change-notifications
+//! [Communications Device]:            https://learn.microsoft.com/en-us/windows/win32/devio/communications-resources
+//! [Console Input Buffer]:             https://learn.microsoft.com/en-us/windows/console/console-input-buffer
+//! [Console Screen Buffer]:            https://learn.microsoft.com/en-us/windows/console/console-screen-buffers
+//! [Desktop]:                          https://learn.microsoft.com/en-us/windows/win32/winstation/desktops
+//! [Event]:                            https://learn.microsoft.com/en-us/windows/win32/sync/event-objects
+//! [Event Log]:                        https://learn.microsoft.com/en-us/windows/win32/eventlog/event-logging
+//! [File]:                             https://learn.microsoft.com/en-us/windows/win32/fileio/file-objects
+//! [File Mapping]:                     https://learn.microsoft.com/en-us/windows/win32/memory/file-mapping
+//! [Find File]:                        https://learn.microsoft.com/en-us/windows/win32/fileio/listing-the-files-in-a-directory
+//! [Heap]:                             https://learn.microsoft.com/en-us/windows/win32/memory/heap-functions
+//! [I/O Completion Port]:              https://learn.microsoft.com/en-us/windows/win32/fileio/i-o-completion-ports
+//! [Job]:                              https://learn.microsoft.com/en-us/windows/win32/procthread/job-objects
+//! [Mailslot]:                         https://learn.microsoft.com/en-us/windows/win32/ipc/mailslots
+//! [Memory Resource Notification]:     https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-creatememoryresourcenotification
+//! [Module]:                           https://learn.microsoft.com/en-us/windows/win32/psapi/module-information
+//! [Mutex]:                            https://learn.microsoft.com/en-us/windows/win32/sync/mutex-objects
+//! [Pipe]:                             https://learn.microsoft.com/en-us/windows/win32/ipc/about-pipes
+//! [Process]:                          https://learn.microsoft.com/en-us/windows/win32/procthread/about-processes-and-threads
+//! [Semaphore]:                        https://learn.microsoft.com/en-us/windows/win32/sync/semaphore-objects
+//! [Socket]:                           https://learn.microsoft.com/en-us/windows/win32/winsock/getting-started-with-winsock
+//! [Thread]:                           https://learn.microsoft.com/en-us/windows/win32/procthread/about-processes-and-threads
+//! [Timer]:                            https://learn.microsoft.com/en-us/windows/win32/sync/waitable-timer-objects
+//! [Update Resource]:                  https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-updateresourcea
+//! [Window Station]:                   https://learn.microsoft.com/en-us/windows/win32/winstation/window-stations
 
 #[allow(unused_imports)] use crate::*;
 #[allow(unused_imports)] use winapi::shared::ntdef::HANDLE;

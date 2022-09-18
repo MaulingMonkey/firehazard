@@ -28,7 +28,7 @@ impl<'s> List<'s> {
             | process::creation::mitigation_policy::extension_point_disable::ALWAYS_ON
             | (!target.allow.dynamic_code * process::creation::mitigation_policy::prohibit_dynamic_code::ALWAYS_ON)
             | process::creation::mitigation_policy::control_flow_guard::ALWAYS_ON               // Redundant?
-            | process::creation::mitigation_policy::control_flow_guard::EXPORT_SUPPRESSION      // https://docs.microsoft.com/en-us/windows/win32/secbp/pe-metadata#export-suppression
+            | process::creation::mitigation_policy::control_flow_guard::EXPORT_SUPPRESSION      // https://learn.microsoft.com/en-us/windows/win32/secbp/pe-metadata#export-suppression
             | process::creation::mitigation_policy::block_non_microsoft_binaries::ALWAYS_ON     // Redundant?
             | process::creation::mitigation_policy::block_non_microsoft_binaries::ALLOW_STORE   // ?
             | (!target.allow.same_desktop * process::creation::mitigation_policy::font_disable::ALWAYS_ON) // user32.dll(?) requires access on init
@@ -79,7 +79,7 @@ impl<'s> List<'s> {
             },
             process::ThreadAttributeRef::job_list(&self.job_list[..]),
             process::ThreadAttributeRef::handle_list(&self.inherit[..]),
-            // TODO: ThreadAttributeRef::security_capabilities ? app container / capability sids related: https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_capabilities
+            // TODO: ThreadAttributeRef::security_capabilities ? app container / capability sids related: https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_capabilities
         ][..]).unwrap()
     }
 }

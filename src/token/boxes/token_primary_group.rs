@@ -9,7 +9,7 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_primary_group)\] ~ `Box<(TOKEN_PRIMARY_GROUP, ..)>`
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_primary_group)\] ~ `Box<(TOKEN_PRIMARY_GROUP, ..)>`
 #[repr(transparent)] pub struct BoxTokenPrimaryGroup(CBox<TOKEN_PRIMARY_GROUP>);
 
 impl BoxTokenPrimaryGroup {

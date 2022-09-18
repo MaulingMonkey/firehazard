@@ -3,7 +3,7 @@ use winapi::um::winnt::{JOBOBJECT_BASIC_LIMIT_INFORMATION, JOBOBJECT_EXTENDED_LI
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_limit_information)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_limit_information)\]
 /// JOBOBJECT_BASIC_LIMIT_INFORMATION
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)] pub struct BasicLimitInformation {
@@ -32,7 +32,7 @@ structure!(@assert layout BasicLimitInformation => JOBOBJECT_BASIC_LIMIT_INFORMA
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_extended_limit_information)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_extended_limit_information)\]
 /// JOBOBJECT_EXTENDED_LIMIT_INFORMATION
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)] pub struct ExtendedLimitInformation {

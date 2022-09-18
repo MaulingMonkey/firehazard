@@ -12,31 +12,31 @@ use core::mem::{size_of, transmute};
 
 #[derive(Clone, Debug, Default)] #[repr(transparent)] #[doc(hidden)] pub struct DefaultOnly<T>(T);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa)\]
 /// STARTUPINFOA param for the CreateProcess family of functions
 pub unsafe trait AsStartupInfoA { fn as_winapi(&self) -> Result<*mut STARTUPINFOA, Error>; }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfow)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfow)\]
 /// STARTUPINFOW param for the CreateProcess family of functions
 pub unsafe trait AsStartupInfoW { fn as_winapi(&self) -> Result<*mut STARTUPINFOW, Error>; }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa)\]
 /// STARTUPINFOA
 pub type StartupInfoA<'s> = StartupInfo<'s, u8>;
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfow)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfow)\]
 /// STARTUPINFOW
 pub type StartupInfoW<'s> = StartupInfo<'s, u16>;
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-startupinfoexa)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-startupinfoexa)\]
 /// STARTUPINFOEXA
 pub type StartupInfoExA<'s> = StartupInfoEx<'s, u8>;
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-startupinfoexw)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-startupinfoexw)\]
 /// STARTUPINFOEXW
 pub type StartupInfoExW<'s> = StartupInfoEx<'s, u16>;
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa)\]
 /// STARTUPINFO
 #[derive(Debug)]
 #[repr(C)] pub struct StartupInfo<'s, U: abistr::Unit> where U::CChar : Clone {
@@ -102,7 +102,7 @@ structure!(@assert layout process::StartupInfoW => STARTUPINFOW {
     std_error       == hStdError,
 });
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-startupinfoexa)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/ns-winbase-startupinfoexa)\]
 /// STARTUPINFOEX
 #[derive(Debug)]
 #[repr(C)] pub struct StartupInfoEx<'s, U: abistr::Unit> where U::CChar : Clone {

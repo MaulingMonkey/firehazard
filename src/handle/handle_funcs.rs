@@ -14,11 +14,11 @@ use core::ptr::{null_mut, NonNull};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
 /// A raw **N**on **N**ull Handle
 pub type HANDLENN = NonNull<c_void>;
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
 /// CloseHandle
 ///
 /// Explicitly close a file handle.  This is generally not necessary - owned handle types will automatically close
@@ -45,21 +45,21 @@ pub fn close_handle(object: impl Into<handle::Owned>) -> Result<(), Error> {
     Error::get_last_if(FALSE == unsafe { CloseHandle(h) })
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
 /// CloseHandle or panic
 #[track_caller] pub(crate) unsafe fn drop_close_handle_nn<T>(this: &mut impl AsLocalHandleNN<T>) {
     let handle = this.as_handle_nn().as_ptr().cast();
     assert!(0 != unsafe { CloseHandle(handle) }, "CloseHandle(0x{:X}) failed with GetLastError()={:?}", handle as usize, Error::get_last());
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
 /// <strike>DuplicateHandle(process, handle, 0, 0, 0, DUPLICATE_CLOSE_SOURCE)</strike>
 #[cfg(doc)]
 pub unsafe fn close_remote_handle(process: &process::Handle, handle: HANDLE) -> Result<(), Error> {
     Error::get_last_if(FALSE == unsafe { DuplicateHandle(process.as_handle(), handle, null_mut(), null_mut(), 0, false as _, DUPLICATE_CLOSE_SOURCE)})
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-compareobjecthandles)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-compareobjecthandles)\]
 /// <strike>CompareObjectHandles</strike>
 #[cfg(doc)] /// NYI (windows SDK too early to link this API?)
 pub fn compare_object_handles(first: &handle::Owned, second: &handle::Owned) -> bool {
@@ -94,7 +94,7 @@ pub(crate) fn debug<T>(fmt: &mut Formatter, module: &str, name: &str, handle: No
     assert_eq!(-6, get_current_thread_effective_token() .as_handle() as isize);
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
 /// DuplicateHandle(-1, source, -1, access, inherit, 0)
 ///
 /// ### Examples
@@ -133,7 +133,7 @@ pub fn duplicate_handle_local<'a>(source: impl AsRef<handle::Psuedo<'a>>, access
     unsafe { handle::Owned::from_raw(target) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
 /// DuplicateHandle(-1, source, -1, 0, inherit, DUPLICATE_SAME_ACCESS)
 ///
 /// ### Examples
@@ -172,7 +172,7 @@ pub fn duplicate_handle_local_same_access<'a>(source: impl AsRef<handle::Psuedo<
     unsafe { handle::Owned::from_raw(target) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-gethandleinformation)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-gethandleinformation)\]
 /// GetHandleInformation
 ///
 /// ### Example
@@ -192,7 +192,7 @@ pub fn get_handle_information<'a>(object: impl AsRef<handle::Borrowed<'a>>) -> R
     Ok(unsafe { handle::Flags::from_unchecked(flags) })
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-sethandleinformation)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-sethandleinformation)\]
 /// SetHandleInformation
 ///
 /// ### Example

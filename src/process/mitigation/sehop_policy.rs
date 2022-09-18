@@ -4,7 +4,7 @@ use bytemuck::*;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-process_mitigation_sehop_policy)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-process_mitigation_sehop_policy)\]
 /// ~ PROCESS_MITIGATION_SEHOP_POLICY
 #[derive(Clone, Copy, Debug)]
 #[derive(Default, Zeroable)]

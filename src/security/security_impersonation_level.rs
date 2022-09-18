@@ -5,7 +5,7 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-security_impersonation_level)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-security_impersonation_level)\]
 /// SECURITY_IMPERSONATION_LEVEL
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct ImpersonationLevel(SECURITY_IMPERSONATION_LEVEL);

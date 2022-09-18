@@ -4,12 +4,12 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\]
 /// DWORD/[u32]: Mask for removing or restricting access rights to Access-Token objects
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct AccessRightsMask(u32);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\]
 /// DWORD/[u32]: Access rights for Access-Token objects
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct AccessRights(u32);
@@ -47,7 +47,7 @@ impl Debug for AccessRights {
             READ_CONTROL,
             WRITE_DAC,
             WRITE_OWNER,
-            SYNCHRONIZE, // XXX: not supported: https://docs.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects
+            SYNCHRONIZE, // XXX: not supported: https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects
         ])
     }
 }

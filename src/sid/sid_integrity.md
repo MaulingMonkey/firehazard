@@ -38,6 +38,6 @@ This provides various protections:
 
 ## References
 *   <https://en.wikipedia.org/wiki/Mandatory_Integrity_Control>
-*   <https://docs.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/ms537319(v=vs.85)>
+*   <https://learn.microsoft.com/en-us/previous-versions/windows/internet-explorer/ie-developer/platform-apis/ms537319(v=vs.85)>
 *   <https://stackoverflow.com/questions/34500133/setting-up-a-chromium-like-sandbox-error-0xc00000a5>
 *   <https://stackoverflow.com/questions/44027935/windows-process-with-untrusted-integrity-level/44032406>

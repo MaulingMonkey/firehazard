@@ -5,7 +5,7 @@ use winapi::um::winnt::*;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_system_call_disable_policy)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_system_call_disable_policy)\]
 /// ~ [PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY]
 #[derive(Clone, Copy, Debug)]
 #[derive(Default, Zeroable)]

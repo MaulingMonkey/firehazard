@@ -10,7 +10,7 @@ use core::ptr::null_mut;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertstringsidtosida)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertstringsidtosida)\]
 /// ConvertStringSidToSidA - convert e.g. `"S-1-0-0"` to [`sid::Box`]
 ///
 /// ### Examples
@@ -33,7 +33,7 @@ pub fn convert_string_sid_to_sid_a(s: impl TryIntoAsCStr) -> Result<SidBox<alloc
     unsafe { SidBox::from_raw(sid.cast()) }.ok_or(Error(ERROR_INVALID_SID))
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertstringsidtosidw)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertstringsidtosidw)\]
 /// ConvertStringSidToSidW - convert e.g. `"S-1-0-0"` to [`sid::Box`]
 ///
 /// ### Examples

@@ -1,4 +1,4 @@
-//! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_descriptor)\]
+//! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_descriptor)\]
 //! [`Attributes`], [`Descriptor`], [`DescriptorBuilder`], etc.
 
 mod security_attributes;            pub use security_attributes::*;

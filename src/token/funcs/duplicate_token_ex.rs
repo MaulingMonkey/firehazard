@@ -1,4 +1,4 @@
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-duplicatetokenex)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-duplicatetokenex)\]
 /// DuplicateTokenEx
 ///
 /// Deep clones the token handle, giving it it's own unique permissions list etc.

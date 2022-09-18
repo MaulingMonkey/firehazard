@@ -3,7 +3,7 @@ use winapi::um::winnt::TOKEN_ELEVATION;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_elevation)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_elevation)\]
 /// TOKEN_ELEVATION
 #[derive(Clone, Copy, Default, Debug)]
 #[repr(C)] pub struct Elevation {

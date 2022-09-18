@@ -1,4 +1,4 @@
-//! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\]
+//! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\]
 //! PROCESS_MITIGATION_\*
 //!
 //! Process mitigation policy types and functions
@@ -26,7 +26,7 @@ mod user_shadow_stack_policy;       pub use user_shadow_stack_policy::*;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-process_mitigation_policy)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-process_mitigation_policy)\]
 /// PROCESS_MITIGATION_POLICY
 ///
 /// `C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h`
@@ -53,8 +53,8 @@ mod user_shadow_stack_policy;       pub use user_shadow_stack_policy::*;
     //MaxProcessMitigationPolicy
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\] GetProcessMitigationPolicy /<br>
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setprocessmitigationpolicy)\] SetProcessMitigationPolicy parameters
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\] GetProcessMitigationPolicy /<br>
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setprocessmitigationpolicy)\] SetProcessMitigationPolicy parameters
 ///
 /// ### Safety
 /// [`IntoPolicy::Raw`] must be ABI-compatible with whatever policy enumerand [`IntoPolicy::ty`] returns.

@@ -1,4 +1,4 @@
-//! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/winstation/window-stations)\]
+//! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/window-stations)\]
 //! Window Station APIs
 
 mod winsta_access_rights;               pub use winsta_access_rights::*;
@@ -9,7 +9,7 @@ pub use funcs::*;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowstationa)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowstationa)\]
 /// CreateWindowStationA Flags
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct CreateWindowFlags(u32);

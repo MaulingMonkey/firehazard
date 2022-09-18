@@ -34,7 +34,7 @@ pub fn debug_loop(
                     EXCEPTION_DATATYPE_MISALIGNMENT => "EXCEPTION_DATATYPE_MISALIGNMENT",
                     EXCEPTION_SINGLE_STEP           => "EXCEPTION_SINGLE_STEP",
                     DBG_CONTROL_C                   => "DBG_CONTROL_C",
-                    // Ref: https://docs.microsoft.com/en-us/troubleshoot/developer/visualstudio/cpp/libraries/fatal-error-thread-exit-fls-callback
+                    // Ref: https://learn.microsoft.com/en-us/troubleshoot/developer/visualstudio/cpp/libraries/fatal-error-thread-exit-fls-callback
                     0xE06D7363                      => "Microsoft C++ Exception",
                     //0x8007045A                      => "ERROR_DLL_INIT_FAILED",
                     _                               => "???",

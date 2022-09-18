@@ -1,8 +1,8 @@
-//! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/secauthz/access-mask)\]
+//! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-mask)\]
 //! ACCESS_MASK generic types, functions, and constants
 //!
 //! ### References
-//! *   [`ACCESS_MASK`](https://docs.microsoft.com/en-us/windows/win32/secauthz/access-mask)
+//! *   [`ACCESS_MASK`](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-mask)
 //! *   The Old New Thing / Raymond Chen
 //!     *   [Is GENERIC_ALL equivalent to GENERIC_READ | GENERIC_WRITE | GENERIC_EXECUTE?](https://devblogs.microsoft.com/oldnewthing/20170310-00/?p=95705)
 //!     *   [Anybody can make up a generic mapping](https://devblogs.microsoft.com/oldnewthing/?p=20733)

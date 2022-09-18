@@ -1,4 +1,4 @@
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-lookupprivilegevaluea)\] LookupPrivilegeValueA
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-lookupprivilegevaluea)\] LookupPrivilegeValueA
 pub fn lookup_privilege_value_a(name: impl abistr::AsCStr) -> Result<crate::privilege::Luid, crate::Error> {
     use crate::*;
     let name = name.as_cstr();
@@ -7,7 +7,7 @@ pub fn lookup_privilege_value_a(name: impl abistr::AsCStr) -> Result<crate::priv
     Ok(privilege::Luid(luid))
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-lookupprivilegenamea)\] LookupPrivilegeNameA
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-lookupprivilegenamea)\] LookupPrivilegeNameA
 #[cfg(std)] pub fn lookup_privilege_name_a(mut luid: crate::privilege::Luid) -> Result<std::string::String, crate::Error> {
     use crate::*;
     use winapi::shared::winerror::*;

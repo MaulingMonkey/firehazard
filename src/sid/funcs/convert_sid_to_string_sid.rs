@@ -1,4 +1,4 @@
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertsidtostringsida)\] ConvertSidToStringSidA
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertsidtostringsida)\] ConvertSidToStringSidA
 pub fn convert_sid_to_string_sid_a(sid: &crate::sid::Value) -> Option<crate::alloc::CString<u8, crate::alloc::LocalAllocFree>> {
     if sid.as_psid().is_null() { return None }
     let mut local_string = core::ptr::null_mut();
@@ -8,7 +8,7 @@ pub fn convert_sid_to_string_sid_a(sid: &crate::sid::Value) -> Option<crate::all
     Some(local_string)
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertsidtostringsidw)\] ConvertSidToStringSidW
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertsidtostringsidw)\] ConvertSidToStringSidW
 pub fn convert_sid_to_string_sid_w(sid: &crate::sid::Value) -> Option<crate::alloc::CString<u16, crate::alloc::LocalAllocFree>> {
     if sid.as_psid().is_null() { return None }
     let mut local_string = core::ptr::null_mut();

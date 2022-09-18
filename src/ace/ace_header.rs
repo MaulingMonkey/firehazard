@@ -3,7 +3,7 @@ use winapi::um::winnt::ACE_HEADER;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header)\]
 /// ~ ACE_HEADER
 ///
 /// ### ABI Differences
@@ -11,7 +11,7 @@ use winapi::um::winnt::ACE_HEADER;
 /// A raw `ACE_HEADER` has only 2-byte alignment - however, actual ACEs (and this [`ace::Header`] type) have 4-byte alignment:
 /// > Each ACL and ACE structure begins on a DWORD boundary.
 /// >
-/// > <https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl>
+/// > <https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl>
 #[derive(Clone, Copy, Debug)] #[repr(C, align(4))] pub struct Header {
     pub ty:     ace::Type,
     pub flags:  ace::Flags,

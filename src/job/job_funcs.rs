@@ -12,7 +12,7 @@ use core::ptr::null_mut;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-assignprocesstojobobject)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-assignprocesstojobobject)\]
 /// AssignProcessToJobObject
 ///
 /// ### Example
@@ -26,7 +26,7 @@ pub fn assign_process_to_job_object<'a>(job: &job::OwnedHandle, process: impl As
     Error::get_last_if(FALSE == unsafe { AssignProcessToJobObject(job.as_handle(), process.as_ref().as_handle()) })
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createjobobjecta)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createjobobjecta)\]
 /// CreateJobObjectA
 ///
 /// ### Example
@@ -44,7 +44,7 @@ pub fn create_job_object_a(job_attributes: Option<core::convert::Infallible>, na
 }
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-createjobobjectw)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-createjobobjectw)\]
 /// CreateJobObjectW
 ///
 /// ### Example
@@ -61,10 +61,10 @@ pub fn create_job_object_w(job_attributes: Option<core::convert::Infallible>, na
     unsafe { job::OwnedHandle::from_raw(h) }
 }
 
-// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-freememoryjobobject)\]
+// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-freememoryjobobject)\]
 // FreeMemoryJobObject
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi/nf-jobapi-isprocessinjob)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi/nf-jobapi-isprocessinjob)\]
 /// IsProcessInJob
 ///
 /// ### Example
@@ -81,7 +81,7 @@ pub fn is_process_in_job<'a>(process: impl AsRef<process::PsuedoHandle<'a>>, job
     Ok(r != FALSE)
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-openjobobjecta)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-openjobobjecta)\]
 /// OpenJobObjectA
 ///
 /// ### Example
@@ -100,7 +100,7 @@ pub fn open_job_object_a(desired_access: impl Into<access::Mask>, inherit_handle
     unsafe { job::OwnedHandle::from_raw(h) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-openjobobjectw)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-openjobobjectw)\]
 /// OpenJobObjectW
 ///
 /// ### Example
@@ -119,7 +119,7 @@ pub fn open_job_object_w(desired_access: impl Into<access::Mask>, inherit_handle
     unsafe { job::OwnedHandle::from_raw(h) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
 /// QueryInformationJobObject
 ///
 /// ### Example
@@ -132,10 +132,10 @@ pub fn open_job_object_w(desired_access: impl Into<access::Mask>, inherit_handle
 pub fn query_information_job_object<Info: job::QueryInformationJobObject>(job: &job::OwnedHandle) -> Result<Info, Error> { Info::query_from(job) }
 
 // "Starting with Windows 10, version 1607, this function is no longer supported."
-// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryioratecontrolinformationjobobject)\]
+// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryioratecontrolinformationjobobject)\]
 // QueryIoRateControlInformationJobObject
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
 /// SetInformationJobObject
 ///
 /// ### Examples
@@ -164,10 +164,10 @@ pub fn query_information_job_object<Info: job::QueryInformationJobObject>(job: &
 pub fn set_information_job_object(job: &job::OwnedHandle, information: impl job::SetInformationJobObject) -> Result<(), Error> { information.set_on(job) }
 
 // "Starting with Windows 10, version 1607, this function is no longer supported."
-// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setioratecontrolinformationjobobject)\]
+// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setioratecontrolinformationjobobject)\]
 // SetIoRateControlInformationJobObject
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-terminatejobobject)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-terminatejobobject)\]
 /// TerminateJobObject
 ///
 /// ### Example

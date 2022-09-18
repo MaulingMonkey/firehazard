@@ -5,7 +5,7 @@ use winapi::um::winnt::*;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_dynamic_code_policy)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_dynamic_code_policy)\]
 /// ~ [PROCESS_MITIGATION_DYNAMIC_CODE_POLICY]
 #[derive(Clone, Copy, Debug)]
 #[derive(Default, Zeroable)]

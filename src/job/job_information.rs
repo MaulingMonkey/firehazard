@@ -9,15 +9,15 @@ use core::mem::{size_of, MaybeUninit};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
 /// [`query_information_job_object`] result
 pub trait QueryInformationJobObject : Sized { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error>; }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
 /// [`set_information_job_object`] parameter
 pub trait SetInformationJobObject { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error>; }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
 /// QueryInformationJobObject
 pub(super) unsafe fn query_fixed<T>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS) -> Result<T, Error> {
     let mut info = MaybeUninit::<T>::zeroed();
@@ -31,7 +31,7 @@ pub(super) unsafe fn query_fixed<T>(job: &job::OwnedHandle, class: JOBOBJECTINFO
 }
 
 #[cfg(std)]
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
 /// QueryInformationJobObject
 pub(super) unsafe fn query_vec<T>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS) -> Result<std::vec::Vec<T>, Error> {
     let mut bytes = 0;
@@ -66,7 +66,7 @@ pub(super) unsafe fn query_vec<T>(job: &job::OwnedHandle, class: JOBOBJECTINFOCL
     }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
 /// SetInformationJobObject
 pub(super) unsafe fn set<T: ?Sized>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS, information: &T) -> Result<(), Error> {
     let size = u32::try_from(core::mem::size_of_val(information)).map_err(|_| Error(ERROR_INVALID_PARAMETER))?;

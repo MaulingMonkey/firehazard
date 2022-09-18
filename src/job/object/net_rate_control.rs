@@ -4,7 +4,7 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_net_rate_control_information)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_net_rate_control_information)\]
 /// JOBOBJECT_NET_RATE_CONTROL_INFORMATION
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)] pub struct NetRateControlInformation {
@@ -48,11 +48,11 @@ impl NetRateControlInformation {
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-job_object_net_rate_control_flags)\] JOB_OBJECT_NET_RATE_CONTROL_FLAGS mask
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-job_object_net_rate_control_flags)\] JOB_OBJECT_NET_RATE_CONTROL_FLAGS mask
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct NetRateControlFlagsMask(u32);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-job_object_net_rate_control_flags)\] JOB_OBJECT_NET_RATE_CONTROL_FLAGS
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-job_object_net_rate_control_flags)\] JOB_OBJECT_NET_RATE_CONTROL_FLAGS
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct NetRateControlFlags(u32);
 

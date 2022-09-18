@@ -14,7 +14,7 @@ use core::ptr::{null_mut, NonNull};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] CreatePipe
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] CreatePipe
 ///
 /// ### Example
 /// ```
@@ -30,16 +30,16 @@ pub fn create_pipe(pipe_attributes: Option<&security::Attributes>, size: u32) ->
     Ok((read?, write?))
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createnamedpipea)\] <strike>CreateNamedPipeA</strike>
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createnamedpipea)\] <strike>CreateNamedPipeA</strike>
 #[cfg(doc)] pub fn create_named_pipe_a() { unimplemented!() }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew)\] <strike>CreateNamedPipeW</strike>
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew)\] <strike>CreateNamedPipeW</strike>
 #[cfg(doc)] pub fn create_named_pipe_w() { unimplemented!() }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-disconnectnamedpipe)\] <strike>DisconnectNamedPipe</strike>
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-disconnectnamedpipe)\] <strike>DisconnectNamedPipe</strike>
 #[cfg(doc)] pub fn disconnect_named_pipe(handle: ()) -> Result<(), Error> { unimplemented!() }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlea)\] GetFinalPathNameByHandleA
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlea)\] GetFinalPathNameByHandleA
 pub fn get_final_path_name_by_handle_a_inplace<'a>(
     handle: impl AsRef<io::FileHandle<'a>>,
     path:   &mut [u8],
@@ -51,7 +51,7 @@ pub fn get_final_path_name_by_handle_a_inplace<'a>(
     Ok(&path[..full_chars])
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlea)\] GetFinalPathNameByHandleW
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlea)\] GetFinalPathNameByHandleW
 pub fn get_final_path_name_by_handle_w_inplace<'a>(
     handle: impl AsRef<io::FileHandle<'a>>,
     path:   &mut [u16],
@@ -64,7 +64,7 @@ pub fn get_final_path_name_by_handle_w_inplace<'a>(
 }
 
 #[cfg(std)]
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlea)\] GetFinalPathNameByHandleW
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlea)\] GetFinalPathNameByHandleW
 pub fn get_final_path_name_by_handle<'a>(handle: impl AsRef<io::FileHandle<'a>>, flags: u32) -> Result<PathBuf, Error> {
     let handle = handle.as_ref();
 

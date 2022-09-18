@@ -3,11 +3,11 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/procthread/process-creation-flags)\] Process creation flags mask
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/procthread/process-creation-flags)\] Process creation flags mask
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct CreationFlagsMask(u32);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/procthread/process-creation-flags)\] Process creation flags
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/procthread/process-creation-flags)\] Process creation flags
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct CreationFlags(u32);
 
@@ -68,10 +68,10 @@ pub const CREATE_NEW_PROCESS_GROUP          : CreationFlags = CreationFlags(wina
 /// If not set, the environment block `environment` uses ANSI (e.g. ASCII? Windows-1251? UTF8?) characters instead.
 pub const CREATE_UNICODE_ENVIRONMENT        : CreationFlags = CreationFlags(winapi::um::winbase::CREATE_UNICODE_ENVIRONMENT         ); // 0x00000400
 
-/// Use a separate, private [NTVDM](https://docs.microsoft.com/en-us/windows/compatibility/ntvdm-and-16-bit-app-support) process for 16-bit executables.
+/// Use a separate, private [NTVDM](https://learn.microsoft.com/en-us/windows/compatibility/ntvdm-and-16-bit-app-support) process for 16-bit executables.
 pub const CREATE_SEPARATE_WOW_VDM           : CreationFlags = CreationFlags(winapi::um::winbase::CREATE_SEPARATE_WOW_VDM            ); // 0x00000800
 
-/// (Re)use a shared, common [NTVDM](https://docs.microsoft.com/en-us/windows/compatibility/ntvdm-and-16-bit-app-support) process for 16-bit executables.
+/// (Re)use a shared, common [NTVDM](https://learn.microsoft.com/en-us/windows/compatibility/ntvdm-and-16-bit-app-support) process for 16-bit executables.
 pub const CREATE_SHARED_WOW_VDM             : CreationFlags = CreationFlags(winapi::um::winbase::CREATE_SHARED_WOW_VDM              ); // 0x00001000
 
 /// Inherit the parent's cpu core affinities.
@@ -80,7 +80,7 @@ pub const INHERIT_PARENT_AFFINITY           : CreationFlags = CreationFlags(wina
 /// Run specially signed Microsoft binaries (media foundation, audio engine, windows error reporting, and system) as a
 /// "protected process" - the system guards the process and it's threads (mostly for DRM purpouses?)
 ///
-/// For more information, see [Overview of the Protected Media Path](https://docs.microsoft.com/en-us/windows/win32/medfound/protected-media-path).
+/// For more information, see [Overview of the Protected Media Path](https://learn.microsoft.com/en-us/windows/win32/medfound/protected-media-path).
 pub const CREATE_PROTECTED_PROCESS          : CreationFlags = CreationFlags(winapi::um::winbase::CREATE_PROTECTED_PROCESS           ); // 0x00040000
 
 /// [process::StartupInfoExW] is passed to `startup_info`, allowing the use of a [process::ThreadAttributeList].
@@ -88,7 +88,7 @@ pub const CREATE_PROTECTED_PROCESS          : CreationFlags = CreationFlags(wina
 /// The configuration of said thread attribute list can result in [create_process_as_user_w] returning various error codes.
 pub const EXTENDED_STARTUPINFO_PRESENT      : CreationFlags = CreationFlags(winapi::um::winbase::EXTENDED_STARTUPINFO_PRESENT       ); // 0x00080000
 
-/// Spawn as a [Isolated User Mode (IUM) Process / Trustlet](https://docs.microsoft.com/en-us/windows/win32/procthread/isolated-user-mode--ium--processes) ?
+/// Spawn as a [Isolated User Mode (IUM) Process / Trustlet](https://learn.microsoft.com/en-us/windows/win32/procthread/isolated-user-mode--ium--processes) ?
 pub const CREATE_SECURE_PROCESS             : CreationFlags = CreationFlags(0x00400000                                              ); // 0x00400000
 
 /// Don't associate the new child process with the parent process's job, if any.
@@ -101,7 +101,7 @@ pub const CREATE_BREAKAWAY_FROM_JOB         : CreationFlags = CreationFlags(wina
 /// > Allows the caller to execute a child process that bypasses the process restrictions that would normally be applied automatically to the process.
 pub const CREATE_PRESERVE_CODE_AUTHZ_LEVEL  : CreationFlags = CreationFlags(winapi::um::winbase::CREATE_PRESERVE_CODE_AUTHZ_LEVEL   ); // 0x02000000
 
-/// Don't inherit the [error mode](https://docs.microsoft.com/en-us/windows/win32/debug/error-mode) of the calling process.
+/// Don't inherit the [error mode](https://learn.microsoft.com/en-us/windows/win32/debug/error-mode) of the calling process.
 pub const CREATE_DEFAULT_ERROR_MODE         : CreationFlags = CreationFlags(winapi::um::winbase::CREATE_DEFAULT_ERROR_MODE          ); // 0x04000000
 
 /// Don't spawn a console window for the child process.

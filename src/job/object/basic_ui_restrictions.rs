@@ -3,7 +3,7 @@ use winapi::um::winnt::{JOBOBJECT_BASIC_UI_RESTRICTIONS, JobObjectBasicUIRestric
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_ui_restrictions)\] JOBOBJECT_BASIC_UI_RESTRICTIONS
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_ui_restrictions)\] JOBOBJECT_BASIC_UI_RESTRICTIONS
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)] pub struct BasicUiRestrictions {
     pub ui_restrictions_class: job::object::uilimit::Flags,

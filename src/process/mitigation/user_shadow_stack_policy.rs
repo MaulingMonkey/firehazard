@@ -4,7 +4,7 @@ use bytemuck::*;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_user_shadow_stack_policy)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_user_shadow_stack_policy)\]
 /// ~ PROCESS_MITIGATION_USER_SHADOW_STACK_POLICY
 #[derive(Clone, Copy, Debug)]
 #[derive(Default, Zeroable)]

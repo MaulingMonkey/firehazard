@@ -12,7 +12,7 @@ use core::ptr::null;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowstationa)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowstationa)\]
 /// CreateWindowStationA
 ///
 /// ### Example
@@ -39,7 +39,7 @@ pub fn create_window_station_a(
     unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowstationw)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowstationw)\]
 /// CreateWindowStationW
 ///
 /// ### Example
@@ -66,7 +66,7 @@ pub fn create_window_station_w(
     unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumwindowstationsa)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumwindowstationsa)\]
 /// EnumWindowStationsA
 ///
 /// ### Example
@@ -105,7 +105,7 @@ unsafe extern "system" fn fwd_enum_window_stations_a<F: FnMut(CStrPtr) -> Result
     }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumwindowstationsw)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumwindowstationsw)\]
 /// EnumWindowStationsW
 ///
 /// ### Example
@@ -144,7 +144,7 @@ unsafe extern "system" fn fwd_enum_window_stations_w<F: FnMut(CStrPtr<u16>) -> R
     }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getprocesswindowstation)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getprocesswindowstation)\]
 /// GetProcessWindowStation + DuplicateHandle
 ///
 /// ### Example
@@ -154,7 +154,7 @@ unsafe extern "system" fn fwd_enum_window_stations_w<F: FnMut(CStrPtr<u16>) -> R
 /// ```
 ///
 /// ### Errata
-/// The docs for [`GetProcessWindowStation`](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getprocesswindowstation) state:
+/// The docs for [`GetProcessWindowStation`](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getprocesswindowstation) state:
 /// >   Do not close the handle returned by this function.
 ///
 /// A borrowed handle is super awkward here, so this function returns a *duplicated* handle that can be closed instead.
@@ -167,7 +167,7 @@ pub fn open_process_window_station() -> Result<winsta::OwnedHandle, Error> {
     unsafe { winsta::OwnedHandle::from_raw(winsta.cast()) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openwindowstationa)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openwindowstationa)\]
 /// OpenWindowStationA
 ///
 /// ### Example
@@ -190,7 +190,7 @@ pub fn open_window_station_a(
     unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openwindowstationw)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openwindowstationw)\]
 /// OpenWindowStationW
 ///
 /// ### Example
@@ -213,7 +213,7 @@ pub fn open_window_station_w(
     unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setprocesswindowstation)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setprocesswindowstation)\]
 /// SetProcessWindowStation
 ///
 /// ### Example

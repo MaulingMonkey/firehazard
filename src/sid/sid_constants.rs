@@ -121,7 +121,7 @@ pub mod builtin {
 
             #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_USER_RID_WDAG_ACCOUNT)]
             ///
-            /// [DOMAIN_USER_RID_WDAG_ACCOUNT]: https://docs.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-application-guard/faq-md-app-guard#what-is-the-wdagutilityaccount-local-account-
+            /// [DOMAIN_USER_RID_WDAG_ACCOUNT]: https://learn.microsoft.com/en-us/windows/security/threat-protection/microsoft-defender-application-guard/faq-md-app-guard#what-is-the-wdagutilityaccount-local-account-
             pub const WDAG_ACCOUNT = sid!(S-1-5-0x20-0x1F8);
         }
 
@@ -277,7 +277,7 @@ pub mod builtin {
             #[desc = r"BUILTIN\Device Owners"]
             #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_DEVICE_OWNERS)]
             ///
-            /// [DOMAIN_ALIAS_RID_DEVICE_OWNERS]:   https://docs.microsoft.com/en-us/windows/win32/secauthz/well-known-sids
+            /// [DOMAIN_ALIAS_RID_DEVICE_OWNERS]:   https://learn.microsoft.com/en-us/windows/win32/secauthz/well-known-sids
             pub const DEVICE_OWNERS = sid!(S-1-5-0x20-0x247);
         }
 

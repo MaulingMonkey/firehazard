@@ -16,7 +16,7 @@ use core::ptr::null_mut;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/procthread/process-and-thread-functions#process-and-thread-extended-attribute-functions)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/procthread/process-and-thread-functions#process-and-thread-extended-attribute-functions)\]
 /// Owned LPPROC_THREAD_ATTRIBUTE_LIST
 #[repr(transparent)] pub struct ThreadAttributeList<'a>(CBox<PROC_THREAD_ATTRIBUTE_LIST>, PhantomData<&'a HANDLE>);
 
@@ -24,11 +24,11 @@ impl<'a> Drop for ThreadAttributeList<'a> { fn drop(&mut self) { unsafe { Delete
 impl Debug for ThreadAttributeList<'_> { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "process::ThreadAttributeList {{ .. }}") } }
 
 impl<'a> ThreadAttributeList<'a> {
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-initializeprocthreadattributelist)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-initializeprocthreadattributelist)\]
     /// InitializeProcThreadAttributeList
     pub fn new() -> Self { Self::with_attribute_capacity(27).unwrap() }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-initializeprocthreadattributelist)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-initializeprocthreadattributelist)\]
     /// InitializeProcThreadAttributeList
     ///
     /// ### Errors
@@ -41,7 +41,7 @@ impl<'a> ThreadAttributeList<'a> {
         Ok(Self(cb, PhantomData))
     }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\] UpdateProcThreadAttribute
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\] UpdateProcThreadAttribute
     pub fn update<'s>(&'s mut self, ThreadAttributeRef(attribute, value, size, _): ThreadAttributeRef<'a>) -> Result<&'s mut Self, Error> where 'a : 's {
         Error::get_last_if(FALSE == unsafe { UpdateProcThreadAttribute(
             self.0.as_mut_ptr(),
@@ -72,7 +72,7 @@ impl<'a> TryFrom<&'_ [ThreadAttributeRef<'a>]> for ThreadAttributeList<'a> {
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\] UpdateProcThreadAttribute (attribute, &value, size) tuple
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\] UpdateProcThreadAttribute (attribute, &value, size) tuple
 #[derive(Clone, Copy)] pub struct ThreadAttributeRef<'a>(usize, LPVOID, usize, PhantomData<&'a usize>);
 
 impl<'a> ThreadAttributeRef<'a> {
@@ -80,7 +80,7 @@ impl<'a> ThreadAttributeRef<'a> {
 }
 
 impl<'a> ThreadAttributeRef<'a> {
-    /// (PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY, [GROUP_AFFINITY](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-group_affinity))
+    /// (PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY, [GROUP_AFFINITY](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-group_affinity))
     pub fn group_affinity(value: &'a GROUP_AFFINITY) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_HANDLE_LIST, &\[[handle::Borrowed]\])
@@ -92,12 +92,12 @@ impl<'a> ThreadAttributeRef<'a> {
     /// In other words: using this attribute strictly *narrows* what handles the child process inherits.
     pub fn handle_list(value: &'a [handle::Borrowed<'a>]) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_HANDLE_LIST, value) } }
 
-    /// (PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR, [PROCESSOR_NUMBER](https://docs.microsoft.com/en-us/windows/desktop/api/winnt/ns-winnt-processor_number))
+    /// (PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR, [PROCESSOR_NUMBER](https://learn.microsoft.com/en-us/windows/desktop/api/winnt/ns-winnt-processor_number))
     pub fn ideal_processor_ntdef(value: &'a winapi::shared::ntdef::PROCESSOR_NUMBER) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR, value) } }
-    /// (PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR, [PROCESSOR_NUMBER](https://docs.microsoft.com/en-us/windows/desktop/api/winnt/ns-winnt-processor_number))
+    /// (PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR, [PROCESSOR_NUMBER](https://learn.microsoft.com/en-us/windows/desktop/api/winnt/ns-winnt-processor_number))
     pub fn ideal_processor_winnt(value: &'a winapi::um::winnt::PROCESSOR_NUMBER) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_IDEAL_PROCESSOR, value) } }
 
-    /// (PROC_THREAD_ATTRIBUTE_MACHINE_TYPE, [IMAGE_FILE_MACHINE_*](https://docs.microsoft.com/en-us/windows/win32/sysinfo/image-file-machine-constants))
+    /// (PROC_THREAD_ATTRIBUTE_MACHINE_TYPE, [IMAGE_FILE_MACHINE_*](https://learn.microsoft.com/en-us/windows/win32/sysinfo/image-file-machine-constants))
     pub fn machine_type(value: &'a WORD) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_MACHINE_TYPE, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY, [process::creation::MitigationPolicy]) - see also <code>[process::creation::mitigation_policy]::\*</code>,  <code>[process::creation::mitigation_policy2]::\*</code>
@@ -113,10 +113,10 @@ impl<'a> ThreadAttributeRef<'a> {
     // /// (PROC_THREAD_ATTRIBUTE_UMS_THREAD, UMS_CREATE_THREAD_ATTRIBUTES)
     // pub unsafe fn ums_thread(value: &'a UMS_CREATE_THREAD_ATTRIBUTES) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_UMS_THREAD, value) } }
 
-    /// (PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES, [SECURITY_CAPABILITIES](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_capabilities))
+    /// (PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES, [SECURITY_CAPABILITIES](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_capabilities))
     pub unsafe fn security_capabilities_raw(value: &'a SECURITY_CAPABILITIES) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_SECURITY_CAPABILITIES, value) } }
 
-    /// (PROC_THREAD_ATTRIBUTE_PROTECTION_LEVEL, [PROTECTION_LEVEL_*](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-process_protection_level_information#members))
+    /// (PROC_THREAD_ATTRIBUTE_PROTECTION_LEVEL, [PROTECTION_LEVEL_*](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-process_protection_level_information#members))
     pub fn protection_level(value: &'a DWORD) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_PROTECTION_LEVEL, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY, DWORD) - see also <code>[process::creation::child_process]::\*</code>
@@ -128,7 +128,7 @@ impl<'a> ThreadAttributeRef<'a> {
     /// (PROC_THREAD_ATTRIBUTE_JOB_LIST, \[[job::OwnedHandle]\])
     pub fn job_list(value: &'a [job::Handle<'a>]) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_JOB_LIST, value) } }
 
-    /// (PROC_THREAD_ATTRIBUTE_ENABLE_OPTIONAL_XSTATE_FEATURES, [XSTATE_*](https://docs.microsoft.com/en-us/windows/win32/debug/working-with-xstate-context))
+    /// (PROC_THREAD_ATTRIBUTE_ENABLE_OPTIONAL_XSTATE_FEATURES, [XSTATE_*](https://learn.microsoft.com/en-us/windows/win32/debug/working-with-xstate-context))
     pub fn enable_optional_xstate_features(value: &'a DWORD64) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_ENABLE_OPTIONAL_XSTATE_FEATURES, value) } }
 
     /// (PROC_THREAD_ATTRIBUTE_COMPONENT_FILTER, COMPONENT_* flags)
@@ -137,7 +137,7 @@ impl<'a> ThreadAttributeRef<'a> {
     /// Protect against nothing.
     ///
     /// ### COMPONENT_KTM (1)
-    /// Blocks access to [Kernel Transaction Manager](https://docs.microsoft.com/en-us/windows/win32/ktm/kernel-transaction-manager-portal) APIs to mitigate
+    /// Blocks access to [Kernel Transaction Manager](https://learn.microsoft.com/en-us/windows/win32/ktm/kernel-transaction-manager-portal) APIs to mitigate
     /// [CVE-2018-8611](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-8611)
     ///
     /// <https://research.nccgroup.com/2020/04/27/cve-2018-8611-exploiting-windows-ktm-part-1-5-introduction/>

@@ -13,7 +13,7 @@ fn main() {
     let t = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
     let r = create_restricted_token(&t, None, None, None, Some(&[sid::AndAttributes::new(sid::NULL, None)])).unwrap();
 
-    // https://docs.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-token_information_class
+    // https://learn.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-token_information_class
     dbg!(t.user());
     dbgl!(t.groups().unwrap().groups());
     dbgl!(t.privileges().unwrap().privileges());

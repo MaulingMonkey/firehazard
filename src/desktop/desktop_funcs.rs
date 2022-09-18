@@ -13,7 +13,7 @@ use core::ptr::null;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-closedesktop)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-closedesktop)\]
 /// CloseDesktop
 ///
 /// Explicitly close a desktop handle.
@@ -66,7 +66,7 @@ pub fn close_desktop(desktop: impl Into<desktop::OwnedHandle>) -> Result<(), (de
     }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopa)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopa)\]
 /// CreateDesktopA
 ///
 /// Create or open an existing desktop.
@@ -99,7 +99,7 @@ pub fn create_desktop_a(
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopw)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopw)\]
 /// CreateDesktopW
 ///
 /// Create or open an existing desktop.
@@ -132,12 +132,12 @@ pub fn create_desktop_w(
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
-// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopexa
+// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopexa
 // CreateDesktopExA: adds heap size + reserved pvoid
-// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopexw
+// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopexw
 // CreateDesktopExW: adds heap size + reserved pvoid
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdesktopsa)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdesktopsa)\]
 /// EnumDesktopsA
 ///
 /// ### Example
@@ -156,7 +156,7 @@ pub fn create_desktop_w(
 /// ```
 ///
 /// ### Errata
-/// The docs for [`EnumDesktopsA`](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdesktopsa) state:
+/// The docs for [`EnumDesktopsA`](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdesktopsa) state:
 /// >   If this parameter (`winsta`) is NULL, the current window station is used.
 ///
 /// However, in my testing (Windows 10.0.19043.1889), this appears to be a lie: if the parameter is NULL, this enumerates
@@ -182,7 +182,7 @@ unsafe extern "system" fn fwd_enum_desktops_a<F: FnMut(CStrPtr) -> Result<(), Er
     }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdesktopsw)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdesktopsw)\]
 /// EnumDesktopsW
 ///
 /// ### Example
@@ -201,7 +201,7 @@ unsafe extern "system" fn fwd_enum_desktops_a<F: FnMut(CStrPtr) -> Result<(), Er
 /// ```
 ///
 /// ### Errata
-/// The docs for [`EnumDesktopsW`](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdesktopsw) state:
+/// The docs for [`EnumDesktopsW`](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdesktopsw) state:
 /// >   If this parameter (`winsta`) is NULL, the current window station is used.
 ///
 /// However, in my testing (Windows 10.0.19043.1889), this appears to be a lie: if the parameter is NULL, this enumerates
@@ -227,10 +227,10 @@ unsafe extern "system" fn fwd_enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(
     }
 }
 
-// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdesktopwindows
+// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdesktopwindows
 // EnumDesktopWindows
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getthreaddesktop)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getthreaddesktop)\]
 /// GetThreadDesktop + DuplicateHandle
 ///
 /// ### Example
@@ -240,7 +240,7 @@ unsafe extern "system" fn fwd_enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(
 /// ```
 ///
 /// ### Errata
-/// The docs for [`GetThreadDesktop`](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getthreaddesktop) state:
+/// The docs for [`GetThreadDesktop`](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getthreaddesktop) state:
 /// >   You do not need to call the CloseDesktop function to close the returned handle.
 ///
 /// A borrowed handle is super awkward here, so this function returns a *duplicated* handle that can be closed instead.
@@ -252,7 +252,7 @@ pub fn open_thread_desktop(thread_id: thread::Id) -> Result<desktop::OwnedHandle
     unsafe { desktop::OwnedHandle::from_raw(desktop.cast()) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-opendesktopa)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-opendesktopa)\]
 /// OpenDesktopA
 ///
 /// Open an existing desktop.
@@ -280,7 +280,7 @@ pub fn open_desktop_a(
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-opendesktopw)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-opendesktopw)\]
 /// OpenDesktopW
 ///
 /// Open an existing desktop.
@@ -308,7 +308,7 @@ pub fn open_desktop_w(
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openinputdesktop)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openinputdesktop)\]
 /// OpenInputDesktop
 ///
 /// ### Example
@@ -327,7 +327,7 @@ pub fn open_input_desktop(
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-switchdesktop)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-switchdesktop)\]
 /// SwitchDesktop
 ///
 /// Make the specified desktop the visible desktop.
@@ -351,7 +351,7 @@ pub fn switch_desktop(desktop: &desktop::OwnedHandle) -> Result<(), Error> {
     Error::get_last_if(FALSE == unsafe { SwitchDesktop(desktop.as_handle()) })
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setthreaddesktop)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setthreaddesktop)\]
 /// SetThreadDesktop x2 + GetThreadDesktop
 ///
 /// Temporarilly set the thread's desktop.

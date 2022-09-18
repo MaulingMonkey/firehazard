@@ -1,5 +1,5 @@
-//! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\]
-//! [`SID`](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)
+//! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\]
+//! [`SID`](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)
 //! related types and manipulation functions
 
 #[path = "sid_integrity.rs"] pub mod integrity;

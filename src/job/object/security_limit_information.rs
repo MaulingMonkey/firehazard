@@ -3,7 +3,7 @@
 //! >   Starting with Windows Vista, you must set security limitations individually for each process associated with a job object,
 //! >   rather than setting them for the job object by using SetInformationJobObject. For information, see Process Security and Access Rights.
 //! >
-//! >   <https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_security_limit_information#remarks>
+//! >   <https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_security_limit_information#remarks>
 
 #![allow(dead_code)]
 
@@ -12,7 +12,7 @@ use winapi::um::winnt::JOBOBJECT_SECURITY_LIMIT_INFORMATION;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_security_limit_information)\] JOBOBJECT_SECURITY_LIMIT_INFORMATION
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_security_limit_information)\] JOBOBJECT_SECURITY_LIMIT_INFORMATION
 #[derive(Debug, Default)]
 #[repr(C)] struct SecurityLimitInformation {
     pub security_limit_flags:   u32, // typeable

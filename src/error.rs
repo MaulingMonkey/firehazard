@@ -11,16 +11,16 @@ use core::fmt::{self, Debug, Formatter};
 pub(crate) trait ResultErrorExt<R>             { fn unerr(self, err: u32, remap: R) -> Self; }
 impl<R> ResultErrorExt<R> for Result<R, Error> { fn unerr(self, err: u32, remap: R) -> Self { match self { Err(e) if e == err => Ok(remap), r => r } } }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)\] DWORD/[u32], typically from GetLastError, representing an error code, hresult, or ntstatus
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)\] DWORD/[u32], typically from GetLastError, representing an error code, hresult, or ntstatus
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)]
 pub struct Error(pub(crate) u32);
 
 impl Error {
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)\] GetLastError
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)\] GetLastError
     pub fn get_last() -> Self { Self(unsafe { GetLastError() }) }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)\] GetLastError if `error`
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)\] GetLastError if `error`
     pub fn get_last_if(error: bool) -> Result<(), Self> { if !error { Ok(()) } else { Err(Self::get_last()) } }
 
     pub fn friendly(self) -> &'static str {

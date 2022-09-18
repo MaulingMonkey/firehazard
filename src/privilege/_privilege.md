@@ -1,10 +1,10 @@
-\[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/secauthz/privilege-constants)\]
+\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/privilege-constants)\]
 Privilege related types and functions
 
 ## Overview
 
-[Privileges](https://docs.microsoft.com/en-us/windows/win32/secauthz/privilege-constants#constants) are referenced either by:
-*   String label (e.g. [`"SeShutdownPrivilege"`](https://docs.microsoft.com/en-us/windows/win32/secauthz/privilege-constants#constants))
+[Privileges](https://learn.microsoft.com/en-us/windows/win32/secauthz/privilege-constants#constants) are referenced either by:
+*   String label (e.g. [`"SeShutdownPrivilege"`](https://learn.microsoft.com/en-us/windows/win32/secauthz/privilege-constants#constants))
 *   64-bit integer [`privilege::Luid`] (Locally Unique ID)
 
 Convert with:
@@ -47,6 +47,6 @@ Notes:
 | SeTimeZonePrivilege           | Adjust the time zone associated with the computer's internal clock.
 
 ## References
-*   [docs.microsoft.com: Privilege Constants (Authorization)](https://docs.microsoft.com/en-us/windows/win32/secauthz/privilege-constants)
+*   [learn.microsoft.com: Privilege Constants (Authorization)](https://learn.microsoft.com/en-us/windows/win32/secauthz/privilege-constants)
 *   [Stack Overflow: How am I able to shutdown the system when I don't have SeShutdownPrivilege](https://superuser.com/questions/1254253/how-am-i-able-to-shutdown-the-system-when-i-dont-have-seshutdownprivilege)
 *   `#define SE_*` in `C:\Program Files (x86)\Windows Kits\10\Include\10.0.17134.0\um\winnt.h`

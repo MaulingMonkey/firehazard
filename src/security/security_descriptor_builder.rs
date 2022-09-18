@@ -10,16 +10,16 @@ use core::ptr::null_mut;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_descriptor)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_descriptor)\]
 /// SECURITY_DESCRIPTOR Builder
 #[repr(transparent)] pub struct DescriptorBuilder<'b>(Descriptor<'b>);
 
 impl DescriptorBuilder<'static> {
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-initializesecuritydescriptor)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-initializesecuritydescriptor)\]
     /// InitializeSecurityDescriptor(..., SECURITY_DESCRIPTOR_REVISION)
     pub fn new() -> Self { Self::new_revision(SECURITY_DESCRIPTOR_REVISION).unwrap() }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-initializesecuritydescriptor)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-initializesecuritydescriptor)\]
     /// InitializeSecurityDescriptor
     fn new_revision(revision: u32) -> Result<Self, Error> {
         let mut b = Self(Descriptor { desc: Default::default(), phantom: PhantomData });
@@ -29,10 +29,10 @@ impl DescriptorBuilder<'static> {
 }
 
 impl<'builder> DescriptorBuilder<'builder> {
-    // https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setsecuritydescriptorcontrol
+    // https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setsecuritydescriptorcontrol
     // TODO: SetSecurityDescriptorControl
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setsecuritydescriptordacl)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setsecuritydescriptordacl)\]
     /// SetSecurityDescriptorDacl
     pub fn dacl<'acl>(mut self, dacl_present: bool, dacl: impl Into<Option<acl::Ptr<'acl>>>, dacl_defaulted: bool) -> Result<DescriptorBuilder<'acl>, Error> where 'builder : 'acl {
         let dacl = dacl.into();
@@ -41,7 +41,7 @@ impl<'builder> DescriptorBuilder<'builder> {
         Ok(self)
     }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setsecuritydescriptorgroup)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setsecuritydescriptorgroup)\]
     /// SetSecurityDescriptorGroup
     pub fn group<'sid>(mut self, group: impl Into<Option<&'sid sid::Value>>, group_defaulted: bool) -> Result<DescriptorBuilder<'sid>, Error> where 'builder : 'sid {
         let group = group.into();
@@ -50,7 +50,7 @@ impl<'builder> DescriptorBuilder<'builder> {
         Ok(self)
     }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setsecuritydescriptorowner)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setsecuritydescriptorowner)\]
     /// SetSecurityDescriptorOwner
     pub fn owner<'sid>(mut self, owner: impl Into<Option<&'sid sid::Value>>, owner_defaulted: bool) -> Result<DescriptorBuilder<'sid>, Error> where 'builder : 'sid {
         let owner = owner.into();
@@ -59,10 +59,10 @@ impl<'builder> DescriptorBuilder<'builder> {
         Ok(self)
     }
 
-    // https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setsecuritydescriptorrmcontrol
+    // https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setsecuritydescriptorrmcontrol
     // TODO: SetSecurityDescriptorRMControl
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setsecuritydescriptorsacl)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setsecuritydescriptorsacl)\]
     /// SetSecurityDescriptorSacl
     pub fn sacl<'acl>(mut self, sacl_present: bool, sacl: impl Into<Option<acl::Ptr<'acl>>>, sacl_defaulted: bool) -> Result<DescriptorBuilder<'acl>, Error> where 'builder : 'acl {
         let sacl = sacl.into();

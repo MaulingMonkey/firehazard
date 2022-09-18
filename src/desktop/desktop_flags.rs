@@ -2,11 +2,11 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopa)\] DWORD/[u32]: CreateDesktop/OpenDesktop flags mask
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopa)\] DWORD/[u32]: CreateDesktop/OpenDesktop flags mask
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct FlagsMask(u32);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopa)\] DWORD/[u32]: CreateDesktop/OpenDesktop flags
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopa)\] DWORD/[u32]: CreateDesktop/OpenDesktop flags
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Flags(u32);
 
@@ -27,6 +27,6 @@ impl Debug for Flags {
     }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-opendesktopa)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-opendesktopa)\]
 /// Allows processes running in other accounts on the desktop to set hooks in this process.
 pub const ALLOWOTHERACCOUNTHOOK : Flags = Flags(winapi::um::winuser::DF_ALLOWOTHERACCOUNTHOOK);

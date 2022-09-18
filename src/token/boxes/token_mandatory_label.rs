@@ -9,7 +9,7 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_mandatory_label)\] ~ `Box<(TOKEN_MANDATORY_LABEL, ..)>`
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_mandatory_label)\] ~ `Box<(TOKEN_MANDATORY_LABEL, ..)>`
 #[repr(transparent)] pub struct BoxTokenMandatoryLabel(CBox<TOKEN_MANDATORY_LABEL>);
 
 impl BoxTokenMandatoryLabel {

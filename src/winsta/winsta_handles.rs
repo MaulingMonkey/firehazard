@@ -7,7 +7,7 @@ use winapi::um::winuser::CloseWindowStation;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowstationa)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowstationa)\]
 /// `HWINSTA` to a window station
 #[repr(transparent)] pub struct OwnedHandle(NonNull<HWINSTA__>);
 

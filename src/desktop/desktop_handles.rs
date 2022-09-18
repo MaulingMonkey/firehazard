@@ -7,7 +7,7 @@ use core::ptr::NonNull;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopa)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopa)\]
 /// `HDESK` to a desktop
 #[repr(transparent)] pub struct OwnedHandle(NonNull<HDESK__>);
 

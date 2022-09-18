@@ -11,7 +11,7 @@ use core::ops::Deref;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\] ~ PSID
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\] ~ PSID
 #[derive(Clone, Copy)] #[repr(transparent)] pub struct Ptr<'a>(*mut SID, PhantomData<&'a SID>);
 
 impl Debug for Ptr<'_> { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { Debug::fmt(&**self, fmt) } }
@@ -19,12 +19,12 @@ impl Deref for Ptr<'_> { type Target = sid::Value; fn deref(&self) -> &Self::Tar
 
 impl Ptr<'_> {
     /// ### Safety
-    /// `sid` should be null, or point to a valid [`SID`](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)
+    /// `sid` should be null, or point to a valid [`SID`](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)
     /// for the lifetime of the [`sid::Ptr`].
     pub const unsafe fn from_raw_unchecked(sid: *mut SID) -> Self { Self(sid, PhantomData) }
 
     /// ### Safety
-    /// `sid` should be null, or point to a valid [`SID`](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)
+    /// `sid` should be null, or point to a valid [`SID`](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)
     /// for the lifetime of the [`sid::Ptr`].
     pub unsafe fn from_raw(sid: *mut SID, bytes: usize) -> Result<Self, Error> {
         if sid.is_null() { return Ok(Self(sid, PhantomData)) }

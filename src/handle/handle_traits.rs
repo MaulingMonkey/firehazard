@@ -8,7 +8,7 @@ use core::ptr::NonNull;
 ///
 /// ### Safety
 /// #### Kernel Object Type
-/// `handle` should be a handle of the correct [kernel object type](https://docs.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects).
+/// `handle` should be a handle of the correct [kernel object type](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects).
 /// That is, creating a _process_ handle from a _thread_ handle or a _desktop_ handle is possibly undefined behavior.
 ///
 /// #### Ownership
@@ -31,12 +31,12 @@ use core::ptr::NonNull;
 ///
 /// I've chosen to make this function `unsafe` despite such arguable soundness.
 ///
-/// [`CloseHandle`]:                                    https://docs.microsoft.com/en-us/wsindows/win32/api/handleapi/nf-handleapi-closehandle
-/// [`PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY`]:  https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_strict_handle_check_policy
+/// [`CloseHandle`]:                                    https://learn.microsoft.com/en-us/wsindows/win32/api/handleapi/nf-handleapi-closehandle
+/// [`PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY`]:  https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_strict_handle_check_policy
 pub trait FromLocalHandle<H=c_void> : Sized {
     /// ### Safety
     /// Assuming `handle` isn't null:
-    /// *   `handle` should have the correct [type](https://docs.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects) (passing an HDESK where HWINSTA was expected may be undefined behavior)
+    /// *   `handle` should have the correct [type](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects) (passing an HDESK where HWINSTA was expected may be undefined behavior)
     /// *   `handle` will be borrowed for `'a` by `Self<'a>` or have ownership transfered to `Self` (destroying the handle out from underneath either may be undefined behavior)
     unsafe fn from_raw(handle: *mut H) -> Result<Self, Error> {
         let handle = core::ptr::NonNull::new(handle).ok_or(Error(winapi::shared::winerror::ERROR_INVALID_HANDLE))?;
@@ -44,13 +44,13 @@ pub trait FromLocalHandle<H=c_void> : Sized {
     }
 
     /// ### Safety
-    /// *   `handle` should have the correct [type](https://docs.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects) (passing an HDESK where HWINSTA was expected may be undefined behavior)
+    /// *   `handle` should have the correct [type](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects) (passing an HDESK where HWINSTA was expected may be undefined behavior)
     /// *   `handle` will be borrowed for `'a` by `Self<'a>` or have ownership transfered to `Self` (destroying the handle out from underneath either may be undefined behavior)
     unsafe fn from_raw_nn(handle: NonNull<H>) -> Self;
 
     /// ### Safety
     /// Assuming `*handle` isn't null:
-    /// *   `*handle` should have the correct [type](https://docs.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects) (passing an HDESK where HWINSTA was expected may be undefined behavior)
+    /// *   `*handle` should have the correct [type](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects) (passing an HDESK where HWINSTA was expected may be undefined behavior)
     /// *   `*handle` will be borrowed for `'a` by `&'a Self<'a>` (destroying the handle out from underneath either may be undefined behavior)
     unsafe fn borrow_from_raw(handle: &*mut H) -> Result<&Self, Error> {
         if handle.is_null() { return Err(Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)) }
@@ -58,7 +58,7 @@ pub trait FromLocalHandle<H=c_void> : Sized {
     }
 
     /// ### Safety
-    /// *   `*handle` should have the correct [type](https://docs.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects) (passing an HDESK where HWINSTA was expected may be undefined behavior)
+    /// *   `*handle` should have the correct [type](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects) (passing an HDESK where HWINSTA was expected may be undefined behavior)
     /// *   `*handle` will be borrowed for `'a` by `&'a Self<'a>` (destroying the handle out from underneath either may be undefined behavior)
     unsafe fn borrow_from_raw_nn(handle: &NonNull<H>) -> &Self;
 }

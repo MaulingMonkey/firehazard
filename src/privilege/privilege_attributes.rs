@@ -3,11 +3,11 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\] DWORD/[u32]: SE_GROUP_*: SID (group) attributes flags mask
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\] DWORD/[u32]: SE_GROUP_*: SID (group) attributes flags mask
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct AttributesMask(u32);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\] DWORD/[u32]: SE_GROUP_*: SID (group) attributes flags
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\] DWORD/[u32]: SE_GROUP_*: SID (group) attributes flags
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Attributes(u32);
 
@@ -31,16 +31,16 @@ impl Debug for Attributes {
     }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\]
 /// The privilege is enabled.
 /// Note that disabled privileges can be enabled with just an appropriate token handle - remove them outright if you're restricting privileges for security purpouses.
 pub const ENABLED               : Attributes        = Attributes(winapi::um::winnt::SE_PRIVILEGE_ENABLED);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\]
 /// The privilege is enabled by default.
 pub const ENABLED_BY_DEFAULT    : Attributes        = Attributes(winapi::um::winnt::SE_PRIVILEGE_ENABLED_BY_DEFAULT);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\]
 /// Mark a privilege for removal when used with [`adjust_token_privileges`].
 pub const REMOVED               : Attributes        = Attributes(winapi::um::winnt::SE_PRIVILEGE_REMOVED);
 

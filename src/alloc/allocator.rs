@@ -15,16 +15,16 @@ use core::ptr::NonNull;
 
 
 
-/// [`HeapAlloc`](https://docs.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapalloc) /
-/// [`HeapFree`](https://docs.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapfree) on
-/// [`GetProcessHeap`](https://docs.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-getprocessheap)
+/// [`HeapAlloc`](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapalloc) /
+/// [`HeapFree`](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-heapfree) on
+/// [`GetProcessHeap`](https://learn.microsoft.com/en-us/windows/win32/api/heapapi/nf-heapapi-getprocessheap)
 pub struct ProcessHeapAllocFree;
 
-/// [`LocalAlloc`](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-localalloc) /
-/// [`LocalFree`](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-localfree)
+/// [`LocalAlloc`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-localalloc) /
+/// [`LocalFree`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-localfree)
 pub struct LocalAllocFree;
 
-/// [`FreeSid`](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-freesid)
+/// [`FreeSid`](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-freesid)
 pub struct FreeSid;
 
 /// Deallocates memory

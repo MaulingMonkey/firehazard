@@ -4,8 +4,8 @@ use crate::*;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/secauthz/privilege-constants)\]
-/// Privilege name, referencing a [privilege](https://docs.microsoft.com/en-us/windows/win32/secauthz/privilege-constants#constants) such as `"SeShutdownPrivilege"`
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/privilege-constants)\]
+/// Privilege name, referencing a [privilege](https://learn.microsoft.com/en-us/windows/win32/secauthz/privilege-constants#constants) such as `"SeShutdownPrivilege"`
 #[derive(Clone, Copy, Debug)] #[repr(transparent)] pub struct Name(CStrNonNull<'static>);
 
 impl Name {
@@ -16,7 +16,7 @@ impl Name {
 
 impl From<Name> for privilege::Luid { fn from(n: Name) -> Self { n.luid() } }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/secauthz/privilege-constants)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/privilege-constants)\]
 /// SE_*_NAME
 pub mod name {
     use super::*;

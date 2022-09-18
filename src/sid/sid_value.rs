@@ -13,7 +13,7 @@ use core::ptr::null_mut;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\]
 /// ~ SID
 ///
 /// Should never be directly constructed - instead, allow various types to [`core::ops::Deref`] into a reference to this.
@@ -32,7 +32,7 @@ impl Value {
     pub fn subauthorities(&self) -> &[u32]  { unsafe{core::slice::from_raw_parts(core::ptr::addr_of!((*self.0).SubAuthority) as *const u32, (*self.0).SubAuthorityCount.into())} }
     fn as_tuple(&self) -> (u8, [u8; 6], &[u32]) { (self.revision(), self.authority(), self.subauthorities()) }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/ntsecapi/nf-ntsecapi-lsalookupsids2)\] LsaLookupSids2
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/ntsecapi/nf-ntsecapi-lsalookupsids2)\] LsaLookupSids2
     #[cfg(std)] pub fn lsa_lookup_sids2(&self) -> Result<std::string::String, Error> {
         if self.0.is_null() { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) }
         // .cast() spam notes:

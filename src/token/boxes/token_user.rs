@@ -9,7 +9,7 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_user)\] ~ `Box<(TOKEN_USER, ..)>`
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_user)\] ~ `Box<(TOKEN_USER, ..)>`
 #[repr(transparent)] pub struct BoxTokenUser(CBox<TOKEN_USER>);
 
 impl BoxTokenUser {

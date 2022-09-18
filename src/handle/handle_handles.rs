@@ -6,17 +6,17 @@ use core::marker::PhantomData;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
 /// Owned `HANDLE` to a kernel object (will [`CloseHandle`] on [`Drop`])
 ///
-/// [`CloseHandle`]:    https://docs.microsoft.com/en-us/wsindows/win32/api/handleapi/nf-handleapi-closehandle
+/// [`CloseHandle`]:    https://learn.microsoft.com/en-us/wsindows/win32/api/handleapi/nf-handleapi-closehandle
 #[repr(transparent)] pub struct Owned(HANDLENN);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
 /// Borrowed `HANDLE` to a kernel object
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)] #[repr(transparent)] pub struct Borrowed<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
 /// Borrowed or psuedo-`HANDLE` to a kernel object
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)] #[repr(transparent)] pub struct Psuedo<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
 

@@ -3,7 +3,7 @@ use winapi::um::winnt::*;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_accounting_information)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_accounting_information)\]
 /// JOBOBJECT_BASIC_ACCOUNTING_INFORMATION
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)] pub struct BasicAccountingInformation {
@@ -30,7 +30,7 @@ structure!(@assert layout BasicAccountingInformation => JOBOBJECT_BASIC_ACCOUNTI
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_and_io_accounting_information)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_and_io_accounting_information)\]
 /// JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION
 #[repr(C)] pub struct BasicAndIoAccountingInformation {
     pub basic_info: BasicAccountingInformation,

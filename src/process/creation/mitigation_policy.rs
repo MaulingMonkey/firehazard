@@ -1,4 +1,4 @@
-//! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\] UpdateProcThreadAttribute value constants for use with<br>
+//! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\] UpdateProcThreadAttribute value constants for use with<br>
 //! PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY
 
 use crate::*;
@@ -14,7 +14,7 @@ pub mod legacy {
     use super::*;
 
     /// Enables data execution prevention (DEP) for the child process.
-    /// For more information, see [Data Execution Prevention](https://docs.microsoft.com/en-us/windows/desktop/Memory/data-execution-prevention).
+    /// For more information, see [Data Execution Prevention](https://learn.microsoft.com/en-us/windows/desktop/Memory/data-execution-prevention).
     pub const DEP_ENABLE            : MitigationPolicyFlags1 = MitigationPolicyFlags1(0x01);
 
     /// Enables DEP-ATL thunk emulation for the child process.

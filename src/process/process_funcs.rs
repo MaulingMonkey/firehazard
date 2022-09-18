@@ -21,7 +21,7 @@ use core::ptr::{null_mut, null};
 
 
 
-/// Escape executable path + arguments in the format expected by typical applications that use [`CommandLineToArgv`](https://docs.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw) or similar to feed their main/WinMain argv arrays.
+/// Escape executable path + arguments in the format expected by typical applications that use [`CommandLineToArgv`](https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-commandlinetoargvw) or similar to feed their main/WinMain argv arrays.
 /// Be aware that some applications - notably including `cmd.exe` - may have their own nonstandard freeform command line parsing logic.
 /// There's not much a generic crate like this can do to help with those - you're on your own with that.
 /// Good luck!
@@ -93,7 +93,7 @@ fn argv_to_command_line_0_inplace<A: AsRef<OsStr>>(exe: impl AsRef<Path>, args: 
     command_line.push(0);
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa)\] CreateProcessA
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa)\] CreateProcessA
 pub fn create_process_a(
     application_name:       impl TryIntoAsOptCStr,
     command_line:           Option<&[u8]>,
@@ -124,7 +124,7 @@ pub fn create_process_a(
     Ok(unsafe { process::Information::from_raw(process_information) })
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessw)\] CreateProcessW
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessw)\] CreateProcessW
 pub fn create_process_w(
     application_name:       impl TryIntoAsOptCStr<u16>,
     // "The Unicode version of this function, CreateProcessW, can modify the contents of this string.
@@ -158,7 +158,7 @@ pub fn create_process_w(
     Ok(unsafe { process::Information::from_raw(process_information) })
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasusera)\] CreateProcessAsUserA
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasusera)\] CreateProcessAsUserA
 ///
 /// | Error                         | Condition |
 /// | ----------------------------- | --------- |
@@ -221,7 +221,7 @@ pub fn create_process_as_user_a(
     Ok(unsafe { process::Information::from_raw(process_information) })
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasuserw)\] CreateProcessAsUserW
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasuserw)\] CreateProcessAsUserW
 ///
 /// | Error                         | Condition |
 /// | ----------------------------- | --------- |
@@ -273,24 +273,24 @@ pub fn create_process_as_user_w(
     Ok(unsafe { process::Information::from_raw(process_information) })
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createprocesswithlogonw)\] CreateProcessWithLogonW
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createprocesswithlogonw)\] CreateProcessWithLogonW
 fn _create_process_with_logon_w() -> Result<process::Information, Error> { unimplemented!() }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createprocesswithtokenw)\] CreateProcessWithTokenW
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createprocesswithtokenw)\] CreateProcessWithTokenW
 fn _create_process_with_token_w() -> Result<process::Information, Error> { unimplemented!() }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitprocess)\] ExitProcess
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitprocess)\] ExitProcess
 pub fn exit_process(exit_code: u32) -> ! { unsafe { ExitProcess(exit_code); core::hint::unreachable_unchecked() } }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentprocess)\] GetCurrentProcess
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentprocess)\] GetCurrentProcess
 pub fn get_current_process() -> process::PsuedoHandle<'static> { unsafe { process::PsuedoHandle::from_raw(GetCurrentProcess()).unwrap() } }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentprocessid)\] GetCurrentProcessId
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentprocessid)\] GetCurrentProcessId
 pub fn get_current_process_id() -> process::Id { unsafe { GetCurrentProcessId() } }
 
 // get/set process afinity masks, etc.
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodeprocess)\] GetExitCodeProcess
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodeprocess)\] GetExitCodeProcess
 ///
 /// ### Returns
 /// *   `Ok(STILL_ACTIVE)` / `Ok(STATUS_PENDING)`   if `process` is still running
@@ -304,7 +304,7 @@ pub fn get_exit_code_process<'a>(process: impl AsRef<process::Handle<'a>>) -> Re
     Ok(exit_code)
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\]
 /// GetProcessMitigationPolicy
 pub fn get_process_mitigation_policy<'a, P: process::mitigation::IntoPolicy>(process: impl AsRef<process::PsuedoHandle<'a>>) -> Result<P, Error> {
     let mut p = P::Raw::default();
@@ -312,19 +312,19 @@ pub fn get_process_mitigation_policy<'a, P: process::mitigation::IntoPolicy>(pro
     Ok(P::from_policy(p))
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(process, 0) == WAIT_TIMEOUT
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(process, 0) == WAIT_TIMEOUT
 pub fn is_process_running<'a>(process: impl AsRef<process::Handle<'a>>) -> bool {
     WAIT_TIMEOUT == unsafe { WaitForSingleObject(process.as_ref().as_handle(), 0) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setprocessmitigationpolicy)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setprocessmitigationpolicy)\]
 /// SetProcessMitigationPolicy
 pub fn set_process_mitigation_policy<P: process::mitigation::IntoPolicy>(policy: P) -> Result<(), Error> {
     Error::get_last_if(0 == unsafe { SetProcessMitigationPolicy(P::ty() as u32, &policy.into_policy() as *const P::Raw as *mut _, size_of::<P::Raw>()) })
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(process, INFINITE) +<br>
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodeprocess)\] GetExitCodeProcess
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(process, INFINITE) +<br>
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodeprocess)\] GetExitCodeProcess
 pub fn wait_for_process<'a>(process: impl AsRef<process::Handle<'a>>) -> Result<u32, Error> {
     match unsafe { WaitForSingleObject(process.as_ref().as_handle(), INFINITE) } {
         WAIT_OBJECT_0       => {},

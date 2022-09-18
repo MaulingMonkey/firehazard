@@ -1,17 +1,17 @@
-//! \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/winstation/desktops)\]
+//! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/desktops)\]
 //! Desktop APIs
 //!
 //! Desktop objects are both a user interface element, and a security boundary.
 //! Windows and processes on the same desktop can interact with each other by sending messages and inspecting each other's windows and handles by default, as well as sharing clipboards and other UI state.
 //! Such access can also be somewhat restricted by:
 //! *   [`job::object::uilimit`]s
-//! *   [AppContainers](https://docs.microsoft.com/en-us/windows/win32/secauthz/appcontainer-isolation#window-isolation)
+//! *   [AppContainers](https://learn.microsoft.com/en-us/windows/win32/secauthz/appcontainer-isolation#window-isolation)
 //! *   [Low Integrity Levels](https://github.com/chromium/chromium/blob/main/docs/design/sandbox.md#the-integrity-levels)
 //!
 //! Desktop objects are used by:
 //! *   Windows itself, for secure password entry / login.
 //! *   Windows itself, for multi-user terminal services server systems.
-//! *   [Sysinternals Desktops](https://docs.microsoft.com/en-us/sysinternals/downloads/desktops)
+//! *   [Sysinternals Desktops](https://learn.microsoft.com/en-us/sysinternals/downloads/desktops)
 //! *   [Chrome](https://github.com/chromium/chromium/blob/main/docs/design/sandbox.md#the-alternate-desktop) uses a non-visible desktop for sandboxing code that uses `user32.dll`
 //! *   [KeePass Password Safe's Secure Desktop Option](https://keepass.info/help/kb/sec_desk.html) (opt-in for secure password entry)
 //!

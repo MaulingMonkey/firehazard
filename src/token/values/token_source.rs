@@ -4,7 +4,7 @@ use winapi::um::winnt::{TOKEN_SOURCE_LENGTH, TOKEN_SOURCE};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_source)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_source)\]
 /// TOKEN_SOURCE
 #[derive(Clone, Copy, Default, Debug)]
 #[repr(C)] pub struct Source {

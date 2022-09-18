@@ -11,7 +11,7 @@ use core::time::Duration;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-checkremotedebuggerpresent)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-checkremotedebuggerpresent)\]
 /// CheckRemoteDebuggerPresent
 ///
 /// ### Example
@@ -27,13 +27,13 @@ pub fn check_remote_debugger_present<'a>(process: impl AsRef<process::PsuedoHand
     Ok(result != FALSE)
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-continuedebugevent)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-continuedebugevent)\]
 /// ContinueDebugEvent
 pub fn continue_debug_event(process_id: process::Id, thread_id: thread::Id, continue_status: u32) -> Result<(), Error> {
     Error::get_last_if(FALSE == unsafe { ContinueDebugEvent(process_id, thread_id, continue_status) })
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-debugactiveprocess)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-debugactiveprocess)\]
 /// DebugActiveProcess
 ///
 /// ### Example
@@ -49,7 +49,7 @@ pub fn debug_active_process(process_id: process::Id) -> Result<(), Error> {
     Error::get_last_if(FALSE == unsafe { DebugActiveProcess(process_id) })
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-debugactiveprocessstop)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-debugactiveprocessstop)\]
 /// DebugActiveProcessStop
 ///
 /// ### Example
@@ -66,7 +66,7 @@ pub fn debug_active_process_stop(process_id: process::Id) -> Result<(), Error> {
     Error::get_last_if(FALSE == unsafe { DebugActiveProcessStop(process_id) })
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-debugbreak)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-debugbreak)\]
 /// DebugBreak
 ///
 /// ### Example
@@ -80,7 +80,7 @@ pub fn debug_break() {
     unsafe { DebugBreak() }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-isdebuggerpresent)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-isdebuggerpresent)\]
 /// IsDebuggerPresent
 ///
 /// ### Example
@@ -92,7 +92,7 @@ pub fn is_debugger_present() -> bool {
     FALSE != unsafe { IsDebuggerPresent() }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-outputdebugstringa)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-outputdebugstringa)\]
 /// OutputDebugStringA
 ///
 /// ### Example
@@ -105,7 +105,7 @@ pub fn output_debug_string_a(output_string: impl AsCStr) {
     unsafe { OutputDebugStringA(output_string.as_cstr()) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-outputdebugstringw)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-outputdebugstringw)\]
 /// OutputDebugStringW
 ///
 /// ### Example
@@ -118,7 +118,7 @@ pub fn output_debug_string_w(output_string: impl AsCStr<u16>) {
     unsafe { OutputDebugStringW(output_string.as_cstr()) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-waitfordebugevent)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-waitfordebugevent)\]
 /// WaitForDebugEvent
 pub fn wait_for_debug_event(timeout: impl Into<Option<Duration>>) -> Result<DebugEvent, Error> {
     let timeout_ms = timeout.into().map_or(INFINITE, |d| u32::try_from(d.as_millis()).unwrap_or(INFINITE).max(INFINITE-1));
@@ -127,7 +127,7 @@ pub fn wait_for_debug_event(timeout: impl Into<Option<Duration>>) -> Result<Debu
     Ok(unsafe { DebugEvent::from_raw(de) })
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-waitfordebugeventex)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-waitfordebugeventex)\]
 /// WaitForDebugEventEx
 pub fn wait_for_debug_event_ex(timeout: impl Into<Option<Duration>>) -> Result<DebugEvent, Error> {
     let timeout_ms = timeout.into().map_or(INFINITE, |d| u32::try_from(d.as_millis()).unwrap_or(INFINITE).max(INFINITE-1));

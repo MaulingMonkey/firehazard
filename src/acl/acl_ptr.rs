@@ -10,16 +10,16 @@ use core::mem::{align_of, size_of};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl)\] ~ PACL
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl)\] ~ PACL
 #[derive(Clone, Copy)] #[repr(transparent)] pub struct Ptr<'a>(*mut ACL, PhantomData<&'a ACL>);
 
 impl Ptr<'_> {
     /// ### Safety
-    /// `acl` should point to a valid [`ACL`](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl) for the lifetime `'a` given [`acl::Ptr<'a>`].
+    /// `acl` should point to a valid [`ACL`](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl) for the lifetime `'a` given [`acl::Ptr<'a>`].
     pub const unsafe fn from_raw_unchecked(acl: *mut ACL) -> Self { Self(acl, PhantomData) }
 
     /// ### Safety
-    /// `acl` should be null, or point to a valid [`ACL`](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl) for the lifetime `'a` given [`acl::Ptr<'a>`].
+    /// `acl` should be null, or point to a valid [`ACL`](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl) for the lifetime `'a` given [`acl::Ptr<'a>`].
     pub unsafe fn from_raw(acl: *mut ACL, bytes: usize) -> Result<Self, Error> {
         if acl.is_null()                            { return Ok(Self(acl, PhantomData)) }
         if acl as usize % align_of::<ACL>() != 0    { return Err(Error(ERROR_INVALID_ACL)) }
@@ -40,17 +40,17 @@ impl Ptr<'_> {
 
     pub fn as_pacl(self) -> PACL { self.0.cast() }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-getaclinformation)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-getaclinformation)\]
     /// GetAclInformation(..., AclRevisionInformation)
     #[allow(dead_code)]
     pub(crate) fn get_acl_revision_information(&self) -> ACL_REVISION_INFORMATION { unsafe { self.get_acl_information(AclRevisionInformation) } }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-getaclinformation)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-getaclinformation)\]
     /// GetAclInformation(..., AclRevisionInformation)
     #[allow(dead_code)]
     pub(crate) fn get_acl_revision(&self) -> acl::Revision { unsafe { acl::Revision::from_unchecked(self.get_acl_revision_information().AclRevision as _) } }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-getaclinformation)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-getaclinformation)\]
     /// GetAclInformation(..., AclSizeInformation)
     pub(crate) fn get_acl_size_information(&self) -> ACL_SIZE_INFORMATION { unsafe { self.get_acl_information(AclSizeInformation) } }
 

@@ -1,4 +1,4 @@
-//! Debugger APIs from [debugapi.h](https://docs.microsoft.com/en-us/windows/win32/api/debugapi/), <strike>dbgeng.h</strike> (not yet)
+//! Debugger APIs from [debugapi.h](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/), <strike>dbgeng.h</strike> (not yet)
 
 mod debug_event;                    pub use debug_event::*;
 

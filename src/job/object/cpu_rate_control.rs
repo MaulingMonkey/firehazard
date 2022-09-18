@@ -4,7 +4,7 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information)\]
 /// JOBOBJECT_CPU_RATE_CONTROL_INFORMATION
 #[derive(Clone, Copy, Default)]
 #[repr(C)] pub struct CpuRateControlInformation {
@@ -89,11 +89,11 @@ impl Debug for CpuRateControlInformation {
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information#members)\] JOBOBJECT_CPU_RATE_CONTROL_INFORMATION::ControlFlags mask
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information#members)\] JOBOBJECT_CPU_RATE_CONTROL_INFORMATION::ControlFlags mask
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct CpuRateControlFlagsMask(u32);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information#members)\] JOBOBJECT_CPU_RATE_CONTROL_INFORMATION::ControlFlags
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information#members)\] JOBOBJECT_CPU_RATE_CONTROL_INFORMATION::ControlFlags
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct CpuRateControlFlags(u32);
 

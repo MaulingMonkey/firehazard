@@ -27,7 +27,7 @@ pub struct Builder {
 impl<'a> From<&'a mut Builder> for acl::Ptr<'a> { fn from(b: &'a mut Builder) -> Self { b.as_acl_ptr() } }
 
 impl Builder {
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-initializeacl)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-initializeacl)\]
     /// InitializeAcl
     pub fn new(revision: acl::Revision) -> Self {
         let mut b = Self { u: U { bytes: [0; max_acl_bytes!()] } };
@@ -49,9 +49,9 @@ impl Builder {
         Ok(self)
     }
 
-    // https://docs.microsoft.com/en-us/windows/win32/secauthz/authorization-functions
+    // https://learn.microsoft.com/en-us/windows/win32/secauthz/authorization-functions
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessallowedace)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessallowedace)\]
     /// `AddAccessAllowedAce`
     pub fn add_access_allowed_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:   acl::Revision,
@@ -62,7 +62,7 @@ impl Builder {
         Ok(self)
     }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessallowedaceex)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessallowedaceex)\]
     /// `AddAccessAllowedAceEx`
     pub fn add_access_allowed_ace_ex<'acl, 'sid>(&'acl mut self,
         ace_revision:   acl::Revision,
@@ -74,7 +74,7 @@ impl Builder {
         Ok(self)
     }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessallowedobjectace)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessallowedobjectace)\]
     /// `AddAccessAllowedObjectAce`
     pub fn add_access_allowed_object_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:               acl::Revision,
@@ -96,7 +96,7 @@ impl Builder {
         Ok(self)
     }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessdeniedace)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessdeniedace)\]
     /// `AddAccessDeniedAce`
     pub fn add_access_denied_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:   acl::Revision,
@@ -107,7 +107,7 @@ impl Builder {
         Ok(self)
     }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessdeniedaceex)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessdeniedaceex)\]
     /// `AddAccessDeniedAceEx`
     pub fn add_access_denied_ace_ex<'acl, 'sid>(&'acl mut self,
         ace_revision:   acl::Revision,
@@ -119,7 +119,7 @@ impl Builder {
         Ok(self)
     }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessdeniedobjectace)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessdeniedobjectace)\]
     /// `AddAccessDeniedObjectAce`
     pub fn add_access_denied_object_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:               acl::Revision,
@@ -141,7 +141,7 @@ impl Builder {
         Ok(self)
     }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addace)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addace)\]
     /// `AddAce` an entire Acl
     pub fn add_acl(&mut self, ace_revision: acl::Revision, starting_ace_index: u32, acl: acl::Ptr) -> Result<&mut Self, Error> {
         if acl.as_pacl().is_null() { return Err(Error(ERROR_INVALID_PARAMETER)); }
@@ -151,7 +151,7 @@ impl Builder {
         Ok(self)
     }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addauditaccessobjectace)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addauditaccessobjectace)\]
     /// `AddAuditAccessObjectAce`
     pub fn add_audit_access_object_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:               acl::Revision,
@@ -177,7 +177,7 @@ impl Builder {
         Ok(self)
     }
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addmandatoryace)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addmandatoryace)\]
     /// `AddMandatoryAce`
     pub fn add_mandatory_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:       acl::Revision,
@@ -189,19 +189,19 @@ impl Builder {
         Ok(self)
     }
 
-    // TODO: https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addresourceattributeace
-    // TODO: https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addscopedpolicyidace
+    // TODO: https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addresourceattributeace
+    // TODO: https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addscopedpolicyidace
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-deleteace)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-deleteace)\]
     /// `DeleteAce`
     pub fn delete_ace(&mut self, ace_index: u32) -> Result<&mut Self, Error> {
         Error::get_last_if(FALSE == unsafe { DeleteAce(self.as_winapi(), ace_index) })?;
         Ok(self)
     }
 
-    // https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-findfirstfreeace
+    // https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-findfirstfreeace
 
-    /// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-getace)\]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-getace)\]
     /// `GetAce`
     pub fn get_ace(&self, ace_index: u32) -> Result<ace::Ptr, Error> {
         let mut ace = null_mut();
@@ -209,5 +209,5 @@ impl Builder {
         unsafe { ace::Ptr::from_raw(ace.cast()) }.ok_or(Error(ERROR_INVALID_HANDLE))
     }
 
-    // https://docs.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setaclinformation
+    // https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setaclinformation
 }

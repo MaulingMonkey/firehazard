@@ -8,16 +8,16 @@ use core::marker::PhantomData;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header)\] ~ &ACE_HEADER
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header)\] ~ &ACE_HEADER
 #[derive(Clone, Copy)] #[repr(transparent)] pub struct Ptr<'a>(*mut ace::Header, PhantomData<&'a ace::Header>);
 
 impl Ptr<'_> {
     /// ### Safety
-    /// `ace_header` should point to a valid [`ACE_HEADER`](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header) for the lifetime `'a` given [`ace::Ptr<'a>`].
+    /// `ace_header` should point to a valid [`ACE_HEADER`](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header) for the lifetime `'a` given [`ace::Ptr<'a>`].
     pub const unsafe fn from_raw_unchecked(ace: *mut ace::Header) -> Self { Self(ace, PhantomData) }
 
     /// ### Safety
-    /// `ace_header` should be null, or point to a valid [`ACE_HEADER`](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header) for the lifetime `'a` given [`ace::Ptr<'a>`].
+    /// `ace_header` should be null, or point to a valid [`ACE_HEADER`](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header) for the lifetime `'a` given [`ace::Ptr<'a>`].
     pub unsafe fn from_raw(ace: *mut ace::Header) -> Option<Self> { if ace.is_null() { None } else { Some(Self(ace, PhantomData)) } }
 
     pub fn header(&self) -> &ace::Header { unsafe { &*self.0 } }
@@ -45,7 +45,7 @@ impl Debug for Ptr<'_> {
             )
         }}
 
-        // https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members
+        // https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members
         match header.ty {
             ace::Type::ACCESS_ALLOWED => {
                 let ace : &ACCESS_ALLOWED_ACE = unsafe { &*self.0.cast() };

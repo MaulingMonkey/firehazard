@@ -6,7 +6,7 @@ use core::ptr::null;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa379560(v=vs.85))\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa379560(v=vs.85))\]
 /// SECURITY_ATTRIBUTES
 #[derive(Clone, Copy, Default)]
 #[repr(transparent)] pub struct Attributes<'sd> {

@@ -8,7 +8,7 @@ use core::mem::{MaybeUninit, size_of_val, size_of};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-readprocessmemory)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-readprocessmemory)\]
 /// ReadProcessMemory
 ///
 /// ### Safety

@@ -1,8 +1,8 @@
-//! I/O APIs ([pipe]((https://docs.microsoft.com/en-us/windows/win32/ipc/pipes)) handles and fns)
+//! I/O APIs ([pipe]((https://learn.microsoft.com/en-us/windows/win32/ipc/pipes)) handles and fns)
 //!
 //! ### References
-//! *   <https://docs.microsoft.com/en-us/windows/win32/ipc/pipes>
-//! *   <https://docs.microsoft.com/en-us/windows/win32/ipc/multithreaded-pipe-server>
+//! *   <https://learn.microsoft.com/en-us/windows/win32/ipc/pipes>
+//! *   <https://learn.microsoft.com/en-us/windows/win32/ipc/multithreaded-pipe-server>
 
 #[cfg(    std )] pub use std::io::{Read, Write, Seek, Error, ErrorKind, Result};
 #[cfg(not(std))] mod io_not_std;

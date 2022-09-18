@@ -2,12 +2,12 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/secauthz/access-mask)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-mask)\]
 /// ACCESS_MASK/DWORD/[u32]: Access rights flags mask for removing or restricting rights
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct MaskMask(pub(super) u32);
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/secauthz/access-mask)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-mask)\]
 /// ACCESS_MASK/DWORD/[u32]: Access rights flags
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Mask(pub(super) u32);

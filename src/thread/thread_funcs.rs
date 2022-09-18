@@ -7,19 +7,19 @@ use winapi::um::winbase::*;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentthread)\] GetCurrentThread
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentthread)\] GetCurrentThread
 pub fn get_current_thread() -> thread::PsuedoHandle<'static> { unsafe { thread::PsuedoHandle::from_raw(GetCurrentThread()).unwrap() } }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentthreadid)\] GetCurrentThreadId
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentthreadid)\] GetCurrentThreadId
 pub fn get_current_thread_id() -> thread::Id { unsafe { GetCurrentThreadId() } }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-resumethread)\] ResumeThread
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-resumethread)\] ResumeThread
 pub fn resume_thread(thread: &thread::OwnedHandle) -> Result<u32, Error> { let r = unsafe { ResumeThread(thread.as_handle()) }; if r as i32 != -1 { Ok(r) } else { Err(Error::get_last()) } }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-suspendthread)\] SuspendThread
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-suspendthread)\] SuspendThread
 pub fn suspend_thread(thread: &thread::OwnedHandle) -> Result<u32, Error> { let r = unsafe { SuspendThread(thread.as_handle()) }; if r as i32 != -1 { Ok(r) } else { Err(Error::get_last()) } }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodethread)\] GetExitCodeThread
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodethread)\] GetExitCodeThread
 ///
 /// ### Returns
 /// *   `Ok(STILL_ACTIVE)` / `Ok(STATUS_PENDING)`   if `thread` is still running
@@ -33,13 +33,13 @@ pub fn get_exit_code_thread<'a>(thread: impl AsRef<thread::Handle<'a>>) -> Resul
     Ok(exit_code)
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(thread, 0) == WAIT_TIMEOUT
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(thread, 0) == WAIT_TIMEOUT
 pub fn is_thread_running<'a>(thread: impl AsRef<thread::Handle<'a>>) -> bool {
     WAIT_TIMEOUT == unsafe { WaitForSingleObject(thread.as_ref().as_handle(), 0) }
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(thread, INFINITE) +<br>
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodethread)\] GetExitCodeThread
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(thread, INFINITE) +<br>
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodethread)\] GetExitCodeThread
 pub fn wait_for_thread<'a>(thread: impl AsRef<thread::Handle<'a>>) -> Result<u32, Error> {
     match unsafe { WaitForSingleObject(thread.as_ref().as_handle(), INFINITE) } {
         WAIT_OBJECT_0       => {},
@@ -51,7 +51,7 @@ pub fn wait_for_thread<'a>(thread: impl AsRef<thread::Handle<'a>>) -> Result<u32
     get_exit_code_thread(thread)
 }
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitthread)\] ExitThread
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitthread)\] ExitThread
 pub fn exit_thread(exit_code: u32) { unsafe { ExitThread(exit_code) } }
 
 #[cfg(std)] #[test] fn test_wait_exit() {

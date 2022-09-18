@@ -33,33 +33,33 @@ fn windows_only() {
 
     // UWP / Microsoft Store isolation
     // Not 100% sure what the linker flag alone does.
-    // https://docs.microsoft.com/en-us/cpp/build/reference/appcontainer-windows-store-app
+    // https://learn.microsoft.com/en-us/cpp/build/reference/appcontainer-windows-store-app
     println!("cargo:rustc-link-arg=/APPCONTAINER");
 
     // Delay Load Import
     // Might be useful for DLLs that cause explosions (`user32.dll`?)
-    // https://docs.microsoft.com/en-us/cpp/build/reference/delayload-delay-load-import
+    // https://learn.microsoft.com/en-us/cpp/build/reference/delayload-delay-load-import
     //println!("cargo:rustc-link-arg=/DELAYLOAD:some.dll");
 
     if _vs_2019 {
         // CET Shadow Stack compatible.  Requires VS2019+
-        // https://docs.microsoft.com/en-us/cpp/build/reference/cetcompat
+        // https://learn.microsoft.com/en-us/cpp/build/reference/cetcompat
         println!("cargo:rustc-link-arg=/CETCOMPAT");
         println!("cargo:rustc-cfg=cet"); // enforce CET in examples
     }
 
     // Enable Control Guard Checks.  Already enabled via .cargo/config.toml
-    // https://docs.microsoft.com/en-us/cpp/build/reference/guard-enable-guard-checks
+    // https://learn.microsoft.com/en-us/cpp/build/reference/guard-enable-guard-checks
     //println!("cargo:rustc-link-arg=/GUARD:CF");
 
-    // https://docs.microsoft.com/en-us/cpp/build/reference/manifest-create-side-by-side-assembly-manifest
+    // https://learn.microsoft.com/en-us/cpp/build/reference/manifest-create-side-by-side-assembly-manifest
     //println!("cargo:rustc-link-arg=/MANIFEST");
 
-    // https://docs.microsoft.com/en-us/cpp/build/reference/manifestfile-name-manifest-file
+    // https://learn.microsoft.com/en-us/cpp/build/reference/manifestfile-name-manifest-file
     //println!("cargo:rustc-link-arg=/MANIFESTFILE:some.manifest");
 
     // Use inferred sanitizer libs - requires rustc support
-    // https://docs.microsoft.com/en-us/cpp/build/reference/inferasanlibs
+    // https://learn.microsoft.com/en-us/cpp/build/reference/inferasanlibs
     // https://github.com/rust-lang/rust/pull/89369
     //println!("cargo:rustc-link-arg=/INFERASANLIBS");
 }

@@ -3,7 +3,7 @@ use winapi::um::winnt::*;
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_limit_violation_information)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_limit_violation_information)\]
 /// JOBOBJECT_LIMIT_VIOLATION_INFORMATION
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)] pub struct LimitViolationInformation {
@@ -38,7 +38,7 @@ structure!(@assert layout LimitViolationInformation => JOBOBJECT_LIMIT_VIOLATION
 
 
 
-/// \[[docs.microsoft.com](https://docs.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_limit_violation_information_2)\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_limit_violation_information_2)\]
 /// JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)] pub struct LimitViolationInformation2 {
