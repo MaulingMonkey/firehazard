@@ -12,7 +12,7 @@ use winapi::um::winnt::*;
 pub struct DepPolicy {
     pub enable:                         bool,
     pub disable_atl_thunk_emulation:    bool,
-    #[doc(hidden)] pub _reserved_flags: (),
+    #[doc(hidden)] pub _reserved_flags: ()
 }
 
 unsafe impl IntoPolicy for PROCESS_MITIGATION_DEP_POLICY {

@@ -12,11 +12,12 @@ fn main() {
         .. Default::default()
     }).unwrap();
 
-    let mut policy = PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY { Flags: 0 };
-    policy.set_MicrosoftSignedOnly(1);  // but this doesn't include our exe?
-    policy.set_MitigationOptIn(1);      // "prevent the process from loading images that are not signed by Microsoft, the Windows Store and the Windows Hardware Quality Labs (WHQL)"
-    //policy.set_StoreSignedOnly(1);      // desktop app isn't store signed - causes ERROR_INVALID_PARAMETER
-    set_process_mitigation_policy(policy).unwrap();
+    set_process_mitigation_policy(process::mitigation::BinarySignaturePolicy {
+        microsoft_signed_only:  true, // but this doesn't include our exe?
+        mitigation_opt_in:      true, // "prevent the process from loading images that are not signed by Microsoft, the Windows Store and the Windows Hardware Quality Labs (WHQL)"
+        //store_signed_only:      true, // desktop app isn't store signed - causes ERROR_INVALID_PARAMETER
+        .. Default::default()
+    }).unwrap();
 
     let mut policy = PROCESS_MITIGATION_CHILD_PROCESS_POLICY { Flags: 0 };
     policy.set_NoChildProcessCreation(1);

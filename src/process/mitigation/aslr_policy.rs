@@ -14,7 +14,7 @@ pub struct AslrPolicy {
     pub enable_force_relocate_images:       bool,
     pub enable_high_entropy:                bool,
     pub disallow_stripped_images:           bool,
-    #[doc(hidden)] pub _reserved_flags:     (),
+    #[doc(hidden)] pub _reserved_flags:     ()
 }
 
 unsafe impl IntoPolicy for PROCESS_MITIGATION_ASLR_POLICY {

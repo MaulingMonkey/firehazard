@@ -1,6 +1,7 @@
 //! PROCESS_MITIGATION_\*
 
 mod aslr_policy;                    pub use aslr_policy::*;
+mod binary_signature_policy;        pub use binary_signature_policy::*;
 mod dep_policy;                     pub use dep_policy::*;
 mod winapi;
 
