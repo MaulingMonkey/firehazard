@@ -2,7 +2,6 @@
 //! Process mitigation policy types and functions
 
 use crate::*;
-use winapi::um::winnt::*;
 
 
 
@@ -15,7 +14,7 @@ pub unsafe trait IntoPolicy {
     /// POD-ish type that will be passed directly to SetProcessMitigationPolicy
     type Policy;
 
-    fn into(self) -> (process::mitigation::Policy, Self::Policy);
+    fn into_policy(self) -> (process::mitigation::Policy, Self::Policy);
 }
 
 pub use funcs::*;
