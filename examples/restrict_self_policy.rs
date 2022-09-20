@@ -7,13 +7,7 @@ fn main() {
     let mask : process::mitigation::OptionsMask = get_process_mitigation_policy(get_current_process()).unwrap();
     dbg!(mask);
 
-    set_process_mitigation_policy(process::mitigation::AslrPolicy {
-        disallow_stripped_images:       true,
-        enable_bottom_up_randomization: true,
-        enable_force_relocate_images:   true,
-        enable_high_entropy:            true,
-        .. Default::default()
-    }).unwrap();
+    set_process_mitigation_policy(process::mitigation::AslrPolicy::strict_v1()).unwrap();
 
     set_process_mitigation_policy(process::mitigation::BinarySignaturePolicy {
         microsoft_signed_only:  true, // but this doesn't include our exe?
