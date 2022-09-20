@@ -17,12 +17,7 @@ fn main() {
         .. Zeroable::zeroed()
     }).unwrap();
 
-    set_process_mitigation_policy(process::mitigation::ChildProcessPolicy {
-        no_child_process_creation:          true,
-        allow_secure_process_creation:      false,
-        audit_no_child_process_creation:    false,
-        .. Default::default()
-    }).unwrap();
+    set_process_mitigation_policy(process::mitigation::ChildProcessPolicy::strict_v1()).unwrap();
 
     set_process_mitigation_policy(process::mitigation::ControlFlowGuardPolicy {
         enable_control_flow_guard:  false,  // "This field cannot be changed via SetProcessMitigationPolicy."
