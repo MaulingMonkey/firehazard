@@ -39,6 +39,7 @@ impl Error {
             ERROR_BAD_PATHNAME              => "ERROR_BAD_PATHNAME",            // 161
             ERROR_BUSY                      => "ERROR_BUSY",                    // 170
             ERROR_PARTIAL_COPY              => "ERROR_PARTIAL_COPY",            // 299
+            367                             => "ERROR_CHILD_PROCESS_BLOCKED",   // 367
             ERROR_NO_TOKEN                  => "ERROR_NO_TOKEN",                // 1008
             ERROR_PRIVILEGE_NOT_HELD        => "ERROR_PRIVILEGE_NOT_HELD",      // 1314
             ERROR_INVALID_SUB_AUTHORITY     => "ERROR_INVALID_SUB_AUTHORITY",   // 1335
