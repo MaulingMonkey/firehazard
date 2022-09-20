@@ -1,3 +1,4 @@
+use bytemuck::Zeroable;
 use firehazard::*;
 use winapi::um::winnt::*;
 
@@ -10,10 +11,10 @@ fn main() {
     set_process_mitigation_policy(process::mitigation::AslrPolicy::strict_v1()).unwrap();
 
     set_process_mitigation_policy(process::mitigation::BinarySignaturePolicy {
-        microsoft_signed_only:  true, // but this doesn't include our exe?
-        mitigation_opt_in:      true, // "prevent the process from loading images that are not signed by Microsoft, the Windows Store and the Windows Hardware Quality Labs (WHQL)"
-        //store_signed_only:      true, // desktop app isn't store signed - causes ERROR_INVALID_PARAMETER
-        .. Default::default()
+        microsoft_signed_only:      true, // but this doesn't include our exe?
+        mitigation_opt_in:          true, // "prevent the process from loading images that are not signed by Microsoft, the Windows Store and the Windows Hardware Quality Labs (WHQL)"
+        //store_signed_only:          true, // cannot use in a desktop app, even in audit mode? causes ERROR_INVALID_PARAMETER
+        .. Zeroable::zeroed()
     }).unwrap();
 
     set_process_mitigation_policy(process::mitigation::ChildProcessPolicy {
