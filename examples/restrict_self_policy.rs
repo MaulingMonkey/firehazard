@@ -19,12 +19,17 @@ fn main() {
 
     set_process_mitigation_policy(process::mitigation::ChildProcessPolicy::strict_v1()).unwrap();
 
+    let old = get_process_mitigation_policy::<process::mitigation::ControlFlowGuardPolicy>(get_current_process()).unwrap();
     set_process_mitigation_policy(process::mitigation::ControlFlowGuardPolicy {
-        enable_control_flow_guard:  false,  // "This field cannot be changed via SetProcessMitigationPolicy."
-        enable_export_suppression:  false,  // "This field cannot be changed via SetProcessMitigationPolicy."
-        strict_mode:                true,   // "If TRUE, all DLLs that are loaded must enable CFG. If a DLL does not enable CFG then the image will fail to load. This policy can be enabled after a process has started by calling SetProcessMitigationPolicy. It cannot be disabled once enabled."
-        .. Default::default()
+        strict_mode: true,              // block non-CFG binaries
+        enable_xfg_audit_mode: false,   // if XFG is enabled, enforce it?
+        //enable_xfg: true,             // ERROR_INVALID_PARAMETER - also probably can't be changed?
+        .. Zeroable::zeroed()
     }).unwrap();
+    let new = get_process_mitigation_policy::<process::mitigation::ControlFlowGuardPolicy>(get_current_process()).unwrap();
+    assert_eq!(old.enable_control_flow_guard,   new.enable_control_flow_guard,  "not as read-only as I thought?");
+    assert_eq!(old.enable_export_suppression,   new.enable_export_suppression,  "not as read-only as I thought?");
+    assert_eq!(old.enable_xfg,                  new.enable_xfg,                 "not as read-only as I thought?");
 
     let policy = process::mitigation::DepPolicy {
         enable:                         true,
