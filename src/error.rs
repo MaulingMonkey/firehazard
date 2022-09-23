@@ -41,6 +41,7 @@ impl Error {
             ERROR_PARTIAL_COPY              => "ERROR_PARTIAL_COPY",            // 299
             367                             => "ERROR_CHILD_PROCESS_BLOCKED",   // 367
             ERROR_NO_TOKEN                  => "ERROR_NO_TOKEN",                // 1008
+            ERROR_NO_SUCH_PRIVILEGE         => "ERROR_NO_SUCH_PRIVILEGE",       // 1313
             ERROR_PRIVILEGE_NOT_HELD        => "ERROR_PRIVILEGE_NOT_HELD",      // 1314
             ERROR_INVALID_SUB_AUTHORITY     => "ERROR_INVALID_SUB_AUTHORITY",   // 1335
             ERROR_INVALID_ACL               => "ERROR_INVALID_ACL",             // 1336

@@ -9,12 +9,20 @@ use crate::*;
 #[derive(Clone, Copy, Debug)] #[repr(transparent)] pub struct Name(CStrNonNull<'static>);
 
 impl Name {
-    pub fn luid(self) -> privilege::Luid {
-        privilege::lookup_privilege_value_a(self.0).unwrap()
+    /// [`lookup_privilege_value_a`] a known privilege identifier.
+    ///
+    /// ### Errors
+    /// *   `ERROR_NO_SUCH_PRIVILEGE`   if `name` doesn't name a known privilege in this version of Windows
+    /// *   `ERROR_INVALID_HANDLE`      on some permission lookup errors (e.g. if the current process's token was restricted, and excluded [`sid::builtin::alias::USERS`](crate::sid::builtin::alias::USERS))
+    pub fn luid(self) -> Result<privilege::Luid, Error> {
+        privilege::lookup_privilege_value_a(self.0)
     }
 }
 
-impl From<Name> for privilege::Luid { fn from(n: Name) -> Self { n.luid() } }
+impl TryFrom<Name> for privilege::Luid {
+    type Error = crate::Error;
+    fn try_from(n: Name) -> Result<Self, Self::Error> { n.luid() }
+}
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/privilege-constants)\]
 /// SE_*_NAME

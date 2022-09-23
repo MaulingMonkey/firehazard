@@ -1,4 +1,23 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-lookupprivilegevaluea)\] LookupPrivilegeValueA
+///
+/// Lookup a [`privilege::Luid`](crate::privilege::Luid) by it's string identifier.
+///
+/// ### Examples
+/// ```
+/// # use abistr::*;
+/// # use firehazard::*;
+/// # use winapi::shared::winerror::*;
+/// // unit tests aren't run in any kind of sandbox, so this should work:
+/// let p = lookup_privilege_value_a(cstr!("SeChangeNotifyPrivilege"));
+/// p.expect("SeChangeNotifyPrivilege should be a valid privilege");
+///
+/// let r = lookup_privilege_value_a(cstr!("not a valid privilege name"));
+/// assert_eq!(r.unwrap_err(), ERROR_NO_SUCH_PRIVILEGE);
+/// ```
+///
+/// ### Errors
+/// *   `ERROR_NO_SUCH_PRIVILEGE`   if `name` doesn't name a known privilege in this version of Windows
+/// *   `ERROR_INVALID_HANDLE`      on some permission lookup errors (e.g. if the current process's token was restricted, and excluded [`sid::builtin::alias::USERS`](crate::sid::builtin::alias::USERS))
 pub fn lookup_privilege_value_a(name: impl abistr::AsCStr) -> Result<crate::privilege::Luid, crate::Error> {
     use crate::*;
     let name = name.as_cstr();
