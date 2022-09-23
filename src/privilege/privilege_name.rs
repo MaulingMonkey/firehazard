@@ -1,12 +1,16 @@
-use abistr::CStrNonNull;
-
 use crate::*;
+
+use abistr::CStrNonNull;
+use winapi::um::winnt::LUID;
 
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/privilege-constants)\]
 /// Privilege name, referencing a [privilege](https://learn.microsoft.com/en-us/windows/win32/secauthz/privilege-constants#constants) such as `"SeShutdownPrivilege"`
-#[derive(Clone, Copy, Debug)] #[repr(transparent)] pub struct Name(CStrNonNull<'static>);
+#[derive(Clone, Copy, Debug)] pub struct Name {
+    name:       CStrNonNull<'static>,
+    hardcoded:  privilege::Luid,
+}
 
 impl Name {
     /// [`lookup_privilege_value_a`] a known privilege identifier.
@@ -14,14 +18,22 @@ impl Name {
     /// ### Errors
     /// *   `ERROR_NO_SUCH_PRIVILEGE`   if `name` doesn't name a known privilege in this version of Windows
     /// *   `ERROR_INVALID_HANDLE`      on some permission lookup errors (e.g. if the current process's token was restricted, and excluded [`sid::builtin::alias::USERS`](crate::sid::builtin::alias::USERS))
-    pub fn luid(self) -> Result<privilege::Luid, Error> {
-        privilege::lookup_privilege_value_a(self.0)
+    pub fn lookup_luid(self) -> Result<privilege::Luid, Error> {
+        privilege::lookup_privilege_value_a(self.name)
     }
+
+    /// A hardcoded [`privilege::Luid`] value.
+    ///
+    /// The fact that privilege luid values are documented in the
+    /// [Local Security Authority (Domain Policy) Remote Protocol](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lsad/1a92af76-d45f-42c3-b67c-f1dc61bd6ee1)
+    /// / RPC documentation lends credence to the idea that these LUIDs are stable - however, this isn't a guarantee that I've found explicitly spelled out anywhere.
+    /// Additionally, there's no guarantee that these LUIDs are explicitly supported on whatever version of Windows you're running.
+    pub const fn hardcoded_luid(self) -> privilege::Luid { self.hardcoded }
 }
 
 impl TryFrom<Name> for privilege::Luid {
     type Error = crate::Error;
-    fn try_from(n: Name) -> Result<Self, Self::Error> { n.luid() }
+    fn try_from(n: Name) -> Result<Self, Self::Error> { n.lookup_luid() }
 }
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/privilege-constants)\]
@@ -29,17 +41,17 @@ impl TryFrom<Name> for privilege::Luid {
 pub mod name {
     use super::*;
     macro_rules! constants { ($(
-        pub const $id:ident = $name:tt $(/ $luid:literal)?;
+        pub const $id:ident = $name:tt / $luid:literal;
     )*) => {
         $(
-            pub const $id : Name = Name(abistr::cstr!($name));
+            pub const $id : Name = Name {
+                name:       abistr::cstr!($name),
+                hardcoded:  privilege::Luid(Luid(LUID { HighPart: 0, LowPart: $luid })),
+            };
         )*
         #[test] fn constants() {
             $(
-                let _luid = $id.luid().expect($name);
-                $(
-                    assert_eq!(_luid, privilege::Luid::from($luid), "{} had unexpected value", $name);
-                )?
+                assert_eq!($id.lookup_luid().expect($name), $id.hardcoded_luid(), "{} had unexpected value", $name);
             )*
         }
     }}
