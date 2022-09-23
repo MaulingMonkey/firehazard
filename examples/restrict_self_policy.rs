@@ -1,5 +1,6 @@
 use bytemuck::Zeroable;
 use firehazard::*;
+use winapi::shared::winerror::*;
 use winapi::um::winnt::*;
 
 fn main() {
@@ -35,9 +36,9 @@ fn main() {
         enable:                         true,
         disable_atl_thunk_emulation:    true,
         permanent:                      true,
-        .. Default::default()
+        .. Zeroable::zeroed()
     };
-    assert_eq!(core::mem::size_of::<usize>()==8, set_process_mitigation_policy(policy).is_err()); // ERROR_NOT_SUPPORTED - possibly because it's force-enabled on x64?
+    assert_eq!(ERROR_NOT_SUPPORTED, set_process_mitigation_policy(policy).unwrap_err()); // already permanently enabled
 
     set_process_mitigation_policy(process::mitigation::DynamicCodePolicy {
         prohibit_dynamic_code:  true,
