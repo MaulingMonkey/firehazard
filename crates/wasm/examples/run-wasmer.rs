@@ -1,8 +1,14 @@
-use firehazard::*;
-use abistr::*;
-use wasmer::*;
-
+#[cfg(not(target_pointer_width = "64"))]
 fn main() {
+    panic!("not implemented on this architecture");
+}
+
+#[cfg(target_pointer_width = "64")] // wasmer has issues on 32-bit
+fn main() {
+    use firehazard::*;
+    use abistr::*;
+    use wasmer::*;
+
     let _ = std::collections::HashMap::<u32, u32>::new(); // seed thread's std PRNG
     output_debug_string_a(cstr!("sandbox"));
     revert_to_self().unwrap();

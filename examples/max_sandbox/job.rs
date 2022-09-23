@@ -59,7 +59,7 @@ pub fn relimit(job: &job::OwnedHandle, processes: u32) {
             // per_job_user_time_limit: ..., // ?
             .. Default::default()
         },
-        job_memory_limit: 4 * 1024*1024*1024, // 4 GiB
+        job_memory_limit: 1 * 1024*1024*1024, // 1 GiB
         .. Default::default()
     }).unwrap();
 }

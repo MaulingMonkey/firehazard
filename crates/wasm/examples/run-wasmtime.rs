@@ -1,8 +1,14 @@
-use firehazard::*;
-use abistr::*;
-use wasmtime::*;
-
+#[cfg(not(target_pointer_width = "64"))]
 fn main() {
+    panic!("not implemented on this architecture");
+}
+
+#[cfg(target_pointer_width = "64")] // wasmtime has issues on 32-bit
+fn main() {
+    use firehazard::*;
+    use abistr::*;
+    use wasmtime::*;
+
     let _ = std::collections::HashMap::<u32, u32>::new(); // seed thread's std PRNG
     output_debug_string_a(cstr!("sandbox"));
     revert_to_self().unwrap();

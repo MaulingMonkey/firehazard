@@ -129,6 +129,7 @@ impl Target {
                     .. Default::default()
                 },
             },
+            #[cfg(target_pointer_width = "64")] // wasmer has issues on 32-bit
             Target {
                 exe: dir.join("run-wasmer.exe"),
                 allow: Allow {
@@ -149,6 +150,7 @@ impl Target {
                     .. Default::default()
                 },
             },
+            #[cfg(target_pointer_width = "64")] // wasmtime has issues on 32-bit
             Target {
                 exe: dir.join("run-wasmtime.exe"),
                 allow: Allow {
