@@ -28,46 +28,65 @@ impl TryFrom<Name> for privilege::Luid {
 /// SE_*_NAME
 pub mod name {
     use super::*;
-    macro_rules! name { ( $name:tt ) => { Name(abistr::cstr!($name)) } }
+    macro_rules! constants { ($(
+        pub const $id:ident = $name:tt $(/ $luid:literal)?;
+    )*) => {
+        $(
+            pub const $id : Name = Name(abistr::cstr!($name));
+        )*
+        #[test] fn constants() {
+            $(
+                let _luid = $id.luid().expect($name);
+                $(
+                    assert_eq!(_luid, privilege::Luid::from($luid), "{} had unexpected value", $name);
+                )?
+            )*
+        }
+    }}
 
     // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h
     // Line 11396 .. 11431
-    pub const CREATE_TOKEN                      : Name = name!("SeCreateTokenPrivilege");
-    pub const ASSIGNPRIMARYTOKEN                : Name = name!("SeAssignPrimaryTokenPrivilege");
-    pub const LOCK_MEMORY                       : Name = name!("SeLockMemoryPrivilege");
-    pub const INCREASE_QUOTA                    : Name = name!("SeIncreaseQuotaPrivilege");
-    pub const UNSOLICITED_INPUT                 : Name = name!("SeUnsolicitedInputPrivilege");
-    pub const MACHINE_ACCOUNT                   : Name = name!("SeMachineAccountPrivilege");
-    pub const TCB                               : Name = name!("SeTcbPrivilege");
-    pub const SECURITY                          : Name = name!("SeSecurityPrivilege");
-    pub const TAKE_OWNERSHIP                    : Name = name!("SeTakeOwnershipPrivilege");
-    pub const LOAD_DRIVER                       : Name = name!("SeLoadDriverPrivilege");
-    pub const SYSTEM_PROFILE                    : Name = name!("SeSystemProfilePrivilege");
-    pub const SYSTEMTIME                        : Name = name!("SeSystemtimePrivilege");
-    pub const PROF_SINGLE_PROCESS               : Name = name!("SeProfileSingleProcessPrivilege");
-    pub const INC_BASE_PRIORITY                 : Name = name!("SeIncreaseBasePriorityPrivilege");
-    pub const CREATE_PAGEFILE                   : Name = name!("SeCreatePagefilePrivilege");
-    pub const CREATE_PERMANENT                  : Name = name!("SeCreatePermanentPrivilege");
-    pub const BACKUP                            : Name = name!("SeBackupPrivilege");
-    pub const RESTORE                           : Name = name!("SeRestorePrivilege");
-    pub const SHUTDOWN                          : Name = name!("SeShutdownPrivilege");
-    pub const DEBUG                             : Name = name!("SeDebugPrivilege");
-    pub const AUDIT                             : Name = name!("SeAuditPrivilege");
-    pub const SYSTEM_ENVIRONMENT                : Name = name!("SeSystemEnvironmentPrivilege");
-    pub const CHANGE_NOTIFY                     : Name = name!("SeChangeNotifyPrivilege");
-    pub const REMOTE_SHUTDOWN                   : Name = name!("SeRemoteShutdownPrivilege");
-    pub const UNDOCK                            : Name = name!("SeUndockPrivilege");
-    pub const SYNC_AGENT                        : Name = name!("SeSyncAgentPrivilege");
-    pub const ENABLE_DELEGATION                 : Name = name!("SeEnableDelegationPrivilege");
-    pub const MANAGE_VOLUME                     : Name = name!("SeManageVolumePrivilege");
-    pub const IMPERSONATE                       : Name = name!("SeImpersonatePrivilege");
-    pub const CREATE_GLOBAL                     : Name = name!("SeCreateGlobalPrivilege");
-    pub const TRUSTED_CREDMAN_ACCESS            : Name = name!("SeTrustedCredManAccessPrivilege");
-    pub const RELABEL                           : Name = name!("SeRelabelPrivilege");
-    pub const INC_WORKING_SET                   : Name = name!("SeIncreaseWorkingSetPrivilege");
-    pub const TIME_ZONE                         : Name = name!("SeTimeZonePrivilege");
-    pub const CREATE_SYMBOLIC_LINK              : Name = name!("SeCreateSymbolicLinkPrivilege");
-    pub const DELEGATE_SESSION_USER_IMPERSONATE : Name = name!("SeDelegateSessionUserImpersonatePrivilege");
+    // https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lsad/1a92af76-d45f-42c3-b67c-f1dc61bd6ee1
+    // https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/ns-ntifs-_se_exports
+    constants! {
+        // no privilege for Luid::from(1)
+        pub const CREATE_TOKEN                      = "SeCreateTokenPrivilege"                      / 2;
+        pub const ASSIGNPRIMARYTOKEN                = "SeAssignPrimaryTokenPrivilege"               / 3;
+        pub const LOCK_MEMORY                       = "SeLockMemoryPrivilege"                       / 4;
+        pub const INCREASE_QUOTA                    = "SeIncreaseQuotaPrivilege"                    / 5;
+        // pub const UNSOLICITED_INPUT                 = "SeUnsolicitedInputPrivilege"; // ERROR_NO_SUCH_PRIVILEGE - "The privilege that is required to read unsolicited input from a terminal device. This privilege is obsolete and unused. It has no effect on the system."
+        pub const MACHINE_ACCOUNT                   = "SeMachineAccountPrivilege"                   / 6;
+        pub const TCB                               = "SeTcbPrivilege"                              / 7;
+        pub const SECURITY                          = "SeSecurityPrivilege"                         / 8;
+        pub const TAKE_OWNERSHIP                    = "SeTakeOwnershipPrivilege"                    / 9;
+        pub const LOAD_DRIVER                       = "SeLoadDriverPrivilege"                       / 10;
+        pub const SYSTEM_PROFILE                    = "SeSystemProfilePrivilege"                    / 11;
+        pub const SYSTEMTIME                        = "SeSystemtimePrivilege"                       / 12;
+        pub const PROF_SINGLE_PROCESS               = "SeProfileSingleProcessPrivilege"             / 13;
+        pub const INC_BASE_PRIORITY                 = "SeIncreaseBasePriorityPrivilege"             / 14;
+        pub const CREATE_PAGEFILE                   = "SeCreatePagefilePrivilege"                   / 15;
+        pub const CREATE_PERMANENT                  = "SeCreatePermanentPrivilege"                  / 16;
+        pub const BACKUP                            = "SeBackupPrivilege"                           / 17;
+        pub const RESTORE                           = "SeRestorePrivilege"                          / 18;
+        pub const SHUTDOWN                          = "SeShutdownPrivilege"                         / 19;
+        pub const DEBUG                             = "SeDebugPrivilege"                            / 20;
+        pub const AUDIT                             = "SeAuditPrivilege"                            / 21;
+        pub const SYSTEM_ENVIRONMENT                = "SeSystemEnvironmentPrivilege"                / 22; // misdocumented as "SeSystemEnvironment" by https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lsad/1a92af76-d45f-42c3-b67c-f1dc61bd6ee1
+        pub const CHANGE_NOTIFY                     = "SeChangeNotifyPrivilege"                     / 23;
+        pub const REMOTE_SHUTDOWN                   = "SeRemoteShutdownPrivilege"                   / 24;
+        pub const UNDOCK                            = "SeUndockPrivilege"                           / 25;
+        pub const SYNC_AGENT                        = "SeSyncAgentPrivilege"                        / 26;
+        pub const ENABLE_DELEGATION                 = "SeEnableDelegationPrivilege"                 / 27;
+        pub const MANAGE_VOLUME                     = "SeManageVolumePrivilege"                     / 28;
+        pub const IMPERSONATE                       = "SeImpersonatePrivilege"                      / 29;
+        pub const CREATE_GLOBAL                     = "SeCreateGlobalPrivilege"                     / 30;
+        pub const TRUSTED_CREDMAN_ACCESS            = "SeTrustedCredManAccessPrivilege"             / 31;
+        pub const RELABEL                           = "SeRelabelPrivilege"                          / 32;
+        pub const INC_WORKING_SET                   = "SeIncreaseWorkingSetPrivilege"               / 33;
+        pub const TIME_ZONE                         = "SeTimeZonePrivilege"                         / 34;
+        pub const CREATE_SYMBOLIC_LINK              = "SeCreateSymbolicLinkPrivilege"               / 35;
+        pub const DELEGATE_SESSION_USER_IMPERSONATE = "SeDelegateSessionUserImpersonatePrivilege"   / 36; // undocumented by https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-lsad/1a92af76-d45f-42c3-b67c-f1dc61bd6ee1
+    }
 }
 
 #[cfg(nope)] pub mod capability { // XXX: do these "string capabilities" also count as privileges?  N.B. suffix _CAPABILITY, not _NAME?
