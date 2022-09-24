@@ -86,3 +86,10 @@ winapi.features = [
     "winnt",
     "winuser",
 ]
+
+
+
+[target.'cfg(windows)'.dev-dependencies]
+#thindx                     = "0.0.0-unsound.5"
+thindx.git                  = "https://github.com/MaulingMonkey/thindx"
+thindx.rev                  = "aa03b40980d2170698ffcf89ed9d64bdb69116ef"

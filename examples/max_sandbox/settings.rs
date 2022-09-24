@@ -190,6 +190,29 @@ impl Target {
                     .. Default::default()
                 },
             },
+            Target {
+                exe: dir.join("ui_d3d9_window.exe"),
+                allow: Allow {
+                    same_desktop:   true,
+                    missing_cet:    true, // D3DERR::NOTAVAILABLE (0x8876086A) unless allowed
+                    .. Allow::default()
+                },
+                spawn: Token {
+                    // "User" is semi-optional here, but lots of database access denied errors occur without it
+                    integrity:  sid::integrity::Low,
+                    privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
+                    enabled:    vec![user, sid::builtin::alias::USERS, sid::WORLD, session],
+                    restricted: Some(vec![user, sid::builtin::alias::USERS, sid::WORLD, session]),
+                    .. Default::default()
+                },
+                lockdown: Token {
+                    // CreateDevice fails w/ D3DERR::NOTAVAILABLE (0x8876086A) unless we have: se_change_notify_privilege + USERS + WORLD
+                    privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
+                    enabled:    vec![sid::builtin::alias::USERS, sid::WORLD, session],
+                    restricted: Some(vec![sid::builtin::alias::USERS, sid::WORLD, session]),
+                    .. Default::default()
+                },
+            },
         ];
         targets.retain(|t| t.exe.exists() || !t.exe.ends_with("trivial.exe"));
         targets.into_iter()

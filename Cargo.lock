@@ -7,6 +7,9 @@ name = "abibool"
 version = "0.5.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0bd30f59e066010fda3421085177545205e1fd063de54700e9c7a6ceffad2e5e"
+dependencies = [
+ "bytemuck",
+]
 
 [[package]]
 name = "abistr"
@@ -15,6 +18,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e7de73941ad2564b82f4ac974b9df97f7033adf8773074cbb24cb1d358519f52"
 dependencies = [
  "abistr-macros",
+ "bytemuck",
  "widestring",
 ]
 
@@ -621,6 +625,7 @@ dependencies = [
  "abibool",
  "abistr",
  "bytemuck",
+ "thindx",
  "winapi",
 ]
 
@@ -808,6 +813,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "mcom"
+version = "0.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4cbcbfa26f173e7b76505a590914c49ac6e61397ed9140669116fd824400b765"
+dependencies = [
+ "winapi",
+]
+
+[[package]]
 name = "memchr"
 version = "2.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -839,6 +853,12 @@ checksum = "5aa361d4faea93603064a027415f07bd8e1d5c88c9fbf68bf56a285428fd79ce"
 dependencies = [
  "autocfg",
 ]
+
+[[package]]
+name = "minidl"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5ea5c42a75297faf23962781d2bb23caaf2ede8fd7337842fef63ee3ffdca5c9"
 
 [[package]]
 name = "miniz_oxide"
@@ -1235,6 +1255,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bab24d30b911b2376f3a13cc2cd443142f0c81dda04c118693e35b3835757755"
 dependencies = [
  "winapi-util",
+]
+
+[[package]]
+name = "thindx"
+version = "0.0.0-git"
+source = "git+https://github.com/MaulingMonkey/thindx?rev=aa03b40980d2170698ffcf89ed9d64bdb69116ef#aa03b40980d2170698ffcf89ed9d64bdb69116ef"
+dependencies = [
+ "abibool",
+ "abistr",
+ "bytemuck",
+ "lazy_static",
+ "mcom",
+ "minidl",
+ "winapi",
+ "winresult",
 ]
 
 [[package]]
@@ -1862,6 +1897,22 @@ name = "windows_x86_64_msvc"
 version = "0.36.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c811ca4a8c853ef420abd8592ba53ddbbac90410fab6903b3e79972a631f7680"
+
+[[package]]
+name = "winresult"
+version = "0.1.1"
+source = "git+https://github.com/MaulingMonkey/winresult?rev=9b877bf59efd8cc89fae4fd5f791a0e51cc53712#9b877bf59efd8cc89fae4fd5f791a0e51cc53712"
+dependencies = [
+ "winresult-types",
+]
+
+[[package]]
+name = "winresult-types"
+version = "0.1.0"
+source = "git+https://github.com/MaulingMonkey/winresult?rev=9b877bf59efd8cc89fae4fd5f791a0e51cc53712#9b877bf59efd8cc89fae4fd5f791a0e51cc53712"
+dependencies = [
+ "bytemuck",
+]
 
 [[package]]
 name = "zstd"
