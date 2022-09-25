@@ -625,6 +625,8 @@ dependencies = [
  "abibool",
  "abistr",
  "bytemuck",
+ "lazy_static",
+ "minidl",
  "thindx",
  "winapi",
 ]

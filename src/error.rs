@@ -34,10 +34,12 @@ impl Error {
             ERROR_NOT_SUPPORTED             => "ERROR_NOT_SUPPORTED",           // 50
             ERROR_INVALID_PARAMETER         => "ERROR_INVALID_PARAMETER",       // 87
             ERROR_EXCL_SEM_ALREADY_OWNED    => "ERROR_EXCL_SEM_ALREADY_OWNED",  // 101
+            ERROR_CALL_NOT_IMPLEMENTED      => "ERROR_CALL_NOT_IMPLEMENTED",    // 120
             ERROR_INSUFFICIENT_BUFFER       => "ERROR_INSUFFICIENT_BUFFER",     // 122
             ERROR_BAD_ARGUMENTS             => "ERROR_BAD_ARGUMENTS",           // 160
             ERROR_BAD_PATHNAME              => "ERROR_BAD_PATHNAME",            // 161
             ERROR_BUSY                      => "ERROR_BUSY",                    // 170
+            ERROR_ALREADY_EXISTS            => "ERROR_ALREADY_EXISTS",          // 183
             ERROR_PARTIAL_COPY              => "ERROR_PARTIAL_COPY",            // 299
             367                             => "ERROR_CHILD_PROCESS_BLOCKED",   // 367
             ERROR_NO_TOKEN                  => "ERROR_NO_TOKEN",                // 1008
@@ -55,8 +57,11 @@ impl Error {
             ERROR_DYNAMIC_CODE_BLOCKED      => "ERROR_DYNAMIC_CODE_BLOCKED",    // 1655
             1657                            => "ERROR_STRICT_CFG_VIOLATION",    // 1657
             ERROR_INVALID_ENVIRONMENT       => "ERROR_INVALID_ENVIRONMENT",     // 1805 - prefer ERROR_BAD_ENVIRONMENT ?
+            ERROR_NOT_APPCONTAINER          => "ERROR_NOT_APPCONTAINER",        // 4250
+            0x800700B7                      => "HRESULT_FROM_WIN32(ERROR_ALREADY_EXISTS)",
             _                               => match self.0 as _ {
                 E_STRING_NOT_NULL_TERMINATED    => "E_STRING_NOT_NULL_TERMINATED",      // 0x80000017
+                E_INVALIDARG                    => "E_INVALIDARG",                      // 0x80070057
                 STATUS_INVALID_HANDLE           => "STATUS_INVALID_HANDLE",             // 0xC0000008
                 STATUS_ACCESS_DENIED            => "STATUS_ACCESS_DENIED",              // 0xC0000022
                 STATUS_NONE_MAPPED              => "STATUS_NONE_MAPPED",                // 0xC0000073

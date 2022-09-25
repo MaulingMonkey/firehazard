@@ -14,6 +14,9 @@ unsafe impl<T: Send, D: Deallocator> Send for CBoxSized<T, D> {}
 unsafe impl<T: Sync, D: Deallocator> Sync for CBoxSized<T, D> {}
 
 impl<T, A: Allocator> CBoxSized<T, A> {
+    pub unsafe fn from_raw_ptr(value: *mut T, total_bytes: usize) -> Option<Self> { Some(Self(NonNull::new(value)?, total_bytes, PhantomData)) }
+    pub unsafe fn from_raw_nn(value: NonNull<T>, total_bytes: usize) -> Self { Self(value, total_bytes, PhantomData) }
+
     pub fn new(value: T) -> Self { Self::new_oversized(value, 0) }
 
     pub fn new_oversized(value: T, total_bytes: usize) -> Self {

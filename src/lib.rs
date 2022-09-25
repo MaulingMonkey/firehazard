@@ -15,6 +15,7 @@
 #[path = "ace/_ace.rs"]                 pub mod ace;            //#[doc(hidden)] pub use ace::funcs::*;
 #[path = "acl/_acl.rs"]                 pub mod acl;            //#[doc(hidden)] pub use acl::funcs::*;
 #[path = "alloc/_alloc.rs"]             pub mod alloc;          #[doc(hidden)] pub use alloc::funcs::*;
+#[path = "appcontainer/_appcontainer.rs"] pub mod appcontainer; #[doc(hidden)] pub use appcontainer::funcs::*;
 #[path = "debug/_debug.rs"]             pub mod debug;          #[doc(hidden)] pub use debug::funcs::*;
 #[path = "desktop/_desktop.rs"]         pub mod desktop;        #[doc(hidden)] pub use desktop::funcs::*;
 #[path = "handle/_handle.rs"]           pub mod handle;         #[doc(hidden)] pub use handle::{funcs::*, traits::*};
