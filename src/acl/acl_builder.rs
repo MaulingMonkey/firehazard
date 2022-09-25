@@ -44,7 +44,7 @@ impl Builder {
     pub fn finish(&mut self) -> Result<&mut Self, Error> {
         // TODO: eliminate the need for this by only temporarilly growing AclSize immediately before add_*_ace and then shrinking it afterwards?
         let size = self.as_acl_ptr().get_acl_size_information().AclBytesInUse;
-        let size = u16::try_from(size).map_err(|_| Error(ERROR_ALLOTTED_SPACE_EXCEEDED))?;
+        let size = u16::try_from(size).map_err(|_| ERROR_ALLOTTED_SPACE_EXCEEDED)?;
         self.u.acl.AclSize = size;
         Ok(self)
     }

@@ -15,11 +15,11 @@ pub fn create_restricted_token(
     Error::get_last_if(0 == unsafe { winapi::um::securitybaseapi::CreateRestrictedToken(
         existing_token_handle.as_handle(),
         flags.into().into(),
-        u32::try_from(sids_to_disable.map_or(0, |s| s.len())).map_err(|_| Error(ERROR_INVALID_PARAMETER))?,
+        u32::try_from(sids_to_disable.map_or(0, |s| s.len())).map_err(|_| ERROR_INVALID_PARAMETER)?,
         sids_to_disable.map_or(null_mut(), |s| s.as_ptr() as *mut _),
-        u32::try_from(privileges_to_delete.map_or(0, |s| s.len())).map_err(|_| Error(ERROR_INVALID_PARAMETER))?,
+        u32::try_from(privileges_to_delete.map_or(0, |s| s.len())).map_err(|_| ERROR_INVALID_PARAMETER)?,
         privileges_to_delete.map_or(null_mut(), |s| s.as_ptr() as *mut _),
-        u32::try_from(sids_to_restrict.map_or(0, |s| s.len())).map_err(|_| Error(ERROR_INVALID_PARAMETER))?,
+        u32::try_from(sids_to_restrict.map_or(0, |s| s.len())).map_err(|_| ERROR_INVALID_PARAMETER)?,
         sids_to_restrict.map_or(null_mut(), |s| s.as_ptr() as *mut _),
         &mut new_handle
     )})?;

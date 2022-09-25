@@ -110,14 +110,14 @@ pub fn create_process_a(
     let mut process_information = Default::default();
 
     Error::get_last_if(0 == unsafe { CreateProcessA(
-        application_name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
+        application_name.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
         command_line.as_ref().map_or(null(), |c| c.as_ptr()) as *mut _,
         process_attributes.map_or(null(), |a| a) as *mut _,
         thread_attributes.map_or(null(), |a| a) as *mut _,
         inherit_handles as _,
         creation_flags,
         environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?,
-        current_directory.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
+        current_directory.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
         startup_info.as_winapi()?,
         &mut process_information
     )})?;
@@ -144,14 +144,14 @@ pub fn create_process_w(
     let mut process_information = Default::default();
 
     Error::get_last_if(0 == unsafe { CreateProcessW(
-        application_name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
+        application_name.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
         command_line.as_mut().map_or(null_mut(), |c| c.as_mut_ptr()),
         process_attributes.map_or(null(), |a| a) as *mut _,
         thread_attributes.map_or(null(), |a| a) as *mut _,
         inherit_handles as _,
         creation_flags,
         environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?,
-        current_directory.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
+        current_directory.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
         startup_info.as_winapi()?,
         &mut process_information
     )})?;
@@ -207,14 +207,14 @@ pub fn create_process_as_user_a(
 
     Error::get_last_if(0 == unsafe { CreateProcessAsUserA(
         token.as_handle(),
-        application_name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
+        application_name.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
         command_line.as_ref().map_or(null(), |c| c.as_ptr()) as *mut _,
         process_attributes.map_or(null(), |a| a) as *mut _,
         thread_attributes.map_or(null(), |a| a) as *mut _,
         inherit_handles as _,
         creation_flags,
         environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?,
-        current_directory.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
+        current_directory.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
         startup_info.as_winapi()?,
         &mut process_information
     )})?;
@@ -259,14 +259,14 @@ pub fn create_process_as_user_w(
 
     Error::get_last_if(0 == unsafe { CreateProcessAsUserW(
         token.as_handle(),
-        application_name.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
+        application_name.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
         command_line.as_mut().map_or(null_mut(), |c| c.as_mut_ptr()),
         process_attributes.map_or(null(), |a| a) as *mut _,
         thread_attributes.map_or(null(), |a| a) as *mut _,
         inherit_handles as _,
         creation_flags,
         environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?,
-        current_directory.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
+        current_directory.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
         startup_info.as_winapi()?,
         &mut process_information
     )})?;

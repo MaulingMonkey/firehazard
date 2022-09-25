@@ -88,8 +88,8 @@ pub fn create_desktop_a(
     sa:             Option<&security::Attributes>,
 ) -> Result<desktop::OwnedHandle, Error> {
     let handle = unsafe { CreateDesktopA(
-        desktop.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_cstr(),
-        device.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
+        desktop.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_cstr(),
+        device.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
         none2null(devmode),
         flags.into().into(),
         desired_access.into().into(),
@@ -121,8 +121,8 @@ pub fn create_desktop_w(
     sa:             Option<&security::Attributes>,
 ) -> Result<desktop::OwnedHandle, Error> {
     let handle = unsafe { CreateDesktopW(
-        desktop.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_cstr(),
-        device.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_opt_cstr(),
+        desktop.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_cstr(),
+        device.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
         none2null(devmode),
         flags.into().into(),
         desired_access.into().into(),
@@ -271,7 +271,7 @@ pub fn open_desktop_a(
     desired_access: impl Into<desktop::AccessRights>,
 ) -> Result<desktop::OwnedHandle, Error> {
     let handle = unsafe { OpenDesktopA(
-        desktop.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_cstr(),
+        desktop.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_cstr(),
         flags.into().into(),
         inherit as _,
         desired_access.into().into()
@@ -299,7 +299,7 @@ pub fn open_desktop_w(
     desired_access: impl Into<desktop::AccessRights>,
 ) -> Result<desktop::OwnedHandle, Error> {
     let handle = unsafe { OpenDesktopW(
-        desktop.try_into().map_err(|_| Error(E_STRING_NOT_NULL_TERMINATED as _))?.as_cstr(),
+        desktop.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_cstr(),
         flags.into().into(),
         inherit as _,
         desired_access.into().into()

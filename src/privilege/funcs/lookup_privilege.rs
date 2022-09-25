@@ -41,7 +41,7 @@ pub fn lookup_privilege_value_a(name: impl abistr::AsCStr) -> Result<crate::priv
     Error::get_last_if(0 == unsafe { LookupPrivilegeNameA(system_name, luid, buf.as_mut_ptr().cast(), &mut len) })?;
     buf.shrink_to(usize::from32(len)); // on the off chance that len shrunk (if it grew, we would've already returned `Error(ERROR_INSUFFICIENT_BUFFER)`)
     assert!(buf.pop() == Some(b'\0'), "BUG: privilege name was expected to be null terminated");
-    std::string::String::from_utf8(buf).map_err(|_| Error(ERROR_INVALID_DATA))
+    Ok(std::string::String::from_utf8(buf).map_err(|_| ERROR_INVALID_DATA)?)
 }
 
 #[cfg(not(std))] pub(crate) fn lookup_privilege_name_a(_luid: crate::privilege::Luid) -> Result<&'static str, crate::Error> { Err(crate::Error(winapi::shared::winerror::ERROR_OUTOFMEMORY)) }

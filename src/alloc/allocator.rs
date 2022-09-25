@@ -53,7 +53,7 @@ unsafe impl Allocator for LocalAllocFree {
 
 impl ProcessHeapAllocFree {
     fn try_alloc_impl<T>(layout: Layout, flags: u32) -> Result<NonNull<T>, Error> {
-        let layout = layout.align_to(align_of::<T>()).map_err(|_| Error(ERROR_OFFSET_ALIGNMENT_VIOLATION))?;
+        let layout = layout.align_to(align_of::<T>()).map_err(|_| ERROR_OFFSET_ALIGNMENT_VIOLATION)?;
         if layout.align() > MEMORY_ALLOCATION_ALIGNMENT { return Err(Error(ERROR_OFFSET_ALIGNMENT_VIOLATION)) }
         let heap = unsafe { GetProcessHeap() };
         let alloc = unsafe { HeapAlloc(heap, flags, layout.size().max(1)) };
@@ -63,7 +63,7 @@ impl ProcessHeapAllocFree {
 
 impl LocalAllocFree {
     fn try_alloc_impl<T>(layout: Layout, flags: u32) -> Result<NonNull<T>, Error> {
-        let layout = layout.align_to(align_of::<T>()).map_err(|_| Error(ERROR_OFFSET_ALIGNMENT_VIOLATION))?;
+        let layout = layout.align_to(align_of::<T>()).map_err(|_| ERROR_OFFSET_ALIGNMENT_VIOLATION)?;
         if layout.align() > MEMORY_ALLOCATION_ALIGNMENT { return Err(Error(ERROR_OFFSET_ALIGNMENT_VIOLATION)) }
         let alloc = unsafe { LocalAlloc(flags, layout.size().max(1)) };
         NonNull::new(alloc.cast()).ok_or_else(|| Error::get_last())

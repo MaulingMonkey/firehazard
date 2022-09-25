@@ -259,7 +259,7 @@ unsafe fn raw_bytes<T: Default>(token: &token::OwnedHandle, class: TOKEN_INFORMA
 unsafe fn raw_fixed<R: Copy + Default>(token: &token::OwnedHandle, class: TOKEN_INFORMATION_CLASS) -> Result<R, Error> {
     let mut size = 0;
     let mut r = R::default();
-    let r_size = u32::try_from(core::mem::size_of_val(&r)).map_err(|_| Error(ERROR_INSUFFICIENT_BUFFER))?;
+    let r_size = u32::try_from(core::mem::size_of_val(&r)).map_err(|_| ERROR_INSUFFICIENT_BUFFER)?;
     Error::get_last_if(0 == unsafe { GetTokenInformation(token.as_handle(), class, &mut r as *mut _ as *mut _, r_size, &mut size) })?;
     if size != r_size { return Err(Error(ERROR_INCORRECT_SIZE)) }
     Ok(r)
