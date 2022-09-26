@@ -1,4 +1,5 @@
 use crate::*;
+use crate::alloc::{CVec, LocalAllocFree};
 
 use winapi::shared::winerror::*;
 use winapi::um::userenv::*;
@@ -8,6 +9,9 @@ use abistr::*;
 use core::ptr::null_mut;
 
 
+
+// https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-checktokencapability
+// CheckTokenCapability
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/userenv/nf-userenv-createappcontainerprofile)\]
 /// CreateAppContainerProfile
@@ -193,6 +197,70 @@ pub fn derive_app_container_sid_from_app_container_name(
     let app_container_sid = unsafe { sid::Box::from_raw(app_container_sid.cast()) }.ok_or(ERROR_INVALID_SID);
     if !SUCCEEDED(hr) { Err(hr)? }
     Ok(app_container_sid?)
+}
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-derivecapabilitysidsfromname)\]
+/// DeriveCapabilitySidsFromName
+///
+/// ### Examples
+/// ```
+/// # use firehazard::*;
+/// # use abistr::*;
+/// let (group_sids, sids) = derive_capability_sids_from_name(cstr16!("internetClient")).unwrap();
+/// assert_eq!(1, group_sids.len());
+/// assert_eq!(1, sids.len());
+/// assert_eq!(*group_sids[0],  *sid!(S-1-5-32-2779705173-1925339129-2667939958-2414465498-3395756507-4015878651-158944808-788332705));
+/// assert_eq!(*sids[0],        *sid!(S-1-15-3-1)); // aka S - 1 - SECURITY_APP_PACKAGE_AUTHORITY - SECURITY_CAPABILITY_BASE_RID - SECURITY_CAPABILITY_INTERNET_CLIENT
+///
+/// let (group_sids, sids) = derive_capability_sids_from_name(cstr16!("activateAsUser")).unwrap();
+/// assert_eq!(1, group_sids.len());
+/// assert_eq!(1, sids.len());
+/// assert_eq!(*group_sids[0],  *sid!(S-1-5-32-1619559953-3382903645-900470658-1831728285-1265525240-911141481-3610949621-2233473754));
+/// assert_eq!(*sids[0],   *sid!(S-1-15-3-1024-1619559953-3382903645-900470658-1831728285-1265525240-911141481-3610949621-2233473754));
+/// ```
+///
+/// ### Errors
+/// *   `ERROR_CALL_NOT_IMPLEMENTED`    - if `kernelbase.dll` failed to load
+/// *   `ERROR_CALL_NOT_IMPLEMENTED`    - if `kernelbase.dll` was missing `DeriveCapabilitySidsFromName`
+/// *   `ERROR_INVALID_PARAMETER`       - if `cap_name` contains interior `\0`s
+///
+/// ### Errata
+/// There appears to be no static linking against this symbol.
+/// While the docs say the fn lives in `kernel32.dll`, this is a lie - it lives in `kernelbase.dll`.
+/// `kernel32.dll` doesn't even re-export the symbol.
+/// I checked.
+#[cfg(std)] // minidl requires std for now
+pub fn derive_capability_sids_from_name(cap_name: impl TryIntoAsCStr<u16>) -> Result<(CVec<sid::Box<LocalAllocFree>, LocalAllocFree>, CVec<sid::Box<LocalAllocFree>, LocalAllocFree>), Error> {
+    use winapi::shared::minwindef::*;
+    use winapi::um::winnt::*;
+
+    let cap_name = cap_name.try_into().map_err(|_| ERROR_INVALID_PARAMETER)?;
+
+    lazy_static::lazy_static! {
+        static ref DERIVE_CAPABILITY_SIDS_FROM_NAME : Option<unsafe extern "system" fn(
+            CapName:                    LPCWSTR,
+            CapabilityGroupSids:        *mut *mut PSID,
+            CapabilityGroupSidCount:    *mut DWORD,
+            CapabilitySids:             *mut *mut PSID,
+            CapabilitySidCount:         *mut DWORD,
+        ) -> BOOL> = {
+            minidl::Library::load("kernelbase.dll").ok().and_then(|lib| unsafe { lib.sym_opt("DeriveCapabilitySidsFromName\0") })
+        };
+    }
+    #[allow(non_snake_case)] let DeriveCapabilitySidsFromName = (*DERIVE_CAPABILITY_SIDS_FROM_NAME).ok_or(ERROR_CALL_NOT_IMPLEMENTED)?;
+
+    let mut n_group_sids = 0;
+    let mut   group_sids = null_mut();
+    let mut n_sids = 0;
+    let mut   sids = null_mut();
+
+    Error::get_last_if(FALSE == unsafe { DeriveCapabilitySidsFromName(cap_name.as_cstr(), &mut group_sids, &mut n_group_sids, &mut sids, &mut n_sids) })?;
+    let n_group_sids = usize::from32(n_group_sids);
+    let n_sids       = usize::from32(n_sids);
+    let group_sids = unsafe { CVec::from_raw_parts(group_sids.cast(), n_group_sids, n_group_sids) };
+    let       sids = unsafe { CVec::from_raw_parts(      sids.cast(),       n_sids,       n_sids) };
+
+    Ok((group_sids, sids))
 }
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/userenv/nf-userenv-deriverestrictedappcontainersidfromappcontainersidandrestrictedname)\]
