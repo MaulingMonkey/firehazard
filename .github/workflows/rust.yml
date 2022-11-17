@@ -1,0 +1,24 @@
+name: Rust
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    name: Windows 2019 Server
+    runs-on: windows-2019
+    steps:
+    - uses: actions/checkout@v2
+    - name: Info
+      run: |
+        rustc -V
+        cargo -V
+        cmd /C ver
+    - name: Build/Test
+      run: scripts\build.cmd
