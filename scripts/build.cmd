@@ -26,10 +26,13 @@ cargo test --workspace --no-default-features
 cargo test --workspace
 @if ERRORLEVEL 1 goto :die
 
+cargo test --workspace --target=i686-pc-windows-msvc
+@if ERRORLEVEL 1 goto :die
+
 cargo build --examples
 @if ERRORLEVEL 1 goto :die
 
-target\debug\examples\max_sandbox.exe >NUL
+target\debug\examples\max_sandbox.exe
 @if ERRORLEVEL 1 goto :die
 
 

@@ -14,4 +14,5 @@
 # I was on 1.61.0 before, 1.62.0 is untested.
 channel = "1.63.0"
 
+targets = [ "x86_64-pc-windows-msvc", "i686-pc-windows-msvc" ]
 profile = "minimal"
