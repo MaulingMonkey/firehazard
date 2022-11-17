@@ -20,9 +20,14 @@ use core::ptr::null;
 /// # use firehazard::*;
 /// # use abistr::cstr;
 /// # use winapi::shared::winerror::*;
-/// assert_eq!(ERROR_ACCESS_DENIED, create_window_station_a(cstr!("WinSta0"), winsta::CWF_CREATE_ONLY, winsta::ALL_ACCESS, None).unwrap_err());
+/// let err = create_window_station_a(cstr!("WinSta0"), winsta::CWF_CREATE_ONLY, winsta::ALL_ACCESS, None).unwrap_err();
+/// assert!(err == ERROR_ACCESS_DENIED || err == ERROR_ALREADY_EXISTS, "create_window_station_a(\"WinSta0\", ...) failed with error: {err:?}");
 /// let winsta = create_window_station_a((), (), winsta::ALL_ACCESS, None).unwrap();
 /// ```
+///
+/// ### Errors
+/// *   `ERROR_ACCESS_DENIED`   if the window station already exists on Windows 10
+/// *   `ERROR_ALREADY_EXISTS`  if the window station already exists on Windows Server 2019
 pub fn create_window_station_a(
     winsta:         impl TryIntoAsOptCStr,
     flags:          impl Into<winsta::CreateWindowFlags>,
@@ -47,9 +52,14 @@ pub fn create_window_station_a(
 /// # use firehazard::*;
 /// # use abistr::cstr16;
 /// # use winapi::shared::winerror::*;
-/// assert_eq!(ERROR_ACCESS_DENIED, create_window_station_w(cstr16!("WinSta0"), winsta::CWF_CREATE_ONLY, winsta::ALL_ACCESS, None).unwrap_err());
+/// let err = create_window_station_w(cstr16!("WinSta0"), winsta::CWF_CREATE_ONLY, winsta::ALL_ACCESS, None).unwrap_err();
+/// assert!(err == ERROR_ACCESS_DENIED || err == ERROR_ALREADY_EXISTS, "create_window_station_w(L\"WinSta0\", ...) failed with error: {err:?}");
 /// let winsta = create_window_station_w((), (), winsta::ALL_ACCESS, None).unwrap();
 /// ```
+///
+/// ### Errors
+/// *   `ERROR_ACCESS_DENIED`   if the window station already exists on Windows 10
+/// *   `ERROR_ALREADY_EXISTS`  if the window station already exists on Windows Server 2019
 pub fn create_window_station_w(
     winsta:         impl TryIntoAsOptCStr<u16>,
     flags:          impl Into<winsta::CreateWindowFlags>,
