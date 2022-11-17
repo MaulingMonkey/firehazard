@@ -66,20 +66,33 @@ impl<'s> List<'s> {
     }
 
     pub fn to_list(&self) -> ThreadAttributeList {
-        process::ThreadAttributeList::try_from(&[
-            process::ThreadAttributeRef::mitigation_policy(&self.mitigation_policy),
-            process::ThreadAttributeRef::child_process_policy(&self.child_policy),
-            process::ThreadAttributeRef::desktop_app_policy(&self.dab_policy),
-            process::ThreadAttributeRef::component_filter_flags(&self.component_filter),
-            #[cfg(nope)] {
-                // will cause create_process_as_user_w to fail with ERROR_INVALID_PARAMETER
-                // Also completely pointless, as we're almost certainly not running as a protected app ourselves
-                const PROTECTION_LEVEL_SAME : u32 = 0xFFFFFFFF;
-                process::ThreadAttributeRef::protection_level(&PROTECTION_LEVEL_SAME)
+        let mitigation_policy   = process::ThreadAttributeRef::mitigation_policy(&self.mitigation_policy);
+        let child_policy        = process::ThreadAttributeRef::child_process_policy(&self.child_policy);
+        let dab_policy          = process::ThreadAttributeRef::desktop_app_policy(&self.dab_policy);
+        let component_filter    = process::ThreadAttributeRef::component_filter_flags(&self.component_filter);
+        let _protection_level   = {
+            // will cause create_process_as_user_w to fail with ERROR_INVALID_PARAMETER
+            // Also completely pointless, as we're almost certainly not running as a protected app ourselves
+            const PROTECTION_LEVEL_SAME : u32 = 0xFFFFFFFF;
+            process::ThreadAttributeRef::protection_level(&PROTECTION_LEVEL_SAME)
+        };
+        let job_list            = process::ThreadAttributeRef::job_list(&self.job_list[..]);
+        let inherit             = process::ThreadAttributeRef::handle_list(&self.inherit[..]);
+        // TODO: ThreadAttributeRef::security_capabilities ? app container / capability sids related: https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_capabilities
+
+        let list = [mitigation_policy, child_policy, dab_policy, component_filter, #[cfg(nope)] _protection_level, job_list, inherit];
+        match process::ThreadAttributeList::try_from(&list[..]) {
+            Ok(list) => return list,
+            err => {
+                dbg!(process::ThreadAttributeList::try_from(&[mitigation_policy ][..]).err());
+                dbg!(process::ThreadAttributeList::try_from(&[child_policy      ][..]).err());
+                dbg!(process::ThreadAttributeList::try_from(&[dab_policy        ][..]).err());
+                dbg!(process::ThreadAttributeList::try_from(&[component_filter  ][..]).err());
+                dbg!(process::ThreadAttributeList::try_from(&[_protection_level ][..]).err());
+                dbg!(process::ThreadAttributeList::try_from(&[job_list          ][..]).err());
+                dbg!(process::ThreadAttributeList::try_from(&[inherit           ][..]).err());
+                err.unwrap()
             },
-            process::ThreadAttributeRef::job_list(&self.job_list[..]),
-            process::ThreadAttributeRef::handle_list(&self.inherit[..]),
-            // TODO: ThreadAttributeRef::security_capabilities ? app container / capability sids related: https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_capabilities
-        ][..]).unwrap()
+        }
     }
 }
