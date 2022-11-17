@@ -12,6 +12,7 @@ pub fn all() {
 }
 
 pub fn one(target: settings::Target) {
+    if std::env::var_os("CI").is_some() { dbg!(&target); }
     assert!(target.spawn.integrity >= target.lockdown.integrity, "target.lockdown.integrity cannot be more permissive than spawn integrity");
 
     let tokens = tokens::create(&target);

@@ -5,6 +5,7 @@ use std::path::PathBuf;
 
 
 
+#[derive(Debug)]
 pub struct Token {
     pub integrity:      sid::integrity::Level,
     pub privileges:     HashSet<privilege::Luid>,
@@ -25,6 +26,7 @@ impl Default for Token {
 
 
 
+#[derive(Debug)]
 pub struct Allow {
     pub same_desktop:   bool,
     pub dynamic_code:   bool,
@@ -43,6 +45,7 @@ impl Default for Allow {
 
 
 
+#[derive(Debug)]
 pub struct Target {
     pub exe:            PathBuf,
     pub allow:          Allow,
