@@ -1,5 +1,6 @@
 use firehazard::*;
 use firehazard::process::ThreadAttributeList;
+use winapi::shared::winerror::ERROR_NOT_SUPPORTED;
 
 
 
@@ -80,19 +81,25 @@ impl<'s> List<'s> {
         let inherit             = process::ThreadAttributeRef::handle_list(&self.inherit[..]);
         // TODO: ThreadAttributeRef::security_capabilities ? app container / capability sids related: https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_capabilities
 
-        let list = [mitigation_policy, child_policy, dab_policy, component_filter, #[cfg(nope)] _protection_level, job_list, inherit];
-        match process::ThreadAttributeList::try_from(&list[..]) {
-            Ok(list) => return list,
-            err => {
-                dbg!(process::ThreadAttributeList::try_from(&[mitigation_policy ][..]).err());
-                dbg!(process::ThreadAttributeList::try_from(&[child_policy      ][..]).err());
-                dbg!(process::ThreadAttributeList::try_from(&[dab_policy        ][..]).err());
-                dbg!(process::ThreadAttributeList::try_from(&[component_filter  ][..]).err());
-                dbg!(process::ThreadAttributeList::try_from(&[_protection_level ][..]).err());
-                dbg!(process::ThreadAttributeList::try_from(&[job_list          ][..]).err());
-                dbg!(process::ThreadAttributeList::try_from(&[inherit           ][..]).err());
-                err.unwrap()
-            },
+        let list = [mitigation_policy, child_policy, dab_policy, #[cfg(nope)] _protection_level, job_list, inherit, component_filter];
+        let mut n = list.len();
+        let min = n - 1; // component_filter is optional
+
+        loop {
+            match process::ThreadAttributeList::try_from(&list[..n-1]) {
+                Ok(list) => return list,
+                Err(err) if err == ERROR_NOT_SUPPORTED && n > min => n -= 1,
+                err => {
+                    dbg!(process::ThreadAttributeList::try_from(&[mitigation_policy ][..]).err());
+                    dbg!(process::ThreadAttributeList::try_from(&[child_policy      ][..]).err());
+                    dbg!(process::ThreadAttributeList::try_from(&[dab_policy        ][..]).err());
+                    dbg!(process::ThreadAttributeList::try_from(&[component_filter  ][..]).err());
+                    dbg!(process::ThreadAttributeList::try_from(&[_protection_level ][..]).err());
+                    dbg!(process::ThreadAttributeList::try_from(&[job_list          ][..]).err());
+                    dbg!(process::ThreadAttributeList::try_from(&[inherit           ][..]).err());
+                    err.unwrap();
+                },
+            }
         }
     }
 }

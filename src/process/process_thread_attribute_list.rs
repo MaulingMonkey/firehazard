@@ -141,6 +141,12 @@ impl<'a> ThreadAttributeRef<'a> {
     /// [CVE-2018-8611](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-8611)
     ///
     /// <https://research.nccgroup.com/2020/04/27/cve-2018-8611-exploiting-windows-ktm-part-1-5-introduction/>
+    ///
+    /// ### Platforms
+    /// |     | SKU                  | `ver`            |
+    /// | --- | -------------------- | ---------------- |
+    /// | ✔️ | Windows 10           | 10.0.19043.2251   |
+    /// | ❌ | Windows Server 2019  | 10.0.17763.3534   |
     pub fn component_filter_flags(component_flags: &'a DWORD) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_COMPONENT_FILTER, component_flags) } }
 }
 
