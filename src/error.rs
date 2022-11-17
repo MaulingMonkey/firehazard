@@ -92,6 +92,7 @@ impl From<Error> for u32 { fn from(err: Error) -> Self { err.0 as _ } }
 impl From<Error> for crate::io::Error { fn from(err: Error) -> Self { Self::from_raw_os_error(err.into()) } }
 impl From<i32> for Error { fn from(err: i32      ) -> Self { Self(err as _) } }
 impl From<u32> for Error { fn from(err: u32      ) -> Self { Self(err as _) } }
+impl From<abistr::InteriorNulError> for Error { fn from(_: abistr::InteriorNulError) -> Self { Self(ERROR_ILLEGAL_CHARACTER) } }
 impl PartialEq<i32> for Error { fn eq(&self, other: &i32) -> bool { *self == Error::from(*other) } }
 impl PartialEq<u32> for Error { fn eq(&self, other: &u32) -> bool { *self == Error::from(*other) } }
 impl PartialEq<Error> for i32 { fn eq(&self, other: &Error) -> bool { Error::from(*self) == *other } }
