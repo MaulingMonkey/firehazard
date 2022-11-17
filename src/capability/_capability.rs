@@ -38,6 +38,7 @@ impl Constant {
     /// SID like `S-1-15-3-1`
     ///
     /// [`None`] if [`derive_capability_sids_from_name`] is not supported on this platform.
+    #[cfg(std)] // minidl requires std for now
     pub fn sid(&self) -> Option<Sid> {
         let (_groups, mut sids) = derive_capability_sids_from_name(self.0).ok()?;
         debug_assert!(sids.len() <= 1);
