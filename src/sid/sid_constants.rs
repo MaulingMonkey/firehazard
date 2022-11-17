@@ -2,7 +2,7 @@
 
 macro_rules! well_known_sids {
     ($(
-        $( #[desc = $desc:literal] )?
+        $( #[desc = $desc:literal] )*
         #[values($rev:ident, $auth:ident $(, $subauth:ident)* $(,)?)]
         $( #[$($attr:meta),+] )*
         pub const $name:ident = sid!($($sid:tt)*);
@@ -11,7 +11,7 @@ macro_rules! well_known_sids {
 
         $(
             #[doc = concat!("`",$(stringify!($sid)),*,"`")]
-            $( #[doc = concat!(" aka `", $desc, "`")] )?
+            $( #[doc = concat!(" aka `", $desc, "`")] )*
             ///
             /// SID Components:
             #[doc = concat!("* [", stringify!($rev), "]")]
@@ -42,12 +42,12 @@ macro_rules! well_known_sids {
                     errors = true;
                 }
 
-                #[allow(unused_variables)] let desc : Option<&'static str> = None;
-                $( let desc = Some($desc); )?
-                let actual_desc = $name.lsa_lookup_sids2().ok();
-                if desc != actual_desc.as_deref() {
-                    std::println!("\u{001B}[31;1merror\u{001B}[0m: {name} description is incorrect\n  documented: {desc:?}\n  actual:     {actual_desc:?}\n");
-                    errors = true;
+                let descs : &'static [&'static str] = &[ $($desc),* ];
+                if let Ok(actual_desc) = $name.lsa_lookup_sids2() {
+                    if !descs.contains(&&*actual_desc) {
+                        std::println!("\u{001B}[31;1merror\u{001B}[0m: {name} documentation is missing actual description\n  documented: {descs:?}\n  actual:      {actual_desc:?}\n");
+                        errors = true;
+                    }
                 }
             )*
             assert!(!errors);
@@ -60,6 +60,8 @@ macro_rules! well_known_sids {
 // https://superuser.com/questions/884988/what-is-nt-authority-and-nt-service
 
 well_known_sids! {
+    // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h
+    // "Universal well-known SIDs"
     #[desc = "NULL SID"]                        #[values(SID_REVISION, SECURITY_NULL_SID_AUTHORITY,    SECURITY_NULL_RID)]                  pub const NULL                  = sid!(S-1-0-0);
     #[desc = "Everyone"]                        #[values(SID_REVISION, SECURITY_WORLD_SID_AUTHORITY,   SECURITY_WORLD_RID)]                 pub const WORLD                 = sid!(S-1-1-0);
     #[desc = "LOCAL"]                           #[values(SID_REVISION, SECURITY_LOCAL_SID_AUTHORITY,   SECURITY_LOCAL_RID)]                 pub const LOCAL                 = sid!(S-1-2-0);
@@ -79,6 +81,8 @@ well_known_sids! {
 /// | 5     | [`SECURITY_NT_AUTHORITY`]
 /// | \*    | Various
 pub mod nt_authority { well_known_sids! {
+    // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h
+    // "NT well-known SIDs"
     #[desc = "DIALUP"]                          #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_DIALUP_RID)]                         pub const DIALUP                    = sid!(S-1-5-1);
     #[desc = "NETWORK"]                         #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_NETWORK_RID)]                        pub const NETWORK                   = sid!(S-1-5-2);
     #[desc = "BATCH"]                           #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_BATCH_RID)]                          pub const BATCH                     = sid!(S-1-5-3);
@@ -100,6 +104,11 @@ pub mod nt_authority { well_known_sids! {
     #[desc = "SYSTEM"]                          #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_LOCAL_SYSTEM_RID)]                   pub const LOCAL_SYSTEM              = sid!(S-1-5-18);
     #[desc = "LOCAL SERVICE"]                   #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_LOCAL_SERVICE_RID)]                  pub const LOCAL_SERVICE             = sid!(S-1-5-19);
     #[desc = "NETWORK SERVICE"]                 #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_NETWORK_SERVICE_RID)]                pub const NETWORK_SERVICE           = sid!(S-1-5-20);
+
+    //  const local users and groups        = sid!(S-1-5-21-x-y);       // SECURITY_NT_AUTHORITY    SECURITY_NT_NON_UNIQUE  x y     includes local named accounts, groups, like "MaulingMonkey" and "docker-users"
+    //  const NtNonUnique                   = sid!(S-1-5-0x15-x-y);
+    //  const EnterpriseReadOnlyControllers = sid!(S-1-5-0x16);         // SECURITY_NT_AUTHORITY    SECURITY_ENTERPRISE_READONLY_CONTROLLERS_RID
+    //  const InstallerGroupCapability      = sid!(S-1-5-0x20);         // same as BuiltinDomain?
 }}
 
 /// `S-1-5-32-*` aka `BUILTIN\*`
@@ -175,6 +184,7 @@ pub mod builtin {
             #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_SYSTEM_OPS)]
             pub const SYSTEM_OPS = sid!(S-1-5-0x20-0x225);
 
+            #[desc = r"BUILTIN\Print Operators"]
             #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_PRINT_OPS)]
             pub const PRINT_OPS = sid!(S-1-5-0x20-0x226);
 
@@ -243,15 +253,19 @@ pub mod builtin {
             #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_EVENT_LOG_READERS_GROUP)]
             pub const EVENT_LOG_READERS_GROUP = sid!(S-1-5-0x20-0x23D);
 
+            #[desc = r"BUILTIN\Certificate Service DCOM Access"]
             #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_CERTSVC_DCOM_ACCESS_GROUP)]
             pub const CERTSVC_DCOM_ACCESS_GROUP = sid!(S-1-5-0x20-0x23E);
 
+            #[desc = r"BUILTIN\RDS Remote Access Servers"]
             #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_RDS_REMOTE_ACCESS_SERVERS)]
             pub const RDS_REMOTE_ACCESS_SERVERS = sid!(S-1-5-0x20-0x23F);
 
+            #[desc = r"BUILTIN\RDS Endpoint Servers"]
             #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_RDS_ENDPOINT_SERVERS)]
             pub const RDS_ENDPOINT_SERVERS = sid!(S-1-5-0x20-0x240);
 
+            #[desc = r"BUILTIN\RDS Management Servers"]
             #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_RDS_MANAGEMENT_SERVERS)]
             pub const RDS_MANAGEMENT_SERVERS = sid!(S-1-5-0x20-0x241);
 
@@ -268,9 +282,11 @@ pub mod builtin {
             pub const REMOTE_MANAGEMENT_USERS = sid!(S-1-5-0x20-0x244);
 
             #[desc = r"BUILTIN\System Managed Accounts Group"]
+            #[desc = r"BUILTIN\System Managed Group"]
             #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_DEFAULT_ACCOUNT)]
             pub const DEFAULT_ACCOUNT = sid!(S-1-5-0x20-0x245);
 
+            #[desc = r"BUILTIN\Storage Replica Administrators"]
             #[values(SID_REVISION, SECURITY_NT_AUTHORITY, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_STORAGE_REPLICA_ADMINS)]
             pub const STORAGE_REPLICA_ADMINS = sid!(S-1-5-0x20-0x246);
 
