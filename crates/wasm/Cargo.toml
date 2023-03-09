@@ -14,4 +14,4 @@ firehazard.path             = "../.."
 [target.x86_64-pc-windows-msvc.dev-dependencies]
 # broken on i686:
 wasmer                      = "3.0.0-beta"
-wasmtime                    = "2.0.2"
+wasmtime                    = "4.0.1"
