@@ -4,11 +4,14 @@
 [![docs.rs](https://docs.rs/firehazard/badge.svg)](https://docs.rs/firehazard)
 [![License](https://img.shields.io/crates/l/firehazard.svg)](https://github.com/MaulingMonkey/firehazard)
 
-Create a *fire hazard* by locking down your <span style="opacity: 50%">(Microsoft)</span> *Windows* so nobody can *escape* (your security sandbox.)<br>
-Unopinionated low level API bindings focused on soundness, safety, and stronger types over raw FFI.<br>
-You may be *at hazard* of being *fired* (or worse) for relying on this crate for security:
+Create a *fire hazard* by locking down your <span style="opacity: 50%">(Microsoft)</span> *Windows* so nobody can *escape* (your security sandbox.)
+*   Exposes bindings to similar Windows APIs as Chrome and Chromium use for [sandboxing their untrusted processes](https://chromium.googlesource.com/chromium/src/+/HEAD/docs/design/sandbox.md).
+*   Focused on soundness, safety, and stronger types over raw FFI.
+*   Low level, Windows only, pure Rust, and unopinionated.
+*   You could build opinionated, high level, cross platform abstractions *atop* this crate (and others.)
 
 ## ⚠️ Warnings ⚠️
+You may be *at hazard* of being *fired* (or worse) for relying on this crate for security:
 * `0.0.0-yyyy-mm-dd` doesn't follow semver.
 * I'm not subscribed to any security lists.
 * I don't have anything alerting me to CVEs.
