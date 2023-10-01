@@ -12,7 +12,7 @@ use core::hash::Hash;
 #[derive(Clone, Copy, PartialEq, Eq)]
 #[repr(transparent)] pub struct Level { sid: sid::Static<1> }
 
-impl Default    for Level { fn default() -> Self { Self { sid: sid::Static::new(1, 16, [0x0000]) } } }
+impl Default    for Level { fn default() -> Self { Level::Untrusted } }
 impl PartialOrd for Level { fn partial_cmp  (&self, other: &Self) -> Option<core::cmp::Ordering>    { (*self.sid.as_sid_ptr()).partial_cmp   (&*other.sid.as_sid_ptr()) } }
 impl Ord        for Level { fn cmp          (&self, other: &Self) -> core::cmp::Ordering            { (*self.sid.as_sid_ptr()).cmp           (&*other.sid.as_sid_ptr()) } }
 impl Hash       for Level { fn hash<H: core::hash::Hasher>(&self, state: &mut H)                    { (*self.sid.as_sid_ptr()).hash(state) } }
