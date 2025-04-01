@@ -1,15 +1,21 @@
 @pushd "%~dp0.." && setlocal
 
+@if "%~1" EQU "src\appcontainer\appcontainer_funcs.rs" goto :test
 @if "%~1" EQU "crates\no-std\examples\trivial.rs" goto :trivial
 @if "%~1" EQU "examples\spam_dbg.rs" goto :spam_dbg
 
 @cargo check --workspace --all-targets --all-features
+@cargo test
 @if ERRORLEVEL 1 goto :die
 
 :die
 @popd && endlocal && exit /b %ERRORLEVEL%
 
 
+
+:test
+cargo test
+@goto :die
 
 :trivial
 cd crates\no-std
