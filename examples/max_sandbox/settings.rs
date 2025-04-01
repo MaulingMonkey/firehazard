@@ -70,7 +70,7 @@ impl Target {
         let se_change_notify_privilege = privilege::name::CHANGE_NOTIFY.lookup_luid().unwrap();
         let mut targets = vec![
             Target {
-                exe: manifest_dir.join(format!(r"crates\no-std\target\{build}\trivial.exe")),
+                exe: manifest_dir.join(format!(r"crates\no-std\target\{build}\examples\trivial.exe")),
                 allow: Allow{
                     missing_cet: true, // no-std doesn't have my fancy build.rs script enabling cet builds
                     .. Default::default()
@@ -87,7 +87,7 @@ impl Target {
                 },
             },
             Target {
-                exe: manifest_dir.join(format!(r"crates\no-std\target\{arch}\{build}\trivial.exe")),
+                exe: manifest_dir.join(format!(r"crates\no-std\target\{arch}\{build}\examples\trivial.exe")),
                 allow: Allow{
                     missing_cet: true, // no-std doesn't have my fancy build.rs script enabling cet builds
                     .. Default::default()
