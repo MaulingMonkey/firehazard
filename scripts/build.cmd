@@ -7,4 +7,7 @@
 @call "%~dp0.\build-basic.cmd"
 @if ERRORLEVEL 1 exit /b %ERRORLEVEL%
 
+@call "%~dp0.\build-i686.cmd"
+@if ERRORLEVEL 1 exit /b %ERRORLEVEL%
+
 @echo BUILD SUCCESS BUILD SUCCESS BUILD SUCCESS BUILD SUCCESS BUILD SUCCESS
