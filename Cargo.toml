@@ -43,6 +43,19 @@ targets                     = ["x86_64-pc-windows-msvc", "i686-pc-windows-msvc"]
 default                     = ["std"]
 std                         = ["abistr/std", "abistr/widestring", "lazy_static", "minidl", "winapi/std"]
 
+[lints.rust.unexpected_cfgs]
+level = "warn"
+check-cfg = [
+    'cfg(cet)',             # CET Shadow Stack (VS2019+)
+    'cfg(std)',             # Shorthand for `cfg(feature = "std")`
+
+    # Never defined
+    'cfg(nope)',            # Generic `#if 0 ... #endif` equivalent
+    'cfg(not_yet)',         # For not yet defined stuff
+]
+
+
+
 [target.'cfg(windows)'.dependencies]
 abibool                     = "0.5.3"
 #abibool.git                 = "https://github.com/MaulingMonkey/abibool"
