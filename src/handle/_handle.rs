@@ -4,32 +4,32 @@
 //! Most crate-local handle types are [`core::ptr::NonNull`] wrappers that, if wrapped in an [`Option`], are ABI-compatible with [`HANDLE`].
 //! The same cannot be said for [`std`] or third party crate types.
 //!
-//! | Kernel Type                                   | Owned                                                                     | Borrowed                                                      | Psuedo                    | Relevance<br>(if any) |
+//! | Kernel Type                                   | Owned                                                                     | Borrowed                                                      | Borrowed or Psuedo        | Relevance<br>(if any) |
 //! | --------------------------------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------     | ------------------------- | --------------------- |
-//! | \*                                            | [handle::Owned]                                                           | [handle::Borrowed]                                            | [handle::Psuedo]          |
-//! | [Access Token]                                | [token::OwnedHandle]                                                      | [token::Handle]                                               | [token::PsuedoHandle]     | Access restriction
+//! | \*                                            | [handle::Owned] <br><br> *transparent `HANDLE`:* <br> [std::...::OwnedHandle] | [handle::Borrowed] | [handle::Psuedo]  <br><br> *transparent `HANDLE`:* <br> [std::...::BorrowedHandle] |
+//! | [Access Token]                                | [token::OwnedHandle]                                                      | [token::Handle]                                               | [token::PsuedoHandle]     | Access&nbsp;restriction
 //! | ~~[Change Notification]~~                     |                                                                           |                                                               |                           |
 //! | ~~[Communications Device]~~                   | [io::File]<br>[std::fs::File]                                             | [io::FileHandle]<br>[io::ReadHandle]<br>[io::WriteHandle]     |                           |
 //! | [Console Input Buffer]                        | [io::File]<br>[io::ReadPipe]<br>[std::fs::File]                           | [io::ReadHandle]<br>[std::io::Stdin]<br>[std::io::StdinLock]  |                           | IPC
 //! | [Console Screen Buffer]                       | [io::File]<br>[io::WritePipe]<br>[std::fs::File]                          | [io::WriteHandle]<br>[std::io::Stdout]<br>[std::io::StdoutLock]<br>[std::io::Stderr]<br>[std::io::StderrLock] | | IPC
-//! | [Desktop]                                     | [desktop::OwnedHandle]                                                    |                                                               |                           | Access restriction
+//! | [Desktop] <br> (not a `HANDLE`)               | [desktop::OwnedHandle]                                                    |                                                               |                           | Access restriction
 //! | [Event]                                       |                                                                           |                                                               |                           | IPC
 //! | ~~[Event Log]~~                               |                                                                           |                                                               |                           |
 //! | [File]                                        | [io::File]<br>[std::fs::File]                                             | [io::FileHandle]<br>[io::ReadHandle]<br>[io::WriteHandle]     |                           | IPC
 //! | [File Mapping]                                |                                                                           |                                                               |                           | IPC
 //! | ~~[Find File]~~                               | [std::fs::read_dir]                                                       |                                                               |                           |
-//! | [Heap]                                        |                                                                           |                                                               |                           | no_std
+//! | [Heap]                                        | *Other Crates:* <br> [ialloc::...::Heap]                                  |                                                               |                           | no_std
 //! | [I/O Completion Port]                         |                                                                           |                                                               |                           | IPC
 //! | [Job]                                         | [job::OwnedHandle]                                                        | [job::Handle]                                                 |                           | Access restriction
 //! | ~~[Mailslot]~~                                |                                                                           |                                                               |                           | IPC
 //! | [Memory Resource Notification]                |                                                                           |                                                               |                           | Resource limits
-//! | [Module]                                      | *Other Crates:*<br>[minidl::Library]<br>[dlopen::raw::Library]            |                                                               |                           | Code patching, debug
+//! | [Module]                                      | *Other Crates:*<br>[minidl::Library]<br>[dlopen::raw::Library]            |                                                               |                           | Code patching <br> Debug
 //! | [Mutex]                                       | *Local, not win32:*<br>[std::sync::Mutex]                                 | *Local, not win32:*<br>[std::sync::MutexGuard]                |                           | IPC
-//! | [Pipe] (Bytewise)<br>(Anonymous or Named)     | [io::ReadPipe]<br>[io::WritePipe]                                         | [io::ReadHandle]<br>[io::WriteHandle]                         |                           | IPC
+//! | [Pipe] (Bytewise)<br>(Anonymous or Named)     | [io::ReadPipe]<br>[io::WritePipe]<br><br>*Not yet stable:*<br>[std::io::PipeReader]<br>[std::io::PipeWriter] | [io::ReadHandle]<br>[io::WriteHandle] |                    | IPC
 //! | [Pipe] (Message-based)<br>(Named Only)        |                                                                           |                                                               |                           | IPC
 //! | [Process]                                     | [process::OwnedHandle]<br>[std::process::Child]                           | [process::Handle]                                             | [process::PsuedoHandle]   | Access restriction <br> IPC
 //! | [Semaphore]                                   |                                                                           |                                                               |                           | IPC
-//! | ~~[Socket]~~                                  | [std::net::TcpListener]<br>[std::net::TcpStream]<br>[std::net::UdpSocket] |                                                               |                           | IPC
+//! | ~~[Socket]~~ <br> (not a `HANDLE`)            | [std::net::TcpListener] <br> [std::net::TcpStream] <br> [std::net::UdpSocket] <br><br> *transparent `SOCKET`:* <br> [std::...::OwnedSocket]   | *transparent `SOCKET`:* <br> [std::...::BorrowedSocket] | | IPC
 //! | [Thread]                                      | [thread::OwnedHandle]<br>[std::thread::JoinHandle]                        | [thread::Handle]                                              | [thread::PsuedoHandle]    | Access restriction
 //! | ~~[Timer]~~                                   |                                                                           |                                                               |                           |
 //! | [Update Resource]                             |                                                                           |                                                               |                           | Code patching
@@ -46,6 +46,14 @@
 //!
 //! [minidl::Library]:                  https://docs.rs/minidl/latest/minidl/struct.Library.html
 //! [dlopen::raw::Library]:             https://docs.rs/dlopen/latest/dlopen/raw/struct.Library.html
+//! [ialloc::...::Heap]:                https://docs.rs/ialloc/latest/ialloc/allocator/win32/struct.Heap.html
+//!
+//! [std::io::PipeReader]:              https://doc.rust-lang.org/beta/std/io/struct.PipeReader.html
+//! [std::io::PipeWriter]:              https://doc.rust-lang.org/beta/std/io/struct.PipeWriter.html
+//! [std::...::BorrowedHandle]:         std::os::windows::io::BorrowedHandle
+//! [std::...::BorrowedSocket]:         std::os::windows::io::BorrowedSocket
+//! [std::...::OwnedHandle]:            std::os::windows::io::OwnedHandle
+//! [std::...::OwnedSocket]:            std::os::windows::io::OwnedSocket
 //!
 //! [Access Token]:                     https://learn.microsoft.com/en-us/windows/win32/secauthz/access-tokens
 //! [Change Notification]:              https://learn.microsoft.com/en-us/windows/win32/fileio/obtaining-directory-change-notifications
