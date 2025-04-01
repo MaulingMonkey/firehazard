@@ -1,4 +1,4 @@
-//! I/O APIs ([pipe]((https://learn.microsoft.com/en-us/windows/win32/ipc/pipes)) handles and fns)
+//! I/O APIs ([pipe](https://learn.microsoft.com/en-us/windows/win32/ipc/pipes) handles and fns)
 //!
 //! ### References
 //! *   <https://learn.microsoft.com/en-us/windows/win32/ipc/pipes>
