@@ -32,8 +32,9 @@ You may be *at hazard* of being *fired* (or worse) for relying on this crate for
 * Test your fire alarms.  The batteries are probably dead.
 
 ## Quickstart
+
+#### Cargo.toml
 ```toml
-## Cargo.toml
 [dependencies]
 firehazard.git = "https://github.com/MaulingMonkey/firehazard"
 ```
