@@ -72,3 +72,6 @@ pub unsafe trait GetPolicy {
 pub trait SetPolicy : GetPolicy {
     fn into_policy(self) -> Self::Raw;
 }
+
+// See also "Exploit protection" settings app for human readable descriptions of some settings
+// N.b. individual "Program settings" display more options than "System settings"
