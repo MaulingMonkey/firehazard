@@ -52,12 +52,38 @@ impl Debug for AccessRights {
     }
 }
 
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/desktop-security-and-access-rights)\]
+/// DESKTOP_CREATEMENU
 pub const CREATEMENU            : AccessRights = AccessRights(winapi::um::winuser::DESKTOP_CREATEMENU       );
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/desktop-security-and-access-rights)\]
+/// DESKTOP_CREATEWINDOW
 pub const CREATEWINDOW          : AccessRights = AccessRights(winapi::um::winuser::DESKTOP_CREATEWINDOW     );
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/desktop-security-and-access-rights)\]
+/// DESKTOP_ENUMERATE
 pub const ENUMERATE             : AccessRights = AccessRights(winapi::um::winuser::DESKTOP_ENUMERATE        );
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/desktop-security-and-access-rights)\]
+/// DESKTOP_HOOKCONTROL
 pub const HOOKCONTROL           : AccessRights = AccessRights(winapi::um::winuser::DESKTOP_HOOKCONTROL      );
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/desktop-security-and-access-rights)\]
+/// DESKTOP_JOURNALPLAYBACK
 pub const JOURNALPLAYBACK       : AccessRights = AccessRights(winapi::um::winuser::DESKTOP_JOURNALPLAYBACK  );
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/desktop-security-and-access-rights)\]
+/// DESKTOP_JOURNALRECORD
 pub const JOURNALRECORD         : AccessRights = AccessRights(winapi::um::winuser::DESKTOP_JOURNALRECORD    );
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/desktop-security-and-access-rights)\]
+/// DESKTOP_READOBJECTS
 pub const READOBJECTS           : AccessRights = AccessRights(winapi::um::winuser::DESKTOP_READOBJECTS      );
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/desktop-security-and-access-rights)\]
+/// DESKTOP_SWITCHDESKTOP
 pub const SWITCHDESKTOP         : AccessRights = AccessRights(winapi::um::winuser::DESKTOP_SWITCHDESKTOP    );
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/desktop-security-and-access-rights)\]
+/// DESKTOP_WRITEOBJECTS
 pub const WRITEOBJECTS          : AccessRights = AccessRights(winapi::um::winuser::DESKTOP_WRITEOBJECTS     );

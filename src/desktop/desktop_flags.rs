@@ -28,5 +28,7 @@ impl Debug for Flags {
 }
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-opendesktopa)\]
+/// DF_ALLOWOTHERACCOUNTHOOK
+/// <br>
 /// Allows processes running in other accounts on the desktop to set hooks in this process.
 pub const ALLOWOTHERACCOUNTHOOK : Flags = Flags(winapi::um::winuser::DF_ALLOWOTHERACCOUNTHOOK);
