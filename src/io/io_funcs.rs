@@ -24,12 +24,12 @@ use core::ptr::{null_mut, NonNull};
 /// # use firehazard::*;
 /// let (read, write) = create_pipe(None, 0).unwrap();
 /// ```
-pub fn create_pipe(pipe_attributes: Option<&security::Attributes>, size: u32) -> Result<(io::ReadPipe, io::WritePipe), Error> {
+pub fn create_pipe(pipe_attributes: Option<&security::Attributes>, size: u32) -> Result<(io::PipeReaderNN, io::PipeWriterNN), Error> {
     let mut read = null_mut();
     let mut write = null_mut();
     Error::get_last_if(FALSE == unsafe { CreatePipe(&mut read, &mut write, pipe_attributes.map_or(null_mut(), |a| a as *const _ as *mut _), size) })?;
-    let read  = NonNull::new(read ).map(|nn| io::ReadPipe (nn)).ok_or(Error(ERROR_INVALID_HANDLE));
-    let write = NonNull::new(write).map(|nn| io::WritePipe(nn)).ok_or(Error(ERROR_INVALID_HANDLE));
+    let read  = NonNull::new(read ).map(|nn| io::PipeReaderNN(nn)).ok_or(Error(ERROR_INVALID_HANDLE));
+    let write = NonNull::new(write).map(|nn| io::PipeWriterNN(nn)).ok_or(Error(ERROR_INVALID_HANDLE));
     Ok((read?, write?))
 }
 
