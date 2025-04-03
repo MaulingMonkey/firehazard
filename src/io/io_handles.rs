@@ -81,21 +81,21 @@ use core::ptr::null_mut;
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for io::{File, FileHandle<'_>});
 handles!(unsafe impl AsRef<Self>                    for io::{File, FileHandle<'_>});
-handles!(unsafe impl Send                           for io::{File});
+handles!(unsafe impl {Send, Sync}                   for io::{File, FileHandle<'_>}); // SAFETY: `std::fs::File` is `Send+Sync` despite `try_clone(&self)`, `impl Read for &File`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(unsafe impl {AsRef, From}                  for io::{File, FileHandle<'_>});
 handles!(unsafe impl {AsRef<@base>, From<@base>}    for io::{File, FileHandle<'_>});
 handles!(       impl Debug                          for io::{File, FileHandle<'_>});
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for io::{ReadPipe, ReadHandle<'_>});
 handles!(unsafe impl AsRef<Self>                    for io::{ReadPipe, ReadHandle<'_>});
-handles!(unsafe impl Send                           for io::{ReadPipe});
+handles!(unsafe impl {Send, Sync}                   for io::{ReadPipe, ReadHandle<'_>}); // SAFETY: `std::io::PipeReader` is `Send+Sync` despite `try_clone(&self)`, `impl Read for &PipeReader`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(unsafe impl {AsRef, From}                  for io::{ReadPipe, ReadHandle<'_>});
 handles!(unsafe impl {AsRef<@base>, From<@base>}    for io::{ReadPipe, ReadHandle<'_>});
 handles!(       impl Debug                          for io::{ReadPipe, ReadHandle<'_>});
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for io::{WritePipe, WriteHandle<'_>});
 handles!(unsafe impl AsRef<Self>                    for io::{WritePipe, WriteHandle<'_>});
-handles!(unsafe impl Send                           for io::{WritePipe});
+handles!(unsafe impl {Send, Sync}                   for io::{WritePipe, WriteHandle<'_>}); // SAFETY: `std::io::PipeWriter` is `Send+Sync` despite `try_clone(&self)`, `impl Write for &PipeWriter`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(unsafe impl {AsRef, From}                  for io::{WritePipe, WriteHandle<'_>});
 handles!(unsafe impl {AsRef<@base>, From<@base>}    for io::{WritePipe, WriteHandle<'_>});
 handles!(       impl Debug                          for io::{WritePipe, WriteHandle<'_>});
