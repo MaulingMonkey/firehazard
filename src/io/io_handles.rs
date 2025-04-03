@@ -15,7 +15,7 @@ use core::ptr::null_mut;
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea)\] Owned non-null file `HANDLE`
 ///
 /// ## Alternatives
-/// *   [`std::fs::File`](https://doc.rust-lang.org/std/fs/struct.File.html) &mdash; no ABI guarantees
+/// *   [`std::fs::File`](https://doc.rust-lang.org/std/fs/struct.File.html) &mdash; cross platform, no ABI guarantees
 /// *   [`std::os::windows::io::OwnedHandle`] &mdash; untyped, permits null/invalid
 /// *   [`firehazard::handle::Owned`] &mdash; untyped
 /// *   [`firehazard::io::FileHandle`] &mdash; borrowed instead of owned
@@ -25,7 +25,7 @@ use core::ptr::null_mut;
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned anonymous non-null pipe `HANDLE` ([io::Read]able end)
 ///
 /// ## Alternatives
-/// *   [`std::io::PipeReader`](https://doc.rust-lang.org/beta/std/io/struct.PipeReader.html) &mdash; no ABI guarantees, not yet stable
+/// *   [`std::io::PipeReader`](https://doc.rust-lang.org/beta/std/io/struct.PipeReader.html) &mdash; no ABI guarantees, cross platform, not yet stable
 /// *   [`std::os::windows::io::OwnedHandle`] &mdash; untyped, permits null/invalid
 /// *   [`firehazard::handle::Owned`] &mdash; untyped
 /// *   [`firehazard::io::ReadHandle`] &mdash; borrowed instead of owned
@@ -35,7 +35,7 @@ use core::ptr::null_mut;
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned anonymous non-null pipe `HANDLE` ([io::Write]able end)
 ///
 /// ## Alternatives
-/// *   [`std::io::PipeWriter`](https://doc.rust-lang.org/beta/std/io/struct.PipeWriter.html) &mdash; no ABI guarantees, not yet stable
+/// *   [`std::io::PipeWriter`](https://doc.rust-lang.org/beta/std/io/struct.PipeWriter.html) &mdash; no ABI guarantees, cross platform, not yet stable
 /// *   [`std::os::windows::io::OwnedHandle`] &mdash; untyped, permits null/invalid
 /// *   [`firehazard::handle::Owned`] &mdash; untyped
 /// *   [`firehazard::io::WriteHandle`] &mdash; borrowed instead of owned
@@ -47,7 +47,7 @@ use core::ptr::null_mut;
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea)\] Borrowed non-null file `HANDLE`
 ///
 /// ## Alternatives
-/// *   [`std::fs::File`](https://doc.rust-lang.org/std/fs/struct.File.html) &mdash; owned instead of borrowed, no ABI guarantees
+/// *   [`std::fs::File`](https://doc.rust-lang.org/std/fs/struct.File.html) &mdash; owned instead of borrowed, cross platform, no ABI guarantees
 /// *   [`std::os::windows::io::BorrowedHandle`] &mdash; untyped, permits null/invalid
 /// *   [`firehazard::handle::Borrowed`] &mdash; untyped
 /// *   [`firehazard::io::File`] &mdash; owned instead of borrowed
@@ -58,7 +58,7 @@ use core::ptr::null_mut;
 /// Borrowed non-null readable pipe or file `HANDLE`
 ///
 /// ## Alternatives
-/// *   [`std::io::PipeReader`](https://doc.rust-lang.org/beta/std/io/struct.PipeReader.html) &mdash; owned instead of borrowed, no ABI guarantees, not yet stable
+/// *   [`std::io::PipeReader`](https://doc.rust-lang.org/beta/std/io/struct.PipeReader.html) &mdash; owned instead of borrowed, cross platform, no ABI guarantees, not yet stable
 /// *   [`std::os::windows::io::BorrowedHandle`] &mdash; untyped, permits null/invalid
 /// *   [`firehazard::handle::Borrowed`] &mdash; untyped
 /// *   [`firehazard::io::ReadPipe`] &mdash; owned instead of borrowed
@@ -69,7 +69,7 @@ use core::ptr::null_mut;
 /// Borrowed non-null writeable pipe or file `HANDLE`
 ///
 /// ## Alternatives
-/// *   [`std::io::PipeWriter`](https://doc.rust-lang.org/beta/std/io/struct.PipeWriter.html) &mdash; owned instead of borrowed, no ABI guarantees, not yet stable
+/// *   [`std::io::PipeWriter`](https://doc.rust-lang.org/beta/std/io/struct.PipeWriter.html) &mdash; owned instead of borrowed, cross platform, no ABI guarantees, not yet stable
 /// *   [`std::os::windows::io::BorrowedHandle`] &mdash; untyped, permits null/invalid
 /// *   [`firehazard::handle::Borrowed`] &mdash; untyped
 /// *   [`firehazard::io::WritePipe`] &mdash; owned instead of borrowed

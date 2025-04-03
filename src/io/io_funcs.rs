@@ -16,6 +16,9 @@ use core::ptr::{null_mut, NonNull};
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] CreatePipe
 ///
+/// ## Alternatives
+/// *   [`std::io::pipe`](https://doc.rust-lang.org/beta/std/io/fn.pipe.html) &mdash; cross platform, not yet stable
+///
 /// ### Example
 /// ```
 /// # use firehazard::*;
