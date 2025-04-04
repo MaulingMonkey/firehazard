@@ -40,6 +40,7 @@ impl Error {
             ERROR_BAD_PATHNAME              => "ERROR_BAD_PATHNAME",            // 161
             ERROR_BUSY                      => "ERROR_BUSY",                    // 170
             ERROR_ALREADY_EXISTS            => "ERROR_ALREADY_EXISTS",          // 183
+            ERROR_PIPE_LOCAL                => "ERROR_PIPE_LOCAL",              // 229
             ERROR_PARTIAL_COPY              => "ERROR_PARTIAL_COPY",            // 299
             367                             => "ERROR_CHILD_PROCESS_BLOCKED",   // 367
             ERROR_ILLEGAL_CHARACTER         => "ERROR_ILLEGAL_CHARACTER",       // 582
