@@ -10,6 +10,7 @@ use winapi::um::namedpipeapi::*;
 #[cfg(std)] use std::path::*;
 #[cfg(std)] use std::vec;
 
+use core::mem::MaybeUninit;
 use core::ptr::{null_mut, NonNull};
 
 
@@ -45,25 +46,25 @@ pub fn create_pipe(pipe_attributes: Option<&security::Attributes>, size: u32) ->
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlea)\] GetFinalPathNameByHandleA
 pub fn get_final_path_name_by_handle_a_inplace<'a>(
     handle: impl AsRef<io::FileHandle<'a>>,
-    path:   &mut [u8],
+    path:   &mut [MaybeUninit<u8>],
     flags:  u32, // TODO: type
-) -> Result<&[u8], Error> {
+) -> Result<&mut [u8], Error> {
     let buf_chars = path.len().try_into().unwrap_or(!0_u32);
     let full_chars = usize::from32(unsafe { GetFinalPathNameByHandleA(handle.as_ref().as_handle(), path.as_mut_ptr().cast(), buf_chars, flags) });
     Error::get_last_if(full_chars == 0 || full_chars > path.len())?;
-    Ok(&path[..full_chars])
+    Ok(unsafe { slice_assume_init_mut(&mut path[..full_chars]) })
 }
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlea)\] GetFinalPathNameByHandleW
 pub fn get_final_path_name_by_handle_w_inplace<'a>(
     handle: impl AsRef<io::FileHandle<'a>>,
-    path:   &mut [u16],
+    path:   &mut [MaybeUninit<u16>],
     flags:  u32, // TODO: type
-) -> Result<&[u16], Error> {
+) -> Result<&mut [u16], Error> {
     let buf_chars = path.len().try_into().unwrap_or(!0_u32);
     let full_chars = usize::from32(unsafe { GetFinalPathNameByHandleW(handle.as_ref().as_handle(), path.as_mut_ptr().cast(), buf_chars, flags) });
     Error::get_last_if(full_chars == 0 || full_chars > path.len())?;
-    Ok(&path[..full_chars])
+    Ok(unsafe { slice_assume_init_mut(&mut path[..full_chars]) })
 }
 
 #[cfg(std)]
@@ -71,13 +72,13 @@ pub fn get_final_path_name_by_handle_w_inplace<'a>(
 pub fn get_final_path_name_by_handle<'a>(handle: impl AsRef<io::FileHandle<'a>>, flags: u32) -> Result<PathBuf, Error> {
     let handle = handle.as_ref();
 
-    let mut buf = [0u16; 260];
+    let mut buf = [MaybeUninit::uninit(); 260];
     let full_chars = usize::from32(unsafe { GetFinalPathNameByHandleW(handle.as_handle(), buf.as_mut_ptr().cast(), buf.len() as _, flags) });
     Error::get_last_if(full_chars == 0)?;
-    if full_chars <= buf.len() { return Ok(PathBuf::from(OsString::from_wide(&buf[..full_chars]))) }
+    if let Some(buf) = buf.get_mut(..full_chars) { return Ok(PathBuf::from(OsString::from_wide(unsafe { slice_assume_init_mut(buf) }))) }
 
     // else `buf` was too small:
-    let mut buf = vec![0u16; full_chars+1];
+    let mut buf = vec![MaybeUninit::uninit(); full_chars+1];
     let path = get_final_path_name_by_handle_w_inplace(handle, &mut buf[..], flags)?;
     Ok(PathBuf::from(OsString::from_wide(path)))
 }
