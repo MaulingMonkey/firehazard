@@ -20,9 +20,9 @@
 #[path = "debug/_debug.rs"]             pub mod debug;          #[doc(hidden)] pub use debug::funcs::*;
 #[path = "desktop/_desktop.rs"]         pub mod desktop;        #[doc(hidden)] pub use desktop::funcs::*;
 #[path = "handle/_handle.rs"]           pub mod handle;         #[doc(hidden)] pub use handle::{funcs::*, traits::*};
+#[path = "io/_io.rs"]                   pub mod io;             #[doc(hidden)] pub use io::funcs::*;
 #[path = "job/_job.rs"]                 pub mod job;            #[doc(hidden)] pub use job::funcs::*;
 #[path = "misc/_misc.rs"]               mod misc;               #[doc(hidden)] pub use misc::funcs::*;
-#[path = "io/_io.rs"]                   pub mod io;             #[doc(hidden)] pub use io::funcs::*;
 #[path = "privilege/_privilege.rs"]     pub mod privilege;      #[doc(hidden)] pub use privilege::funcs::*;
 #[path = "process/_process.rs"]         pub mod process;        #[doc(hidden)] pub use process::funcs::*;
 #[path = "security/_security.rs"]       pub mod security;       //#[doc(hidden)] pub use security::funcs::*;
