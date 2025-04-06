@@ -635,6 +635,7 @@ dependencies = [
  "abibool",
  "abistr",
  "bytemuck",
+ "ialloc",
  "lazy_static",
  "minidl",
  "thindx",
@@ -723,6 +724,19 @@ name = "humantime"
 version = "2.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9a3a5bfb195931eeb336b2a7b4d761daec841b97f947d34394601737a7bba5e4"
+
+[[package]]
+name = "ialloc"
+version = "0.0.0-2023-05-28"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5db3b04b5a1750bdce45b1996183632080d0803dc4637459dfb68bfad23ea5af"
+dependencies = [
+ "bytemuck",
+ "lazy_static",
+ "mcom",
+ "winapi",
+ "winresult 0.1.3",
+]
 
 [[package]]
 name = "ident_case"
@@ -821,6 +835,9 @@ name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
+dependencies = [
+ "spin",
+]
 
 [[package]]
 name = "leb128"
@@ -1337,6 +1354,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a507befe795404456341dfab10cef66ead4c041f62b8b11bbb92bffe5d0953e0"
 
 [[package]]
+name = "spin"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6e63cff320ae2c57904679ba7cb63280a3dc4613885beafb148ee7bf9aa9042d"
+
+[[package]]
 name = "stable_deref_trait"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1380,7 +1403,7 @@ dependencies = [
  "mcom",
  "minidl",
  "winapi",
- "winresult",
+ "winresult 0.1.1",
 ]
 
 [[package]]
@@ -2122,13 +2145,31 @@ name = "winresult"
 version = "0.1.1"
 source = "git+https://github.com/MaulingMonkey/winresult?rev=9b877bf59efd8cc89fae4fd5f791a0e51cc53712#9b877bf59efd8cc89fae4fd5f791a0e51cc53712"
 dependencies = [
- "winresult-types",
+ "winresult-types 0.1.0",
+]
+
+[[package]]
+name = "winresult"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1fe1d4015321f3df114e73ccc695d62c1566b33b0a2d03d553b7dd65dc11f58d"
+dependencies = [
+ "winresult-types 0.1.3",
 ]
 
 [[package]]
 name = "winresult-types"
 version = "0.1.0"
 source = "git+https://github.com/MaulingMonkey/winresult?rev=9b877bf59efd8cc89fae4fd5f791a0e51cc53712#9b877bf59efd8cc89fae4fd5f791a0e51cc53712"
+dependencies = [
+ "bytemuck",
+]
+
+[[package]]
+name = "winresult-types"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c7314fd4ed99b7cc41081400f5d072919967e7382d358bc9e7d72bdd1955e1e8"
 dependencies = [
  "bytemuck",
 ]

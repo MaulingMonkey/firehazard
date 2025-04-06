@@ -1,12 +1,16 @@
 use crate::*;
-use crate::alloc::{CVec, LocalAllocFree};
+use crate::alloc::LocalAllocFree;
+
+use ialloc::allocator::adapt::DangleZst;
+use ialloc::allocator::win32::Local;
+use ialloc::vec::AVec;
 
 use winapi::shared::winerror::*;
 use winapi::um::userenv::*;
 
 use abistr::*;
 
-use core::ptr::null_mut;
+use core::ptr::{null_mut, NonNull};
 
 
 
@@ -232,7 +236,7 @@ pub fn derive_app_container_sid_from_app_container_name(
 /// `kernel32.dll` doesn't even re-export the symbol.
 /// I checked.
 #[cfg(std)] // minidl requires std for now
-pub fn derive_capability_sids_from_name(cap_name: impl TryIntoAsCStr<u16>) -> Result<(CVec<sid::Box<LocalAllocFree>, LocalAllocFree>, CVec<sid::Box<LocalAllocFree>, LocalAllocFree>), Error> {
+pub fn derive_capability_sids_from_name(cap_name: impl TryIntoAsCStr<u16>) -> Result<(AVec<sid::Box<LocalAllocFree>, DangleZst<Local>>, AVec<sid::Box<LocalAllocFree>, DangleZst<Local>>), Error> {
     use winapi::shared::minwindef::*;
     use winapi::um::winnt::*;
 
@@ -259,8 +263,8 @@ pub fn derive_capability_sids_from_name(cap_name: impl TryIntoAsCStr<u16>) -> Re
     Error::get_last_if(FALSE == unsafe { DeriveCapabilitySidsFromName(cap_name.as_cstr(), &mut group_sids, &mut n_group_sids, &mut sids, &mut n_sids) })?;
     let n_group_sids = usize::from32(n_group_sids);
     let n_sids       = usize::from32(n_sids);
-    let group_sids = unsafe { CVec::from_raw_parts(group_sids.cast(), n_group_sids, n_group_sids) };
-    let       sids = unsafe { CVec::from_raw_parts(      sids.cast(),       n_sids,       n_sids) };
+    let group_sids = NonNull::new(group_sids).map_or(AVec::new(), |nn| unsafe { AVec::from_raw_parts(nn.cast(), n_group_sids, n_group_sids) });
+    let       sids = NonNull::new(      sids).map_or(AVec::new(), |nn| unsafe { AVec::from_raw_parts(nn.cast(),       n_sids,       n_sids) });
 
     Ok((group_sids, sids))
 }

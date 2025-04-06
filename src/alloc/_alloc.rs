@@ -4,7 +4,6 @@ mod allocator;                  pub use allocator::*;
 mod cbox;                       pub use cbox::*;
 mod cboxsized;                  pub use cboxsized::*;
 mod cstring;                    pub use cstring::*;
-mod cvec;                       pub use cvec::*;
 
 pub use funcs::*;
 pub(crate) mod funcs {
