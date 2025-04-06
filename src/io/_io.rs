@@ -5,6 +5,7 @@
 //! *   <https://learn.microsoft.com/en-us/windows/win32/ipc/multithreaded-pipe-server>
 
 #[cfg(    std )] pub use std::io::{Read, Write, Seek, Error, ErrorKind, Result};
+#[cfg(    std )] mod io_yes_std;
 #[cfg(not(std))] mod io_not_std;
 #[cfg(not(std))] pub use io_not_std::*;
 
