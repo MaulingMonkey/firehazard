@@ -8,7 +8,7 @@
 ///
 /// ```
 /// # #[cfg(nope)]
-/// # fn example<A: Allocator>(cbs: CBoxSized<TOKEN_GROUPS, A>) {
+/// # fn example<A: Alloc>(cbs: CBoxSized<TOKEN_GROUPS, A>) {
 /// let cbs : CBoxSized<TOKEN_GROUPS, _> = ..;
 /// let groups = provenance_addr(cbs.as_ptr(), cbs.Groups);
 /// let groups = unsafe { core::slice::from_raw_parts(groups, cbs.GroupCount as _) };

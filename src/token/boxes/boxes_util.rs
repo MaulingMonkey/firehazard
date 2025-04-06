@@ -1,5 +1,7 @@
 use crate::*;
-use crate::alloc::{Allocator, CBoxSized};
+use crate::alloc::CBoxSized;
+use ialloc::meta::Stateless;
+use ialloc::thin::{Alloc, Free};
 use winapi::um::winnt::{SID, PSID, SID_AND_ATTRIBUTES};
 use core::mem::{size_of, align_of};
 
@@ -10,7 +12,7 @@ use core::mem::{size_of, align_of};
 /// *   `ptr`       a ptr into `cbs` (can be null if min_count == 0)
 /// *   `min_count` the minimum number of `U` *elements* that `ptr` should be valid for
 /// *   Returns:    the number of *bytes* available after `ptr`
-#[track_caller] pub fn assert_valid_ptr_bytes<T, U, A: Allocator>(cbs: &CBoxSized<T, A>, ptr: *const U, min_count: usize) -> usize {
+#[track_caller] pub fn assert_valid_ptr_bytes<T, U, A: Alloc + Free + Stateless>(cbs: &CBoxSized<T, A>, ptr: *const U, min_count: usize) -> usize {
     if ptr.is_null() && min_count == 0 { return 0 }
     let pbegin = cbs.as_ptr() as usize;
     let pend = pbegin + cbs.bytes(); // shouldn't overflow: contiguous alloc
@@ -25,12 +27,12 @@ use core::mem::{size_of, align_of};
     bytes_avail
 }
 
-#[track_caller] pub fn assert_valid_sid_or_null<T, A: Allocator>(cbs: &CBoxSized<T, A>, sid: PSID) {
+#[track_caller] pub fn assert_valid_sid_or_null<T, A: Alloc + Free + Stateless>(cbs: &CBoxSized<T, A>, sid: PSID) {
     if sid.is_null() { return }
     assert_valid_sid(cbs, sid)
 }
 
-#[track_caller] pub fn assert_valid_sid<T, A: Allocator>(cbs: &CBoxSized<T, A>, sid: PSID) {
+#[track_caller] pub fn assert_valid_sid<T, A: Alloc + Free + Stateless>(cbs: &CBoxSized<T, A>, sid: PSID) {
     let p = cbs.as_ptr() as usize;
     let pend = p + cbs.bytes(); // shouldn't be possible for this to overflow since p .. p+bytes is a contiguous allocation
     let psid = sid as usize;
@@ -41,7 +43,7 @@ use core::mem::{size_of, align_of};
     let _validate_sid = unsafe { sid::Ptr::from_raw(sid.cast(), sid_bytes) }.expect("sid was truncated or otherwise invalid");
 }
 
-#[track_caller] pub fn assert_valid_saa<T, A: Allocator>(cbs: &CBoxSized<T, A>, saa: SID_AND_ATTRIBUTES) {
+#[track_caller] pub fn assert_valid_saa<T, A: Alloc + Free + Stateless>(cbs: &CBoxSized<T, A>, saa: SID_AND_ATTRIBUTES) {
     assert_valid_sid(cbs, saa.Sid);
     let _ = saa.Attributes; // presumed valid
 }
@@ -49,7 +51,7 @@ use core::mem::{size_of, align_of};
 /// ### Safety
 /// `ptr`/`count` are validated against `cbs` with provenance fixing - however, this is undefined behavior
 /// unless `U` is valid for the present bit patterns, and the relevant bytes of `cbs` are initialized.
-#[track_caller] pub unsafe fn assert_valid_after_header_slice<T, U, A: Allocator>(cbs: &CBoxSized<T, A>, ptr: *const U, count: impl TryInto<usize>, allow_overlap_header: bool) -> &[U] {
+#[track_caller] pub unsafe fn assert_valid_after_header_slice<T, U, A: Alloc + Free + Stateless>(cbs: &CBoxSized<T, A>, ptr: *const U, count: impl TryInto<usize>, allow_overlap_header: bool) -> &[U] {
     let count = count.try_into().map_err(|_| ()).expect("slice count was too large to fit into same buffer");
     if ptr.is_null() {
         assert!(count == 0, "slice pointer was null with nonzero count");

@@ -1,5 +1,8 @@
 use crate::*;
 
+use ialloc::meta::Stateless;
+use ialloc::thin::Free;
+
 use winapi::um::winnt::SID;
 
 use core::fmt::{self, Debug, Formatter};
@@ -8,20 +11,20 @@ use core::ops::Deref;
 
 
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\] ~ Box<(SID, ???), D>
-#[repr(transparent)] pub struct Box<D: alloc::Deallocator>(*mut SID, PhantomData<D>);
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\] ~ Box<(SID, ???), A>
+#[repr(transparent)] pub struct Box<A: Free + Stateless>(*mut SID, PhantomData<A>);
 
-impl<D: alloc::Deallocator> Debug for Box<D> { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { Debug::fmt(&**self, fmt) } }
-impl<D: alloc::Deallocator> Deref for Box<D> { type Target = sid::Value; fn deref(&self) -> &Self::Target { unsafe { core::mem::transmute(self) } } }
-impl<D: alloc::Deallocator> Drop  for Box<D> { fn drop(&mut self) { unsafe { D::free(self.0) } } }
+impl<A: Free + Stateless> Debug for Box<A> { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { Debug::fmt(&**self, fmt) } }
+impl<A: Free + Stateless> Deref for Box<A> { type Target = sid::Value; fn deref(&self) -> &Self::Target { unsafe { core::mem::transmute(self) } } }
+impl<A: Free + Stateless> Drop  for Box<A> { fn drop(&mut self) { unsafe { A::default().free_nullable(self.0.cast()) } } }
 
-impl<'s, D: alloc::Deallocator> From<&'s Box<D>> for sid::Ptr<'s> {
-    fn from(sid: &'s Box<D>) -> Self {
+impl<'s, A: Free + Stateless> From<&'s Box<A>> for sid::Ptr<'s> {
+    fn from(sid: &'s Box<A>) -> Self {
         sid.as_sid_ptr()
     }
 }
 
-impl<D: alloc::Deallocator> Box<D> {
+impl<A: Free + Stateless> Box<A> {
     /// ### Safety
     /// *   `sid` should be a valid [`LocalAlloc`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-localalloc)ed buffer containing a valid [`SID`](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid).
     /// *   `sid` should not be [`LocalFree`](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-localfree)ed by anything else as [`Box::from_raw_unchecked`] takes ownership.
