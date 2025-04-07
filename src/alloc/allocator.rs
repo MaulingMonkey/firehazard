@@ -1,8 +1,6 @@
 use ialloc::Alignment;
 
-use core::alloc::Layout;
 use core::mem::MaybeUninit;
-use core::ptr::NonNull;
 
 
 
@@ -31,9 +29,6 @@ unsafe impl ialloc::thin::Free for FreeSid {
     }
 }
 
-unsafe impl ialloc::fat::Free for FreeSid {
-    unsafe fn free(&self, ptr: NonNull<MaybeUninit<u8>>, layout: Layout) {
-        let _ = layout;
-        unsafe { ialloc::thin::Free::free(self, ptr) }
-    }
+ialloc::impls! {
+    unsafe impl ialloc::fat::Free for FreeSid => ialloc::thin::Free;
 }
