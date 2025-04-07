@@ -44,6 +44,8 @@ pub mod name {
         pub const $id:ident = $name:tt / $luid:literal;
     )*) => {
         $(
+            #[doc = concat!(stringify!($name))]
+            ///
             pub const $id : Name = Name {
                 name:       abistr::cstr!($name),
                 hardcoded:  privilege::Luid(Luid(LUID { HighPart: 0, LowPart: $luid })),
