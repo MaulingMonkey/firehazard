@@ -8,11 +8,17 @@ use winapi::um::winbase::*;
 pub fn all() {
     // TODO: make desktop available to low/untrusted integrity processes (currently requires Medium integrity)
     let _alt_desktop = create_desktop_a(cstr!("max_sandbox_desktop"), (), None, None, access::GENERIC_ALL, None).unwrap();
-    for target in settings::Target::list() { one(target) }
+    for target in settings::Target::list() {
+        if std::env::var_os("CI").is_some() {
+            dbg!(&target);
+        } else {
+            println!("sandboxing {}", target.exe.display());
+        }
+        one(target);
+    }
 }
 
 pub fn one(target: settings::Target) {
-    if std::env::var_os("CI").is_some() { dbg!(&target); }
     assert!(target.spawn.integrity >= target.lockdown.integrity, "target.lockdown.integrity cannot be more permissive than spawn integrity");
 
     let tokens = tokens::create(&target);
