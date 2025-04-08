@@ -7,7 +7,7 @@ exclude                     = ["crates/no-std"] # separate workspace
 [package]
 name                        = "firehazard"
 version                     = "0.0.0-2022-09-10"
-rust-version                = "1.69" # ialloc MSRV
+rust-version                = "1.81.0" # ialloc MSRV
 description                 = "Unopinionated low level API bindings focused on soundness, safety, and stronger types over raw FFI."
 authors                     = ["MaulingMonkey <git@maulingmonkey.com>"]
 edition                     = "2021"

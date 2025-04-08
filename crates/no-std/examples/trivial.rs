@@ -1,8 +1,16 @@
 #![no_std]
 #![no_main]
 
-use firehazard::*;
-use abistr::*;
+extern crate alloc;
+
+use firehazard::{
+    abistr::cstr,
+    ialloc::allocator::{adapt::PanicOverAlign, win32::ProcessHeap},
+
+    exit_process, output_debug_string_a, revert_to_self,
+};
+
+#[global_allocator] static GLOBAL_ALLOCATOR : PanicOverAlign<ProcessHeap> = PanicOverAlign(ProcessHeap);
 
 #[no_mangle] extern "C" fn mainCRTStartup() -> i32 { run(); 0 }
 #[no_mangle] extern "C" fn main() -> i32 { 0 } // unused but required?

@@ -8,6 +8,7 @@
 
 #[cfg(std)] extern crate std;
 #[doc(hidden)] pub extern crate abistr;
+#[doc(hidden)] pub extern crate ialloc;
 #[doc(hidden)] pub extern crate winapi;
 
 #[path = "macros/_macros.rs"] #[macro_use] mod macros;
