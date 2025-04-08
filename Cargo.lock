@@ -1133,9 +1133,9 @@ dependencies = [
 
 [[package]]
 name = "ialloc"
-version = "0.0.0-2023-05-28"
+version = "0.0.0-2025-04-08"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5db3b04b5a1750bdce45b1996183632080d0803dc4637459dfb68bfad23ea5af"
+checksum = "3ac05662bea6fea161d26ce304ee8a9b844c2032fded949770758ab8e87c5722"
 dependencies = [
  "bytemuck",
  "lazy_static",
@@ -1522,9 +1522,9 @@ dependencies = [
 
 [[package]]
 name = "mcom"
-version = "0.1.4"
+version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f19b24eb29c8c12fdc82173dd1e8cafa5d8d1c476c096f054e1928f1e26aaf9b"
+checksum = "767f64f47d8c33a82c408dbeeca24dc51e5793f11498dabf4d8a77d7bddb768c"
 dependencies = [
  "winapi",
 ]
