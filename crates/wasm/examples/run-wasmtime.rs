@@ -31,6 +31,6 @@ fn main() {
 
     let instance = Instance::new(&mut store, &module, &[host_hello.into()]).unwrap();
 
-    let hello = instance.get_typed_func::<(), (), _>(&mut store, "hello").unwrap();
+    let hello = instance.get_typed_func::<(), ()>(&mut store, "hello").unwrap();
     hello.call(&mut store, ()).unwrap();
 }

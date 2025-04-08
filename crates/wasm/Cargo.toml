@@ -12,6 +12,5 @@ license                     = "Apache-2.0 OR MIT"
 firehazard.path             = "../.."
 
 [target.x86_64-pc-windows-msvc.dev-dependencies]
-# broken on i686:
-wasmer                      = "3.0.0-beta"
-wasmtime                    = "2.0.2"
+wasmer                      = "5"
+wasmtime                    = "29" # last version that works with rustc 1.81.0
