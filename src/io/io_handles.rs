@@ -137,3 +137,35 @@ unsafe fn write_file(h: HANDLENN, buf: &[u8]) -> io::Result<usize> {
     Error::get_last_if(FALSE == unsafe { WriteFile(h.as_ptr(), buf.as_ptr().cast(), buf.len().try_into().unwrap_or(!0u32), &mut written, null_mut()) })?;
     Ok(usize::from32(written))
 }
+
+impl crate::os::windows::io::FromRawHandle for FileNN         { unsafe fn from_raw_handle(handle: crate::os::windows::io::RawHandle) -> Self { Self(HANDLENN::new(handle.cast()).expect("undefined behavior: null is not an open, owned handle")) } }
+impl crate::os::windows::io::FromRawHandle for PipeReaderNN   { unsafe fn from_raw_handle(handle: crate::os::windows::io::RawHandle) -> Self { Self(HANDLENN::new(handle.cast()).expect("undefined behavior: null is not an open, owned handle")) } }
+impl crate::os::windows::io::FromRawHandle for PipeWriterNN   { unsafe fn from_raw_handle(handle: crate::os::windows::io::RawHandle) -> Self { Self(HANDLENN::new(handle.cast()).expect("undefined behavior: null is not an open, owned handle")) } }
+
+impl crate::os::windows::io::IntoRawHandle for FileNN         { fn into_raw_handle(self) -> crate::os::windows::io::RawHandle { self.into_handle().cast() } }
+impl crate::os::windows::io::IntoRawHandle for PipeReaderNN   { fn into_raw_handle(self) -> crate::os::windows::io::RawHandle { self.into_handle().cast() } }
+impl crate::os::windows::io::IntoRawHandle for PipeWriterNN   { fn into_raw_handle(self) -> crate::os::windows::io::RawHandle { self.into_handle().cast() } }
+
+// It might be appropriate to impl TryFrom<OwnedHandle> for FileNN, PipeReaderNN, PipeWriterNN?
+// ~~Constructing `crate::os::windows::io::NullHandleError` is awkward though.~~ Just use OwnedHandle::try_from(HandleOrNull)?
+// Deferring until I have a concrete use case, if I ever do.
+
+
+
+#[cfg(test)] mod tests {
+    use crate::io::*;
+    use crate::os::windows::io::FromRawHandle;
+    use core::ptr::null_mut;
+
+    #[test] #[should_panic = "undefined behavior"] fn null_firehazard_io_file() {
+        let _null = unsafe { FileNN::from_raw_handle(null_mut()) };
+    }
+
+    #[test] #[should_panic = "undefined behavior"] fn null_firehazard_io_read_pipe() {
+        let _null = unsafe { PipeReaderNN::from_raw_handle(null_mut()) };
+    }
+
+    #[test] #[should_panic = "undefined behavior"] fn null_firehazard_io_write_pipe() {
+        let _null = unsafe { PipeWriterNN::from_raw_handle(null_mut()) };
+    }
+}

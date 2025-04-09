@@ -40,6 +40,12 @@ macro_rules! handles {
         impl AsLocalHandleNN<$raw> for $ty {
             fn as_handle_nn(&self) -> core::ptr::NonNull<$raw> { self.0 }
         }
+        impl crate::os::windows::io::AsRawHandle for $ty {
+            fn as_raw_handle(&self) -> crate::os::windows::io::RawHandle { self.0.as_ptr().cast() }
+        }
+        impl crate::os::windows::io::AsHandle for $ty {
+            fn as_handle(&self) -> crate::os::windows::io::BorrowedHandle { unsafe { crate::os::windows::io::BorrowedHandle::borrow_raw(self.0.as_ptr().cast()) } }
+        }
     };
     ($(unsafe)? impl Debug for $mo:ident::$ty:ident$(<$l:lifetime>)?) => {
         impl core::fmt::Debug for $mo::$ty$(<$l>)? {
