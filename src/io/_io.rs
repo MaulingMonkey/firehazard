@@ -11,6 +11,33 @@
 
 
 
-#[path = "io_funcs.rs"]             pub(crate) mod funcs;       pub use funcs::*;
 mod io_counters;                    pub use io_counters::*;
 mod io_handles;                     pub use io_handles::*;
+
+pub use funcs::*;
+pub(crate) mod funcs {
+    use crate as firehazard;
+    // TODO: CallNamedPipeA
+    // TODO: CallNamedPipeW
+    // TODO: ConnectNamedPipe
+    // TODO: CreateNamedPipeA
+    // TODO: CreateNamedPipeW
+    include!("funcs/create_pipe.rs");
+    // TODO: DisconnectNamedPipe
+    include!("funcs/get_final_path_name_by_handle.rs");
+    // TODO: GetNamedPipeClientComputerNameA
+    // TODO: GetNamedPipeClientComputerNameW
+    // TODO: GetNamedPipeClientProcessId
+    // TODO: GetNamedPipeClientSessionId
+    // TODO: GetNamedPipeHandleStateA
+    // TODO: GetNamedPipeHandleStateW
+    // TODO: GetNamedPipeInfo
+    // TODO: GetNamedPipeServerProcessId
+    // TODO: GetNamedPipeServerSessionId
+    // TODO: ImpersonateNamedPipeClient
+    // TODO: PeekNamedPipe
+    // TODO: SetNamedPipeHandleState
+    // TODO: TransactNamedPipe
+    // TODO: WaitNamedPipeA
+    // TODO: WaitNamedPipeW
+}
