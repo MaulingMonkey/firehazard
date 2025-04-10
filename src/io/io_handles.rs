@@ -129,6 +129,14 @@ impl crate::os::windows::io::IntoRawHandle for FileNN         { fn into_raw_hand
 impl crate::os::windows::io::IntoRawHandle for PipeReaderNN   { fn into_raw_handle(self) -> crate::os::windows::io::RawHandle { self.into_handle().cast() } }
 impl crate::os::windows::io::IntoRawHandle for PipeWriterNN   { fn into_raw_handle(self) -> crate::os::windows::io::RawHandle { self.into_handle().cast() } }
 
+unsafe impl valrow::Borrowable for FileNN            { type Abi = HANDLENN; }
+unsafe impl valrow::Borrowable for PipeReaderNN      { type Abi = HANDLENN; }
+unsafe impl valrow::Borrowable for PipeWriterNN      { type Abi = HANDLENN; }
+
+unsafe impl valrow::Borrowable for FileHandle<'_>    { type Abi = HANDLENN; }
+unsafe impl valrow::Borrowable for ReadHandle<'_>    { type Abi = HANDLENN; }
+unsafe impl valrow::Borrowable for WriteHandle<'_>   { type Abi = HANDLENN; }
+
 // It might be appropriate to impl TryFrom<OwnedHandle> for FileNN, PipeReaderNN, PipeWriterNN?
 // ~~Constructing `crate::os::windows::io::NullHandleError` is awkward though.~~ Just use OwnedHandle::try_from(HandleOrNull)?
 // Deferring until I have a concrete use case, if I ever do.

@@ -51,6 +51,7 @@ dependencies = [
  "abistr",
  "bytemuck",
  "ialloc",
+ "valrow",
  "winapi",
 ]
 
@@ -132,6 +133,12 @@ name = "unicode-ident"
 version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c4f5b37a154999a8f3f98cc23a628d850e154479cd94decf3414696e12e31aaf"
+
+[[package]]
+name = "valrow"
+version = "0.0.0-2024-02-13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6770d2ca655a839425b904c2103b14e309e8e3fed329d33eb0e00bc25620d57b"
 
 [[package]]
 name = "winapi"

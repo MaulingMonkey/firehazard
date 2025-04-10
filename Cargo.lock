@@ -940,6 +940,7 @@ dependencies = [
  "lazy_static",
  "minidl",
  "thindx",
+ "valrow",
  "winapi",
 ]
 
@@ -2636,6 +2637,12 @@ name = "uuid"
 version = "1.16.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "458f7a779bf54acc9f347480ac654f68407d3aab21269a6e3c9f922acd9e2da9"
+
+[[package]]
+name = "valrow"
+version = "0.0.0-2024-02-13"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6770d2ca655a839425b904c2103b14e309e8e3fed329d33eb0e00bc25620d57b"
 
 [[package]]
 name = "version_check"

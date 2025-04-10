@@ -26,3 +26,7 @@ handles!(unsafe impl {AsRef, From}          for handle::{Owned, Borrowed<'_>, Ps
 handles!(impl Debug                         for handle::{Owned, Borrowed<'_>, Psuedo<'_>});
 
 impl Drop for Owned { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
+
+unsafe impl valrow::Borrowable for Owned         { type Abi = HANDLENN; }
+unsafe impl valrow::Borrowable for Borrowed<'_>  { type Abi = HANDLENN; }
+unsafe impl valrow::Borrowable for Psuedo<'_>    { type Abi = HANDLENN; }

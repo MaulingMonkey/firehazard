@@ -22,3 +22,5 @@ impl Drop for OwnedHandle { fn drop(&mut self) {
     let h = self.as_handle();
     assert!(0 != unsafe { CloseDesktop(h) }, "CloseDesktop({h:?}) failed with GetLastError()={:?}", Error::get_last());
 }}
+
+unsafe impl valrow::Borrowable for OwnedHandle   { type Abi = NonNull<HDESK__>; }

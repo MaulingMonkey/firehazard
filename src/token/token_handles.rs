@@ -32,3 +32,7 @@ handles!(impl Debug                                 for token::{OwnedHandle, Han
 
 impl PsuedoHandle<'static> { pub(crate) const unsafe fn from_raw_const(c: isize) -> Self { assert!(c != 0); Self(unsafe{core::ptr::NonNull::new_unchecked(c as _)}, PhantomData) } }
 impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
+
+unsafe impl valrow::Borrowable for OwnedHandle       { type Abi = HANDLENN; }
+unsafe impl valrow::Borrowable for Handle<'_>        { type Abi = HANDLENN; }
+unsafe impl valrow::Borrowable for PsuedoHandle<'_>  { type Abi = HANDLENN; }

@@ -25,3 +25,6 @@ handles!(unsafe impl {AsRef<@base>, From<@base>}    for job::{OwnedHandle, Handl
 handles!(impl Debug                                 for job::{OwnedHandle, Handle<'_>});
 
 impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
+
+unsafe impl valrow::Borrowable for OwnedHandle   { type Abi = HANDLENN; }
+unsafe impl valrow::Borrowable for Handle<'_>    { type Abi = HANDLENN; }

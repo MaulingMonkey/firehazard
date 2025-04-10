@@ -79,6 +79,8 @@ lazy_static.optional        = true # alternatively, enable `spin_no_std` feature
 minidl.version              = "0.1"
 minidl.optional             = true  # make non-optional after unblocking https://github.com/MaulingMonkey/minidl/issues/1
 
+valrow.version              = "0.0.0-2024-02-13"
+
 winapi.version              = "0.3"
 winapi.features = [
     # common

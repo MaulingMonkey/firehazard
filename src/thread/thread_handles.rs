@@ -32,3 +32,7 @@ handles!(impl Debug                                 for thread::{OwnedHandle, Ha
 
 impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 #[cfg(std)] impl<T> From<JoinHandle<T>> for OwnedHandle { fn from(jh: JoinHandle<T>) -> Self { unsafe { Self::from_raw(jh.into_raw_handle().cast()).unwrap() } } }
+
+unsafe impl valrow::Borrowable for OwnedHandle       { type Abi = HANDLENN; }
+unsafe impl valrow::Borrowable for Handle<'_>        { type Abi = HANDLENN; }
+unsafe impl valrow::Borrowable for PsuedoHandle<'_>  { type Abi = HANDLENN; }
