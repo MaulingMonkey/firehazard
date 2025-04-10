@@ -7,6 +7,7 @@
 @if "%~1" EQU "examples\spam_dbg.rs" goto :spam_dbg
 
 @cargo check --workspace --all-targets --all-features
+@if ERRORLEVEL 1 goto :die
 @cargo test
 @if ERRORLEVEL 1 goto :die
 
