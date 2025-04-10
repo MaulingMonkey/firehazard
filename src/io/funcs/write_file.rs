@@ -11,8 +11,7 @@
 /// | never valid               | [Err]\(≈ ERROR_INVALID_HANDLE\) or, if [strict handle checks](crate::process::mitigation::StrictHandleCheckPolicy) are enabled, an exception.
 /// | unwriteable               | [Err]\(≈ ERROR_ACCESS_DENIED\)
 ///
-pub(crate) unsafe fn write_file(handle: &impl firehazard::AsLocalHandle, buffer: &[u8], overlapped: Option<core::convert::Infallible>) -> Result<usize, firehazard::Error> {
-    use crate::From32;
+pub(crate) unsafe fn write_file(handle: &impl firehazard::AsLocalHandle, buffer: &[u8], overlapped: Option<core::convert::Infallible>) -> Result<u32, firehazard::Error> {
     let mut written = 0;
     firehazard::Error::get_last_if(0 == unsafe { winapi::um::fileapi::WriteFile(
         handle.as_handle().cast(),
@@ -21,7 +20,7 @@ pub(crate) unsafe fn write_file(handle: &impl firehazard::AsLocalHandle, buffer:
         &mut written,
         crate::none2null(overlapped),
     )})?;
-    Ok(usize::from32(written))
+    Ok(written)
 }
 
 // TODO: examples
@@ -51,6 +50,24 @@ pub(crate) unsafe fn write_file(handle: &impl firehazard::AsLocalHandle, buffer:
     let r = unsafe { write_file(&unwriteable, &[0u8; 1024], None) };
     drop(unwriteable);
     assert_eq!(r, Err(firehazard::Error(winapi::shared::winerror::ERROR_ACCESS_DENIED)));
+}
+
+#[ignore] // XXX: This test takes a good minute
+#[cfg(target_pointer_width = "64")] #[cfg(std)] #[test] fn read_write_file_5_gib() {
+    use crate::*;
+    use std::os::windows::fs::OpenOptionsExt;
+
+    let file = std::fs::OpenOptions::new()
+        .create(true).read(true).write(true).truncate(true)
+        .custom_flags(winapi::um::winbase::FILE_FLAG_DELETE_ON_CLOSE)
+        .open("target/read_write_file_5_gib.bin").unwrap();
+
+    let mut huge = std::vec::Vec::new();
+    huge.resize(5_usize << 30, 0u8); // 5 GiB
+
+    assert_eq!(Ok(!0), unsafe { write_file(&file, &huge, None) });
+    assert_eq!(Ok(0),  unsafe { set_file_pointer_ex(&file, io::SeekFrom::Start(0)) });
+    assert_eq!(Ok(!0), unsafe { read_file(&file, &mut huge, None) });
 }
 
 // TODO: WriteFileEx

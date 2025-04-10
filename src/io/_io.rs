@@ -4,7 +4,7 @@
 //! *   <https://learn.microsoft.com/en-us/windows/win32/ipc/pipes>
 //! *   <https://learn.microsoft.com/en-us/windows/win32/ipc/multithreaded-pipe-server>
 
-#[cfg(    std )] pub use std::io::{Read, Write, Seek, Error, ErrorKind, Result};
+#[cfg(    std )] pub use std::io::{Read, Seek, Write, Error, ErrorKind, Result, SeekFrom};
 #[cfg(    std )] mod io_yes_std;
 #[cfg(not(std))] mod io_not_std;
 #[cfg(not(std))] pub use io_not_std::*;
@@ -37,6 +37,7 @@ pub(crate) mod funcs {
     // TODO: ImpersonateNamedPipeClient
     // TODO: PeekNamedPipe
     include!("funcs/read_file.rs");
+    include!("funcs/set_file_pointer.rs");
     // TODO: SetNamedPipeHandleState
     // TODO: TransactNamedPipe
     // TODO: WaitNamedPipeA

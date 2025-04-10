@@ -7,6 +7,11 @@ pub trait Read {
     // TODO: lots
 }
 
+pub trait Seek {
+    fn seek(&mut self, pos: SeekFrom) -> Result<u64>;
+    // TODO: lots
+}
+
 pub trait Write {
     fn write(&mut self, buf: &[u8]) -> Result<usize>;
     fn flush(&mut self) -> Result<()>;
@@ -79,6 +84,13 @@ pub enum ErrorKind {
     UnexpectedEof,
     OutOfMemory,
     Other,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum SeekFrom {
+    Start(u64),
+    End(i64),
+    Current(i64),
 }
 
 

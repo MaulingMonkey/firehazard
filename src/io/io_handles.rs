@@ -108,18 +108,21 @@ impl Drop       for FileNN          { fn drop(&mut self) { unsafe { drop_close_h
 impl Drop       for PipeReaderNN    { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 impl Drop       for PipeWriterNN    { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 
-impl io::Read   for FileNN          { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(self, buf, None)?) } } }
-impl io::Read   for FileHandle<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(self, buf, None)?) } } }
-impl io::Read   for PipeReaderNN    { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(self, buf, None)?) } } }
-impl io::Read   for ReadHandle<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(self, buf, None)?) } } }
+impl io::Read   for FileNN          { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(self, buf, None).map(usize::from32)?) } } }
+impl io::Read   for FileHandle<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(self, buf, None).map(usize::from32)?) } } }
+impl io::Read   for PipeReaderNN    { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(self, buf, None).map(usize::from32)?) } } }
+impl io::Read   for ReadHandle<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(self, buf, None).map(usize::from32)?) } } }
+
+impl io::Seek   for FileNN          { fn seek(&mut self, pos: io::SeekFrom) -> io::Result<u64> { unsafe { Ok(set_file_pointer_ex(self, pos)?) } } }
+impl io::Seek   for FileHandle<'_>  { fn seek(&mut self, pos: io::SeekFrom) -> io::Result<u64> { unsafe { Ok(set_file_pointer_ex(self, pos)?) } } }
 
 // noop flush sane: https://github.com/rust-lang/rust/blob/c2110769cd58cd3b0c31f308c8cfeab5e19340fd/library/std/src/sys/fs/windows.rs#L604-L606
-impl io::Write  for FileNN          { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(self, buf, None)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
-impl io::Write  for FileHandle<'_>  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(self, buf, None)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl io::Write  for FileNN          { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl io::Write  for FileHandle<'_>  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
 
 // noop flush sane: https://github.com/rust-lang/rust/blob/c2110769cd58cd3b0c31f308c8cfeab5e19340fd/library/std/src/io/pipe.rs#L271-L274
-impl io::Write  for PipeWriterNN    { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(self, buf, None)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
-impl io::Write  for WriteHandle<'_> { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(self, buf, None)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl io::Write  for PipeWriterNN    { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl io::Write  for WriteHandle<'_> { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
 
 impl crate::os::windows::io::FromRawHandle for FileNN         { unsafe fn from_raw_handle(handle: crate::os::windows::io::RawHandle) -> Self { Self(HANDLENN::new(handle.cast()).expect("undefined behavior: null is not an open, owned handle")) } }
 impl crate::os::windows::io::FromRawHandle for PipeReaderNN   { unsafe fn from_raw_handle(handle: crate::os::windows::io::RawHandle) -> Self { Self(HANDLENN::new(handle.cast()).expect("undefined behavior: null is not an open, owned handle")) } }

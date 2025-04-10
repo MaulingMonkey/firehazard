@@ -11,8 +11,7 @@
 /// | never valid               | [Err]\(≈ ERROR_INVALID_HANDLE\) or, if [strict handle checks](crate::process::mitigation::StrictHandleCheckPolicy) are enabled, an exception.
 /// | unreadable                | [Err]\(≈ ERROR_ACCESS_DENIED\)
 ///
-pub(crate) unsafe fn read_file(handle: &impl firehazard::AsLocalHandle, buffer: &mut [u8], overlapped: Option<core::convert::Infallible>) -> Result<usize, firehazard::Error> {
-    use crate::From32;
+pub(crate) unsafe fn read_file(handle: &impl firehazard::AsLocalHandle, buffer: &mut [u8], overlapped: Option<core::convert::Infallible>) -> Result<u32, firehazard::Error> {
     let mut read = 0;
     firehazard::Error::get_last_if(0 == unsafe { winapi::um::fileapi::ReadFile(
         handle.as_handle().cast(),
@@ -21,7 +20,7 @@ pub(crate) unsafe fn read_file(handle: &impl firehazard::AsLocalHandle, buffer: 
         &mut read,
         crate::none2null(overlapped),
     )})?;
-    Ok(usize::from32(read))
+    Ok(read)
 }
 
 // TODO: examples
@@ -47,7 +46,11 @@ pub(crate) unsafe fn read_file(handle: &impl firehazard::AsLocalHandle, buffer: 
 }
 
 #[cfg(std)] #[test] fn read_file_not_readable() {
-    let unreadable = std::fs::OpenOptions::new().write(true).create(true).open("target/tmp/read_file_not_readable.bin").unwrap();
+    use std::os::windows::fs::OpenOptionsExt;
+    let unreadable = std::fs::OpenOptions::new()
+        .write(true).create(true)
+        .custom_flags(winapi::um::winbase::FILE_FLAG_DELETE_ON_CLOSE)
+        .open("target/read_file_not_readable.bin").unwrap();
     let r = unsafe { read_file(&unreadable, &mut [0u8; 1024], None) };
     drop(unreadable);
     assert_eq!(r, Err(firehazard::Error(winapi::shared::winerror::ERROR_ACCESS_DENIED)));
