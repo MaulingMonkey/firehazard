@@ -1,7 +1,7 @@
 //! [`std::os::windows::io`] re-export or [`no_std`](https://docs.rust-embedded.org/book/intro/no-std.html) placeholders
 
 use crate::*;
-use crate::os::windows::raw::*;
+use crate::os::windows::raw::{*, HANDLE};
 
 use winapi::shared::minwindef::FALSE;
 use winapi::um::handleapi::{CloseHandle, DuplicateHandle, INVALID_HANDLE_VALUE};

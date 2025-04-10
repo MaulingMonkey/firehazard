@@ -4,7 +4,7 @@ use crate::*;
 
 use winapi::ctypes::c_void;
 use winapi::shared::minwindef::FALSE;
-use winapi::shared::ntdef::HANDLE;
+pub(crate) use winapi::shared::ntdef::HANDLE;
 use winapi::shared::winerror::*;
 use winapi::um::handleapi::*;
 use winapi::um::winnt::{DUPLICATE_CLOSE_SOURCE, DUPLICATE_SAME_ACCESS};

@@ -1,6 +1,6 @@
 #![cfg(std)]
 
-use crate::{AsLocalHandle, HANDLENN};
+use crate::{AsLocalHandle, HANDLE, HANDLENN};
 use crate::io::FileNN;
 use crate::os::windows::prelude::*;
 
@@ -20,6 +20,8 @@ impl From<std::fs::File> for FileNN { fn from(file: std::fs::File) -> Self {
 }
 
 impl From<FileNN> for std::fs::File { fn from(file: FileNN) -> Self { unsafe { std::fs::File::from_raw_handle(file.into_handle()) } } }
+
+impl AsLocalHandle for std::fs::File { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
 
 
 
