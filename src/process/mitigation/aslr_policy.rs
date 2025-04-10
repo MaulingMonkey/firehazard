@@ -6,7 +6,7 @@ use winapi::um::winnt::*;
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_aslr_policy)\]
-/// ~ [PROCESS_MITIGATION_ASLR_POLICY]
+/// ≈ [PROCESS_MITIGATION_ASLR_POLICY]
 ///
 /// Enable [Address Space Layout Randomization](https://en.wikipedia.org/wiki/Address_space_layout_randomization).
 /// This presumably can only apply to newly loaded DLLs - existing DLLs and the executable were already loaded.
@@ -15,6 +15,7 @@ use winapi::um::winnt::*;
 ///
 /// [`/DYNAMICBASE`]:   https://learn.microsoft.com/en-us/cpp/build/reference/dynamicbase-use-address-space-layout-randomization
 /// [`/HIGHENTROPYVA`]: https://learn.microsoft.com/en-us/cpp/build/reference/highentropyva-support-64-bit-aslr
+///
 #[derive(Clone, Copy, Debug)]
 #[derive(Zeroable)]
 pub struct AslrPolicy {

@@ -9,7 +9,9 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_groups)\] ~ `Box<(TOKEN_GROUPS, ..)>`
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_groups)\]
+/// ≈ `Box<(TOKEN_GROUPS, ..)>`
+///
 #[repr(transparent)] pub struct BoxTokenGroups(CBox<TOKEN_GROUPS>);
 
 impl BoxTokenGroups {

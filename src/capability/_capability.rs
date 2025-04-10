@@ -27,7 +27,7 @@ use crate::*;
 /// <code>\([id](Self::id)(), [sid](Self::sid)()\) = \(`"internetClient"`, [sid!]\(S-1-15-3-1\)\)</code>
 #[derive(Clone, Copy, Debug)] #[repr(transparent)] pub struct Constant(abistr::CStrNonNull<'static, u16>);
 
-/// ~ [sid::Box]
+/// ≈ [sid::Box]
 #[derive(Debug)] #[repr(transparent)] pub struct Sid(pub sid::Box<alloc::LocalAllocFree>); // XXX?
 impl core::ops::Deref for Sid { type Target = sid::Box<alloc::LocalAllocFree>; fn deref(&self) -> &Self::Target { &self.0 } }
 

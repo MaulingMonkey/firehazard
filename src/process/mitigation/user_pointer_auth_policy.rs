@@ -5,7 +5,8 @@ use bytemuck::*;
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-process_mitigation_user_pointer_auth_policy)\]
-/// ~ PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY
+/// ≈ PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY
+///
 #[derive(Clone, Copy, Debug)]
 #[derive(Default, Zeroable)]
 pub struct UserPointerAuthPolicy {

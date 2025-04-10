@@ -5,9 +5,10 @@ use winapi::um::winnt::{self, JobObjectGroupInformation, JobObjectGroupInformati
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
-/// ~ WORD / USHORT referencing a processor group
+/// ≈ WORD / USHORT referencing a processor group
 ///
 /// get/set via `JobObjectGroupInformationEx`
+///
 #[derive(Clone, Copy, Default, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Group(u16);
 
@@ -15,6 +16,7 @@ use winapi::um::winnt::{self, JobObjectGroupInformation, JobObjectGroupInformati
 /// GROUP_AFFINITY referencing a processor group and processor/core mask
 ///
 /// get/set via `JobObjectGroupInformationEx`
+///
 #[derive(Clone, Copy, Default, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(C)] pub struct GroupAffinity {
     pub mask:   usize,

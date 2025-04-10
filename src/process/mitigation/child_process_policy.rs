@@ -6,7 +6,7 @@ use winapi::um::winnt::*;
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-_process_mitigation_child_process_policy)\]
-/// ~ [PROCESS_MITIGATION_CHILD_PROCESS_POLICY]
+/// ≈ [PROCESS_MITIGATION_CHILD_PROCESS_POLICY]
 ///
 /// Lock down the process's ability to create child processes.
 ///
@@ -22,6 +22,7 @@ use winapi::um::winnt::*;
 ///     *   [The Job Object](https://github.com/chromium/chromium/blob/main/docs/design/sandbox.md#the-job-object)
 ///     *   [Extra Disable Child Process Creation](https://github.com/chromium/chromium/blob/main/docs/design/sandbox.md#extra-disable-child-process-creation)
 /// *   [Mitigating arbitrary native code execution in Microsoft Edge](https://blogs.windows.com/msedgedev/2017/02/23/mitigating-arbitrary-native-code-execution/)
+///
 #[derive(Clone, Copy, Debug)]
 #[derive(Zeroable)]
 pub struct ChildProcessPolicy {

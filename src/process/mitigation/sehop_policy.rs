@@ -5,7 +5,8 @@ use bytemuck::*;
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-process_mitigation_sehop_policy)\]
-/// ~ PROCESS_MITIGATION_SEHOP_POLICY
+/// ≈ PROCESS_MITIGATION_SEHOP_POLICY
+///
 #[derive(Clone, Copy, Debug)]
 #[derive(Default, Zeroable)]
 pub struct SehopPolicy {

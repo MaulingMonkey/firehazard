@@ -5,7 +5,8 @@ use bytemuck::*;
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_side_channel_isolation_policy)\]
-/// ~ PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY
+/// ≈ PROCESS_MITIGATION_SIDE_CHANNEL_ISOLATION_POLICY
+///
 #[derive(Clone, Copy, Debug)]
 #[derive(Default, Zeroable)]
 pub struct SideChannelIsolationPolicy {

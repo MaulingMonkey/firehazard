@@ -3,11 +3,15 @@ use core::ops::*;
 
 
 
-/// \[[microsoft.com](https://learn.microsoft.com/et-ee/windows/win32/api/winnt/ns-winnt-token_mandatory_policy)\] ~ TOKEN_MANDATORY_POLICY
+/// \[[microsoft.com](https://learn.microsoft.com/et-ee/windows/win32/api/winnt/ns-winnt-token_mandatory_policy)\]
+/// ≈ TOKEN_MANDATORY_POLICY
+///
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(C)] pub struct MandatoryPolicyMask(u32);
 
-/// \[[microsoft.com](https://learn.microsoft.com/et-ee/windows/win32/api/winnt/ns-winnt-token_mandatory_policy)\] ~ TOKEN_MANDATORY_POLICY
+/// \[[microsoft.com](https://learn.microsoft.com/et-ee/windows/win32/api/winnt/ns-winnt-token_mandatory_policy)\]
+/// ≈ TOKEN_MANDATORY_POLICY
+///
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(C)] pub struct MandatoryPolicy { policy: u32 }
 // What's this? MandatoryPolicy straddles the line of policy and flags struct?

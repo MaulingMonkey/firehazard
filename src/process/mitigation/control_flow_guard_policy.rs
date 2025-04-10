@@ -6,7 +6,7 @@ use winapi::um::winnt::*;
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_control_flow_guard_policy)\]
-/// ~ [PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY]
+/// ≈ [PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY]
 ///
 /// Function pointer validation settings.
 ///
@@ -22,6 +22,7 @@ use winapi::um::winnt::*;
 /// ### References
 /// *   [Advancing Windows Security (BlueHat Shanghai 2019)](https://query.prod.cms.rt.microsoft.com/cms/api/am/binary/RE37dMC)
 /// *   [Control-flow integrity](https://en.wikipedia.org/wiki/Control-flow_integrity) (en.wikipedia.org)
+///
 #[derive(Clone, Copy, Debug)]
 #[derive(Zeroable)]
 pub struct ControlFlowGuardPolicy {

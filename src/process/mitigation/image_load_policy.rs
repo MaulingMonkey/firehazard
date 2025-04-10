@@ -6,7 +6,8 @@ use winapi::um::winnt::*;
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_image_load_policy)\]
-/// ~ [PROCESS_MITIGATION_IMAGE_LOAD_POLICY]
+/// ≈ [PROCESS_MITIGATION_IMAGE_LOAD_POLICY]
+///
 #[derive(Clone, Copy, Debug)]
 #[derive(Default, Zeroable)]
 pub struct ImageLoadPolicy {

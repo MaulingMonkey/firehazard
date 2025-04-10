@@ -6,7 +6,7 @@ use winapi::um::winnt::*;
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_dep_policy)\]
-/// ~ [PROCESS_MITIGATION_DEP_POLICY]
+/// ≈ [PROCESS_MITIGATION_DEP_POLICY]
 ///
 /// Data Execution Prevention (DEP) policies, preventing the execution of arbitrary data.
 /// This makes the exploitation of buffer overflows for code execution vulnerabilities more difficult.
@@ -31,6 +31,7 @@ use winapi::um::winnt::*;
 /// ### References
 /// *   [learn.microsoft.com](https://learn.microsoft.com/en-us/windows/win32/memory/data-execution-prevention)
 /// *   [en.wikipedia.org](https://en.wikipedia.org/wiki/Executable_space_protection#Windows)
+///
 #[derive(Clone, Copy, Debug)]
 #[derive(Zeroable)]
 pub struct DepPolicy {

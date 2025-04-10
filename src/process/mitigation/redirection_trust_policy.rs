@@ -5,7 +5,8 @@ use bytemuck::*;
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process-mitigation-redirection-trust-policy)\]
-/// ~ PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY
+/// ≈ PROCESS_MITIGATION_REDIRECTION_TRUST_POLICY
+///
 #[derive(Clone, Copy, Debug)]
 #[derive(Default, Zeroable)]
 pub struct RedirectionTrustPolicy {

@@ -10,7 +10,9 @@ use core::mem::{align_of, size_of};
 
 
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl)\] ~ PACL
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl)\]
+/// ≈ PACL
+///
 #[derive(Clone, Copy)] #[repr(transparent)] pub struct Ptr<'a>(*mut ACL, PhantomData<&'a ACL>);
 
 impl Ptr<'_> {

@@ -6,7 +6,7 @@ use winapi::um::winnt::*;
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_binary_signature_policy)\]
-/// ~ [PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY]
+/// ≈ [PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY]
 ///
 /// Control who must sign binaries/images/dlls in order for them to be loadable.
 /// This presumably can only apply to newly loaded DLLs - existing DLLs and the executable were already loaded.
@@ -14,6 +14,7 @@ use winapi::um::winnt::*;
 /// ### References
 /// *   [chromium/docs/design/sandbox.md: Disable Loading of Unsigned Code (CIG)](https://github.com/chromium/chromium/blob/main/docs/design/sandbox.md#disable-loading-of-unsigned-code-cig)
 /// *   [Mitigating arbitrary native code execution in Microsoft Edge](https://blogs.windows.com/msedgedev/2017/02/23/mitigating-arbitrary-native-code-execution/)
+///
 #[derive(Clone, Copy, Debug)]
 #[derive(Zeroable)]
 pub struct BinarySignaturePolicy {

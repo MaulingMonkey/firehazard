@@ -6,7 +6,8 @@ use winapi::um::winnt::*;
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_dynamic_code_policy)\]
-/// ~ [PROCESS_MITIGATION_DYNAMIC_CODE_POLICY]
+/// ≈ [PROCESS_MITIGATION_DYNAMIC_CODE_POLICY]
+///
 #[derive(Clone, Copy, Debug)]
 #[derive(Default, Zeroable)]
 pub struct DynamicCodePolicy {

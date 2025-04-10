@@ -4,7 +4,7 @@ use winapi::um::winnt::ACE_HEADER;
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header)\]
-/// ~ ACE_HEADER
+/// ≈ ACE_HEADER
 ///
 /// ### ABI Differences
 ///
@@ -12,6 +12,7 @@ use winapi::um::winnt::ACE_HEADER;
 /// > Each ACL and ACE structure begins on a DWORD boundary.
 /// >
 /// > <https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl>
+///
 #[derive(Clone, Copy, Debug)] #[repr(C, align(4))] pub struct Header {
     pub ty:     ace::Type,
     pub flags:  ace::Flags,

@@ -8,7 +8,9 @@ use core::marker::PhantomData;
 
 
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header)\] ~ &ACE_HEADER
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header)\]
+/// ≈ &ACE_HEADER
+///
 #[derive(Clone, Copy)] #[repr(transparent)] pub struct Ptr<'a>(*mut ace::Header, PhantomData<&'a ace::Header>);
 
 impl Ptr<'_> {

@@ -8,7 +8,9 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_appcontainer_information)\] ~ `Box<(TOKEN_APPCONTAINER_INFORMATION, ..)>`
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_appcontainer_information)\]
+/// ≈ `Box<(TOKEN_APPCONTAINER_INFORMATION, ..)>`
+///
 #[repr(transparent)] pub struct BoxTokenAppcontainerInformation(CBox<TOKEN_APPCONTAINER_INFORMATION>);
 
 impl BoxTokenAppcontainerInformation {

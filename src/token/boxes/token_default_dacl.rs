@@ -9,7 +9,8 @@ use core::fmt::{self, Debug, Formatter};
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_default_dacl)\]
-/// ~ `Box<(TOKEN_DEFAULT_DACL, ..)>`
+/// ≈ `Box<(TOKEN_DEFAULT_DACL, ..)>`
+///
 #[repr(transparent)] pub struct BoxTokenDefaultDacl(CBox<TOKEN_DEFAULT_DACL>);
 
 impl BoxTokenDefaultDacl {

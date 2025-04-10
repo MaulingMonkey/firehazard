@@ -11,7 +11,9 @@ use core::ops::Deref;
 
 
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\] ~ Box<(SID, ???), A>
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\]
+/// ≈ Box<(SID, ???), A>
+///
 #[repr(transparent)] pub struct Box<A: Free + Stateless>(*mut SID, PhantomData<A>);
 
 impl<A: Free + Stateless> Debug for Box<A> { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { Debug::fmt(&**self, fmt) } }

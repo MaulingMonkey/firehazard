@@ -10,7 +10,9 @@ use core::mem::{size_of, align_of, size_of_val};
 
 
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\] ~ `Box<(TOKEN_PRIVILEGES, ..)>`
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\]
+/// ≈ `Box<(TOKEN_PRIVILEGES, ..)>`
+///
 #[repr(transparent)] pub struct BoxTokenPrivileges(CBox<TOKEN_PRIVILEGES>);
 
 impl BoxTokenPrivileges {
