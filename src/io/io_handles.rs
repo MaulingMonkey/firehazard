@@ -2,11 +2,8 @@
 use crate::*;
 
 use winapi::ctypes::c_void;
-use winapi::shared::minwindef::FALSE;
-use winapi::um::fileapi::{ReadFile, WriteFile};
 
 use core::marker::PhantomData;
-use core::ptr::null_mut;
 
 #[doc = "use [`firehazard::io::FileNN`] instead"        ] #[deprecated = "use `firehazard::io::FileNN` instead"        ] pub type File         = FileNN;
 #[doc = "use [`firehazard::io::PipeReaderNN`] instead"  ] #[deprecated = "use `firehazard::io::PipeReaderNN` instead"  ] pub type ReadPipe     = PipeReaderNN;
@@ -111,32 +108,18 @@ impl Drop       for FileNN          { fn drop(&mut self) { unsafe { drop_close_h
 impl Drop       for PipeReaderNN    { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 impl Drop       for PipeWriterNN    { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 
-impl io::Read   for FileNN          { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0, buf) } } }
-impl io::Read   for FileHandle<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0, buf) } } }
-impl io::Read   for PipeReaderNN    { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0, buf) } } }
-impl io::Read   for ReadHandle<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0, buf) } } }
-
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-readfile)\] ReadFile
-unsafe fn read_file(h: HANDLENN, buf: &mut [u8]) -> io::Result<usize> {
-    let mut read = 0;
-    Error::get_last_if(FALSE == unsafe { ReadFile(h.as_ptr(), buf.as_mut_ptr().cast(), buf.len().try_into().unwrap_or(!0u32), &mut read, null_mut()) })?;
-    Ok(usize::from32(read))
-}
+impl io::Read   for FileNN          { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0.as_ptr(), buf, None) } } }
+impl io::Read   for FileHandle<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0.as_ptr(), buf, None) } } }
+impl io::Read   for PipeReaderNN    { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0.as_ptr(), buf, None) } } }
+impl io::Read   for ReadHandle<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { read_file(self.0.as_ptr(), buf, None) } } }
 
 // noop flush sane: https://github.com/rust-lang/rust/blob/c2110769cd58cd3b0c31f308c8cfeab5e19340fd/library/std/src/sys/fs/windows.rs#L604-L606
-impl io::Write  for FileNN          { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
-impl io::Write  for FileHandle<'_>  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl io::Write  for FileNN          { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0.as_ptr(), buf, None) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl io::Write  for FileHandle<'_>  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0.as_ptr(), buf, None) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
 
 // noop flush sane: https://github.com/rust-lang/rust/blob/c2110769cd58cd3b0c31f308c8cfeab5e19340fd/library/std/src/io/pipe.rs#L271-L274
-impl io::Write  for PipeWriterNN    { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
-impl io::Write  for WriteHandle<'_> { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0, buf) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
-
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-writefile)\] WriteFile
-unsafe fn write_file(h: HANDLENN, buf: &[u8]) -> io::Result<usize> {
-    let mut written = 0;
-    Error::get_last_if(FALSE == unsafe { WriteFile(h.as_ptr(), buf.as_ptr().cast(), buf.len().try_into().unwrap_or(!0u32), &mut written, null_mut()) })?;
-    Ok(usize::from32(written))
-}
+impl io::Write  for PipeWriterNN    { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0.as_ptr(), buf, None) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl io::Write  for WriteHandle<'_> { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { write_file(self.0.as_ptr(), buf, None) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
 
 impl crate::os::windows::io::FromRawHandle for FileNN         { unsafe fn from_raw_handle(handle: crate::os::windows::io::RawHandle) -> Self { Self(HANDLENN::new(handle.cast()).expect("undefined behavior: null is not an open, owned handle")) } }
 impl crate::os::windows::io::FromRawHandle for PipeReaderNN   { unsafe fn from_raw_handle(handle: crate::os::windows::io::RawHandle) -> Self { Self(HANDLENN::new(handle.cast()).expect("undefined behavior: null is not an open, owned handle")) } }

@@ -36,8 +36,10 @@ pub(crate) mod funcs {
     // TODO: GetNamedPipeServerSessionId
     // TODO: ImpersonateNamedPipeClient
     // TODO: PeekNamedPipe
+    include!("funcs/read_file.rs");
     // TODO: SetNamedPipeHandleState
     // TODO: TransactNamedPipe
     // TODO: WaitNamedPipeA
     // TODO: WaitNamedPipeW
+    include!("funcs/write_file.rs");
 }
