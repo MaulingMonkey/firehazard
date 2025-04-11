@@ -31,7 +31,8 @@ pub fn close_handle(object: impl Into<firehazard::handle::Owned>) -> Result<(), 
 ///
 #[track_caller] pub(crate) unsafe fn drop_close_handle_nn<T>(this: &mut impl firehazard::AsLocalHandleNN<T>) {
     let handle = this.as_handle_nn().as_ptr().cast();
-    assert!(0 != unsafe { winapi::um::handleapi::CloseHandle(handle) }, "CloseHandle(0x{:X}) failed with GetLastError()={:?}", handle as usize, firehazard::Error::get_last());
+    if 0 != unsafe { winapi::um::handleapi::CloseHandle(handle) } { return }
+    panic!("CloseHandle(0x{:X}) failed with GetLastError()={:?}", handle as usize, firehazard::Error::get_last());
 }
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
