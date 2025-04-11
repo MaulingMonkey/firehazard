@@ -30,14 +30,14 @@ mod values {
 
 pub use funcs::*;
 pub(crate) mod funcs {
-    include!("funcs/create_restricted_token.rs");
-    include!("funcs/duplicate_token_ex.rs");
-    include!("funcs/get_current_x_token.rs");
+    include!(r"funcs\create_restricted_token.rs");
+    include!(r"funcs\duplicate_token_ex.rs");
+    include!(r"funcs\get_current_x_token.rs");
     pub mod get_token_information;
-    include!("funcs/is_token_restricted.rs");
-    include!("funcs/open_process_token.rs");
-    include!("funcs/open_thread_token.rs");
-    include!("funcs/revert_to_self.rs");
-    include!("funcs/set_thread_token.rs");
+    include!(r"funcs\is_token_restricted.rs");
+    include!(r"funcs\open_process_token.rs");
+    include!(r"funcs\open_thread_token.rs");
+    include!(r"funcs\revert_to_self.rs");
+    include!(r"funcs\set_thread_token.rs");
     pub mod set_token_information;
 }

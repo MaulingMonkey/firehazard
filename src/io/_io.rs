@@ -22,9 +22,9 @@ pub(crate) mod funcs {
     // TODO: ConnectNamedPipe
     // TODO: CreateNamedPipeA
     // TODO: CreateNamedPipeW
-    include!("funcs/create_pipe.rs");
+    include!(r"funcs\create_pipe.rs");
     // TODO: DisconnectNamedPipe
-    include!("funcs/get_final_path_name_by_handle.rs");
+    include!(r"funcs\get_final_path_name_by_handle.rs");
     // TODO: GetNamedPipeClientComputerNameA
     // TODO: GetNamedPipeClientComputerNameW
     // TODO: GetNamedPipeClientProcessId
@@ -36,11 +36,11 @@ pub(crate) mod funcs {
     // TODO: GetNamedPipeServerSessionId
     // TODO: ImpersonateNamedPipeClient
     // TODO: PeekNamedPipe
-    include!("funcs/read_file.rs");
-    include!("funcs/set_file_pointer.rs");
+    include!(r"funcs\read_file.rs");
+    include!(r"funcs\set_file_pointer.rs");
     // TODO: SetNamedPipeHandleState
     // TODO: TransactNamedPipe
     // TODO: WaitNamedPipeA
     // TODO: WaitNamedPipeW
-    include!("funcs/write_file.rs");
+    include!(r"funcs\write_file.rs");
 }
