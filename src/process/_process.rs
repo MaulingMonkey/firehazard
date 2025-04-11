@@ -9,9 +9,9 @@ mod process_information;                pub use process_information::*;
 mod process_startup_info;               pub use process_startup_info::*;
 mod process_thread_attribute_list;      pub use process_thread_attribute_list::*;
 
-#[path = "creation/_creation.rs"]       pub mod creation;
-#[path = "mitigation/_mitigation.rs"]   pub mod mitigation;
-#[path = "process_environment.rs"]      pub mod environment;
+#[path = r"creation\_creation.rs"]      pub mod creation;
+#[path = r"mitigation\_mitigation.rs"]  pub mod mitigation;
+#[path = r"process_environment.rs"]     pub mod environment;
 
 /// DWORD / u32 process identifier.  In practice, only 16 bits are generally used - reuse / collisions can occur quickly.
 pub type Id = u32;
