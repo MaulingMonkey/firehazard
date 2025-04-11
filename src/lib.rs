@@ -11,6 +11,11 @@
 #[doc(hidden)] pub extern crate ialloc;
 #[doc(hidden)] pub extern crate winapi;
 
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
+/// A raw **N**on **N**ull Handle
+pub type HANDLENN = core::ptr::NonNull<winapi::ctypes::c_void>;
+pub use winapi::shared::ntdef::HANDLE;
+
 #[path = r"macros\_macros.rs"] #[macro_use] mod macros;
 #[path = r"access\_access.rs"]              pub mod access;         //#[doc(hidden)] pub use access::constants::*;
 #[path = r"ace\_ace.rs"]                    pub mod ace;            //#[doc(hidden)] pub use ace::funcs::*;

@@ -89,5 +89,15 @@
 
 #[path = "handle_handles.rs"]   mod handles;            pub use handles::*;
 #[path = "handle_flags.rs"]     mod flags;              pub use flags::*;
-#[path = "handle_funcs.rs"]     pub(crate) mod funcs;   pub use funcs::*;
 #[path = "handle_traits.rs"]    pub(crate) mod traits;  pub use traits::*;
+
+pub use funcs::*;
+pub mod funcs {
+    use crate as firehazard;
+    include!(r"funcs\close_handle.rs");
+    include!(r"funcs\compare_object_handles.rs");
+    include!(r"funcs\duplicate_handle.rs");
+    include!(r"funcs\get_handle_information.rs");
+    include!(r"funcs\set_handle_information.rs");
+}
+include!(r"funcs\debug.rs"); // XXX: don't re-export at crate root
