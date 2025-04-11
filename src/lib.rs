@@ -20,6 +20,7 @@
 #[path = "capability/_capability.rs"]   pub mod capability;
 #[path = "debug/_debug.rs"]             pub mod debug;          #[doc(hidden)] pub use debug::funcs::*;
 #[path = "desktop/_desktop.rs"]         pub mod desktop;        #[doc(hidden)] pub use desktop::funcs::*;
+#[path = "file/_file.rs"]               pub mod file;
 #[path = "handle/_handle.rs"]           pub mod handle;         #[doc(hidden)] pub use handle::{funcs::*, traits::*};
 #[path = "io/_io.rs"]                   pub mod io;             #[doc(hidden)] pub use io::funcs::*;
 #[path = "job/_job.rs"]                 pub mod job;            #[doc(hidden)] pub use job::funcs::*;
@@ -32,6 +33,7 @@
 #[path = "thread/_thread.rs"]           pub mod thread;         #[doc(hidden)] pub use thread::funcs::*;
 #[path = "token/_token.rs"]             pub mod token;          #[doc(hidden)] pub use token::funcs::*;
 #[path = "util/_util.rs"]               mod util;               pub(crate) use util::*;
+#[path = "volume/_volume.rs"]           pub mod volume;
 #[path = "winsta/_winsta.rs"]           pub mod winsta;         #[doc(hidden)] pub use winsta::funcs::*;
 
 mod error;                              pub use error::*;

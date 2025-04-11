@@ -83,7 +83,7 @@ pub fn debug_loop(
             },
             LoadDll(event) => {
                 let hfile = unsafe { io::FileHandle::from_raw(event.hFile) }.unwrap();
-                let image_name = get_final_path_name_by_handle(hfile, 0).unwrap();
+                let image_name = get_final_path_name_by_handle(&hfile, 0).unwrap();
 
                 println!("[{dwProcessId}:{dwThreadId}] dll loaded: {image_name:?}");
                 let _prev_name = dlls.insert(event.lpBaseOfDll, image_name);
