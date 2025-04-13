@@ -83,7 +83,7 @@ tests! {
         assert_eq!(0, unsafe { GetLastError() });
     }
 
-    #[test] #[strict_handle_check_exception = 0] // no exception
+    #[test] #[isolate] #[strict_handle_check_exception = 0] // no exception
     fn close_handle_dangling() {
         use std::os::windows::io::AsRawHandle;
         let file = std::fs::File::open("Readme.md").unwrap();
@@ -93,7 +93,7 @@ tests! {
         assert_eq!(ERROR_INVALID_HANDLE, unsafe { GetLastError() });
     }
 
-    #[test] #[strict_handle_check_exception = 0] // no exception
+    #[test] #[isolate] #[strict_handle_check_exception = 0] // no exception
     fn close_handle_never_valid() {
         assert!(0 == unsafe { CloseHandle(0x12345678_usize as *mut _) });
         assert_eq!(ERROR_INVALID_HANDLE, unsafe { GetLastError() });

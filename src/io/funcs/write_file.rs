@@ -45,13 +45,13 @@ tests! {
         assert_eq!(r, Err(Error(ERROR_INVALID_HANDLE)));
     }
 
-    #[test] #[strict_handle_check_exception = 0xC0000008] // STATUS_INVALID_HANDLE
+    #[test] #[isolate] #[strict_handle_check_exception = 0xC0000008] // STATUS_INVALID_HANDLE
     fn write_file_never_valid() {
         let r = unsafe { write_file(&crate::handle::invalid::never_valid(), &[0u8; 1024], None) };
         assert_eq!(r, Err(Error(ERROR_INVALID_HANDLE)));
     }
 
-    #[test] #[strict_handle_check_exception = 0xC0000008] // STATUS_INVALID_HANDLE
+    #[test] #[isolate] #[strict_handle_check_exception = 0xC0000008] // STATUS_INVALID_HANDLE
     fn write_file_dangling() {
         let r = unsafe { write_file(&crate::handle::invalid::dangling(), &[0u8; 1024], None) };
         assert_eq!(r, Err(Error(ERROR_INVALID_HANDLE)));

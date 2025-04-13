@@ -115,70 +115,72 @@ pub fn get_final_path_name_by_handle(handle: &impl firehazard::AsLocalHandle, fl
 
 
 
-#[cfg(std)] #[test] fn get_final_path_name_by_handle_null() {
-    assert_eq!(
-        get_final_path_name_by_handle(&crate::handle::invalid::null(), 0),
-        Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)),
-    );
-}
-
-#[cfg(std)] #[test] fn get_final_path_name_by_handle_invalid_handle_value() {
-    assert_eq!(
-        get_final_path_name_by_handle(&crate::handle::invalid::invalid_value(), 0),
-        Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)),
-    );
-}
-
-#[cfg(std)] #[test] fn get_final_path_name_by_handle_bad_handle_value() {
-    assert_eq!(
-        get_final_path_name_by_handle(&crate::handle::invalid::never_valid(), 0),
-        Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)),
-    );
-}
-
-#[cfg(std)] #[test] fn get_final_path_name_by_handle_dangling() {
-    assert_eq!(
-        get_final_path_name_by_handle(&crate::handle::invalid::dangling(), 0),
-        Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)),
-    );
-}
-
-#[cfg(std)] #[test] fn get_final_path_name_by_handle_bad_flags() {
-    let file = std::fs::File::open("Readme.md").unwrap();
-    get_final_path_name_by_handle(&file, 0).unwrap(); // good flags
-    assert_eq!(
-        get_final_path_name_by_handle(&file, !0),
-        Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_PARAMETER))
-    );
-}
-
-#[cfg(std)] #[test] fn get_final_path_name_by_handle_anonymous_pipe() {
-    let (read, write) = firehazard::create_pipe(None, 0).unwrap();
-
-    for flags in [0, 1, 2, 4, 8, 8|1, 8|2, 8|4] {
+tests! {
+    #[test] fn get_final_path_name_by_handle_null() {
         assert_eq!(
-            get_final_path_name_by_handle(&read, flags),
-            Err(firehazard::Error(winapi::shared::winerror::ERROR_BAD_PATHNAME)),
-        );
-
-        assert_eq!(
-            get_final_path_name_by_handle(&write, flags),
-            Err(firehazard::Error(winapi::shared::winerror::ERROR_BAD_PATHNAME)),
+            get_final_path_name_by_handle(&crate::handle::invalid::null(), 0),
+            Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)),
         );
     }
-}
 
-#[cfg(std)] #[test] fn get_final_path_name_by_handle_job() {
-    use firehazard::abistr::cstr16;
-    let anon_job  = firehazard::create_job_object_w(None, ()).unwrap();
-    let named_job = firehazard::create_job_object_w(None, cstr16!("Local/firehazard/get_final_path_name_by_handle_job")).unwrap();
+    #[test] fn get_final_path_name_by_handle_invalid_handle_value() {
+        assert_eq!(
+            get_final_path_name_by_handle(&crate::handle::invalid::invalid_value(), 0),
+            Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)),
+        );
+    }
 
-    for job in [&anon_job, &named_job] {
+    #[test] #[isolate] fn get_final_path_name_by_handle_bad_handle_value() {
+        assert_eq!(
+            get_final_path_name_by_handle(&crate::handle::invalid::never_valid(), 0),
+            Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)),
+        );
+    }
+
+    #[test] #[isolate] fn get_final_path_name_by_handle_dangling() {
+        assert_eq!(
+            get_final_path_name_by_handle(&crate::handle::invalid::dangling(), 0),
+            Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)),
+        );
+    }
+
+    #[test] fn get_final_path_name_by_handle_bad_flags() {
+        let file = std::fs::File::open("Readme.md").unwrap();
+        get_final_path_name_by_handle(&file, 0).unwrap(); // good flags
+        assert_eq!(
+            get_final_path_name_by_handle(&file, !0),
+            Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_PARAMETER))
+        );
+    }
+
+    #[test] fn get_final_path_name_by_handle_anonymous_pipe() {
+        let (read, write) = firehazard::create_pipe(None, 0).unwrap();
+
         for flags in [0, 1, 2, 4, 8, 8|1, 8|2, 8|4] {
             assert_eq!(
-                get_final_path_name_by_handle(job, flags),
-                Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)),
+                get_final_path_name_by_handle(&read, flags),
+                Err(firehazard::Error(winapi::shared::winerror::ERROR_BAD_PATHNAME)),
             );
+
+            assert_eq!(
+                get_final_path_name_by_handle(&write, flags),
+                Err(firehazard::Error(winapi::shared::winerror::ERROR_BAD_PATHNAME)),
+            );
+        }
+    }
+
+    #[test] fn get_final_path_name_by_handle_job() {
+        use firehazard::abistr::cstr16;
+        let anon_job  = firehazard::create_job_object_w(None, ()).unwrap();
+        let named_job = firehazard::create_job_object_w(None, cstr16!("Local/firehazard/get_final_path_name_by_handle_job")).unwrap();
+
+        for job in [&anon_job, &named_job] {
+            for flags in [0, 1, 2, 4, 8, 8|1, 8|2, 8|4] {
+                assert_eq!(
+                    get_final_path_name_by_handle(job, flags),
+                    Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)),
+                );
+            }
         }
     }
 }
