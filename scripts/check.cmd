@@ -1,9 +1,7 @@
 @pushd "%~dp0.." && setlocal
 
 @if "%~1" EQU "src\appcontainer\appcontainer_funcs.rs" goto :test
-@if "%~1" EQU "src\process\mitigation\strict_handle_check_policy.rs" goto :strict_handle_check_policy
 @if "%~1" EQU "crates\no-std\examples\trivial.rs" goto :trivial
-@if "%~1" EQU "crates\testing\examples\strict_handle_check_policy.rs" goto :strict_handle_check_policy
 @if "%~1" EQU "examples\spam_dbg.rs" goto :spam_dbg
 
 @cargo check --workspace --all-targets --all-features
@@ -29,8 +27,4 @@ cargo          build --example trivial --release
 
 :spam_dbg
 cargo run --example spam_dbg
-@goto :die
-
-:strict_handle_check_policy
-cargo run -p testing --example strict_handle_check_policy
 @goto :die

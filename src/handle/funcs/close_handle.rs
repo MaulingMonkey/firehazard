@@ -18,6 +18,16 @@
 /// assert_eq!(ERROR_INVALID_HANDLE, e);
 /// # }
 /// ```
+///
+/// ### Errors
+///
+/// | `handle`                  | Error <br> (via GetLastError)                 | Exception <br> [(Strict Handle Checks)](crate::process::mitigation::StrictHandleCheckPolicy)  |
+/// | ------------------------- |:---------------------------------------------:|:---------------------------------------------------------------------------------------------:|
+/// | null                      | ERROR_INVALID_HANDLE                          | <span style="opacity: 50%">None</span>                                                        |
+/// | INVALID_HANDLE_VALUE      | <span style="opacity: 50%">Success!</span>    | <span style="opacity: 50%">None</span>                                                        |
+/// | closed/dangling           | ERROR_INVALID_HANDLE                          | <span style="opacity: 50%">None</span>                                                        |
+/// | never valid               | ERROR_INVALID_HANDLE                          | <span style="opacity: 50%">None</span>                                                        |
+///
 pub fn close_handle(object: impl Into<firehazard::handle::Owned>) -> Result<(), firehazard::Error> {
     use firehazard::*;
 
@@ -51,4 +61,41 @@ pub unsafe fn close_remote_handle(process: &firehazard::process::Handle, handle:
         false as _,
         winapi::um::winnt::DUPLICATE_CLOSE_SOURCE
     )})
+}
+
+
+
+tests! {
+    use winapi::shared::winerror::ERROR_INVALID_HANDLE;
+    use winapi::um::handleapi::{CloseHandle, INVALID_HANDLE_VALUE};
+    use winapi::um::errhandlingapi::{GetLastError, SetLastError};
+
+    #[test] #[strict_handle_check_exception = 0] // no exception
+    fn close_handle_null() {
+        assert!(0 == unsafe { CloseHandle(core::ptr::null_mut()) });
+        assert_eq!(ERROR_INVALID_HANDLE, unsafe { GetLastError() });
+    }
+
+    #[test] #[strict_handle_check_exception = 0] // no exception
+    fn close_handle_invalid() {
+        unsafe { SetLastError(0) }; // clear error - the next call "succeeds"!
+        assert!(0 != unsafe { CloseHandle(INVALID_HANDLE_VALUE) });
+        assert_eq!(0, unsafe { GetLastError() });
+    }
+
+    #[test] #[strict_handle_check_exception = 0] // no exception
+    fn close_handle_dangling() {
+        use std::os::windows::io::AsRawHandle;
+        let file = std::fs::File::open("Readme.md").unwrap();
+        let handle = file.as_raw_handle();
+        drop(file);
+        assert!(0 == unsafe { CloseHandle(handle.cast()) });
+        assert_eq!(ERROR_INVALID_HANDLE, unsafe { GetLastError() });
+    }
+
+    #[test] #[strict_handle_check_exception = 0] // no exception
+    fn close_handle_never_valid() {
+        assert!(0 == unsafe { CloseHandle(0x12345678_usize as *mut _) });
+        assert_eq!(ERROR_INVALID_HANDLE, unsafe { GetLastError() });
+    }
 }

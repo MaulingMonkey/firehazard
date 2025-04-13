@@ -3,13 +3,13 @@
 ///
 /// ### Errors
 ///
-/// | `handle`                  | Error |
-/// | --------------------------| ------|
-/// | null                      | [Err]\(≈ ERROR_INVALID_HANDLE\)
-/// | INVALID_HANDLE_VALUE      | [Err]\(≈ ERROR_INVALID_HANDLE\)
-/// | closed/dangling           | [Err]\(≈ ERROR_INVALID_HANDLE\) or, if [strict handle checks](crate::process::mitigation::StrictHandleCheckPolicy) are enabled, an exception.
-/// | never valid               | [Err]\(≈ ERROR_INVALID_HANDLE\) or, if [strict handle checks](crate::process::mitigation::StrictHandleCheckPolicy) are enabled, an exception.
-/// | unwriteable               | [Err]\(≈ ERROR_ACCESS_DENIED\)
+/// | `handle`                  | Error <br> (via GetLastError)                 | Exception <br> [(Strict Handle Checks)](crate::process::mitigation::StrictHandleCheckPolicy)  |
+/// | ------------------------- |:---------------------------------------------:|:---------------------------------------------------------------------------------------------:|
+/// | null                      | ERROR_INVALID_HANDLE                          | <span style="opacity: 50%">None</span>                                                        |
+/// | INVALID_HANDLE_VALUE      | ERROR_INVALID_HANDLE                          | <span style="opacity: 50%">None</span>                                                        |
+/// | closed/dangling           | ERROR_INVALID_HANDLE                          | STATUS_INVALID_HANDLE                                                                         |
+/// | never valid               | ERROR_INVALID_HANDLE                          | STATUS_INVALID_HANDLE                                                                         |
+/// | unwriteable               | ERROR_ACCESS_DENIED                           | <span style="opacity: 50%">None</span>                                                        |
 ///
 pub(crate) unsafe fn write_file(handle: &impl firehazard::AsLocalHandle, buffer: &[u8], overlapped: Option<core::convert::Infallible>) -> Result<u32, firehazard::Error> {
     let mut written = 0;
@@ -23,33 +23,47 @@ pub(crate) unsafe fn write_file(handle: &impl firehazard::AsLocalHandle, buffer:
     Ok(written)
 }
 
-// TODO: examples
+// TODO: ### Examples
+// TODO: WriteFileEx
+// TODO: WriteFileGather
 
-#[test] fn write_file_null() {
-    let r = unsafe { write_file(&crate::handle::invalid::null(), &[0u8; 1024], None) };
-    assert_eq!(r, Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)));
-}
 
-#[test] fn write_file_invalid_handle_value() {
-    let r = unsafe { write_file(&crate::handle::invalid::invalid_value(), &[0u8; 1024], None) };
-    assert_eq!(r, Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)));
-}
 
-#[test] fn write_file_bad_handle_value() {
-    let r = unsafe { write_file(&crate::handle::invalid::never_valid(), &[0u8; 1024], None) };
-    assert_eq!(r, Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)));
-}
+tests! {
+    use firehazard::*;
+    use winapi::shared::winerror::{ERROR_ACCESS_DENIED, ERROR_INVALID_HANDLE};
 
-#[cfg(std)] #[test] fn write_file_dangling() {
-    let r = unsafe { write_file(&crate::handle::invalid::dangling(), &[0u8; 1024], None) };
-    assert_eq!(r, Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)));
-}
+    #[test] #[strict_handle_check_exception = 0] // no exception
+    fn write_file_null() {
+        let r = unsafe { write_file(&crate::handle::invalid::null(), &[0u8; 1024], None) };
+        assert_eq!(r, Err(Error(ERROR_INVALID_HANDLE)));
+    }
 
-#[cfg(std)] #[test] fn write_file_not_writeable() {
-    let unwriteable = std::fs::File::open("Readme.md").unwrap();
-    let r = unsafe { write_file(&unwriteable, &[0u8; 1024], None) };
-    drop(unwriteable);
-    assert_eq!(r, Err(firehazard::Error(winapi::shared::winerror::ERROR_ACCESS_DENIED)));
+    #[test] #[strict_handle_check_exception = 0] // no exception
+    fn write_file_invalid_handle_value() {
+        let r = unsafe { write_file(&crate::handle::invalid::invalid_value(), &[0u8; 1024], None) };
+        assert_eq!(r, Err(Error(ERROR_INVALID_HANDLE)));
+    }
+
+    #[test] #[strict_handle_check_exception = 0xC0000008] // STATUS_INVALID_HANDLE
+    fn write_file_never_valid() {
+        let r = unsafe { write_file(&crate::handle::invalid::never_valid(), &[0u8; 1024], None) };
+        assert_eq!(r, Err(Error(ERROR_INVALID_HANDLE)));
+    }
+
+    #[test] #[strict_handle_check_exception = 0xC0000008] // STATUS_INVALID_HANDLE
+    fn write_file_dangling() {
+        let r = unsafe { write_file(&crate::handle::invalid::dangling(), &[0u8; 1024], None) };
+        assert_eq!(r, Err(Error(ERROR_INVALID_HANDLE)));
+    }
+
+    #[test] #[strict_handle_check_exception = 0] // no exception
+    fn write_file_not_writeable() {
+        let unwriteable = std::fs::File::open("Readme.md").unwrap();
+        let r = unsafe { write_file(&unwriteable, &[0u8; 1024], None) };
+        drop(unwriteable);
+        assert_eq!(r, Err(Error(ERROR_ACCESS_DENIED)));
+    }
 }
 
 #[ignore] // XXX: This test takes a good minute
@@ -69,6 +83,3 @@ pub(crate) unsafe fn write_file(handle: &impl firehazard::AsLocalHandle, buffer:
     assert_eq!(Ok(0),  unsafe { set_file_pointer_ex(&file, io::SeekFrom::Start(0)) });
     assert_eq!(Ok(!0), unsafe { read_file(&file, &mut huge, None) });
 }
-
-// TODO: WriteFileEx
-// TODO: WriteFileGather

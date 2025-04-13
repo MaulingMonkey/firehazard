@@ -1,6 +1,7 @@
 mod bits32;                     pub(crate) use bits32::*;
 pub(crate) mod partition;
 mod provenance;                 pub(crate) use provenance::*;
+pub(crate) mod test;
 mod uninit;                     pub(crate) use uninit::*;
 
 #[allow(dead_code)] // XXX: Unlike the pending nightly fn, this acquires safety by sacrificing `?Sized` support.
