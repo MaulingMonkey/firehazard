@@ -25,7 +25,7 @@ pub fn one(target: settings::Target) {
     let exe = &target.exe;
     let mut command_line = exe_to_command_line_0(exe);
 
-    let (_read, write) = io::create_pipe(Some(&security::Attributes::new(None, true)), 0).unwrap();
+    let (_read, write) = create_pipe(Some(&security::Attributes::new(None, true)), 0).unwrap();
     let job = job::create();
     let attribute_list = attribute::List::new(&target, &job, vec![(&write).into()]);
     let mut si = process::StartupInfoExW::default();

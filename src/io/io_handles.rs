@@ -5,9 +5,9 @@ use winapi::ctypes::c_void;
 
 use core::marker::PhantomData;
 
-#[doc = "use [`firehazard::io::FileNN`] instead"        ] #[deprecated = "use `firehazard::io::FileNN` instead"        ] pub type File         = FileNN;
-#[doc = "use [`firehazard::io::PipeReaderNN`] instead"  ] #[deprecated = "use `firehazard::io::PipeReaderNN` instead"  ] pub type ReadPipe     = PipeReaderNN;
-#[doc = "use [`firehazard::io::PipeWriterNN`] instead"  ] #[deprecated = "use `firehazard::io::PipeWriterNN` instead"  ] pub type WritePipe    = PipeWriterNN;
+#[doc(hidden)] #[deprecated = "use `firehazard::io::FileNN` instead"        ] pub type File         = FileNN;
+#[doc(hidden)] #[deprecated = "use `firehazard::io::PipeReaderNN` instead"  ] pub type ReadPipe     = PipeReaderNN;
+#[doc(hidden)] #[deprecated = "use `firehazard::io::PipeWriterNN` instead"  ] pub type WritePipe    = PipeWriterNN;
 
 
 
@@ -29,7 +29,7 @@ use core::marker::PhantomData;
 /// *   [`firehazard::handle::Owned`] &mdash; untyped
 /// *   [`firehazard::io::ReadHandle`] &mdash; borrowed instead of owned
 ///
-#[repr(transparent)] pub struct PipeReaderNN(pub(super) HANDLENN);
+#[repr(transparent)] pub struct PipeReaderNN(pub(crate) HANDLENN);
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned anonymous non-null pipe `HANDLE` ([io::Write]able end)
 ///
@@ -39,7 +39,7 @@ use core::marker::PhantomData;
 /// *   [`firehazard::handle::Owned`] &mdash; untyped
 /// *   [`firehazard::io::WriteHandle`] &mdash; borrowed instead of owned
 ///
-#[repr(transparent)] pub struct PipeWriterNN(pub(super) HANDLENN);
+#[repr(transparent)] pub struct PipeWriterNN(pub(crate) HANDLENN);
 
 
 
