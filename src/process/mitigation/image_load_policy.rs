@@ -12,9 +12,11 @@ use winapi::um::winnt::*;
 #[derive(Clone, Copy, Debug)]
 #[derive(Default, Zeroable)]
 pub struct ImageLoadPolicy {
-    pub no_remote_images:               bool,
-    pub no_low_mandatory_label_images:  bool,
-    pub prefer_system32_images:         bool,
+    pub no_remote_images:                       bool,
+    pub no_low_mandatory_label_images:          bool,
+    pub prefer_system32_images:                 bool,
+    pub audit_no_remote_images:                 bool,
+    pub audit_no_low_mandatory_label_images:    bool,
     #[doc(hidden)] pub _reserved_flags: ()
 }
 
@@ -41,9 +43,13 @@ impl SetPolicy for ImageLoadPolicy {
 impl From<ImageLoadPolicy> for PROCESS_MITIGATION_IMAGE_LOAD_POLICY {
     fn from(i: ImageLoadPolicy) -> Self {
         let mut o = Self::default();
-        o.set_NoRemoteImages            (i.no_remote_images                 as u32);
-        o.set_NoLowMandatoryLabelImages (i.no_low_mandatory_label_images    as u32);
-        o.set_PreferSystem32Images      (i.prefer_system32_images           as u32);
+        o.Flags = 0
+            | ((i.no_remote_images                      as u32) << 0)
+            | ((i.no_low_mandatory_label_images         as u32) << 1)
+            | ((i.prefer_system32_images                as u32) << 2)
+            | ((i.audit_no_remote_images                as u32) << 3)
+            | ((i.audit_no_low_mandatory_label_images   as u32) << 4)
+            ;
         o
     }
 }
@@ -51,9 +57,11 @@ impl From<ImageLoadPolicy> for PROCESS_MITIGATION_IMAGE_LOAD_POLICY {
 impl From<PROCESS_MITIGATION_IMAGE_LOAD_POLICY> for ImageLoadPolicy {
     fn from(i: PROCESS_MITIGATION_IMAGE_LOAD_POLICY) -> Self {
         let mut o = Self::default();
-        o.no_remote_images              = i.NoRemoteImages()            != 0;
-        o.no_low_mandatory_label_images = i.NoLowMandatoryLabelImages() != 0;
-        o.prefer_system32_images        = i.PreferSystem32Images()      != 0;
+        o.no_remote_images                      = (i.Flags & (1 << 0)) != 0;
+        o.no_low_mandatory_label_images         = (i.Flags & (1 << 1)) != 0;
+        o.prefer_system32_images                = (i.Flags & (1 << 2)) != 0;
+        o.audit_no_remote_images                = (i.Flags & (1 << 3)) != 0;
+        o.audit_no_low_mandatory_label_images   = (i.Flags & (1 << 4)) != 0;
         o
     }
 }

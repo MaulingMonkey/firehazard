@@ -12,9 +12,10 @@ use winapi::um::winnt::*;
 #[derive(Clone, Copy, Debug)]
 #[derive(Default, Zeroable)]
 pub struct DynamicCodePolicy {
-    pub prohibit_dynamic_code:  bool,
-    pub allow_thread_opt_out:   bool,
-    pub allow_remote_downgrade: bool,
+    pub prohibit_dynamic_code:              bool,
+    pub allow_thread_opt_out:               bool,
+    pub allow_remote_downgrade:             bool,
+    pub audit_prohibit_dynamic_code:        bool,
     #[doc(hidden)] pub _reserved_flags: ()
 }
 
@@ -41,9 +42,12 @@ impl SetPolicy for DynamicCodePolicy {
 impl From<DynamicCodePolicy> for PROCESS_MITIGATION_DYNAMIC_CODE_POLICY {
     fn from(i: DynamicCodePolicy) -> Self {
         let mut o = Self::default();
-        o.set_ProhibitDynamicCode   (i.prohibit_dynamic_code    as u32);
-        o.set_AllowThreadOptOut     (i.allow_thread_opt_out     as u32);
-        o.set_AllowRemoteDowngrade  (i.allow_remote_downgrade   as u32);
+        o.Flags = 0
+            | ((i.prohibit_dynamic_code                 as u32) << 0)
+            | ((i.allow_thread_opt_out                  as u32) << 1)
+            | ((i.allow_remote_downgrade                as u32) << 2)
+            | ((i.audit_prohibit_dynamic_code           as u32) << 3)
+            ;
         o
     }
 }
@@ -51,9 +55,10 @@ impl From<DynamicCodePolicy> for PROCESS_MITIGATION_DYNAMIC_CODE_POLICY {
 impl From<PROCESS_MITIGATION_DYNAMIC_CODE_POLICY> for DynamicCodePolicy {
     fn from(i: PROCESS_MITIGATION_DYNAMIC_CODE_POLICY) -> Self {
         let mut o = Self::default();
-        o.prohibit_dynamic_code     = i.ProhibitDynamicCode()   != 0;
-        o.allow_thread_opt_out      = i.AllowThreadOptOut()     != 0;
-        o.allow_remote_downgrade    = i.AllowRemoteDowngrade()  != 0;
+        o.prohibit_dynamic_code                 = (i.Flags & (1 << 0)) != 0;
+        o.allow_thread_opt_out                  = (i.Flags & (1 << 1)) != 0;
+        o.allow_remote_downgrade                = (i.Flags & (1 << 2)) != 0;
+        o.audit_prohibit_dynamic_code           = (i.Flags & (1 << 3)) != 0;
         o
     }
 }

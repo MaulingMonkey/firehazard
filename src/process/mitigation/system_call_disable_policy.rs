@@ -12,7 +12,8 @@ use winapi::um::winnt::*;
 #[derive(Clone, Copy, Debug)]
 #[derive(Default, Zeroable)]
 pub struct SystemCallDisablePolicy {
-    pub disallow_win32k_system_calls: bool,
+    pub disallow_win32k_system_calls:           bool,
+    pub audit_disallow_win32k_system_calls:     bool,
     #[doc(hidden)] pub _reserved_flags: ()
 }
 
@@ -39,7 +40,10 @@ impl SetPolicy for SystemCallDisablePolicy {
 impl From<SystemCallDisablePolicy> for PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY {
     fn from(i: SystemCallDisablePolicy) -> Self {
         let mut o = Self::default();
-        o.set_DisallowWin32kSystemCalls(i.disallow_win32k_system_calls as u32);
+        o.Flags = 0
+            | ((i.disallow_win32k_system_calls          as u32) << 0)
+            | ((i.audit_disallow_win32k_system_calls    as u32) << 1)
+            ;
         o
     }
 }
@@ -47,7 +51,8 @@ impl From<SystemCallDisablePolicy> for PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_PO
 impl From<PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY> for SystemCallDisablePolicy {
     fn from(i: PROCESS_MITIGATION_SYSTEM_CALL_DISABLE_POLICY) -> Self {
         let mut o = Self::default();
-        o.disallow_win32k_system_calls = i.DisallowWin32kSystemCalls() != 0;
+        o.disallow_win32k_system_calls          = (i.Flags & (1 << 0)) != 0;
+        o.audit_disallow_win32k_system_calls    = (i.Flags & (1 << 1)) != 0;
         o
     }
 }
