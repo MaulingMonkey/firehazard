@@ -93,6 +93,7 @@ pub fn get_final_path_name_by_handle_w_inplace<'path>(
 /// *   `ERROR_INVALID_HANDLE`              &mdash; if `handle` is a job object
 /// *   `ERROR_INVALID_HANDLE`              &mdash; if `handle` is null/INVALID_HANDLE_VALUE/bad/dangling
 /// *   `ERROR_INVALID_PARAMETER`           &mdash; if `flags` is invalid
+/// *   `ERROR_ACCESS_DENIED`               &mdash; seen by the `max_sandbox`'s debugging of LoadDll for a very restricted process
 ///
 pub fn get_final_path_name_by_handle(handle: &impl firehazard::AsLocalHandle, flags: u32) -> Result<std::path::PathBuf, firehazard::Error> {
     use crate::From32;

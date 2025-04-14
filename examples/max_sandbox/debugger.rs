@@ -82,8 +82,10 @@ pub fn debug_loop(
                 break;
             },
             LoadDll(event) => {
-                let hfile = unsafe { io::FileHandle::from_raw(event.hFile) }.unwrap();
-                let image_name = get_final_path_name_by_handle(&hfile, 0).unwrap();
+                // XXX: May fail with ERROR_INVALID_HANDLE if the debugeee's spawn token lacks `USERS` (DLL failed to open?)
+                let hfile = unsafe { io::FileHandle::from_raw(event.hFile) }.ok();
+                // XXX: May fail with ERROR_ACCESS_DENIED if the debugee's restricted token lacks `SE_CHANGE_NOTIFY_NAME`
+                let image_name = hfile.and_then(|hfile| get_final_path_name_by_handle(&hfile, 0).ok()).unwrap_or_else(|| PathBuf::from("???"));
 
                 println!("[{dwProcessId}:{dwThreadId}] dll loaded: {image_name:?}");
                 let _prev_name = dlls.insert(event.lpBaseOfDll, image_name);

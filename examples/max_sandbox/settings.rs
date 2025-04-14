@@ -208,11 +208,70 @@ impl Target {
                     restricted: Some(vec![user, sid::builtin::alias::USERS, sid::WORLD, session]),
                     .. Default::default()
                 },
+
+                // lockdown for ui_d3d9_window happens after Direct3DCreate9 but before CreateDevice
+                //
                 lockdown: Token {
                     // CreateDevice fails w/ D3DERR::NOTAVAILABLE (0x8876086A) unless we have: se_change_notify_privilege + USERS + WORLD
                     privileges: [se_change_notify_privilege].into_iter().collect(), // DLL access
                     enabled:    vec![sid::builtin::alias::USERS, sid::WORLD, session],
                     restricted: Some(vec![sid::builtin::alias::USERS, sid::WORLD, session]),
+                    .. Default::default()
+                },
+            },
+            Target {
+                exe: dir.join("ui_d3d11_window.exe"),
+                allow: Allow {
+                    same_desktop: true,
+                    .. Allow::default()
+                },
+                spawn: Token {
+                    integrity:  sid::integrity::Low,// else STATUS_DLL_INIT_FAILED (thrown from multiple threads threads + process)
+                    privileges: [
+                        se_change_notify_privilege, // else misc. scary nonfatal exceptions + debugger can't list dlls (would `revert_to_self` help?)
+                    ].into_iter().collect(),
+                    enabled: vec![
+                        // required to avoid these nonfatal dxgi access denied errors (compat / user settings?):
+                        // onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(148)\dxgi.dll!00007FFB9C493F03: (caller: 00007FFB9C46DD72) ReturnHr(1) tid(3bb8) 80070005 Access is denied.
+                        // onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(108)\dxgi.dll!00007FFB9C493FCC: (caller: 00007FFB9C46DD72) ReturnHr(2) tid(3bb8) 80070005 Access is denied.
+                        // onecore\windows\directx\database\helperlibrary\lib\perappusersettingsqueryimpl.cpp(98)\dxgi.dll!00007FFB9C493C9D: (caller: 00007FFB9C45DE61) ReturnHr(3) tid(3bb8) 80070005 Access is denied.
+                        // onecore\windows\directx\database\helperlibrary\lib\directxdatabasehelper.cpp(1410)\dxgi.dll!00007FFB9C493DBD: (caller: 00007FFB9C45DE61) ReturnHr(4) tid(3bb8) 8000FFFF Catastrophic failure
+                        //user,
+                        sid::builtin::alias::USERS, // else STATUS_DLL_NOT_FOUND   (thrown from multiple threads threads + process)
+                        sid::WORLD,                 // else STATUS_ACCESS_DENIED   (thrown from process only?)
+                        session,                    // else STATUS_DLL_INIT_FAILED (thrown from multiple threads threads + process)
+                    ],
+                    restricted: Some(vec![
+                        //user,
+                        sid::builtin::alias::USERS, // else STATUS_DLL_NOT_FOUND   (thrown from multiple threads threads + process)
+                        sid::WORLD,                 // else STATUS_ACCESS_DENIED   (thrown from process only?)
+                        session,                    // else STATUS_DLL_INIT_FAILED (thrown from multiple threads threads + process)
+                    ]),
+                    .. Default::default()
+                },
+
+                // lockdown for ui_d3d11_window happens after D3D11CreateDeviceAndSwapChain.
+                //
+                // While the program won't crash at that point if absolutely no permissions are granted,
+                // a few settings are required for rendering to succeed - without them, the window will
+                // remain blank and white, as if e.g. `swap_chain.Present(...)` was never called.
+                //
+                // It might be possible to further restrict permissions after the first present,
+                // I have not experimented with that.
+                //
+                lockdown: Token {
+                    privileges: [
+                        // I would say "DLL access", but lockdown happens after all relevant DLLs are loaded.
+                        se_change_notify_privilege, // required to present?
+                    ].into_iter().collect(),
+                    enabled:    vec![
+                        //user,                     // else nonfatal 1702 exceptions (presumably not "RPC_S_INVALID_BINDING"?)
+                        sid::builtin::alias::USERS, // required to present?
+                    ],
+                    restricted: Some(vec![
+                        //user,                     // else nonfatal 1702 exceptions (presumably not "RPC_S_INVALID_BINDING"?)
+                        sid::builtin::alias::USERS, // required to present?
+                    ]),
                     .. Default::default()
                 },
             },

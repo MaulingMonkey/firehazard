@@ -938,6 +938,7 @@ dependencies = [
  "bytemuck",
  "ialloc",
  "lazy_static",
+ "mcom",
  "minidl",
  "thindx",
  "valrow",

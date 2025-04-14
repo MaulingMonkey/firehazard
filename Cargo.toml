@@ -115,6 +115,22 @@ winapi.features = [
 
 
 [target.'cfg(windows)'.dev-dependencies]
+mcom.version                = "0.1.5"
+mcom.default-features       = false
+mcom.features               = ["windows-2000", "winapi-family-desktop-app"]
+
 #thindx                     = "0.0.0-unsound.5"
 thindx.git                  = "https://github.com/MaulingMonkey/thindx"
 thindx.rev                  = "aa03b40980d2170698ffcf89ed9d64bdb69116ef"
+
+winapi.version              = "0.3"
+winapi.features = [
+    # shared
+    "dxgi",
+    "dxgiformat",
+    "dxgitype",
+
+    # um
+    "d3dcommon",
+    "d3d11",
+]
