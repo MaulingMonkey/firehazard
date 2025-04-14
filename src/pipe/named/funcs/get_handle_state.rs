@@ -2,7 +2,7 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getnamedpipehandlestatea)\]
 /// GetNamedPipeHandleStateA
 ///
-pub fn get_named_pipe_handle_state_a<'a, 'b, 'c, 'd, 'e>(
+pub fn get_handle_state_a<'a, 'b, 'c, 'd, 'e>(
     handle:                     &impl firehazard::AsLocalHandle, // XXX
     state:                      impl Into<Option<&'a mut u32>>,
     current_instances:          impl Into<Option<&'b mut u32>>,
@@ -33,7 +33,7 @@ pub fn get_named_pipe_handle_state_a<'a, 'b, 'c, 'd, 'e>(
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-getnamedpipehandlestatew)\]
 /// GetNamedPipeHandleStateW
 ///
-pub fn get_named_pipe_handle_state_w<'a, 'b, 'c, 'd, 'e>(
+pub fn get_handle_state_w<'a, 'b, 'c, 'd, 'e>(
     handle:                     &impl firehazard::AsLocalHandle, // XXX
     state:                      impl Into<Option<&'a mut u32>>,
     current_instances:          impl Into<Option<&'b mut u32>>,

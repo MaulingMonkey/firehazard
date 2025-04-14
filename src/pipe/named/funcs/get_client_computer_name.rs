@@ -11,33 +11,33 @@
 /// # use winapi::shared::winerror::*;
 /// #
 /// // This function fails on local pipes
-/// let local = create_named_pipe_w(
+/// let local = pipe::named::create_w(
 ///     cstr16!(r"\\.\pipe\local\example-for-client-computer-name-check"),
 ///     pipe::ACCESS_DUPLEX, 0, pipe::UNLIMITED_INSTANCES,
 ///     0, 0, None, None,
 /// ).unwrap();
-/// assert_eq!(ERROR_PIPE_LOCAL, get_named_pipe_client_computer_name(&local).unwrap_err());
+/// assert_eq!(ERROR_PIPE_LOCAL, pipe::named::get_client_computer_name(&local).unwrap_err());
 ///
 /// // ...including local *anonymous* pipes
-/// let (read, write) = create_pipe(None, 0).unwrap();
-/// assert_eq!(ERROR_PIPE_LOCAL, get_named_pipe_client_computer_name(&read ).unwrap_err());
-/// assert_eq!(ERROR_PIPE_LOCAL, get_named_pipe_client_computer_name(&write).unwrap_err());
+/// let (read, write) = pipe::create(None, 0).unwrap();
+/// assert_eq!(ERROR_PIPE_LOCAL, pipe::named::get_client_computer_name(&read ).unwrap_err());
+/// assert_eq!(ERROR_PIPE_LOCAL, pipe::named::get_client_computer_name(&write).unwrap_err());
 ///
 /// // ...including local *server* pipes available for remote connection
-/// let global = create_named_pipe_w(
+/// let global = pipe::named::create_w(
 ///     cstr16!(r"\\.\pipe\example-for-client-computer-name-check"),
 ///     pipe::ACCESS_DUPLEX, pipe::ACCEPT_REMOTE_CLIENTS, pipe::UNLIMITED_INSTANCES,
 ///     0, 0, None, None,
 /// ).unwrap();
-/// assert_eq!(ERROR_PIPE_LOCAL, get_named_pipe_client_computer_name(&global).unwrap_err());
+/// assert_eq!(ERROR_PIPE_LOCAL, pipe::named::get_client_computer_name(&global).unwrap_err());
 /// ```
-pub fn get_named_pipe_client_computer_name(
+pub fn get_client_computer_name(
     handle: &impl firehazard::AsLocalHandle,
 ) -> Result<std::ffi::OsString, firehazard::Error> {
     use std::os::windows::ffi::OsStringExt;
 
     let mut buf = [core::mem::MaybeUninit::uninit(); winapi::shared::minwindef::MAX_PATH];
-    let buf = get_named_pipe_client_computer_name_w(handle, &mut buf[..])?;
+    let buf = get_client_computer_name_w(handle, &mut buf[..])?;
     Ok(std::ffi::OsString::from_wide(buf))
 }
 
@@ -47,7 +47,7 @@ pub fn get_named_pipe_client_computer_name(
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getnamedpipeclientcomputernamea)\]
 /// GetNamedPipeClientComputerNameA
 ///
-pub fn get_named_pipe_client_computer_name_a<'name>(
+pub fn get_client_computer_name_a<'name>(
     handle:                 &impl firehazard::AsLocalHandle, // XXX
     client_computer_name:   &'name mut [core::mem::MaybeUninit<u8>],
 ) -> Result<&'name [u8], firehazard::Error> { // XXX: CStr?
@@ -73,7 +73,7 @@ pub fn get_named_pipe_client_computer_name_a<'name>(
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-getnamedpipeclientcomputernamew)\]
 /// GetNamedPipeClientComputerNameW
 ///
-pub fn get_named_pipe_client_computer_name_w<'name>(
+pub fn get_client_computer_name_w<'name>(
     handle:                 &impl firehazard::AsLocalHandle, // XXX
     client_computer_name:   &'name mut [core::mem::MaybeUninit<u16>],
 ) -> Result<&'name mut [u16], firehazard::Error> { // XXX: OsStr?

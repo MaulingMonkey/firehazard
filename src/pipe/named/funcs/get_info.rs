@@ -7,8 +7,8 @@
 /// # use firehazard::*;
 /// # use abistr::*;
 /// #
-/// let (read, write) = create_pipe(None, 0).unwrap();
-/// let local = create_named_pipe_w(
+/// let (read, write) = pipe::create(None, 0).unwrap();
+/// let local = pipe::named::create_w(
 ///     cstr16!(r"\\.\pipe\local\firehazard_get_named_pipe_info_example"),
 ///     pipe::ACCESS_DUPLEX, 0, pipe::UNLIMITED_INSTANCES, 0, 0, None, None,
 /// ).unwrap();
@@ -18,31 +18,31 @@
 /// let mut in_buffer_size = 0;
 /// let mut max_instances = pipe::UNLIMITED_INSTANCES;
 ///
-/// get_named_pipe_info(&read, &mut flags, &mut out_buffer_size, &mut in_buffer_size, &mut max_instances).unwrap();
+/// pipe::named::get_info(&read, &mut flags, &mut out_buffer_size, &mut in_buffer_size, &mut max_instances).unwrap();
 /// assert_eq!(flags, pipe::SERVER_END | pipe::TYPE_BYTE);
 /// dbg!(out_buffer_size); // 4 KiB?
 /// dbg!( in_buffer_size); // 4 KiB?
 /// assert_eq!(max_instances, pipe::MaxInstances::ONE);
 ///
-/// get_named_pipe_info(&write, &mut flags, &mut out_buffer_size, &mut in_buffer_size, &mut max_instances).unwrap();
+/// pipe::named::get_info(&write, &mut flags, &mut out_buffer_size, &mut in_buffer_size, &mut max_instances).unwrap();
 /// assert_eq!(flags, pipe::CLIENT_END | pipe::TYPE_BYTE);
 /// dbg!(out_buffer_size); // 4 KiB?
 /// dbg!( in_buffer_size); // 4 KiB?
 /// assert_eq!(max_instances, pipe::MaxInstances::ONE);
 ///
-/// get_named_pipe_info(&local, &mut flags, &mut out_buffer_size, &mut in_buffer_size, &mut max_instances).unwrap();
+/// pipe::named::get_info(&local, &mut flags, &mut out_buffer_size, &mut in_buffer_size, &mut max_instances).unwrap();
 /// assert_eq!(flags, pipe::SERVER_END | pipe::TYPE_BYTE);
 /// dbg!(out_buffer_size); // 0?
 /// dbg!(in_buffer_size ); // 0?
 /// assert_eq!(max_instances, pipe::UNLIMITED_INSTANCES);
 ///
 /// // Pointless noop, but they do at least "succeed":
-/// get_named_pipe_info(&read,  None, None, None, None).unwrap();
-/// get_named_pipe_info(&write, None, None, None, None).unwrap();
-/// get_named_pipe_info(&local, None, None, None, None).unwrap();
+/// pipe::named::get_info(&read,  None, None, None, None).unwrap();
+/// pipe::named::get_info(&write, None, None, None, None).unwrap();
+/// pipe::named::get_info(&local, None, None, None, None).unwrap();
 /// ```
 ///
-pub fn get_named_pipe_info<'a, 'b, 'c, 'd>(
+pub fn get_info<'a, 'b, 'c, 'd>(
     handle:             &impl firehazard::AsLocalHandle,
     flags:              impl Into<Option<&'a mut u32>>,
     out_buffer_size:    impl Into<Option<&'b mut u32>>,

@@ -2,7 +2,7 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-transactnamedpipe)\]
 /// TransactNamedPipe(..., nullptr)
 ///
-pub fn transact_named_pipe<'buffer>(
+pub fn transact<'buffer>(
     handle:         &impl firehazard::AsLocalHandle, // XXX
     in_buffer:      &[u8],
     out_buffer:     &'buffer mut [core::mem::MaybeUninit<u8>],
@@ -36,7 +36,7 @@ pub fn transact_named_pipe<'buffer>(
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-transactnamedpipe)\]
 /// <strike>TransactNamedPipe(..., &overlapped)</strike>
 ///
-pub unsafe fn transact_named_pipe_overlapped<'buffer>(
+pub unsafe fn transact_overlapped<'buffer>(
     handle:         &impl firehazard::AsLocalHandle, // XXX
     in_buffer:      &[u8],
     out_buffer:     &'buffer mut [core::mem::MaybeUninit<u8>],

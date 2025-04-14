@@ -4,7 +4,7 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-waitnamedpipew)\]
 /// WaitNamedPipeW
 ///
-pub fn wait_named_pipe(
+pub fn wait(
     name:           impl AsRef<std::ffi::OsStr>,
     timeout:        impl Into<firehazard::NMPWAIT>,
 ) -> Result<(), firehazard::Error> {
@@ -14,7 +14,7 @@ pub fn wait_named_pipe(
     let name = name.as_ref();
     let name = name.encode_wide().chain(Some(0)).collect::<std::vec::Vec<_>>();
     let name = abistr::CStrNonNull::from_units_with_nul(&name).map_err(|_| ERROR_ILLEGAL_CHARACTER)?;
-    wait_named_pipe_w(name, timeout)
+    wait_w(name, timeout)
 }
 
 
@@ -23,7 +23,7 @@ pub fn wait_named_pipe(
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-waitnamedpipea)\]
 /// WaitNamedPipeA
 ///
-pub fn wait_named_pipe_a(
+pub fn wait_a(
     name:           impl abistr::TryIntoAsCStr,
     timeout:        impl Into<firehazard::NMPWAIT>,
 ) -> Result<(), firehazard::Error> {
@@ -42,7 +42,7 @@ pub fn wait_named_pipe_a(
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-waitnamedpipew)\]
 /// WaitNamedPipeW
 ///
-pub fn wait_named_pipe_w(
+pub fn wait_w(
     name:           impl abistr::TryIntoAsCStr<u16>,
     timeout:        impl Into<firehazard::NMPWAIT>,
 ) -> Result<(), firehazard::Error> {

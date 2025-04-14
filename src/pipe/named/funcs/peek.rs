@@ -2,7 +2,7 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-peeknamedpipe)\]
 /// PeekNamedPipe
 ///
-pub fn peek_named_pipe<'buffer, 'a, 'b>(
+pub fn peek<'buffer, 'a, 'b>(
     handle:                     &impl firehazard::AsLocalHandle, // XXX
     buffer:                     impl Into<Option<&'buffer mut [core::mem::MaybeUninit<u8>]>>,
     total_bytes_avail:          impl Into<Option<&'a mut u32>>,

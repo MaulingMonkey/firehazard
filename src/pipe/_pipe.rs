@@ -5,26 +5,34 @@
 //! *   <https://learn.microsoft.com/en-us/windows/win32/ipc/pipes>
 //! *   <https://learn.microsoft.com/en-us/windows/win32/ipc/multithreaded-pipe-server>
 
-pub use funcs::*;
-pub(crate) mod funcs {
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/ipc/anonymous-pipes)\]
+/// Anonymous Pipes
+pub mod anonymous {
     use crate as firehazard;
-    include!(r"funcs\call_named_pipe.rs");
-    include!(r"funcs\connect_named_pipe.rs");
-    include!(r"funcs\create_named_pipe.rs");
-    include!(r"funcs\create_pipe.rs");
-    include!(r"funcs\disconnect_named_pipe.rs");
-    include!(r"funcs\get_named_pipe_client_computer_name.rs");
-    include!(r"funcs\get_named_pipe_client_process_id.rs");
-    include!(r"funcs\get_named_pipe_client_session_id.rs");
-    include!(r"funcs\get_named_pipe_handle_state.rs");
-    include!(r"funcs\get_named_pipe_info.rs");
-    include!(r"funcs\get_named_pipe_server_process_id.rs");
-    include!(r"funcs\get_named_pipe_server_session_id.rs");
-    include!(r"funcs\impersonate_named_pipe_client.rs");
-    include!(r"funcs\peek_named_pipe.rs");
-    include!(r"funcs\set_named_pipe_handle_state.rs");
-    include!(r"funcs\transact_named_pipe.rs");
-    include!(r"funcs\wait_named_pipe.rs");
+    include!(r"anonymous\funcs\create.rs");
+}
+pub use anonymous::create;
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/ipc/named-pipes)\]
+/// Named Pipes
+pub mod named {
+    use crate as firehazard;
+    include!(r"named\funcs\call.rs");
+    include!(r"named\funcs\create.rs");
+    include!(r"named\funcs\connect.rs");
+    include!(r"named\funcs\disconnect.rs");
+    include!(r"named\funcs\get_client_computer_name.rs");
+    include!(r"named\funcs\get_client_process_id.rs");
+    include!(r"named\funcs\get_client_session_id.rs");
+    include!(r"named\funcs\get_handle_state.rs");
+    include!(r"named\funcs\get_info.rs");
+    include!(r"named\funcs\get_server_process_id.rs");
+    include!(r"named\funcs\get_server_session_id.rs");
+    include!(r"named\funcs\impersonate_client.rs");
+    include!(r"named\funcs\peek.rs");
+    include!(r"named\funcs\set_handle_state.rs");
+    include!(r"named\funcs\transact.rs");
+    include!(r"named\funcs\wait.rs");
 }
 
 pub use values::*;

@@ -8,10 +8,10 @@
 /// ### Example
 /// ```
 /// # use firehazard::*;
-/// let (read, write) = create_pipe(None, 0).unwrap();
+/// let (read, write) = pipe::create(None, 0).unwrap();
 /// ```
 ///
-pub fn create_pipe(pipe_attributes: Option<&firehazard::security::Attributes>, size: u32) -> Result<(firehazard::io::PipeReaderNN, firehazard::io::PipeWriterNN), firehazard::Error> {
+pub fn create(pipe_attributes: Option<&firehazard::security::Attributes>, size: u32) -> Result<(firehazard::io::PipeReaderNN, firehazard::io::PipeWriterNN), firehazard::Error> {
     use winapi::shared::winerror::ERROR_INVALID_HANDLE;
     use core::ptr::{null_mut, NonNull};
 

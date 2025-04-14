@@ -10,7 +10,7 @@ use core::fmt::{self, Debug, Formatter};
 /// &mdash;
 /// [`NMPWAIT::USE_DEFAULT_WAIT`] | 2+ ms | ∞
 ///
-/// Exists mainly to represent [`call_named_pipe`]'s et. all's `timeout` parameter.
+/// Exists mainly to represent [`pipe::named::call`]'s et. all's `timeout` parameter.
 ///
 /// | Value                 | Description                   |
 /// |:---------------------:| ------------------------------|

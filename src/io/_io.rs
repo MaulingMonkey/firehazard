@@ -23,4 +23,4 @@ pub(crate) mod funcs {
     include!(r"funcs\write_file.rs");
 }
 
-#[deprecated = "moved to firehazard::[pipe::]create_pipe"] #[doc(hidden)] pub use crate::create_pipe;
+#[deprecated = "moved to firehazard::pipe::create"] #[doc(hidden)] pub use crate::pipe::create as create_pipe;

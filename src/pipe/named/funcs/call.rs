@@ -4,7 +4,7 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-callnamedpipew)\]
 /// CallNamedPipeW
 ///
-pub fn call_named_pipe<'out_buffer>(
+pub fn call<'out_buffer>(
     name:               impl AsRef<std::ffi::OsStr>,
     in_buffer:          &[u8],
     out_buffer:         &'out_buffer mut [core::mem::MaybeUninit<u8>],
@@ -16,7 +16,7 @@ pub fn call_named_pipe<'out_buffer>(
     let name = name.as_ref();
     let name = name.encode_wide().chain(Some(0)).collect::<std::vec::Vec<_>>();
     let name = abistr::CStrNonNull::from_units_with_nul(&name).map_err(|_| ERROR_ILLEGAL_CHARACTER)?;
-    call_named_pipe_w(name, in_buffer, out_buffer, timeout)
+    call_w(name, in_buffer, out_buffer, timeout)
 }
 
 
@@ -25,7 +25,7 @@ pub fn call_named_pipe<'out_buffer>(
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-callnamedpipea)\]
 /// CallNamedPipeA
 ///
-pub fn call_named_pipe_a<'out_buffer>(
+pub fn call_a<'out_buffer>(
     name:               impl abistr::TryIntoAsCStr,
     in_buffer:          &[u8],
     out_buffer:         &'out_buffer mut [core::mem::MaybeUninit<u8>],
@@ -59,7 +59,7 @@ pub fn call_named_pipe_a<'out_buffer>(
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-callnamedpipew)\]
 /// CallNamedPipeW
 ///
-pub fn call_named_pipe_w<'out_buffer>(
+pub fn call_w<'out_buffer>(
     name:               impl abistr::TryIntoAsCStr<u16>,
     in_buffer:          &[u8],
     out_buffer:         &'out_buffer mut [core::mem::MaybeUninit<u8>],

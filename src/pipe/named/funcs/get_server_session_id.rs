@@ -5,14 +5,14 @@
 /// ### Example
 /// ```
 /// # use firehazard::*;
-/// let (read, write) = create_pipe(None, 0).unwrap();
+/// let (read, write) = pipe::create(None, 0).unwrap();
 ///
-/// dbg!(get_named_pipe_client_session_id(&read ).unwrap());
-/// dbg!(get_named_pipe_server_session_id(&read ).unwrap());
-/// dbg!(get_named_pipe_client_session_id(&write).unwrap());
-/// dbg!(get_named_pipe_server_session_id(&write).unwrap());
+/// dbg!(pipe::named::get_client_session_id(&read ).unwrap());
+/// dbg!(pipe::named::get_server_session_id(&read ).unwrap());
+/// dbg!(pipe::named::get_client_session_id(&write).unwrap());
+/// dbg!(pipe::named::get_server_session_id(&write).unwrap());
 ///
-pub fn get_named_pipe_server_session_id(
+pub fn get_server_session_id(
     handle: &impl firehazard::AsLocalHandle, // XXX
 ) -> Result<winapi::shared::minwindef::ULONG, firehazard::Error> {
     let mut pid = 0;

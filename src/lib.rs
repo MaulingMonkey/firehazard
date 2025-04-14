@@ -36,7 +36,7 @@ pub use winapi::shared::ntdef::HANDLE;
 #[path = r"job\_job.rs"]                    pub mod job;            #[doc(hidden)] pub use job::funcs::*;
 #[path = r"misc\_misc.rs"]                  mod misc;               #[doc(hidden)] pub use misc::funcs::*;
 #[path = r"os\_os.rs"]                      pub(crate) mod os;
-#[path = r"pipe\_pipe.rs"]                  pub mod pipe;           #[doc(hidden)] pub use pipe::{funcs::*, NMPWAIT};
+#[path = r"pipe\_pipe.rs"]                  pub mod pipe;           #[doc(hidden)] pub use pipe::NMPWAIT;
 #[path = r"privilege\_privilege.rs"]        pub mod privilege;      #[doc(hidden)] pub use privilege::funcs::*;
 #[path = r"process\_process.rs"]            pub mod process;        #[doc(hidden)] pub use process::funcs::*;
 #[path = r"security\_security.rs"]          pub mod security;       //#[doc(hidden)] pub use security::funcs::*;

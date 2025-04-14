@@ -158,7 +158,7 @@ tests! {
     }
 
     #[test] fn get_final_path_name_by_handle_anonymous_pipe() {
-        let (read, write) = firehazard::create_pipe(None, 0).unwrap();
+        let (read, write) = firehazard::pipe::create(None, 0).unwrap();
 
         for flags in [0, 1, 2, 4, 8, 8|1, 8|2, 8|4] {
             assert_eq!(

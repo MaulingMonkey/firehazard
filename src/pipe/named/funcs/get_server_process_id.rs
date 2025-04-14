@@ -5,17 +5,17 @@
 /// ### Example
 /// ```
 /// # use firehazard::*;
-/// let (read, write) = create_pipe(None, 0).unwrap();
+/// let (read, write) = pipe::create(None, 0).unwrap();
 ///
 /// // While you'll likely pass a pipe end to a child process, both ends start out owned by the current process.
 /// let pid = get_current_process_id();
-/// assert_eq!(pid, get_named_pipe_client_process_id(&read ).unwrap());
-/// assert_eq!(pid, get_named_pipe_server_process_id(&read ).unwrap());
-/// assert_eq!(pid, get_named_pipe_client_process_id(&write).unwrap());
-/// assert_eq!(pid, get_named_pipe_server_process_id(&write).unwrap());
+/// assert_eq!(pid, pipe::named::get_client_process_id(&read ).unwrap());
+/// assert_eq!(pid, pipe::named::get_server_process_id(&read ).unwrap());
+/// assert_eq!(pid, pipe::named::get_client_process_id(&write).unwrap());
+/// assert_eq!(pid, pipe::named::get_server_process_id(&write).unwrap());
 /// ```
 ///
-pub fn get_named_pipe_server_process_id(
+pub fn get_server_process_id(
     handle: &impl firehazard::AsLocalHandle, // XXX
 ) -> Result<firehazard::process::Id, firehazard::Error> {
     let mut pid = 0;
