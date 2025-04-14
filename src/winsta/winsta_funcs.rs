@@ -85,6 +85,31 @@ pub fn create_window_station_w(
 
 
 
+#[doc(alias = "CloseWindowStation")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-closewindowstation)\]
+/// CloseWindowStation
+///
+/// ### Example
+/// ```
+/// # use abistr::cstr16;
+/// # use firehazard::*;
+/// let winsta = create_window_station_w((), (), winsta::ALL_ACCESS, None).unwrap();
+/// close_window_station(winsta).unwrap();
+/// ```
+///
+// ### Errors
+// TODO
+//
+pub fn close_window_station(
+    winsta:     impl Into<winsta::OwnedHandle>,
+) -> Result<(), Error> {
+    Error::get_last_if(0 == unsafe { winapi::um::winuser::CloseWindowStation(
+        core::mem::ManuallyDrop::new(winsta.into()).as_handle_nn().as_ptr().cast()
+    )})
+}
+
+
+
 #[doc(alias = "EnumWindowStationsA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumwindowstationsa)\]
 /// EnumWindowStationsA
