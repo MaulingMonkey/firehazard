@@ -95,6 +95,8 @@ pub mod cet_user_shadow_stacks {
 }
 
 /// User-mode CET set context instruction pointer validation mitigation policy options.
+///
+/// Windows 10+
 pub mod user_cet_set_context_ip_validation {
     use super::*;
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_MASK"         )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_MASK"            ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_MASK           );
@@ -105,6 +107,8 @@ pub mod user_cet_set_context_ip_validation {
 }
 
 /// Block non-CET/non-EHCONT binaries mitigation policy options.
+///
+/// Windows 10+
 pub mod block_non_cet_binaries {
     use super::*;
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_MASK"                     )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_MASK"                        ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_MASK                       );
@@ -115,6 +119,8 @@ pub mod block_non_cet_binaries {
 }
 
 /// XFG mitigation policy options.
+///
+/// Windows 10+
 pub mod xtended_control_flow_guard {
     use super::*;
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_MASK"                 )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_MASK"                    ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_MASK                   );
@@ -125,6 +131,8 @@ pub mod xtended_control_flow_guard {
 }
 
 /// ARM64 user-mode per-process instruction pointer authentication mitigation policy options.
+///
+/// Windows 10+
 pub mod pointer_auth_user_ip {
     use super::*;
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_MASK"                       )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_MASK"                          ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_MASK                         );
@@ -135,6 +143,8 @@ pub mod pointer_auth_user_ip {
 }
 
 /// CET-related dynamic code validation data APIs out-of-proc mitigation policy options.
+///
+/// Windows 10+
 pub mod cet_dynamic_apis_out_of_proc_only {
     use super::*;
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_MASK"          )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_MASK"             ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_MASK            );
@@ -145,6 +155,8 @@ pub mod cet_dynamic_apis_out_of_proc_only {
 }
 
 /// Restrict core sharing policy options.
+///
+/// Windows 10+
 pub mod restrict_core_sharing {
     use super::*;
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_MASK"                      )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_MASK"                         ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_MASK                        );

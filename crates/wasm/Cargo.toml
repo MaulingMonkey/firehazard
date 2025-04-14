@@ -11,6 +11,6 @@ license                     = "Apache-2.0 OR MIT"
 [dev-dependencies]
 firehazard.path             = "../.."
 
-[target.x86_64-pc-windows-msvc.dev-dependencies]
+[target."cfg(target_pointer_width=\"64\")".dev-dependencies]
 wasmer                      = "5"
 wasmtime                    = "29" # last version that works with rustc 1.81.0

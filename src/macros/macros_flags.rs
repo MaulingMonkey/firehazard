@@ -20,6 +20,7 @@ macro_rules! flags {
         impl core::ops::BitOrAssign         for $flags { fn bitor_assign (&mut self, rhs: Self) { self.0 |= rhs.0 } }
 
         impl core::ops::Not                 for $flags  { type Output = $mask;  fn not(self) -> Self::Output { $mask(!self.0) } }
+        impl core::ops::Not                 for $mask   { type Output = $mask;  fn not(self) -> Self::Output { $mask(!self.0) } }
         impl core::ops::BitAnd<$mask>       for $flags  { type Output = $flags; fn bitand(self, rhs: $mask ) -> $flags { $flags(self.0 & rhs.0) } }
         impl core::ops::BitAnd<$flags>      for $mask   { type Output = $flags; fn bitand(self, rhs: $flags) -> $flags { $flags(self.0 & rhs.0) } }
         impl core::ops::BitAndAssign<$mask> for $flags  { fn bitand_assign(&mut self, rhs: $mask) { self.0 &= rhs.0 } }

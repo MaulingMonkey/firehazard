@@ -10,15 +10,42 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+  windows-2019-server:
     name: Windows 2019 Server
     runs-on: windows-2019
     steps:
     - uses: actions/checkout@v2
     - name: Info
-      run: |
-        rustc -V
-        cargo -V
-        cmd /C ver
+      run: scripts\info.cmd
     - name: Build/Test
       run: scripts\build.cmd
+  windows-2022-server:
+    name: Windows 2022 Server
+    runs-on: windows-2022
+    steps:
+    - uses: actions/checkout@v2
+    - name: Info
+      run: scripts\info.cmd
+    - name: Build/Test
+      run: scripts\build.cmd
+  windows-2025-server:
+    name: Windows 2025 Server
+    runs-on: windows-2019
+    steps:
+    - uses: actions/checkout@v2
+    - name: Info
+      run: scripts\info.cmd
+    - name: Build/Test
+      run: scripts\build.cmd
+  # AARCH64 not yet supported by corosensei = "0.2.1" ( https://docs.rs/corosensei/latest/corosensei/#supported-targets )
+  #windows-11-arm:
+  #  name: Windows 11 (ARM)
+  #  runs-on: windows-11-arm
+  #  steps:
+  #  - uses: actions/checkout@v2
+  #  - name: Install Rust
+  #    run: scripts\ci-arm-install.cmd
+  #  - name: Info
+  #    run: scripts\info.cmd
+  #  - name: Build/Test
+  #    run: scripts\ci-arm-build-test.cmd

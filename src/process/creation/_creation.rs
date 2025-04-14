@@ -73,6 +73,8 @@ impl MitigationPolicyMask {
 impl From<MitigationPolicyFlags1Mask> for MitigationPolicyMask { fn from(flags: MitigationPolicyFlags1Mask) -> Self { Self(flags, MitigationPolicyFlags2Mask(0)) } }
 impl From<(MitigationPolicyFlags1Mask, MitigationPolicyFlags2Mask)> for MitigationPolicyMask { fn from(flags: (MitigationPolicyFlags1Mask, MitigationPolicyFlags2Mask)) -> Self { Self(flags.0, flags.1) } }
 
+
+
 #[doc(alias = "PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
 /// PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY Flags Mask
@@ -86,6 +88,10 @@ impl From<(MitigationPolicyFlags1Mask, MitigationPolicyFlags2Mask)> for Mitigati
 ///
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct MitigationPolicyFlags1(u64);
+
+flags!(impl .. for MitigationPolicyFlags1(u64) - MitigationPolicyFlags1Mask);
+
+
 
 #[doc(alias = "PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
@@ -101,5 +107,4 @@ impl From<(MitigationPolicyFlags1Mask, MitigationPolicyFlags2Mask)> for Mitigati
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct MitigationPolicyFlags2(u64);
 
-flags!(impl .. for MitigationPolicyFlags1(u64) - MitigationPolicyFlags1Mask);
 flags!(impl .. for MitigationPolicyFlags2(u64) - MitigationPolicyFlags2Mask);

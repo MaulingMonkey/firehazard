@@ -4,14 +4,15 @@ use winapi::shared::winerror::ERROR_NOT_SUPPORTED;
 
 
 
+#[derive(Clone, PartialEq)]
 pub struct List<'s> {
-    pub mitigation_policy:  process::creation::MitigationPolicy,
-    pub child_policy:       process::creation::ChildProcessPolicyFlags,
-    pub dab_policy:         process::creation::DesktopAppPolicyFlags,
-    pub component_filter:   u32,
-    pub job_list:           Vec<job::Handle<'s>>,
-    pub inherit:            Vec<handle::Borrowed<'s>>,
-    // ...
+    pub mitigation_policy:  Option<process::creation::MitigationPolicy>,
+    pub child_policy:       Option<process::creation::ChildProcessPolicyFlags>,
+    pub dab_policy:         Option<process::creation::DesktopAppPolicyFlags>,
+    pub component_filter:   Option<u32>,
+    pub protection_level:   Option<u32>,
+    pub job_list:           Option<Vec<job::Handle<'s>>>,
+    pub inherit:            Option<Vec<handle::Borrowed<'s>>>,
 }
 
 impl<'s> List<'s> {
@@ -45,8 +46,7 @@ impl<'s> List<'s> {
             | process::creation::mitigation_policy2::restrict_indirect_branch_prediction::ALWAYS_ON
             | (!target.allow.dynamic_code * process::creation::mitigation_policy2::allow_downgrade_dynamic_code_policy::ALWAYS_OFF)
             | process::creation::mitigation_policy2::speculative_store_bypass_disable::ALWAYS_ON
-            | process::creation::mitigation_policy2::cet_user_shadow_stacks::ALWAYS_ON      // Redundant
-            | process::creation::mitigation_policy2::cet_user_shadow_stacks::STRICT_MODE
+            | process::creation::mitigation_policy2::cet_user_shadow_stacks::STRICT_MODE            // causes ERROR_INVALID_PARAMETER on Windows Server 2019
             | process::creation::mitigation_policy2::user_cet_set_context_ip_validation::ALWAYS_ON
             | (!target.allow.missing_cet * process::creation::mitigation_policy2::block_non_cet_binaries::ALWAYS_ON)
             //| process::creation::mitigation_policy2::xtended_control_flow_guard::ALWAYS_ON        // causes ERROR_INVALID_PARAMETER - not built with XFG? see https://connormcgarr.github.io/examining-xfg/ / https://query.prod.cms.rt.microsoft.com/cms/api/am/binary/RE37dMC
@@ -55,48 +55,58 @@ impl<'s> List<'s> {
             //| process::creation::mitigation_policy2::restrict_core_sharing::ALWAYS_ON             // causes ERROR_INVALID_PARAMETER (do I need to specify cores to hog?)
             ;
 
-        let mitigation_policy   = process::creation::MitigationPolicy::from((policy1, policy2));
-        let child_policy        = process::creation::child_process::RESTRICTED;
-        let dab_policy          = process::creation::desktop_app_breakaway::ENABLE_PROCESS_TREE;
-        const COMPONENT_KTM : u32 = 1; // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h
-        let component_filter    = COMPONENT_KTM;
-        let job_list            = vec![job.into()];
-        let inherit             = inherit.into_iter().collect();
+        let mitigation_policy   = Some(process::creation::MitigationPolicy::from((policy1, policy2)));
+        let child_policy        = Some(process::creation::child_process::RESTRICTED);
+        let dab_policy          = Some(process::creation::desktop_app_breakaway::ENABLE_PROCESS_TREE);
 
-        Self { mitigation_policy, child_policy, dab_policy, component_filter, job_list, inherit }
+        const COMPONENT_KTM : u32 = 1; // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h
+        let component_filter    = Some(COMPONENT_KTM);
+
+        const PROTECTION_LEVEL_SAME : u32 = 0xFFFFFFFF;
+        // will cause create_process_as_user_w to fail with ERROR_INVALID_PARAMETER
+        // Also completely pointless, as we're almost certainly not running as a protected app ourselves
+        let protection_level = false.then_some(PROTECTION_LEVEL_SAME);
+
+        let job_list            = Some(vec![job.into()]);
+        let inherit             = Some(inherit.into_iter().collect());
+
+        Self { mitigation_policy, child_policy, dab_policy, component_filter, protection_level, job_list, inherit }
     }
 
     pub fn to_list(&self) -> ThreadAttributeList {
-        let mitigation_policy   = process::ThreadAttributeRef::mitigation_policy(&self.mitigation_policy);
-        let child_policy        = process::ThreadAttributeRef::child_process_policy(&self.child_policy);
-        let dab_policy          = process::ThreadAttributeRef::desktop_app_policy(&self.dab_policy);
-        let component_filter    = process::ThreadAttributeRef::component_filter_flags(&self.component_filter);
-        let _protection_level   = {
-            // will cause create_process_as_user_w to fail with ERROR_INVALID_PARAMETER
-            // Also completely pointless, as we're almost certainly not running as a protected app ourselves
-            const PROTECTION_LEVEL_SAME : u32 = 0xFFFFFFFF;
-            process::ThreadAttributeRef::protection_level(&PROTECTION_LEVEL_SAME)
-        };
-        let job_list            = process::ThreadAttributeRef::job_list(&self.job_list[..]);
-        let inherit             = process::ThreadAttributeRef::handle_list(&self.inherit[..]);
+        let mitigation_policy   = self.mitigation_policy.as_ref().map(|p| process::ThreadAttributeRef::mitigation_policy(p));
+        let child_policy        = self.child_policy     .as_ref().map(|p| process::ThreadAttributeRef::child_process_policy(p));
+        let dab_policy          = self.dab_policy       .as_ref().map(|p| process::ThreadAttributeRef::desktop_app_policy(p));
+        let component_filter    = self.component_filter .as_ref().map(|p| process::ThreadAttributeRef::component_filter_flags(p));
+        let protection_level    = self.protection_level .as_ref().map(|p| process::ThreadAttributeRef::protection_level(p));
+        let job_list            = self.job_list         .as_ref().map(|p| process::ThreadAttributeRef::job_list(p));
+        let inherit             = self.inherit          .as_ref().map(|p| process::ThreadAttributeRef::handle_list(p));
         // TODO: ThreadAttributeRef::security_capabilities ? app container / capability sids related: https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-security_capabilities
 
-        let list = [mitigation_policy, child_policy, dab_policy, #[cfg(nope)] _protection_level, job_list, inherit, component_filter];
+        let list = [
+            mitigation_policy,
+            child_policy,
+            dab_policy,
+            protection_level,
+            job_list,
+            inherit,
+            component_filter,
+        ].into_iter().flatten().collect::<Vec<_>>();
         let mut n = list.len();
-        let min = n - 1; // component_filter is optional
+        let min = n - if component_filter.is_some() { 1 } else { 0 }; // component_filter is optional
 
         loop {
             match process::ThreadAttributeList::try_from(&list[..n-1]) {
                 Ok(list) => return list,
                 Err(err) if err == ERROR_NOT_SUPPORTED && n > min => n -= 1,
                 err => {
-                    dbg!(process::ThreadAttributeList::try_from(&[mitigation_policy ][..]).err());
-                    dbg!(process::ThreadAttributeList::try_from(&[child_policy      ][..]).err());
-                    dbg!(process::ThreadAttributeList::try_from(&[dab_policy        ][..]).err());
-                    dbg!(process::ThreadAttributeList::try_from(&[component_filter  ][..]).err());
-                    dbg!(process::ThreadAttributeList::try_from(&[_protection_level ][..]).err());
-                    dbg!(process::ThreadAttributeList::try_from(&[job_list          ][..]).err());
-                    dbg!(process::ThreadAttributeList::try_from(&[inherit           ][..]).err());
+                    dbg!(mitigation_policy  .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
+                    dbg!(child_policy       .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
+                    dbg!(dab_policy         .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
+                    dbg!(component_filter   .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
+                    dbg!(protection_level   .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
+                    dbg!(job_list           .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
+                    dbg!(inherit            .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
                     err.unwrap();
                 },
             }
