@@ -24,9 +24,15 @@ use core::ptr::null_mut;
 #[repr(transparent)] pub struct ThreadAttributeList<'a>(CBox<PROC_THREAD_ATTRIBUTE_LIST>, PhantomData<&'a HANDLE>);
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-deleteprocthreadattributelist)\]
-/// DeleteProcThreadAttributeList
+/// DeleteProcThreadAttributeList + HeapFree
 ///
-impl<'a> Drop for ThreadAttributeList<'a> { fn drop(&mut self) { unsafe { DeleteProcThreadAttributeList(self.0.as_mut_ptr()) } } }
+impl<'a> Drop for ThreadAttributeList<'a> {
+    fn drop(&mut self) {
+        // To my understanding: this frees what's referenced by PROC_THREAD_ATTRIBUTE_LIST, but not the buffer containing the PROC_THREAD_ATTRIBUTE_LIST itself.
+        unsafe { DeleteProcThreadAttributeList(self.0.as_mut_ptr()) }
+        // The PROC_THREAD_ATTRIBUTE_LIST buffer will be dropped implicitly by `self.0`'s implicit [`CBox::drop`] as it goes out of scope.
+    }
+}
 
 impl Debug for ThreadAttributeList<'_> { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { write!(fmt, "process::ThreadAttributeList {{ .. }}") } }
 
