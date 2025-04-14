@@ -6,11 +6,13 @@ use core::fmt::{self, Debug, Formatter};
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\]
 /// DWORD/[u32]: Mask for removing or restricting access rights to Access-Token objects
+///
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct AccessRightsMask(u32);
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\]
 /// DWORD/[u32]: Access rights for Access-Token objects
+///
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct AccessRights(u32);
 
@@ -52,20 +54,20 @@ impl Debug for AccessRights {
     }
 }
 
-pub const ALL_ACCESS            : AccessRights = AccessRights(winapi::um::winnt::TOKEN_ALL_ACCESS);
-pub const ALL_ACCESS_P          : AccessRights = AccessRights(winapi::um::winnt::TOKEN_ALL_ACCESS_P);
-pub const READ                  : AccessRights = AccessRights(winapi::um::winnt::TOKEN_READ);
-pub const WRITE                 : AccessRights = AccessRights(winapi::um::winnt::TOKEN_WRITE);
-pub const EXECUTE               : AccessRights = AccessRights(winapi::um::winnt::TOKEN_EXECUTE);
-pub const TRUST_CONSTRAINT_MASK : AccessRightsMask = AccessRightsMask(winapi::um::winnt::TOKEN_TRUST_CONSTRAINT_MASK);
-pub const ACCESS_PSEUDO_HANDLE  : AccessRights = AccessRights(winapi::um::winnt::TOKEN_ACCESS_PSEUDO_HANDLE);
+#[doc(alias = "TOKEN_ALL_ACCESS"            )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\] TOKEN_ALL_ACCESS"             ] pub const ALL_ACCESS            : AccessRights        = AccessRights(    winapi::um::winnt::TOKEN_ALL_ACCESS);
+#[doc(alias = "TOKEN_ALL_ACCESS_P"          )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\] TOKEN_ALL_ACCESS_P"           ] pub const ALL_ACCESS_P          : AccessRights        = AccessRights(    winapi::um::winnt::TOKEN_ALL_ACCESS_P);
+#[doc(alias = "TOKEN_READ"                  )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\] TOKEN_READ"                   ] pub const READ                  : AccessRights        = AccessRights(    winapi::um::winnt::TOKEN_READ);
+#[doc(alias = "TOKEN_WRITE"                 )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\] TOKEN_WRITE"                  ] pub const WRITE                 : AccessRights        = AccessRights(    winapi::um::winnt::TOKEN_WRITE);
+#[doc(alias = "TOKEN_EXECUTE"               )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\] TOKEN_EXECUTE"                ] pub const EXECUTE               : AccessRights        = AccessRights(    winapi::um::winnt::TOKEN_EXECUTE);
+#[doc(alias = "TOKEN_TRUST_CONSTRAINT_MASK" )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\] TOKEN_TRUST_CONSTRAINT_MASK"  ] pub const TRUST_CONSTRAINT_MASK : AccessRightsMask    = AccessRightsMask(winapi::um::winnt::TOKEN_TRUST_CONSTRAINT_MASK);
+#[doc(alias = "TOKEN_ACCESS_PSEUDO_HANDLE"  )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\] TOKEN_ACCESS_PSEUDO_HANDLE"   ] pub const ACCESS_PSEUDO_HANDLE  : AccessRights        = AccessRights(    winapi::um::winnt::TOKEN_ACCESS_PSEUDO_HANDLE);
 
-pub const ASSIGN_PRIMARY        : AccessRights = AccessRights(winapi::um::winnt::TOKEN_ASSIGN_PRIMARY);
-pub const DUPLICATE             : AccessRights = AccessRights(winapi::um::winnt::TOKEN_DUPLICATE);
-pub const IMPERSONATE           : AccessRights = AccessRights(winapi::um::winnt::TOKEN_IMPERSONATE);
-pub const QUERY                 : AccessRights = AccessRights(winapi::um::winnt::TOKEN_QUERY);
-pub const QUERY_SOURCE          : AccessRights = AccessRights(winapi::um::winnt::TOKEN_QUERY_SOURCE);
-pub const ADJUST_PRIVILEGES     : AccessRights = AccessRights(winapi::um::winnt::TOKEN_ADJUST_PRIVILEGES);
-pub const ADJUST_GROUPS         : AccessRights = AccessRights(winapi::um::winnt::TOKEN_ADJUST_GROUPS);
-pub const ADJUST_DEFAULT        : AccessRights = AccessRights(winapi::um::winnt::TOKEN_ADJUST_DEFAULT);
-pub const ADJUST_SESSIONID      : AccessRights = AccessRights(winapi::um::winnt::TOKEN_ADJUST_SESSIONID);
+#[doc(alias = "TOKEN_ASSIGN_PRIMARY"        )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\] TOKEN_ASSIGN_PRIMARY"         ] pub const ASSIGN_PRIMARY        : AccessRights        = AccessRights(    winapi::um::winnt::TOKEN_ASSIGN_PRIMARY);
+#[doc(alias = "TOKEN_DUPLICATE"             )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\] TOKEN_DUPLICATE"              ] pub const DUPLICATE             : AccessRights        = AccessRights(    winapi::um::winnt::TOKEN_DUPLICATE);
+#[doc(alias = "TOKEN_IMPERSONATE"           )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\] TOKEN_IMPERSONATE"            ] pub const IMPERSONATE           : AccessRights        = AccessRights(    winapi::um::winnt::TOKEN_IMPERSONATE);
+#[doc(alias = "TOKEN_QUERY"                 )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\] TOKEN_QUERY"                  ] pub const QUERY                 : AccessRights        = AccessRights(    winapi::um::winnt::TOKEN_QUERY);
+#[doc(alias = "TOKEN_QUERY_SOURCE"          )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\] TOKEN_QUERY_SOURCE"           ] pub const QUERY_SOURCE          : AccessRights        = AccessRights(    winapi::um::winnt::TOKEN_QUERY_SOURCE);
+#[doc(alias = "TOKEN_ADJUST_PRIVILEGES"     )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\] TOKEN_ADJUST_PRIVILEGES"      ] pub const ADJUST_PRIVILEGES     : AccessRights        = AccessRights(    winapi::um::winnt::TOKEN_ADJUST_PRIVILEGES);
+#[doc(alias = "TOKEN_ADJUST_GROUPS"         )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\] TOKEN_ADJUST_GROUPS"          ] pub const ADJUST_GROUPS         : AccessRights        = AccessRights(    winapi::um::winnt::TOKEN_ADJUST_GROUPS);
+#[doc(alias = "TOKEN_ADJUST_DEFAULT"        )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\] TOKEN_ADJUST_DEFAULT"         ] pub const ADJUST_DEFAULT        : AccessRights        = AccessRights(    winapi::um::winnt::TOKEN_ADJUST_DEFAULT);
+#[doc(alias = "TOKEN_ADJUST_SESSIONID"      )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/secauthz/access-rights-for-access-token-objects)\] TOKEN_ADJUST_SESSIONID"       ] pub const ADJUST_SESSIONID      : AccessRights        = AccessRights(    winapi::um::winnt::TOKEN_ADJUST_SESSIONID);

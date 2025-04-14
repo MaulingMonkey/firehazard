@@ -6,6 +6,7 @@ use core::fmt::{self, Debug, Formatter};
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-initializeacl#parameters)\]
 /// ACL_REVISION{,DS}
+///
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Revision(u8);
 
@@ -19,7 +20,16 @@ impl Revision {
     pub const unsafe fn from_unchecked(ty: u8) -> Self { Self(ty) }
 }
 
+#[doc(alias = "ACL_REVISION")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-initializeacl#parameters)\]
+/// ACL_REVISION
+///
 pub const REVISION      : Revision = Revision(ACL_REVISION as _);
+
+#[doc(alias = "ACL_REVISION_DS")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-initializeacl#parameters)\]
+/// ACL_REVISION_DS
+///
 pub const REVISION_DS   : Revision = Revision(ACL_REVISION_DS as _);
 
 // pub const ACL_REVISION: BYTE = 2;

@@ -10,6 +10,8 @@ use core::mem::{align_of, size_of};
 
 
 
+#[doc(alias = "PACL")]
+#[doc(alias = "ACL")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-acl)\]
 /// ≈ PACL
 ///
@@ -42,20 +44,33 @@ impl Ptr<'_> {
 
     pub fn as_pacl(self) -> PACL { self.0.cast() }
 
+    #[doc(alias = "GetAclInformation")]
+    #[doc(alias = "AclRevisionInformation")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-getaclinformation)\]
     /// GetAclInformation(..., AclRevisionInformation)
+    ///
     #[allow(dead_code)]
     pub(crate) fn get_acl_revision_information(&self) -> ACL_REVISION_INFORMATION { unsafe { self.get_acl_information(AclRevisionInformation) } }
 
+    #[doc(alias = "GetAclInformation")]
+    #[doc(alias = "AclRevisionInformation")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-getaclinformation)\]
     /// GetAclInformation(..., AclRevisionInformation)
+    ///
     #[allow(dead_code)]
     pub(crate) fn get_acl_revision(&self) -> acl::Revision { unsafe { acl::Revision::from_unchecked(self.get_acl_revision_information().AclRevision as _) } }
 
+    #[doc(alias = "GetAclInformation")]
+    #[doc(alias = "AclSizeInformation")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-getaclinformation)\]
     /// GetAclInformation(..., AclSizeInformation)
+    ///
     pub(crate) fn get_acl_size_information(&self) -> ACL_SIZE_INFORMATION { unsafe { self.get_acl_information(AclSizeInformation) } }
 
+    #[doc(alias = "GetAclInformation")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-getaclinformation)\]
+    /// GetAclInformation(...)
+    ///
     /// ### Safety
     /// *   `class` must be valid and must match `T`
     unsafe fn get_acl_information<T: Default>(&self, class: u32) -> T {

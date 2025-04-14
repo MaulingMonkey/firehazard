@@ -6,6 +6,7 @@ use core::ops::Deref;
 
 
 
+#[doc(alias = "DEBUG_EVENT")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/minwinbase/ns-minwinbase-debug_event)\]
 /// DEBUG_EVENT
 ///
@@ -39,14 +40,49 @@ impl From<DebugEvent> for DEBUG_EVENT { fn from(de: DebugEvent) -> Self { de.0 }
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/minwinbase/ns-minwinbase-debug_event)\]
 /// ≈ DEBUG_EVENT::u
 pub enum DebugEventU {
+    #[doc(alias = "EXCEPTION_DEBUG_EVENT")]
+    /// EXCEPTION_DEBUG_EVENT → [EXCEPTION_DEBUG_INFO]
+    ///
     Exception(EXCEPTION_DEBUG_INFO),
+
+    #[doc(alias = "CREATE_THREAD_DEBUG_EVENT")]
+    /// CREATE_THREAD_DEBUG_EVENT → [CREATE_THREAD_DEBUG_INFO]
+    ///
     CreateThread(CREATE_THREAD_DEBUG_INFO),
+
+    #[doc(alias = "CREATE_PROCESS_DEBUG_EVENT")]
+    /// CREATE_PROCESS_DEBUG_EVENT → [CREATE_PROCESS_DEBUG_INFO]
+    ///
     CreateProcess(CREATE_PROCESS_DEBUG_INFO),
+
+    #[doc(alias = "EXIT_THREAD_DEBUG_EVENT")]
+    /// EXIT_THREAD_DEBUG_EVENT → [EXIT_THREAD_DEBUG_INFO]
+    ///
     ExitThread(EXIT_THREAD_DEBUG_INFO),
+
+    #[doc(alias = "EXIT_PROCESS_DEBUG_EVENT")]
+    /// EXIT_PROCESS_DEBUG_EVENT → [EXIT_PROCESS_DEBUG_INFO]
+    ///
     ExitProcess(EXIT_PROCESS_DEBUG_INFO),
+
+    #[doc(alias = "LOAD_DLL_DEBUG_EVENT")]
+    /// LOAD_DLL_DEBUG_EVENT → LOAD_DLL_DEBUG_INFO
+    ///
     LoadDll(LOAD_DLL_DEBUG_INFO),
+
+    #[doc(alias = "UNLOAD_DLL_DEBUG_EVENT")]
+    /// UNLOAD_DLL_DEBUG_EVENT → [UNLOAD_DLL_DEBUG_INFO]
+    ///
     UnloadDll(UNLOAD_DLL_DEBUG_INFO),
+
+    #[doc(alias = "OUTPUT_DEBUG_STRING_EVENT")]
+    /// OUTPUT_DEBUG_STRING_EVENT → [OUTPUT_DEBUG_STRING_INFO]
+    ///
     DebugString(OUTPUT_DEBUG_STRING_INFO),
+
+    #[doc(alias = "RIP_EVENT")]
+    /// RIP_EVENT → [RIP_INFO]
+    ///
     Rip(RIP_INFO),
 
     #[doc(hidden)] _NotHandled(PhantomData<HANDLE>)

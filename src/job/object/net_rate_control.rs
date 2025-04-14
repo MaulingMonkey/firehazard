@@ -4,8 +4,10 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
+#[doc(alias = "JOBOBJECT_NET_RATE_CONTROL_INFORMATION")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_net_rate_control_information)\]
 /// JOBOBJECT_NET_RATE_CONTROL_INFORMATION
+///
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)] pub struct NetRateControlInformation {
     /// Limit the maximum number of *outgoing* network traffic bytes for the job.
@@ -48,11 +50,17 @@ impl NetRateControlInformation {
 
 
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-job_object_net_rate_control_flags)\] JOB_OBJECT_NET_RATE_CONTROL_FLAGS mask
+#[doc(alias = "JOB_OBJECT_NET_RATE_CONTROL_FLAGS")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-job_object_net_rate_control_flags)\]
+/// JOB_OBJECT_NET_RATE_CONTROL_FLAGS mask
+///
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct NetRateControlFlagsMask(u32);
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-job_object_net_rate_control_flags)\] JOB_OBJECT_NET_RATE_CONTROL_FLAGS
+#[doc(alias = "JOB_OBJECT_NET_RATE_CONTROL_FLAGS")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-job_object_net_rate_control_flags)\]
+/// JOB_OBJECT_NET_RATE_CONTROL_FLAGS
+///
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct NetRateControlFlags(u32);
 
@@ -75,16 +83,31 @@ impl Debug for NetRateControlFlags {
     }
 }
 
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-job_object_net_rate_control_flags)\]
+/// JOB_OBJECT_NET_RATE_CONTROL_ENABLE
+/// <br>
 /// Turns on the control of the network traffic.
 /// You must set this value if you also set either [job::object::NET_RATE_CONTROL_MAX_BANDWIDTH] or [job::object::NET_RATE_CONTROL_DSCP_TAG].
+///
 pub const NET_RATE_CONTROL_ENABLE           : NetRateControlFlags       = NetRateControlFlags(winapi::um::winnt::JOB_OBJECT_NET_RATE_CONTROL_ENABLE);
 
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-job_object_net_rate_control_flags)\]
+/// JOB_OBJECT_NET_RATE_CONTROL_MAX_BANDWIDTH
+/// <br>
 /// Use the [`NetRateControlInformation::max_bandwidth`] field to limit the total *outgoing* bandwidth used over the lifetime of the job.
+///
 pub const NET_RATE_CONTROL_MAX_BANDWIDTH    : NetRateControlFlags       = NetRateControlFlags(winapi::um::winnt::JOB_OBJECT_NET_RATE_CONTROL_MAX_BANDWIDTH);
 
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-job_object_net_rate_control_flags)\]
+/// JOB_OBJECT_NET_RATE_CONTROL_DSCP_TAG
+/// <br>
 /// Use the [`NetRateControlInformation::dscp_tag`] field to set the [differentiated services code point](https://en.wikipedia.org/wiki/Differentiated_services) tag.
+///
 pub const NET_RATE_CONTROL_DSCP_TAG         : NetRateControlFlags       = NetRateControlFlags(winapi::um::winnt::JOB_OBJECT_NET_RATE_CONTROL_DSCP_TAG);
 
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-job_object_net_rate_control_flags)\]
+/// JOB_OBJECT_NET_RATE_CONTROL_VALID_FLAGS
+///
 pub const NET_RATE_CONTROL_VALID_FLAGS      : NetRateControlFlagsMask   = NetRateControlFlagsMask(winapi::um::winnt::JOB_OBJECT_NET_RATE_CONTROL_VALID_FLAGS);
 
 

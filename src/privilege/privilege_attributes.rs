@@ -3,11 +3,15 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\] DWORD/[u32]: SE_GROUP_*: SID (group) attributes flags mask
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\]
+/// DWORD/[u32]: SE_GROUP_*: SID (group) attributes flags mask
+///
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct AttributesMask(u32);
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\] DWORD/[u32]: SE_GROUP_*: SID (group) attributes flags
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\]
+/// DWORD/[u32]: SE_GROUP_*: SID (group) attributes flags
+///
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Attributes(u32);
 
@@ -31,6 +35,9 @@ impl Debug for Attributes {
     }
 }
 
+
+
+#[doc(alias = "SE_PRIVILEGE_ENABLED")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\]
 /// SE_PRIVILEGE_ENABLED
 /// &mdash;
@@ -39,6 +46,9 @@ impl Debug for Attributes {
 ///
 pub const ENABLED               : Attributes        = Attributes(winapi::um::winnt::SE_PRIVILEGE_ENABLED);
 
+
+
+#[doc(alias = "SE_PRIVILEGE_ENABLED_BY_DEFAULT")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\]
 /// SE_PRIVILEGE_ENABLED_BY_DEFAULT
 /// &mdash;
@@ -46,6 +56,9 @@ pub const ENABLED               : Attributes        = Attributes(winapi::um::win
 ///
 pub const ENABLED_BY_DEFAULT    : Attributes        = Attributes(winapi::um::winnt::SE_PRIVILEGE_ENABLED_BY_DEFAULT);
 
+
+
+#[doc(alias = "SE_PRIVILEGE_REMOVED")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\]
 /// SE_PRIVILEGE_REMOVED
 /// &mdash;
@@ -53,6 +66,9 @@ pub const ENABLED_BY_DEFAULT    : Attributes        = Attributes(winapi::um::win
 ///
 pub const REMOVED               : Attributes        = Attributes(winapi::um::winnt::SE_PRIVILEGE_REMOVED);
 
+
+
+#[doc(alias = "SE_PRIVILEGE_USED_FOR_ACCESS")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\]
 /// SE_PRIVILEGE_USED_FOR_ACCESS
 /// &mdash;
@@ -61,6 +77,9 @@ pub const REMOVED               : Attributes        = Attributes(winapi::um::win
 ///
 pub const USED_FOR_ACCESS       : Attributes        = Attributes(winapi::um::winnt::SE_PRIVILEGE_USED_FOR_ACCESS);
 
+
+
+#[doc(alias = "SE_PRIVILEGE_VALID_ATTRIBUTES")]
 /// \[<strike>microsoft.com</strike>\]
 /// SE_PRIVILEGE_VALID_ATTRIBUTES
 /// &mdash;

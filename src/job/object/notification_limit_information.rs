@@ -3,8 +3,10 @@ use winapi::um::winnt::*;
 
 
 
+#[doc(alias = "JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_notification_limit_information)\]
 /// JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION
+///
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)] pub struct NotificationLimitInformation {
     pub io_read_bytes_limit:                u64,
@@ -28,8 +30,10 @@ structure!(@assert layout NotificationLimitInformation => JOBOBJECT_NOTIFICATION
 
 
 
+#[doc(alias = "JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION_2")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_notification_limit_information_2)\]
 /// JOBOBJECT_NOTIFICATION_LIMIT_INFORMATION_2
+///
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)] pub struct NotificationLimitInformation2 {
     pub io_read_bytes_limit:                    u64,

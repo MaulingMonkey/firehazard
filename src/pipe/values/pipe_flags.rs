@@ -5,16 +5,19 @@ use winapi::um::winbase::*;
 
 // https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew#parameters
 
+#[doc(alias = "PIPE_ACCESS_DUPLEX")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew#parameters)\]
 /// PIPE_ACCESS_DUPLEX
 ///
 pub const ACCESS_DUPLEX : DWORD = PIPE_ACCESS_DUPLEX;
 
+#[doc(alias = "PIPE_ACCESS_INBOUND")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew#parameters)\]
 /// PIPE_ACCESS_INBOUND
 ///
 pub const ACCESS_INBOUND : DWORD = PIPE_ACCESS_INBOUND;
 
+#[doc(alias = "PIPE_ACCESS_OUTBOUND")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew#parameters)\]
 /// PIPE_ACCESS_OUTBOUND
 ///
@@ -28,6 +31,7 @@ pub const ACCESS_OUTBOUND : DWORD = PIPE_ACCESS_OUTBOUND;
 
 
 
+#[doc(alias = "PIPE_TYPE_BYTE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew#parameters)\]
 /// PIPE_TYPE_BYTE
 ///
@@ -36,15 +40,18 @@ pub const TYPE_BYTE : DWORD = PIPE_TYPE_BYTE;
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew#parameters)\]
 /// PIPE_TYPE_MESSAGE
 ///
+#[doc(alias = "PIPE_TYPE_MESSAGE")]
 pub const TYPE_MESSAGE : DWORD = PIPE_TYPE_MESSAGE;
 
 
 
+#[doc(alias = "PIPE_WAIT")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew#parameters)\]
 /// PIPE_WAIT
 ///
 pub const WAIT : DWORD = PIPE_WAIT;
 
+#[doc(alias = "PIPE_NOWAIT")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew#parameters)\]
 /// PIPE_NOWAIT
 ///
@@ -52,11 +59,13 @@ pub const NOWAIT : DWORD = PIPE_NOWAIT;
 
 
 
+#[doc(alias = "PIPE_ACCEPT_REMOTE_CLIENTS")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew#parameters)\]
 /// PIPE_ACCEPT_REMOTE_CLIENTS
 ///
 pub const ACCEPT_REMOTE_CLIENTS : DWORD = PIPE_ACCEPT_REMOTE_CLIENTS;
 
+#[doc(alias = "PIPE_REJECT_REMOTE_CLIENTS")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew#parameters)\]
 /// PIPE_REJECT_REMOTE_CLIENTS
 ///
@@ -64,11 +73,13 @@ pub const REJECT_REMOTE_CLIENTS : DWORD = PIPE_REJECT_REMOTE_CLIENTS;
 
 
 
+#[doc(alias = "PIPE_READMODE_BYTE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew#parameters)\]
 /// PIPE_READMODE_BYTE
 ///
 pub const READMODE_BYTE : DWORD = PIPE_READMODE_BYTE;
 
+#[doc(alias = "PIPE_READMODE_MESSAGE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew#parameters)\]
 /// PIPE_READMODE_MESSAGE
 ///
@@ -76,11 +87,13 @@ pub const READMODE_MESSAGE : DWORD = PIPE_READMODE_MESSAGE;
 
 
 
+#[doc(alias = "PIPE_CLIENT_END")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-getnamedpipeinfo)\]
 /// PIPE_CLIENT_END
 ///
 pub const CLIENT_END : DWORD = PIPE_CLIENT_END;
 
+#[doc(alias = "PIPE_SERVER_END")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-getnamedpipeinfo)\]
 /// PIPE_SERVER_END
 ///

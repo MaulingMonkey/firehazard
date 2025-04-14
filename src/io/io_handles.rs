@@ -11,6 +11,7 @@ use core::marker::PhantomData;
 
 
 
+#[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea)\] Owned non-null file `HANDLE`
 ///
 /// ### Alternatives
@@ -21,6 +22,7 @@ use core::marker::PhantomData;
 ///
 #[repr(transparent)] pub struct FileNN(pub(super) HANDLENN);
 
+#[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned anonymous non-null pipe `HANDLE` ([io::Read]able end)
 ///
 /// ### Alternatives
@@ -31,6 +33,7 @@ use core::marker::PhantomData;
 ///
 #[repr(transparent)] pub struct PipeReaderNN(pub(crate) HANDLENN);
 
+#[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned anonymous non-null pipe `HANDLE` ([io::Write]able end)
 ///
 /// ### Alternatives
@@ -43,6 +46,7 @@ use core::marker::PhantomData;
 
 
 
+#[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea)\] Borrowed non-null file `HANDLE`
 ///
 /// ### Alternatives
@@ -54,6 +58,7 @@ use core::marker::PhantomData;
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct FileHandle<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
 
+#[doc(alias = "HANDLE")]
 /// Borrowed non-null readable pipe or file `HANDLE`
 ///
 /// ### Alternatives
@@ -65,6 +70,7 @@ use core::marker::PhantomData;
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct ReadHandle<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
 
+#[doc(alias = "HANDLE")]
 /// Borrowed non-null writeable pipe or file `HANDLE`
 ///
 /// ### Alternatives
@@ -104,9 +110,9 @@ handles!(unsafe impl @convert io::FileNN => io::PipeReaderNN);
 handles!(unsafe impl @convert &'_ io::FileNN => io::WriteHandle<'_> );
 handles!(unsafe impl @convert &'_ io::FileNN => io::ReadHandle<'_>  );
 
-impl Drop       for FileNN          { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
-impl Drop       for PipeReaderNN    { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
-impl Drop       for PipeWriterNN    { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
+#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for FileNN          { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
+#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for PipeReaderNN    { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
+#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for PipeWriterNN    { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 
 impl io::Read   for FileNN          { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(self, buf, None).map(usize::from32)?) } } }
 impl io::Read   for FileHandle<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(self, buf, None).map(usize::from32)?) } } }

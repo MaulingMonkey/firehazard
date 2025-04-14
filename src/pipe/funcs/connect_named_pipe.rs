@@ -1,3 +1,4 @@
+#[doc(alias = "ConnectNamedPipe")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-connectnamedpipe)\]
 /// ConnectNamedPipe(handle, nullptr)
 ///
@@ -13,6 +14,7 @@ pub fn connect_named_pipe(
 
 
 
+#[doc(alias = "ConnectNamedPipe")]
 #[cfg(doc)]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-connectnamedpipe)\]
 /// ~~ConnectNamedPipe(handle, &overlapped)~~

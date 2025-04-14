@@ -5,6 +5,7 @@ use winapi::um::winnt::*;
 
 
 
+#[doc(alias = "PROCESS_MITIGATION_CHILD_PROCESS_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-_process_mitigation_child_process_policy)\]
 /// ≈ [PROCESS_MITIGATION_CHILD_PROCESS_POLICY]
 ///

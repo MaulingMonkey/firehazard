@@ -1,3 +1,5 @@
+#[doc(alias = "GetNamedPipeClientComputerName")]
+#[doc(alias = "GetNamedPipeClientComputerNameW")]
 #[cfg(std)]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-getnamedpipeclientcomputernamew)\]
 /// GetNamedPipeClientComputerNameW
@@ -41,6 +43,7 @@ pub fn get_named_pipe_client_computer_name(
 
 
 
+#[doc(alias = "GetNamedPipeClientComputerNameA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getnamedpipeclientcomputernamea)\]
 /// GetNamedPipeClientComputerNameA
 ///
@@ -65,6 +68,8 @@ pub fn get_named_pipe_client_computer_name_a<'name>(
 
 
 
+#[doc(alias = "GetNamedPipeClientComputerName")]
+#[doc(alias = "GetNamedPipeClientComputerNameW")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-getnamedpipeclientcomputernamew)\]
 /// GetNamedPipeClientComputerNameW
 ///

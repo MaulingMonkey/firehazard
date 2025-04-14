@@ -34,6 +34,7 @@ use core::ptr::NonNull;
 /// [`CloseHandle`]:                                    https://learn.microsoft.com/en-us/wsindows/win32/api/handleapi/nf-handleapi-closehandle
 /// [`PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY`]:  https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_strict_handle_check_policy
 pub trait FromLocalHandle<H=c_void> : Sized {
+
     /// ### Safety
     /// Assuming `handle` isn't null:
     /// *   `handle` should have the correct [type](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects) (passing an HDESK where HWINSTA was expected may be undefined behavior)
@@ -63,14 +64,20 @@ pub trait FromLocalHandle<H=c_void> : Sized {
     unsafe fn borrow_from_raw_nn(handle: &NonNull<H>) -> &Self;
 }
 
+
+
 /// Some kind of wrapper around a HANDLE owned by the current/local process.
+///
 pub trait AsLocalHandle<H=c_void> : Sized {
     /// [`winapi`]-friendly HANDLE
     fn as_handle(&self) -> *mut H;
     fn into_handle(self) -> *mut H { let h = self.as_handle(); core::mem::forget(self); h }
 }
 
+
+
 /// Some kind of wrapper around a non-null HANDLE owned by the current/local process.
+///
 pub trait AsLocalHandleNN<H=c_void> : AsLocalHandle<H> {
     /// HANDLE, but [NonNull].
     fn as_handle_nn(&self) -> NonNull<H>;

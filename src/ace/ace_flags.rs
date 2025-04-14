@@ -4,11 +4,13 @@ use core::fmt::{self, Debug, Display, Formatter};
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members)\]
 /// ACE_HEADER::AceFlags Mask
+///
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct FlagsMask(u8);
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members)\]
 /// ACE_HEADER::AceFlags
+///
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Flags(u8);
 
@@ -54,15 +56,53 @@ impl Debug for Flags {
     }
 }
 
+
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members)\]
+/// OBJECT_INHERIT_ACE
+///
 pub const OBJECT_INHERIT_ACE            : Flags     = Flags     (winapi::um::winnt::OBJECT_INHERIT_ACE          ); // 0x01
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members)\]
+/// CONTAINER_INHERIT_ACE
+///
 pub const CONTAINER_INHERIT_ACE         : Flags     = Flags     (winapi::um::winnt::CONTAINER_INHERIT_ACE       ); // 0x02
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members)\]
+/// NO_PROPAGATE_INHERIT_ACE
+///
 pub const NO_PROPAGATE_INHERIT_ACE      : Flags     = Flags     (winapi::um::winnt::NO_PROPAGATE_INHERIT_ACE    ); // 0x04
+
+
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members)\]
+/// INHERIT_ONLY_ACE
+///
 pub const INHERIT_ONLY_ACE              : Flags     = Flags     (winapi::um::winnt::INHERIT_ONLY_ACE            ); // 0x08
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members)\]
+/// INHERITED_ACE
+///
 pub const INHERITED_ACE                 : Flags     = Flags     (winapi::um::winnt::INHERITED_ACE               ); // 0x10
+
+/// \[<strike>microsoft.com</strike>\]
+/// VALID_INHERIT_FLAGS
+///
 pub const VALID_INHERIT_FLAGS           : FlagsMask = FlagsMask (winapi::um::winnt::VALID_INHERIT_FLAGS         ); // 0x1F
+
 // 0x20
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members)\]
+/// SUCCESSFUL_ACCESS_ACE_FLAG
+///
 pub const SUCCESSFUL_ACCESS_ACE_FLAG    : Flags     = Flags     (winapi::um::winnt::SUCCESSFUL_ACCESS_ACE_FLAG  ); // 0x40 - also previously TRUST_PROTECTED_FILTER_ACE_FLAG
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members)\]
+/// FAILED_ACCESS_ACE_FLAG
+///
 pub const FAILED_ACCESS_ACE_FLAG        : Flags     = Flags     (winapi::um::winnt::FAILED_ACCESS_ACE_FLAG      ); // 0x80
+
+
 
 macro_rules! table { ( $( $short:literal $sddl:ident $flag:tt )* ) => {
     &[$(

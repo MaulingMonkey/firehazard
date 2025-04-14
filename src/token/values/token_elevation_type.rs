@@ -6,8 +6,10 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
+#[doc(alias = "TOKEN_ELEVATION_TYPE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ne-winnt-token_elevation_type)\]
 /// TOKEN_ELEVATION_TYPE
+///
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct ElevationType(TOKEN_ELEVATION_TYPE);
 
@@ -17,15 +19,28 @@ impl ElevationType {
     /// ### Safety
     ///
     /// Some APIs might assume [`ElevationType`] is a valid token type.
+    ///
     pub const unsafe fn from_unchecked(ty: TOKEN_ELEVATION_TYPE) -> Self { Self(ty) }
 
+
+
+    #[doc(alias = "TokenElevationTypeDefault")]
     /// TokenElevationTypeDefault
+    ///
     pub const Default : ElevationType = ElevationType(TokenElevationTypeDefault);
 
+
+
+    #[doc(alias = "TokenElevationTypeFull")]
     /// TokenElevationTypeFull
+    ///
     pub const Full : ElevationType = ElevationType(TokenElevationTypeFull);
 
+
+
+    #[doc(alias = "TokenElevationTypeLimited")]
     /// TokenElevationTypeLimited
+    ///
     pub const Limited : ElevationType = ElevationType(TokenElevationTypeLimited);
 }
 

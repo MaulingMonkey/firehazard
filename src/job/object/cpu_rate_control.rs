@@ -4,8 +4,10 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
+#[doc(alias = "JOBOBJECT_CPU_RATE_CONTROL_INFORMATION")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information)\]
 /// JOBOBJECT_CPU_RATE_CONTROL_INFORMATION
+///
 #[derive(Clone, Copy, Default)]
 #[repr(C)] pub struct CpuRateControlInformation {
     control_flags:  CpuRateControlFlags,
@@ -89,11 +91,15 @@ impl Debug for CpuRateControlInformation {
 
 
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information#members)\] JOBOBJECT_CPU_RATE_CONTROL_INFORMATION::ControlFlags mask
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information#members)\]
+/// JOBOBJECT_CPU_RATE_CONTROL_INFORMATION::ControlFlags mask
+///
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct CpuRateControlFlagsMask(u32);
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information#members)\] JOBOBJECT_CPU_RATE_CONTROL_INFORMATION::ControlFlags
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information#members)\]
+/// JOBOBJECT_CPU_RATE_CONTROL_INFORMATION::ControlFlags
+///
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct CpuRateControlFlags(u32);
 
@@ -120,25 +126,58 @@ impl Debug for CpuRateControlFlags {
 
 
 
+#[doc(alias = "JOB_OBJECT_CPU_RATE_CONTROL_ENABLE")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information#members)\]
+/// JOB_OBJECT_CPU_RATE_CONTROL_ENABLE
+/// <br>
 /// This flag enables the job's CPU rate to be controlled based on weight or hard cap.
 /// You must set this value if you also set JOB_OBJECT_CPU_RATE_CONTROL_WEIGHT_BASED, JOB_OBJECT_CPU_RATE_CONTROL_HARD_CAP, or JOB_OBJECT_CPU_RATE_CONTROL_MIN_MAX_RATE.
+///
 pub const CPU_RATE_CONTROL_ENABLE : CpuRateControlFlags = CpuRateControlFlags(JOB_OBJECT_CPU_RATE_CONTROL_ENABLE);
 
+
+
+#[doc(alias = "JOB_OBJECT_CPU_RATE_CONTROL_WEIGHT_BASED")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information#members)\]
+/// JOB_OBJECT_CPU_RATE_CONTROL_WEIGHT_BASED
+/// <br>
 /// The job's CPU rate is calculated based on its relative weight to the weight of other jobs.
 /// If this flag is set, the Weight member contains more information.
 /// If this flag is clear, the CpuRate member contains more information.
 /// If you set JOB_OBJECT_CPU_RATE_CONTROL_WEIGHT_BASED, you cannot also set JOB_OBJECT_CPU_RATE_CONTROL_MIN_MAX_RATE.
+///
 pub const CPU_RATE_CONTROL_WEIGHT_BASED : CpuRateControlFlags = CpuRateControlFlags(JOB_OBJECT_CPU_RATE_CONTROL_WEIGHT_BASED);
 
+
+
+#[doc(alias = "JOB_OBJECT_CPU_RATE_CONTROL_HARD_CAP")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information#members)\]
+/// JOB_OBJECT_CPU_RATE_CONTROL_HARD_CAP
+/// <br>
 /// The job's CPU rate is a hard limit. After the job reaches its CPU cycle limit for the current scheduling interval, no threads associated with the job will run until the next interval.
 /// If you set JOB_OBJECT_CPU_RATE_CONTROL_HARD_CAP, you cannot also set JOB_OBJECT_CPU_RATE_CONTROL_MIN_MAX_RATE.
+///
 pub const CPU_RATE_CONTROL_HARD_CAP : CpuRateControlFlags = CpuRateControlFlags(JOB_OBJECT_CPU_RATE_CONTROL_HARD_CAP);
 
+
+
+#[doc(alias = "JOB_OBJECT_CPU_RATE_CONTROL_NOTIFY")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information#members)\]
+/// JOB_OBJECT_CPU_RATE_CONTROL_NOTIFY
+/// <br>
 /// Sends messages when the CPU rate for the job exceeds the rate limits for the job during the tolerance interval.
+///
 pub const CPU_RATE_CONTROL_NOTIFY : CpuRateControlFlags = CpuRateControlFlags(JOB_OBJECT_CPU_RATE_CONTROL_NOTIFY);
 
+
+
+#[doc(alias = "JOB_OBJECT_CPU_RATE_CONTROL_MIN_MAX_RATE")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_cpu_rate_control_information#members)\]
+/// JOB_OBJECT_CPU_RATE_CONTROL_MIN_MAX_RATE
+/// <br>
 /// The CPU rate for the job is limited by minimum and maximum rates that you specify in the MinRate and MaxRate members.
 /// If you set JOB_OBJECT_CPU_RATE_CONTROL_MIN_MAX_RATE, you can set neither JOB_OBJECT_CPU_RATE_CONTROL_WEIGHT_BASED nor JOB_OBJECT_CPU_RATE_CONTROL_HARD_CAP.
+///
 pub const CPU_RATE_CONTROL_MIN_MAX_RATE : CpuRateControlFlags = CpuRateControlFlags(JOB_OBJECT_CPU_RATE_CONTROL_MIN_MAX_RATE);
 
 

@@ -1,3 +1,4 @@
+#[doc(alias = "WriteFile")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-writefile)\]
 /// WriteFile(..., nullptr)
 ///

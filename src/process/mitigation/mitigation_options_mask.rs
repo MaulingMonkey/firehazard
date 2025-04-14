@@ -3,6 +3,7 @@ use crate::*;
 
 
 
+#[doc(alias = "ProcessMitigationOptionsMask")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\]
 /// ProcessMitigationOptionsMask
 ///
@@ -11,6 +12,7 @@ use crate::*;
 /// this is actually a mask of valid [`process::creation::MitigationPolicy`] bits.
 ///
 /// When interpreting said bits, many values are `..._RESERVED` and should not be used as is - so I've chosen [`process::creation::MitigationPolicyMask`] is the least awkward fit.
+///
 pub type OptionsMask = process::creation::MitigationPolicyMask;
 
 unsafe impl GetPolicy for OptionsMask {

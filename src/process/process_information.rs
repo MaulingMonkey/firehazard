@@ -4,8 +4,10 @@ use core::mem::{transmute};
 
 
 
+#[doc(alias = "PROCESS_INFORMATION")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-process_information)\]
 /// PROCESS_INFORMATION
+///
 #[derive(Debug)]
 #[repr(C)] pub struct Information {
     pub process:    process::OwnedHandle,

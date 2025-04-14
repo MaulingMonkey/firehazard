@@ -1,4 +1,6 @@
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openthreadtoken)\] OpenThreadToken
+#[doc(alias = "OpenThreadToken")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openthreadtoken)\]
+/// OpenThreadToken
 ///
 /// ### Example
 /// ```
@@ -21,6 +23,7 @@
 /// *   `ERROR_NO_TOKEN`        if the thread isn't impersonating any token
 /// *   `ERROR_INVALID_HANDLE`  if `thread` wasn't a valid thread handle (maybe it was a process handle?)
 /// *   `ERROR_ACCESS_DENIED`   if the current process/thread token lacks the rights to open the token with `rights` (Untrusted integrity, missing SIDs, blocked by DACL, etc.)
+///
 pub fn open_thread_token<'a>(thread: impl AsRef<crate::thread::PsuedoHandle<'a>>, desired_access: impl Into<crate::token::AccessRights>, open_as_self: bool) -> Result<crate::token::OwnedHandle, crate::Error> {
     use crate::*;
     let mut h = core::ptr::null_mut();

@@ -9,6 +9,7 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
+#[doc(alias = "TOKEN_PRIMARY_GROUP")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_primary_group)\]
 /// ≈ `Box<(TOKEN_PRIMARY_GROUP, ..)>`
 ///

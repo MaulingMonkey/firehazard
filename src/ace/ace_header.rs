@@ -3,6 +3,7 @@ use winapi::um::winnt::ACE_HEADER;
 
 
 
+#[doc(alias = "ACE_HEADER")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header)\]
 /// ≈ ACE_HEADER
 ///

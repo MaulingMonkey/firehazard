@@ -5,6 +5,7 @@ use winapi::um::winnt::*;
 
 
 
+#[doc(alias = "PROCESS_MITIGATION_DYNAMIC_CODE_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_dynamic_code_policy)\]
 /// ≈ [PROCESS_MITIGATION_DYNAMIC_CODE_POLICY]
 ///

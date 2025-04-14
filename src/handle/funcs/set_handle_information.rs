@@ -1,3 +1,4 @@
+#[doc(alias = "SetHandleInformation")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-sethandleinformation)\]
 /// SetHandleInformation
 ///
@@ -12,6 +13,7 @@
 /// close_handle(thread).unwrap();
 /// # }
 /// ```
+///
 pub fn set_handle_information<'a>(
     object:     impl AsRef<firehazard::handle::Borrowed<'a>>,
     mask:       impl Into<firehazard::handle::FlagsMask>,

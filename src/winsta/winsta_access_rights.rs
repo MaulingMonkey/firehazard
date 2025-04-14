@@ -52,13 +52,13 @@ impl Debug for AccessRights {
     }
 }
 
-pub const ALL_ACCESS            : AccessRights = AccessRights(winapi::um::winuser::WINSTA_ALL_ACCESS);
-pub const ACCESSCLIPBOARD       : AccessRights = AccessRights(winapi::um::winuser::WINSTA_ACCESSCLIPBOARD);
-pub const ACCESSGLOBALATOMS     : AccessRights = AccessRights(winapi::um::winuser::WINSTA_ACCESSGLOBALATOMS);
-pub const CREATEDESKTOP         : AccessRights = AccessRights(winapi::um::winuser::WINSTA_CREATEDESKTOP);
-pub const ENUMDESKTOPS          : AccessRights = AccessRights(winapi::um::winuser::WINSTA_ENUMDESKTOPS);
-pub const ENUMERATE             : AccessRights = AccessRights(winapi::um::winuser::WINSTA_ENUMERATE);
-pub const EXITWINDOWS           : AccessRights = AccessRights(winapi::um::winuser::WINSTA_EXITWINDOWS);
-pub const READATTRIBUTES        : AccessRights = AccessRights(winapi::um::winuser::WINSTA_READATTRIBUTES);
-pub const READSCREEN            : AccessRights = AccessRights(winapi::um::winuser::WINSTA_READSCREEN);
-pub const WRITEATTRIBUTES       : AccessRights = AccessRights(winapi::um::winuser::WINSTA_WRITEATTRIBUTES);
+#[doc(alias = "WINSTA_ALL_ACCESS"           )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/window-station-security-and-access-rights)\] WINSTA_ALL_ACCESS"          ] pub const ALL_ACCESS            : AccessRights = AccessRights(winapi::um::winuser::WINSTA_ALL_ACCESS          );
+#[doc(alias = "WINSTA_ACCESSCLIPBOARD"      )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/window-station-security-and-access-rights)\] WINSTA_ACCESSCLIPBOARD"     ] pub const ACCESSCLIPBOARD       : AccessRights = AccessRights(winapi::um::winuser::WINSTA_ACCESSCLIPBOARD     );
+#[doc(alias = "WINSTA_ACCESSGLOBALATOMS"    )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/window-station-security-and-access-rights)\] WINSTA_ACCESSGLOBALATOMS"   ] pub const ACCESSGLOBALATOMS     : AccessRights = AccessRights(winapi::um::winuser::WINSTA_ACCESSGLOBALATOMS   );
+#[doc(alias = "WINSTA_CREATEDESKTOP"        )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/window-station-security-and-access-rights)\] WINSTA_CREATEDESKTOP"       ] pub const CREATEDESKTOP         : AccessRights = AccessRights(winapi::um::winuser::WINSTA_CREATEDESKTOP       );
+#[doc(alias = "WINSTA_ENUMDESKTOPS"         )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/window-station-security-and-access-rights)\] WINSTA_ENUMDESKTOPS"        ] pub const ENUMDESKTOPS          : AccessRights = AccessRights(winapi::um::winuser::WINSTA_ENUMDESKTOPS        );
+#[doc(alias = "WINSTA_ENUMERATE"            )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/window-station-security-and-access-rights)\] WINSTA_ENUMERATE"           ] pub const ENUMERATE             : AccessRights = AccessRights(winapi::um::winuser::WINSTA_ENUMERATE           );
+#[doc(alias = "WINSTA_EXITWINDOWS"          )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/window-station-security-and-access-rights)\] WINSTA_EXITWINDOWS"         ] pub const EXITWINDOWS           : AccessRights = AccessRights(winapi::um::winuser::WINSTA_EXITWINDOWS         );
+#[doc(alias = "WINSTA_READATTRIBUTES"       )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/window-station-security-and-access-rights)\] WINSTA_READATTRIBUTES"      ] pub const READATTRIBUTES        : AccessRights = AccessRights(winapi::um::winuser::WINSTA_READATTRIBUTES      );
+#[doc(alias = "WINSTA_READSCREEN"           )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/window-station-security-and-access-rights)\] WINSTA_READSCREEN"          ] pub const READSCREEN            : AccessRights = AccessRights(winapi::um::winuser::WINSTA_READSCREEN          );
+#[doc(alias = "WINSTA_WRITEATTRIBUTES"      )] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/winstation/window-station-security-and-access-rights)\] WINSTA_WRITEATTRIBUTES"     ] pub const WRITEATTRIBUTES       : AccessRights = AccessRights(winapi::um::winuser::WINSTA_WRITEATTRIBUTES     );

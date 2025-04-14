@@ -1,4 +1,6 @@
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-reverttoself)\] RevertToSelf
+#[doc(alias = "RevertToSelf")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-reverttoself)\]
+/// RevertToSelf
 ///
 /// ### Example
 /// ```
@@ -18,6 +20,7 @@
 /// revert_to_self().expect("wasn't impersonating, should succeed anyways");
 /// open_thread_token(get_current_thread(), token::ALL_ACCESS, true).expect_err("reverted token, shouldn't have been able to open_thread_token");
 /// ```
+///
 pub fn revert_to_self() -> Result<(), crate::Error> {
     crate::Error::get_last_if(0 == unsafe { winapi::um::securitybaseapi::RevertToSelf() })
 }

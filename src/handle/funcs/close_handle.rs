@@ -1,3 +1,4 @@
+#[doc(alias = "CloseHandle")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
 /// CloseHandle
 ///
@@ -36,6 +37,9 @@ pub fn close_handle(object: impl Into<firehazard::handle::Owned>) -> Result<(), 
     Error::get_last_if(0 == unsafe { winapi::um::handleapi::CloseHandle(h) })
 }
 
+
+
+#[doc(alias = "CloseHandle")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
 /// CloseHandle or panic
 ///
@@ -45,6 +49,9 @@ pub fn close_handle(object: impl Into<firehazard::handle::Owned>) -> Result<(), 
     panic!("CloseHandle(0x{:X}) failed with GetLastError()={:?}", handle as usize, firehazard::Error::get_last());
 }
 
+
+
+#[doc(alias = "CloseHandle")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
 /// <strike>DuplicateHandle(process, handle, 0, 0, 0, DUPLICATE_CLOSE_SOURCE)</strike>
 ///

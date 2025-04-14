@@ -11,6 +11,8 @@ use core::ops::Deref;
 
 
 
+#[doc(alias = "SID")]
+#[doc(alias = "PSID")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\]
 /// ≈ PSID
 ///
@@ -39,7 +41,12 @@ impl Ptr<'_> {
     }
 }
 
+
+
+#[doc(alias = "SID")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\]
 /// SID, but without the trailing variable length SubAuthority field
+///
 #[allow(non_snake_case)]
 #[derive(Clone, Copy)]
 #[repr(C)] struct Header {

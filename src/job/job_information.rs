@@ -11,14 +11,22 @@ use core::mem::{size_of, MaybeUninit};
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
 /// [`query_information_job_object`] result
+///
 pub trait QueryInformationJobObject : Sized { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error>; }
+
+
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
 /// [`set_information_job_object`] parameter
+///
 pub trait SetInformationJobObject { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error>; }
 
+
+
+#[doc(alias = "QueryInformationJobObject")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
 /// QueryInformationJobObject
+///
 pub(super) unsafe fn query_fixed<T>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS) -> Result<T, Error> {
     let mut info = MaybeUninit::<T>::zeroed();
     let size = u32::try_from(core::mem::size_of_val(&info)).map_err(|_| ERROR_INVALID_PARAMETER)?;
@@ -30,9 +38,13 @@ pub(super) unsafe fn query_fixed<T>(job: &job::OwnedHandle, class: JOBOBJECTINFO
     Ok(unsafe { info.assume_init() })
 }
 
+
+
+#[doc(alias = "QueryInformationJobObject")]
 #[cfg(std)]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-queryinformationjobobject)\]
 /// QueryInformationJobObject
+///
 pub(super) unsafe fn query_vec<T>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS) -> Result<std::vec::Vec<T>, Error> {
     let mut bytes = 0;
     match Error::get_last_if(FALSE == unsafe { QueryInformationJobObject(job.as_handle(), class, core::ptr::null_mut(), 0, &mut bytes) }) {
@@ -66,8 +78,12 @@ pub(super) unsafe fn query_vec<T>(job: &job::OwnedHandle, class: JOBOBJECTINFOCL
     }
 }
 
+
+
+#[doc(alias = "SetInformationJobObject")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/jobapi2/nf-jobapi2-setinformationjobobject)\]
 /// SetInformationJobObject
+///
 pub(super) unsafe fn set<T: ?Sized>(job: &job::OwnedHandle, class: JOBOBJECTINFOCLASS, information: &T) -> Result<(), Error> {
     let size = u32::try_from(core::mem::size_of_val(information)).map_err(|_| ERROR_INVALID_PARAMETER)?;
     let info : *const T = information;

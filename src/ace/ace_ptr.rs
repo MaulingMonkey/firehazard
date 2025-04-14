@@ -8,6 +8,8 @@ use core::marker::PhantomData;
 
 
 
+#[doc(alias = "ACE_HEADER")]
+#[doc(alias = "PACE_HEADER")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header)\]
 /// ≈ &ACE_HEADER
 ///

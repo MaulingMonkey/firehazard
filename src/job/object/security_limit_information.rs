@@ -12,7 +12,10 @@ use winapi::um::winnt::JOBOBJECT_SECURITY_LIMIT_INFORMATION;
 
 
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_security_limit_information)\] JOBOBJECT_SECURITY_LIMIT_INFORMATION
+#[doc(alias = "JOBOBJECT_SECURITY_LIMIT_INFORMATION")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_security_limit_information)\]
+/// JOBOBJECT_SECURITY_LIMIT_INFORMATION
+///
 #[derive(Debug, Default)]
 #[repr(C)] struct SecurityLimitInformation {
     pub security_limit_flags:   u32, // typeable

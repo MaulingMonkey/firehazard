@@ -1,4 +1,6 @@
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocesstoken)\] OpenProcessToken
+#[doc(alias = "OpenProcessToken")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocesstoken)\]
+/// OpenProcessToken
 ///
 /// ### Example
 /// ```
@@ -9,6 +11,7 @@
 /// ### Errors
 /// *   `ERROR_INVALID_HANDLE`  if `process` wasn't a valid process handle (maybe it was a thread handle?)
 /// *   `ERROR_ACCESS_DENIED`   if the current process/thread token lacks the rights to open the token with `desired_access` (Untrusted integrity, missing SIDs, blocked by DACL, etc.)
+///
 pub fn open_process_token<'a>(process: impl AsRef<crate::process::PsuedoHandle<'a>>, desired_access: impl Into<crate::token::AccessRights>) -> Result<crate::token::OwnedHandle, crate::Error> {
     use crate::*;
     let mut h = core::ptr::null_mut();

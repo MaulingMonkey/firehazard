@@ -21,8 +21,17 @@ impl SetFilePointerEx_IntoSeekFrom for crate::io::SeekFrom { fn into_distance_me
     }
 }}
 
+
+
+#[doc(alias = "SetFilePointer")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointer)\]
 /// SetFilePointer
+///
+/// | `distance_method`                 | `method`      |
+/// | ----------------------------------| --------------|
+/// | [`std::io::SeekFrom::Start`]      | FILE_BEGIN    |
+/// | [`std::io::SeekFrom::Current`]    | FILE_CURRENT  |
+/// | [`std::io::SeekFrom::End`]        | FILE_END      |
 ///
 /// ### Alternatives
 /// *   [`std::io::Seek::seek`]             &mdash; cross platform, requires std
@@ -43,8 +52,17 @@ pub(crate) unsafe fn set_file_pointer(handle: &impl firehazard::AsLocalHandle, d
     Ok(((hi.unwrap_or(0) as u32 as u64) << 32) | (lo as u32 as u64))
 }
 
-// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointerex)\]
+
+
+#[doc(alias = "SetFilePointerEx")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-setfilepointerex)\]
 /// SetFilePointerEx
+///
+/// | `distance_method`                 | `method`      |
+/// | ----------------------------------| --------------|
+/// | [`std::io::SeekFrom::Start`]      | FILE_BEGIN    |
+/// | [`std::io::SeekFrom::Current`]    | FILE_CURRENT  |
+/// | [`std::io::SeekFrom::End`]        | FILE_END      |
 ///
 /// ### Alternatives
 /// *   [`std::io::Seek::seek`]             &mdash; cross platform, requires std

@@ -13,6 +13,7 @@ use core::ptr::null_mut;
 
 
 
+#[doc(alias = "SID")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\]
 /// ≈ SID
 ///
@@ -27,13 +28,24 @@ impl Value {
     pub fn as_psid(&self) -> PSID { self.0.cast() }
     pub fn as_ptr_sid(&self) -> *mut SID { self.0 }
 
+    /// SID::Revision
     pub fn revision(&self)  -> u8           { unsafe{*self.0}.Revision }
+
+    /// SID::IdentifierAuthority
     pub fn authority(&self) -> [u8; 6]      { unsafe{*self.0}.IdentifierAuthority.Value }
+
+    /// SID::IdentifierAuthority
     pub fn authority_u64(&self) -> u64      { let [a,b,c,d,e,f] = self.authority(); u64::from_be_bytes([0,0,a,b,c,d,e,f]) }
+
+    /// SID::SubAuthority
     pub fn subauthorities(&self) -> &[u32]  { unsafe{core::slice::from_raw_parts(core::ptr::addr_of!((*self.0).SubAuthority) as *const u32, (*self.0).SubAuthorityCount.into())} }
+
     fn as_tuple(&self) -> (u8, [u8; 6], &[u32]) { (self.revision(), self.authority(), self.subauthorities()) }
 
-    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/ntsecapi/nf-ntsecapi-lsalookupsids2)\] LsaLookupSids2
+    #[doc(alias = "LsaLookupSids2")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/ntsecapi/nf-ntsecapi-lsalookupsids2)\]
+    /// LsaLookupSids2
+    ///
     #[cfg(std)] pub fn lsa_lookup_sids2(&self) -> Result<std::string::String, Error> {
         if self.0.is_null() { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) }
         // .cast() spam notes:

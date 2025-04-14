@@ -1,3 +1,4 @@
+#[doc(alias = "SetThreadToken")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setthreadtoken)\]
 /// SetThreadToken
 ///
@@ -19,6 +20,7 @@
 ///
 /// ### Errors
 /// *   `ERROR_BAD_TOKEN_TYPE`  if `token` is a primary token instead of an impersonation token
+///
 pub fn set_thread_token<'t>(thread: impl crate::thread::AsHandleOrNone, token: impl Into<Option<&'t crate::token::OwnedHandle>>) -> Result<(), crate::Error> {
     use crate::*;
     use winapi::um::processthreadsapi::SetThreadToken;

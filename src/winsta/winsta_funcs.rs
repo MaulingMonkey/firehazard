@@ -12,6 +12,7 @@ use core::ptr::null;
 
 
 
+#[doc(alias = "CreateWindowStationA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowstationa)\]
 /// CreateWindowStationA
 ///
@@ -28,6 +29,7 @@ use core::ptr::null;
 /// ### Errors
 /// *   `ERROR_ACCESS_DENIED`   if the window station already exists on Windows 10
 /// *   `ERROR_ALREADY_EXISTS`  if the window station already exists on Windows Server 2019
+///
 pub fn create_window_station_a(
     winsta:         impl TryIntoAsOptCStr,
     flags:          impl Into<winsta::CreateWindowFlags>,
@@ -44,6 +46,10 @@ pub fn create_window_station_a(
     unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
+
+
+#[doc(alias = "CreateWindowStation")]
+#[doc(alias = "CreateWindowStationW")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowstationw)\]
 /// CreateWindowStationW
 ///
@@ -60,6 +66,7 @@ pub fn create_window_station_a(
 /// ### Errors
 /// *   `ERROR_ACCESS_DENIED`   if the window station already exists on Windows 10
 /// *   `ERROR_ALREADY_EXISTS`  if the window station already exists on Windows Server 2019
+///
 pub fn create_window_station_w(
     winsta:         impl TryIntoAsOptCStr<u16>,
     flags:          impl Into<winsta::CreateWindowFlags>,
@@ -76,6 +83,9 @@ pub fn create_window_station_w(
     unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
+
+
+#[doc(alias = "EnumWindowStationsA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumwindowstationsa)\]
 /// EnumWindowStationsA
 ///
@@ -98,6 +108,7 @@ pub fn create_window_station_w(
 /// "WinSta0"
 /// "Service-0x0-21cd8$"
 /// ```
+///
 pub fn enum_window_stations_a<F: FnMut(CStrPtr) -> Result<(), Error>>(mut enum_func: F) -> Result<(), Error> {
     let enum_func : *mut F = &mut enum_func;
     Error::get_last_if(FALSE == unsafe { EnumWindowStationsA(Some(fwd_enum_window_stations_a::<F>), enum_func as LPARAM) })
@@ -115,6 +126,10 @@ unsafe extern "system" fn fwd_enum_window_stations_a<F: FnMut(CStrPtr) -> Result
     }
 }
 
+
+
+#[doc(alias = "EnumWindowStations")]
+#[doc(alias = "EnumWindowStationsW")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumwindowstationsw)\]
 /// EnumWindowStationsW
 ///
@@ -137,6 +152,7 @@ unsafe extern "system" fn fwd_enum_window_stations_a<F: FnMut(CStrPtr) -> Result
 /// "WinSta0"
 /// "Service-0x0-21cd8$"
 /// ```
+///
 pub fn enum_window_stations_w<F: FnMut(CStrPtr<u16>) -> Result<(), Error>>(mut enum_func: F) -> Result<(), Error> {
     let enum_func : *mut F = &mut enum_func;
     Error::get_last_if(FALSE == unsafe { EnumWindowStationsW(Some(fwd_enum_window_stations_w::<F>), enum_func as LPARAM) })
@@ -154,6 +170,9 @@ unsafe extern "system" fn fwd_enum_window_stations_w<F: FnMut(CStrPtr<u16>) -> R
     }
 }
 
+
+
+#[doc(alias = "GetProcessWindowStation")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getprocesswindowstation)\]
 /// GetProcessWindowStation + DuplicateHandle
 ///
@@ -168,6 +187,7 @@ unsafe extern "system" fn fwd_enum_window_stations_w<F: FnMut(CStrPtr<u16>) -> R
 /// >   Do not close the handle returned by this function.
 ///
 /// A borrowed handle is super awkward here, so this function returns a *duplicated* handle that can be closed instead.
+///
 pub fn open_process_window_station() -> Result<winsta::OwnedHandle, Error> {
     // "Do not close the handle returned by this function." - so we return a closeable clone instead
     let mut winsta : HANDLE = unsafe { GetProcessWindowStation() }.cast();
@@ -177,6 +197,9 @@ pub fn open_process_window_station() -> Result<winsta::OwnedHandle, Error> {
     unsafe { winsta::OwnedHandle::from_raw(winsta.cast()) }
 }
 
+
+
+#[doc(alias = "OpenWindowStationA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openwindowstationa)\]
 /// OpenWindowStationA
 ///
@@ -186,6 +209,7 @@ pub fn open_process_window_station() -> Result<winsta::OwnedHandle, Error> {
 /// # use abistr::cstr;
 /// let winsta0 = open_window_station_a(cstr!("WinSta0"), false, winsta::ALL_ACCESS).unwrap();
 /// ```
+///
 pub fn open_window_station_a(
     winsta:         impl TryIntoAsCStr,
     inherit:        bool,
@@ -200,6 +224,10 @@ pub fn open_window_station_a(
     unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
+
+
+#[doc(alias = "OpenWindowStation")]
+#[doc(alias = "OpenWindowStationW")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openwindowstationw)\]
 /// OpenWindowStationW
 ///
@@ -209,6 +237,7 @@ pub fn open_window_station_a(
 /// # use abistr::cstr16;
 /// let winsta0 = open_window_station_w(cstr16!("WinSta0"), false, winsta::ALL_ACCESS).unwrap();
 /// ```
+///
 pub fn open_window_station_w(
     winsta:         impl TryIntoAsCStr<u16>,
     inherit:        bool,
@@ -223,6 +252,9 @@ pub fn open_window_station_w(
     unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
+
+
+#[doc(alias = "SetProcessWindowStation")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setprocesswindowstation)\]
 /// SetProcessWindowStation
 ///
@@ -233,6 +265,7 @@ pub fn open_window_station_w(
 /// set_process_window_station(&winsta).unwrap();
 /// # std::mem::forget(winsta); // will ERROR_BUSY otherwise
 /// ```
+///
 pub fn set_process_window_station(winsta: &winsta::OwnedHandle) -> Result<(), Error> {
     Error::get_last_if(FALSE == unsafe { SetProcessWindowStation(winsta.as_handle()) })
 }

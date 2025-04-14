@@ -5,6 +5,7 @@ use winapi::um::winnt::*;
 
 
 
+#[doc(alias = "PROCESS_MITIGATION_ASLR_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_aslr_policy)\]
 /// ≈ [PROCESS_MITIGATION_ASLR_POLICY]
 ///
@@ -29,6 +30,7 @@ pub struct AslrPolicy {
     /// *   <https://blog.didierstevens.com/2011/08/16/so-how-good-is-pseudo-aslr/>
     ///
     /// [`/DYNAMICBASE`]:   https://learn.microsoft.com/en-us/cpp/build/reference/dynamicbase-use-address-space-layout-randomization
+    ///
     pub enable_bottom_up_randomization:     bool,
 
     /// **Enable Always:**
@@ -45,6 +47,7 @@ pub struct AslrPolicy {
     /// To fix such performance issues, consider rebuilding said DLLs with [`/DYNAMICBASE`].
     ///
     /// [`/DYNAMICBASE`]:   https://learn.microsoft.com/en-us/cpp/build/reference/dynamicbase-use-address-space-layout-randomization
+    ///
     pub enable_force_relocate_images:       bool,
 
     /// **Enable Always:**
@@ -59,6 +62,7 @@ pub struct AslrPolicy {
     /// *   This high entropy option might be enabled.
     ///
     /// [`/HIGHENTROPYVA`]: https://learn.microsoft.com/en-us/cpp/build/reference/highentropyva-support-64-bit-aslr
+    ///
     pub enable_high_entropy:                bool,
 
     /// **Enable Always:**
@@ -67,6 +71,7 @@ pub struct AslrPolicy {
     /// Such DLLs were already broken, and should be fixed instead of weaking this prohibition:
     /// *   Another DLL or the EXE might've loaded with a conflicting address already
     /// *   VirtualAlloc could've allocated at the DLL's preferred address.
+    ///
     pub disallow_stripped_images:           bool,
 
     #[doc(hidden)] pub _reserved_flags: ()
@@ -77,6 +82,7 @@ impl AslrPolicy {
     ///
     /// If new safety-enhancing fields are added, they will *not* be enabled - instead, a new fn (e.g. `strict_v2()`) will be introduced,
     /// and this one will be marked as deprecated (and possibly `#[cfg(...)]`ed out with the right `--cfg` flag for auditing purpouses.)
+    ///
     pub fn strict_v1() -> Self {
         Self {
             enable_bottom_up_randomization: true,

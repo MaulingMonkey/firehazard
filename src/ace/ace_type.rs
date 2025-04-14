@@ -6,28 +6,123 @@ use core::fmt::{self, Debug, Formatter};
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-ace_header#members)\]
 /// ACE_HEADER::AceType
+///
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Type(u8);
 
 impl Type {
+    #[doc(alias = "ACCESS_ALLOWED_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-access_allowed_ace)\]
+    /// ACCESS_ALLOWED_ACE_TYPE
+    ///
     pub const ACCESS_ALLOWED                    : Type = Type(ACCESS_ALLOWED_ACE_TYPE);
+
+    #[doc(alias = "ACCESS_DENIED_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-access_denied_ace)\]
+    /// ACCESS_DENIED_ACE_TYPE
+    ///
     pub const ACCESS_DENIED                     : Type = Type(ACCESS_DENIED_ACE_TYPE);
+
+    #[doc(alias = "ACCESS_ALLOWED_OBJECT_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-access_allowed_object_ace)\]
+    /// ACCESS_ALLOWED_OBJECT_ACE_TYPE
+    ///
     pub const ACCESS_ALLOWED_OBJECT             : Type = Type(ACCESS_ALLOWED_OBJECT_ACE_TYPE);
+
+    #[doc(alias = "ACCESS_DENIED_OBJECT_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-access_denied_object_ace)\]
+    /// ACCESS_DENIED_OBJECT_ACE_TYPE
+    ///
     pub const ACCESS_DENIED_OBJECT              : Type = Type(ACCESS_DENIED_OBJECT_ACE_TYPE);
+
+    #[doc(alias = "SYSTEM_AUDIT_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-system_audit_ace)\]
+    /// SYSTEM_AUDIT_ACE_TYPE
+    ///
     pub const SYSTEM_AUDIT                      : Type = Type(SYSTEM_AUDIT_ACE_TYPE);
+
+    #[doc(alias = "SYSTEM_ALARM_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-system_alarm_ace)\]
+    /// SYSTEM_ALARM_ACE_TYPE
+    ///
     pub const SYSTEM_ALARM                      : Type = Type(SYSTEM_ALARM_ACE_TYPE);
+
+    #[doc(alias = "SYSTEM_AUDIT_OBJECT_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-system_audit_object_ace)\]
+    /// SYSTEM_AUDIT_OBJECT_ACE_TYPE
+    ///
     pub const SYSTEM_AUDIT_OBJECT               : Type = Type(SYSTEM_AUDIT_OBJECT_ACE_TYPE);
+
+    #[doc(alias = "SYSTEM_ALARM_OBJECT_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-system_alarm_object_ace)\]
+    /// SYSTEM_ALARM_OBJECT_ACE_TYPE
+    ///
     pub const SYSTEM_ALARM_OBJECT               : Type = Type(SYSTEM_ALARM_OBJECT_ACE_TYPE);
+
+    #[doc(alias = "SYSTEM_MANDATORY_LABEL_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-system_mandatory_label_ace)\]
+    /// SYSTEM_MANDATORY_LABEL_ACE_TYPE
+    ///
     pub const SYSTEM_MANDATORY_LABEL            : Type = Type(SYSTEM_MANDATORY_LABEL_ACE_TYPE);
+
+    #[doc(alias = "ACCESS_ALLOWED_CALLBACK_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-access_allowed_callback_ace)\]
+    /// ACCESS_ALLOWED_CALLBACK_ACE_TYPE
+    ///
     pub const ACCESS_ALLOWED_CALLBACK           : Type = Type(ACCESS_ALLOWED_CALLBACK_ACE_TYPE);
+
+    #[doc(alias = "ACCESS_DENIED_CALLBACK_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-access_denied_callback_ace)\]
+    /// ACCESS_DENIED_CALLBACK_ACE_TYPE
+    ///
     pub const ACCESS_DENIED_CALLBACK            : Type = Type(ACCESS_DENIED_CALLBACK_ACE_TYPE);
+
+    #[doc(alias = "SYSTEM_RESOURCE_ATTRIBUTE_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-system_resource_attribute_ace)\]
+    /// SYSTEM_RESOURCE_ATTRIBUTE_ACE_TYPE
+    ///
     pub const SYSTEM_RESOURCE_ATTRIBUTE         : Type = Type(SYSTEM_RESOURCE_ATTRIBUTE_ACE_TYPE);
+
+    #[doc(alias = "SYSTEM_SCOPED_POLICY_ID_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-system_scoped_policy_id_ace)\]
+    /// SYSTEM_SCOPED_POLICY_ID_ACE_TYPE
+    ///
     pub const SYSTEM_SCOPED_POLICY_ID           : Type = Type(SYSTEM_SCOPED_POLICY_ID_ACE_TYPE);
+
+    #[doc(alias = "SYSTEM_AUDIT_CALLBACK_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-system_audit_callback_ace)\]
+    /// SYSTEM_AUDIT_CALLBACK_ACE_TYPE
+    ///
     pub const SYSTEM_AUDIT_CALLBACK             : Type = Type(SYSTEM_AUDIT_CALLBACK_ACE_TYPE);
+
+    #[doc(alias = "SYSTEM_AUDIT_CALLBACK_OBJECT_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-system_audit_object_ace)\]
+    /// SYSTEM_AUDIT_CALLBACK_OBJECT_ACE_TYPE
+    ///
     pub const SYSTEM_AUDIT_CALLBACK_OBJECT      : Type = Type(SYSTEM_AUDIT_CALLBACK_OBJECT_ACE_TYPE);
+
+    #[doc(alias = "ACCESS_ALLOWED_CALLBACK_OBJECT_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-access_allowed_callback_object_ace)\]
+    /// ACCESS_ALLOWED_CALLBACK_OBJECT_ACE_TYPE
+    ///
     pub const ACCESS_ALLOWED_CALLBACK_OBJECT    : Type = Type(ACCESS_ALLOWED_CALLBACK_OBJECT_ACE_TYPE);
+
+    #[doc(alias = "ACCESS_DENIED_CALLBACK_OBJECT_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-access_denied_callback_object_ace)\]
+    /// ACCESS_DENIED_CALLBACK_OBJECT_ACE_TYPE
+    ///
     pub const ACCESS_DENIED_CALLBACK_OBJECT     : Type = Type(ACCESS_DENIED_CALLBACK_OBJECT_ACE_TYPE);
+
+    #[doc(alias = "SYSTEM_PROCESS_TRUST_LABEL_ACE_TYPE")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/ns-ntifs-_system_process_trust_label_ace)\]
+    /// SYSTEM_PROCESS_TRUST_LABEL_ACE_TYPE
+    ///
     pub const SYSTEM_PROCESS_TRUST_LABEL        : Type = Type(SYSTEM_PROCESS_TRUST_LABEL_ACE_TYPE);
+
+    #[doc(alias = "SYSTEM_ACCESS_FILTER_ACE_TYPE")]
+    /// \[<strike>microsoft.com</strike>\]
+    /// SYSTEM_ACCESS_FILTER_ACE_TYPE
+    ///
     pub const SYSTEM_ACCESS_FILTER              : Type = Type(SYSTEM_ACCESS_FILTER_ACE_TYPE);
 }
 

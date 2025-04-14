@@ -13,6 +13,7 @@ use core::ptr::null;
 
 
 
+#[doc(alias = "CloseDesktop")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-closedesktop)\]
 /// CloseDesktop
 ///
@@ -56,6 +57,7 @@ use core::ptr::null;
 /// assert_eq!(ERROR_INVALID_HANDLE, close_handle(dupe).unwrap_err());
 /// let _ : () = close_desktop(desktop).unwrap();
 /// ```
+///
 pub fn close_desktop(desktop: impl Into<desktop::OwnedHandle>) -> Result<(), (desktop::OwnedHandle, Error)> {
     let desktop = desktop.into();
     if FALSE != unsafe { CloseDesktop(desktop.as_handle()) } {
@@ -66,6 +68,9 @@ pub fn close_desktop(desktop: impl Into<desktop::OwnedHandle>) -> Result<(), (de
     }
 }
 
+
+
+#[doc(alias = "CreateDesktopA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopa)\]
 /// CreateDesktopA
 ///
@@ -79,6 +84,7 @@ pub fn close_desktop(desktop: impl Into<desktop::OwnedHandle>) -> Result<(), (de
 /// let a = create_desktop_a(cstr!("create_desktop_a"), (), None, None, GENERIC_ALL, None).unwrap();
 /// let b = create_desktop_a(cstr!("create_desktop_a"), (), None, None, GENERIC_ALL, None).unwrap();
 /// ```
+///
 pub fn create_desktop_a(
     desktop:        impl TryIntoAsCStr,
     device:         impl TryIntoAsOptCStr,
@@ -99,6 +105,10 @@ pub fn create_desktop_a(
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
+
+
+#[doc(alias = "CreateDesktop")]
+#[doc(alias = "CreateDesktopW")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopw)\]
 /// CreateDesktopW
 ///
@@ -112,6 +122,7 @@ pub fn create_desktop_a(
 /// let a = create_desktop_w(cstr16!("create_desktop_w"), (), None, None, GENERIC_ALL, None).unwrap();
 /// # let b = create_desktop_w(cstr16!("create_desktop_w"), (), None, None, GENERIC_ALL, None).unwrap();
 /// ```
+///
 pub fn create_desktop_w(
     desktop:        impl TryIntoAsCStr<u16>,
     device:         impl TryIntoAsOptCStr<u16>,
@@ -132,11 +143,19 @@ pub fn create_desktop_w(
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
-// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopexa
-// CreateDesktopExA: adds heap size + reserved pvoid
-// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopexw
-// CreateDesktopExW: adds heap size + reserved pvoid
 
+
+// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopexa
+// TODO: CreateDesktopExA: adds heap size + reserved pvoid
+
+
+
+// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopexw
+// TODO: CreateDesktopExW: adds heap size + reserved pvoid
+
+
+
+#[doc(alias = "EnumDesktopsA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdesktopsa)\]
 /// EnumDesktopsA
 ///
@@ -162,6 +181,7 @@ pub fn create_desktop_w(
 /// However, in my testing (Windows 10.0.19043.1889), this appears to be a lie: if the parameter is NULL, this enumerates
 /// *window stations* instead of enumerating *desktops of said window station*.  As such, I've made `winsta` a non-optional
 /// type in this function.
+///
 pub fn enum_desktops_a<F: FnMut(CStrPtr) -> Result<(), Error>>(
     winsta:         &winsta::OwnedHandle,
     mut enum_func:  F,
@@ -182,6 +202,10 @@ unsafe extern "system" fn fwd_enum_desktops_a<F: FnMut(CStrPtr) -> Result<(), Er
     }
 }
 
+
+
+#[doc(alias = "EnumDesktops")]
+#[doc(alias = "EnumDesktopsW")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdesktopsw)\]
 /// EnumDesktopsW
 ///
@@ -207,6 +231,7 @@ unsafe extern "system" fn fwd_enum_desktops_a<F: FnMut(CStrPtr) -> Result<(), Er
 /// However, in my testing (Windows 10.0.19043.1889), this appears to be a lie: if the parameter is NULL, this enumerates
 /// *window stations* instead of enumerating *desktops of said window station*.  As such, I've made `winsta` a non-optional
 /// type in this function.
+///
 pub fn enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(), Error>>(
     winsta:         &winsta::OwnedHandle,
     mut enum_func:  F,
@@ -227,9 +252,14 @@ unsafe extern "system" fn fwd_enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(
     }
 }
 
-// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdesktopwindows
-// EnumDesktopWindows
 
+
+// https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enumdesktopwindows
+// TODO: EnumDesktopWindows
+
+
+
+#[doc(alias = "GetThreadDesktop")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getthreaddesktop)\]
 /// GetThreadDesktop + DuplicateHandle
 ///
@@ -244,6 +274,7 @@ unsafe extern "system" fn fwd_enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(
 /// >   You do not need to call the CloseDesktop function to close the returned handle.
 ///
 /// A borrowed handle is super awkward here, so this function returns a *duplicated* handle that can be closed instead.
+///
 pub fn open_thread_desktop(thread_id: thread::Id) -> Result<desktop::OwnedHandle, Error> {
     let mut desktop : HANDLE = unsafe { GetThreadDesktop(thread_id) }.cast();
     Error::get_last_if(desktop.is_null())?;
@@ -252,6 +283,9 @@ pub fn open_thread_desktop(thread_id: thread::Id) -> Result<desktop::OwnedHandle
     unsafe { desktop::OwnedHandle::from_raw(desktop.cast()) }
 }
 
+
+
+#[doc(alias = "OpenDesktopA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-opendesktopa)\]
 /// OpenDesktopA
 ///
@@ -264,6 +298,7 @@ pub fn open_thread_desktop(thread_id: thread::Id) -> Result<desktop::OwnedHandle
 /// # use abistr::cstr;
 /// let desktop = open_desktop_a(cstr!("Default"), None, false, GENERIC_ALL).unwrap();
 /// ```
+///
 pub fn open_desktop_a(
     desktop:        impl TryIntoAsCStr,
     flags:          impl Into<desktop::Flags>,
@@ -280,6 +315,10 @@ pub fn open_desktop_a(
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
+
+
+#[doc(alias = "OpenDesktop")]
+#[doc(alias = "OpenDesktopW")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-opendesktopw)\]
 /// OpenDesktopW
 ///
@@ -292,6 +331,7 @@ pub fn open_desktop_a(
 /// # use abistr::cstr16;
 /// let desktop = open_desktop_w(cstr16!("Default"), None, false, GENERIC_ALL).unwrap();
 /// ```
+///
 pub fn open_desktop_w(
     desktop:        impl TryIntoAsCStr<u16>,
     flags:          impl Into<desktop::Flags>,
@@ -308,6 +348,9 @@ pub fn open_desktop_w(
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
+
+
+#[doc(alias = "OpenInputDesktop")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openinputdesktop)\]
 /// OpenInputDesktop
 ///
@@ -317,6 +360,7 @@ pub fn open_desktop_w(
 /// # use firehazard::access::*;
 /// let desktop = open_input_desktop(None, false, GENERIC_ALL).unwrap();
 /// ```
+///
 pub fn open_input_desktop(
     flags:          impl Into<desktop::Flags>,
     inherit:        bool,
@@ -327,6 +371,9 @@ pub fn open_input_desktop(
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
+
+
+#[doc(alias = "SwitchDesktop")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-switchdesktop)\]
 /// SwitchDesktop
 ///
@@ -347,10 +394,14 @@ pub fn open_input_desktop(
 /// sleep_ms(3000);
 /// switch_desktop(&original).unwrap();
 /// ```
+///
 pub fn switch_desktop(desktop: &desktop::OwnedHandle) -> Result<(), Error> {
     Error::get_last_if(FALSE == unsafe { SwitchDesktop(desktop.as_handle()) })
 }
 
+
+
+#[doc(alias = "SetThreadDesktop")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setthreaddesktop)\]
 /// SetThreadDesktop x2 + GetThreadDesktop
 ///
@@ -396,6 +447,7 @@ pub fn switch_desktop(desktop: &desktop::OwnedHandle) -> Result<(), Error> {
 ///
 /// *   By strictly enforcing LIFO stacking order / borrowing for the thread's desktops, [`with_thread_desktop`] avoids the
 ///     awkward ownership issues of `'static` lifetimes that would be involved with directly exposing SetThreadDesktop.
+///
 pub fn with_thread_desktop<R>(desktop: &desktop::OwnedHandle, f: impl FnOnce()->R) -> Result<R, Error> {
     let thread = get_current_thread_id();
     let original = unsafe { GetThreadDesktop(thread) };

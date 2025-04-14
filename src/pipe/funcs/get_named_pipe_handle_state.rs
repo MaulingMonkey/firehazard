@@ -1,3 +1,4 @@
+#[doc(alias = "GetNamedPipeHandleStateA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getnamedpipehandlestatea)\]
 /// GetNamedPipeHandleStateA
 ///
@@ -27,6 +28,8 @@ pub fn get_named_pipe_handle_state_a<'a, 'b, 'c, 'd, 'e>(
 
 
 
+#[doc(alias = "GetNamedPipeHandleState")]
+#[doc(alias = "GetNamedPipeHandleStateW")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-getnamedpipehandlestatew)\]
 /// GetNamedPipeHandleStateW
 ///

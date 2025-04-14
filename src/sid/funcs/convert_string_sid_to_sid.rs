@@ -10,6 +10,7 @@ use core::ptr::null_mut;
 
 
 
+#[doc(alias = "ConvertStringSidToSidA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertstringsidtosida)\]
 /// ConvertStringSidToSidA - convert e.g. `"S-1-0-0"` to [`sid::Box`]
 ///
@@ -26,6 +27,7 @@ use core::ptr::null_mut;
 ///
 /// ### See Also
 /// *   [sid!] for compile-time validated error-free [`sid::Ptr`]s.
+///
 pub fn convert_string_sid_to_sid_a(s: impl TryIntoAsCStr) -> Result<SidBox<alloc::LocalAllocFree>, Error> {
     let s = s.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?;
     let mut sid = null_mut();
@@ -33,6 +35,10 @@ pub fn convert_string_sid_to_sid_a(s: impl TryIntoAsCStr) -> Result<SidBox<alloc
     unsafe { SidBox::from_raw(sid.cast()) }.ok_or(Error(ERROR_INVALID_SID))
 }
 
+
+
+#[doc(alias = "ConvertStringSidToSid")]
+#[doc(alias = "ConvertStringSidToSidW")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertstringsidtosidw)\]
 /// ConvertStringSidToSidW - convert e.g. `"S-1-0-0"` to [`sid::Box`]
 ///
@@ -47,6 +53,7 @@ pub fn convert_string_sid_to_sid_a(s: impl TryIntoAsCStr) -> Result<SidBox<alloc
 ///
 /// ### See Also
 /// *   [sid!] for compile-time validated error-free [`sid::Ptr`]s.
+///
 pub fn convert_string_sid_to_sid_w(s: impl TryIntoAsCStr<u16>) -> Result<SidBox<alloc::LocalAllocFree>, Error> {
     let s = s.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?;
     let mut sid = null_mut();

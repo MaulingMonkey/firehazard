@@ -27,8 +27,10 @@ pub struct Builder {
 impl<'a> From<&'a mut Builder> for acl::Ptr<'a> { fn from(b: &'a mut Builder) -> Self { b.as_acl_ptr() } }
 
 impl Builder {
+    #[doc(alias = "InitializeAcl")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-initializeacl)\]
     /// InitializeAcl
+    ///
     pub fn new(revision: acl::Revision) -> Self {
         let mut b = Self { u: U { bytes: [0; max_acl_bytes!()] } };
         assert!(FALSE != unsafe { InitializeAcl(&mut b.u.acl, max_acl_bytes!(), revision.into()) }, "GetLastError()=={:?}", Error::get_last());
@@ -51,8 +53,10 @@ impl Builder {
 
     // https://learn.microsoft.com/en-us/windows/win32/secauthz/authorization-functions
 
+    #[doc(alias = "AddAccessAllowedAce")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessallowedace)\]
-    /// `AddAccessAllowedAce`
+    /// AddAccessAllowedAce
+    ///
     pub fn add_access_allowed_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:   acl::Revision,
         access_mask:    token::AccessRights,
@@ -62,8 +66,10 @@ impl Builder {
         Ok(self)
     }
 
+    #[doc(alias = "AddAccessAllowedAceEx")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessallowedaceex)\]
-    /// `AddAccessAllowedAceEx`
+    /// AddAccessAllowedAceEx
+    ///
     pub fn add_access_allowed_ace_ex<'acl, 'sid>(&'acl mut self,
         ace_revision:   acl::Revision,
         ace_flags:      ace::Flags,
@@ -74,8 +80,10 @@ impl Builder {
         Ok(self)
     }
 
+    #[doc(alias = "AddAccessAllowedObjectAce")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessallowedobjectace)\]
-    /// `AddAccessAllowedObjectAce`
+    /// AddAccessAllowedObjectAce
+    ///
     pub fn add_access_allowed_object_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:               acl::Revision,
         ace_flags:                  ace::Flags,
@@ -96,8 +104,10 @@ impl Builder {
         Ok(self)
     }
 
+    #[doc(alias = "AddAccessDeniedAce")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessdeniedace)\]
-    /// `AddAccessDeniedAce`
+    /// AddAccessDeniedAce
+    ///
     pub fn add_access_denied_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:   acl::Revision,
         access_mask:    token::AccessRights,
@@ -107,8 +117,10 @@ impl Builder {
         Ok(self)
     }
 
+    #[doc(alias = "AddAccessDeniedAceEx")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessdeniedaceex)\]
-    /// `AddAccessDeniedAceEx`
+    /// AddAccessDeniedAceEx
+    ///
     pub fn add_access_denied_ace_ex<'acl, 'sid>(&'acl mut self,
         ace_revision:   acl::Revision,
         ace_flags:      ace::Flags,
@@ -119,8 +131,10 @@ impl Builder {
         Ok(self)
     }
 
+    #[doc(alias = "AddAccessDeniedObjectAce")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addaccessdeniedobjectace)\]
-    /// `AddAccessDeniedObjectAce`
+    /// AddAccessDeniedObjectAce
+    ///
     pub fn add_access_denied_object_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:               acl::Revision,
         ace_flags:                  ace::Flags,
@@ -141,8 +155,10 @@ impl Builder {
         Ok(self)
     }
 
+    #[doc(alias = "AddAce")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addace)\]
-    /// `AddAce` an entire Acl
+    /// AddAce &mdash; add an entire Acl
+    ///
     pub fn add_acl(&mut self, ace_revision: acl::Revision, starting_ace_index: u32, acl: acl::Ptr) -> Result<&mut Self, Error> {
         if acl.as_pacl().is_null() { return Err(Error(ERROR_INVALID_PARAMETER)); }
         let size : u16 = acl.aces().map(|a| a.header().size).sum();
@@ -151,8 +167,10 @@ impl Builder {
         Ok(self)
     }
 
+    #[doc(alias = "AddAuditAccessObjectAce")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addauditaccessobjectace)\]
-    /// `AddAuditAccessObjectAce`
+    /// AddAuditAccessObjectAce
+    ///
     pub fn add_audit_access_object_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:               acl::Revision,
         ace_flags:                  ace::Flags,
@@ -177,8 +195,10 @@ impl Builder {
         Ok(self)
     }
 
+    #[doc(alias="AddMandatoryAce")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addmandatoryace)\]
-    /// `AddMandatoryAce`
+    /// AddMandatoryAce
+    ///
     pub fn add_mandatory_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:       acl::Revision,
         ace_flags:          ace::Flags,
@@ -192,8 +212,10 @@ impl Builder {
     // TODO: https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addresourceattributeace
     // TODO: https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-addscopedpolicyidace
 
+    #[doc(alias = "DeleteAce")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-deleteace)\]
-    /// `DeleteAce`
+    /// DeleteAce
+    ///
     pub fn delete_ace(&mut self, ace_index: u32) -> Result<&mut Self, Error> {
         Error::get_last_if(FALSE == unsafe { DeleteAce(self.as_winapi(), ace_index) })?;
         Ok(self)
@@ -201,8 +223,10 @@ impl Builder {
 
     // https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-findfirstfreeace
 
+    #[doc(alias = "GetAce")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-getace)\]
-    /// `GetAce`
+    /// GetAce
+    ///
     pub fn get_ace(&self, ace_index: u32) -> Result<ace::Ptr, Error> {
         let mut ace = null_mut();
         Error::get_last_if(FALSE == unsafe { GetAce(self.as_winapi_const(), ace_index, &mut ace) })?;

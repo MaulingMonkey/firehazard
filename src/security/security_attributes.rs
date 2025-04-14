@@ -6,8 +6,10 @@ use core::ptr::null;
 
 
 
+#[doc(alias = "SECURITY_ATTRIBUTES")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa379560(v=vs.85))\]
 /// SECURITY_ATTRIBUTES
+///
 #[derive(Clone, Copy, Default)]
 #[repr(transparent)] pub struct Attributes<'sd> {
     attributes:  SECURITY_ATTRIBUTES,

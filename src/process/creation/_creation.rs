@@ -7,13 +7,17 @@ pub mod mitigation_policy2;
 
 
 
+#[doc(alias = "PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
 /// PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY Flags Mask
+///
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct ChildProcessPolicyFlagsMask(u32);
 
+#[doc(alias = "PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
 /// PROC_THREAD_ATTRIBUTE_CHILD_PROCESS_POLICY Flags
+///
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct ChildProcessPolicyFlags(u32);
 
@@ -21,13 +25,17 @@ flags!(impl .. for ChildProcessPolicyFlags(u32) - ChildProcessPolicyFlagsMask);
 
 
 
+#[doc(alias = "PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
 /// PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY Flags Mask
+///
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct DesktopAppPolicyFlagsMask(u32);
 
+#[doc(alias = "PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
 /// PROC_THREAD_ATTRIBUTE_DESKTOP_APP_POLICY Flags
+///
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct DesktopAppPolicyFlags(u32);
 
@@ -35,8 +43,10 @@ flags!(impl .. for DesktopAppPolicyFlags(u32) - DesktopAppPolicyFlagsMask);
 
 
 
+#[doc(alias = "PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
 /// PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY Flags
+///
 #[derive(Clone, Copy, Default, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(C)] pub struct MitigationPolicy(MitigationPolicyFlags1, MitigationPolicyFlags2);
 
@@ -48,8 +58,10 @@ impl MitigationPolicy {
 impl From<MitigationPolicyFlags1> for MitigationPolicy { fn from(flags: MitigationPolicyFlags1) -> Self { Self(flags, MitigationPolicyFlags2(0)) } }
 impl From<(MitigationPolicyFlags1, MitigationPolicyFlags2)> for MitigationPolicy { fn from(flags: (MitigationPolicyFlags1, MitigationPolicyFlags2)) -> Self { Self(flags.0, flags.1) } }
 
+#[doc(alias = "PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
 /// PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY Flag Mask
+///
 #[derive(Clone, Copy, Default, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(C)] pub struct MitigationPolicyMask(MitigationPolicyFlags1Mask, MitigationPolicyFlags2Mask);
 
@@ -61,23 +73,31 @@ impl MitigationPolicyMask {
 impl From<MitigationPolicyFlags1Mask> for MitigationPolicyMask { fn from(flags: MitigationPolicyFlags1Mask) -> Self { Self(flags, MitigationPolicyFlags2Mask(0)) } }
 impl From<(MitigationPolicyFlags1Mask, MitigationPolicyFlags2Mask)> for MitigationPolicyMask { fn from(flags: (MitigationPolicyFlags1Mask, MitigationPolicyFlags2Mask)) -> Self { Self(flags.0, flags.1) } }
 
+#[doc(alias = "PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
 /// PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY Flags Mask
+///
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct MitigationPolicyFlags1Mask(u64);
 
+#[doc(alias = "PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
 /// PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY Flags
+///
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct MitigationPolicyFlags1(u64);
 
+#[doc(alias = "PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
 /// PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY Flags Mask
+///
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct MitigationPolicyFlags2Mask(u64);
 
+#[doc(alias = "PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
 /// PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY Flags
+///
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct MitigationPolicyFlags2(u64);
 

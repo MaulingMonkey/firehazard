@@ -9,6 +9,7 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
+#[doc(alias = "TOKEN_USER")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_user)\]
 /// ≈ `Box<(TOKEN_USER, ..)>`
 ///

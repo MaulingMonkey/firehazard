@@ -1,3 +1,5 @@
+#[doc(alias = "CreateNamedPipe")]
+#[doc(alias = "CreateNamedPipeW")]
 #[cfg(std)]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew)\]
 /// CreateNamedPipeW
@@ -31,6 +33,7 @@
 ///     0, 0, pipe::UNLIMITED_INSTANCES, 0, 0, None, None,
 /// ).unwrap_err());
 /// ```
+///
 pub fn create_named_pipe<'a, 'b: 'a>(
     name:                   impl AsRef<std::ffi::OsStr>,
     open_mode:              u32, // TODO: type
@@ -55,6 +58,7 @@ pub fn create_named_pipe<'a, 'b: 'a>(
 
 
 
+#[doc(alias = "CreateNamedPipeA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createnamedpipea)\]
 /// CreateNamedPipeA
 ///
@@ -87,6 +91,7 @@ pub fn create_named_pipe<'a, 'b: 'a>(
 ///     0, 0, pipe::UNLIMITED_INSTANCES, 0, 0, None, None,
 /// ).unwrap_err());
 /// ```
+///
 pub fn create_named_pipe_a<'a, 'b: 'a>(
     name:                   impl abistr::TryIntoAsCStr,
     open_mode:              u32, // TODO: type
@@ -116,6 +121,8 @@ pub fn create_named_pipe_a<'a, 'b: 'a>(
 
 
 
+#[doc(alias = "CreateNamedPipe")]
+#[doc(alias = "CreateNamedPipeW")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew)\]
 /// CreateNamedPipeW
 ///
@@ -148,6 +155,7 @@ pub fn create_named_pipe_a<'a, 'b: 'a>(
 ///     0, 0, pipe::UNLIMITED_INSTANCES, 0, 0, None, None,
 /// ).unwrap_err());
 /// ```
+///
 pub fn create_named_pipe_w<'a, 'b: 'a>(
     name:                   impl abistr::TryIntoAsCStr<u16>,
     open_mode:              u32, // TODO: type

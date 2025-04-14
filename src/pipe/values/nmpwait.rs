@@ -80,14 +80,17 @@ impl NMPWAIT {
     // #define NMPWAIT_NOWAIT                  0x00000001
     // #define NMPWAIT_USE_DEFAULT_WAIT        0x00000000
 
+    #[doc(alias = "NMPWAIT_WAIT_FOREVER")]
     /// NMPWAIT_WAIT_FOREVER
     ///
     pub const WAIT_FOREVER      : Self = Self::from_unchecked(0xffffffff);
 
+    #[doc(alias = "NMPWAIT_USE_DEFAULT_WAIT")]
     /// NMPWAIT_USE_DEFAULT_WAIT
     ///
     pub const USE_DEFAULT_WAIT  : Self = Self::from_unchecked(0x00000000);
 
+    #[doc(alias = "NMPWAIT_NOWAIT")]
     /// NMPWAIT_NOWAIT
     ///
     pub const NOWAIT            : Self = Self::from_unchecked(0x00000001);
@@ -104,6 +107,7 @@ impl Debug for NMPWAIT {
     }
 }
 
+/// USE_DEFAULT_WAIT
 impl From<Option<core::convert::Infallible>> for NMPWAIT {
     fn from(_none: Option<core::convert::Infallible>) -> Self { NMPWAIT::USE_DEFAULT_WAIT }
 }

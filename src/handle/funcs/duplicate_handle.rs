@@ -1,3 +1,4 @@
+#[doc(alias = "DuplicateHandle")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
 /// DuplicateHandle(-1, source, -1, access, inherit, 0)
 ///
@@ -19,6 +20,7 @@
 /// assert_eq!(ERROR_INVALID_HANDLE, t.unwrap_err());
 /// # }
 /// ```
+///
 pub fn duplicate_handle_local<'a>(
     source:         impl AsRef<firehazard::handle::Psuedo<'a>>,
     access:         impl Into<firehazard::access::Mask>,
@@ -43,6 +45,9 @@ pub fn duplicate_handle_local<'a>(
     unsafe { handle::Owned::from_raw(target) }
 }
 
+
+
+#[doc(alias = "DuplicateHandle")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
 /// DuplicateHandle(-1, source, -1, 0, inherit, DUPLICATE_SAME_ACCESS)
 ///
@@ -64,6 +69,7 @@ pub fn duplicate_handle_local<'a>(
 /// assert_eq!(ERROR_INVALID_HANDLE, t.unwrap_err());
 /// # }
 /// ```
+///
 pub fn duplicate_handle_local_same_access<'a>(
     source:         impl AsRef<firehazard::handle::Psuedo<'a>>,
     inherit_handle: bool,

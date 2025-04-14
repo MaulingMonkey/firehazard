@@ -4,13 +4,17 @@ use winapi::um::winnt::{TOKEN_SOURCE_LENGTH, TOKEN_SOURCE};
 
 
 
+#[doc(alias = "TOKEN_SOURCE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_source)\]
 /// TOKEN_SOURCE
+///
 #[derive(Clone, Copy, Default, Debug)]
 #[repr(C)] pub struct Source {
     pub source_name:        CStrBuf<u8, TOKEN_SOURCE_LENGTH>,
     pub source_identifier:  Luid,
 }
+
+
 
 structure!(@assert layout token::Source => TOKEN_SOURCE {
     source_name         == SourceName,

@@ -3,8 +3,10 @@ use winapi::um::winnt::IO_COUNTERS;
 
 
 
+#[doc(alias = "IO_COUNTERS")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-io_counters)\]
 /// IO_COUNTERS
+///
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)] pub struct Counters {
     pub read_operation_count:   u64,

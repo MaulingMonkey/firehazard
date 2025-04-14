@@ -1,3 +1,5 @@
+#[doc(alias = "WaitNamedPipe")]
+#[doc(alias = "WaitNamedPipeW")]
 #[cfg(std)]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-waitnamedpipew)\]
 /// WaitNamedPipeW
@@ -17,6 +19,7 @@ pub fn wait_named_pipe(
 
 
 
+#[doc(alias = "WaitNamedPipeA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-waitnamedpipea)\]
 /// WaitNamedPipeA
 ///
@@ -34,6 +37,8 @@ pub fn wait_named_pipe_a(
 
 
 
+#[doc(alias = "WaitNamedPipe")]
+#[doc(alias = "WaitNamedPipeW")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-waitnamedpipew)\]
 /// WaitNamedPipeW
 ///

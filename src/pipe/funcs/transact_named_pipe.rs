@@ -1,3 +1,4 @@
+#[doc(alias = "TransactNamedPipe")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-transactnamedpipe)\]
 /// TransactNamedPipe(..., nullptr)
 ///
@@ -30,6 +31,7 @@ pub fn transact_named_pipe<'buffer>(
 
 
 
+#[doc(alias = "TransactNamedPipe")]
 #[cfg(doc)]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-transactnamedpipe)\]
 /// <strike>TransactNamedPipe(..., &overlapped)</strike>

@@ -3,8 +3,10 @@ use winapi::um::winnt::{JOBOBJECT_BASIC_LIMIT_INFORMATION, JOBOBJECT_EXTENDED_LI
 
 
 
+#[doc(alias = "JOBOBJECT_BASIC_LIMIT_INFORMATION")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_limit_information)\]
 /// JOBOBJECT_BASIC_LIMIT_INFORMATION
+///
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)] pub struct BasicLimitInformation {
     pub per_process_user_time_limit:    u64,    // 100-nanosecond ticks
@@ -32,8 +34,10 @@ structure!(@assert layout BasicLimitInformation => JOBOBJECT_BASIC_LIMIT_INFORMA
 
 
 
+#[doc(alias = "JOBOBJECT_EXTENDED_LIMIT_INFORMATION")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_extended_limit_information)\]
 /// JOBOBJECT_EXTENDED_LIMIT_INFORMATION
+///
 #[derive(Clone, Copy, Debug, Default)]
 #[repr(C)] pub struct ExtendedLimitInformation {
     pub basic_limit_information:        BasicLimitInformation,

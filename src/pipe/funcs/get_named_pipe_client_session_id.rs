@@ -1,3 +1,4 @@
+#[doc(alias = "GetNamedPipeClientSessionId")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getnamedpipeclientsessionid)\]
 /// GetNamedPipeClientSessionId
 ///

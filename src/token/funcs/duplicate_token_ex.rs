@@ -1,3 +1,4 @@
+#[doc(alias = "DuplicateTokenEx")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-duplicatetokenex)\]
 /// DuplicateTokenEx
 ///
@@ -15,6 +16,7 @@
 ///
 /// assert_ne!(tok.as_handle(), dup.as_handle());
 /// ```
+///
 pub fn duplicate_token_ex(
     token:                  &crate::token::OwnedHandle,
     desired_access:         impl Into<crate::token::AccessRights>,

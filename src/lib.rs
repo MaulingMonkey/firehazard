@@ -12,8 +12,13 @@
 #[doc(hidden)] pub extern crate winapi;
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
-/// A raw **N**on **N**ull Handle
+/// A raw **N**on **N**ull handle
+///
 pub type HANDLENN = core::ptr::NonNull<winapi::ctypes::c_void>;
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
+/// A raw nullable handle
+///
 pub use winapi::shared::ntdef::HANDLE;
 
 #[path = r"macros\_macros.rs"] #[macro_use] mod macros;

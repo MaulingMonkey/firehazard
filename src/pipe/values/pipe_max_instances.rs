@@ -6,6 +6,7 @@ use core::fmt::{self, Debug, Display, Formatter, Write};
 
 
 
+#[doc(alias = "PIPE_UNLIMITED_INSTANCES")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew#parameters)\]
 /// PIPE_UNLIMITED_INSTANCES
 ///
@@ -82,6 +83,7 @@ impl MaxInstances {
     /// Shorthand for <code>[MaxInstances]::[finite](Self::finite)::&lt;1&gt;()</code>
     pub const ONE : Self = Self::from_finite::<1>();
 
+    #[doc(alias = "PIPE_UNLIMITED_INSTANCES")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew#parameters)\]
     /// PIPE_UNLIMITED_INSTANCES
     ///

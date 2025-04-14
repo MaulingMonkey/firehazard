@@ -1,3 +1,4 @@
+#[doc(alias = "ReadFile")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-readfile)\]
 /// ReadFile(..., nullptr)
 ///

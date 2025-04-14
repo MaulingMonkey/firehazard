@@ -17,6 +17,9 @@ use core::ptr::{null_mut, NonNull};
 // https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-checktokencapability
 // CheckTokenCapability
 
+
+
+#[doc(alias = "CreateAppContainerProfile")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/userenv/nf-userenv-createappcontainerprofile)\]
 /// CreateAppContainerProfile
 ///
@@ -54,6 +57,7 @@ use core::ptr::{null_mut, NonNull};
 /// *   `E_ACCESSDENIED`                            - The caller does not have permission to create the profile.
 /// *   `E_INVALIDARG`                              - If an argument is not valid (illegal chars? exceeds length limits?)
 /// *   `HRESULT_FROM_WIN32(ERROR_ALREADY_EXISTS)`  - The application data store already exists.
+///
 pub fn create_app_container_profile(
     app_container_name: impl TryIntoAsCStr<u16>,
     display_name:       impl TryIntoAsCStr<u16>,
@@ -75,7 +79,11 @@ pub fn create_app_container_profile(
     Ok(app_container_sid?)
 }
 
-/// \[<strike>microsoft.com</strike>\] CreateAppContainerToken
+
+
+#[doc(alias = "CreateAppContainerToken")]
+/// \[<strike>microsoft.com</strike>\]
+/// CreateAppContainerToken
 ///
 /// An undocumented `kernelbase.dll` API for creating an app container token, used by Chromium etc.
 ///
@@ -112,6 +120,7 @@ pub fn create_app_container_profile(
 ///
 /// ### References
 /// *   <https://github.com/chromium/chromium/commit/9d4152381ceebbd1445489daa4f45f3d728a213c>
+///
 #[cfg(std)] // minidl requires std for now: https://github.com/MaulingMonkey/minidl/issues/1
 pub fn create_app_container_token<'a>(
     token:      impl AsRef<token::Handle<'a>>,
@@ -136,6 +145,9 @@ pub fn create_app_container_token<'a>(
     unsafe { token::OwnedHandle::from_raw(out_token) }
 }
 
+
+
+#[doc(alias = "DeleteAppContainerProfile")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/userenv/nf-userenv-deleteappcontainerprofile)\]
 /// DeleteAppContainerProfile
 ///
@@ -163,6 +175,7 @@ pub fn create_app_container_token<'a>(
 /// ### Errors
 /// *   `E_INVALIDARG`                              - If `app_container_name` is not valid (illegal chars? exceeds 64 codepoints?)
 /// *   `HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED)`   - If called from within an app container.
+///
 pub fn delete_app_container_profile(
     app_container_name: impl TryIntoAsCStr<u16>,
 ) -> Result<(), Error> {
@@ -171,6 +184,9 @@ pub fn delete_app_container_profile(
     Ok(())
 }
 
+
+
+#[doc(alias = "DeriveAppContainerSidFromAppContainerName")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/userenv/nf-userenv-deriveappcontainersidfromappcontainername)\]
 /// DeriveAppContainerSidFromAppContainerName
 ///
@@ -192,6 +208,7 @@ pub fn delete_app_container_profile(
 ///
 /// ### Errors
 /// *   `E_INVALIDARG`  - If `app_container_name` is not valid (illegal chars? exceeds 64 codepoints?)
+///
 pub fn derive_app_container_sid_from_app_container_name(
     app_container_name: impl TryIntoAsCStr<u16>,
 ) -> Result<sid::Box<alloc::FreeSid>, Error> {
@@ -205,6 +222,9 @@ pub fn derive_app_container_sid_from_app_container_name(
     Ok(app_container_sid?)
 }
 
+
+
+#[doc(alias = "DeriveCapabilitySidsFromName")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-derivecapabilitysidsfromname)\]
 /// DeriveCapabilitySidsFromName
 ///
@@ -235,6 +255,7 @@ pub fn derive_app_container_sid_from_app_container_name(
 /// While the docs say the fn lives in `kernel32.dll`, this is a lie - it lives in `kernelbase.dll`.
 /// `kernel32.dll` doesn't even re-export the symbol.
 /// I checked.
+///
 #[cfg(std)] // minidl requires std for now
 pub fn derive_capability_sids_from_name(cap_name: impl TryIntoAsCStr<u16>) -> Result<(AVec<sid::Box<LocalAllocFree>, DangleZst<Local>>, AVec<sid::Box<LocalAllocFree>, DangleZst<Local>>), Error> {
     use winapi::shared::minwindef::*;
@@ -269,8 +290,12 @@ pub fn derive_capability_sids_from_name(cap_name: impl TryIntoAsCStr<u16>) -> Re
     Ok((group_sids, sids))
 }
 
+
+
+#[doc(alias = "DeriveRestrictedAppContainerSidFromAppContainerSidAndRestrictedName")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/userenv/nf-userenv-deriverestrictedappcontainersidfromappcontainersidandrestrictedname)\]
 /// DeriveRestrictedAppContainerSidFromAppContainerSidAndRestrictedName
+///
 #[allow(dead_code)] // "DeriveRestrictedAppContainerSidFromAppContainerSidAndRestrictedName is reserved for future use."
 fn derive_restricted_app_container_sid_from_app_container_sid_and_restricted_name(
     app_container_sid:              &sid::Value,
@@ -287,8 +312,12 @@ fn derive_restricted_app_container_sid_from_app_container_sid_and_restricted_nam
     Ok(restricted_app_container_sid?)
 }
 
+
+
+#[doc(alias = "GetAppContainerFolderPath")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/userenv/nf-userenv-getappcontainerfolderpath)\]
 /// GetAppContainerFolderPath
+///
 #[cfg(not_yet)] // someone gave GetAppContainerFolderPath a *string* based SID parameter? verify that they actually meant to require a SID and not a name before exposing
 #[cfg(std)]
 pub fn get_app_container_folder_path(
@@ -308,11 +337,15 @@ pub fn get_app_container_folder_path(
     Ok(std::path::PathBuf::from(std::ffi::OsString::from_wide(path.units())))
 }
 
+
+
+#[doc(alias = "GetAppContainerRegistryLocation")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/userenv/nf-userenv-getappcontainerregistrylocation)
 /// GetAppContainerRegistryLocation
 ///
 /// Gets the registry location associated with an AppContainer.
 /// Must be called from within the context of the AppContainer.
+///
 #[cfg(not_yet)] // missing types, use case
 pub fn get_app_container_registry_location(desired_access: ()) -> Result<!, Error> { // missing type wrapper for HKEY as well
     todo!()

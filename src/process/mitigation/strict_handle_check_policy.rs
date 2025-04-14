@@ -5,8 +5,7 @@ use winapi::um::winnt::*;
 
 
 
-// See also: crates\testing\examples\strict_handle_check_policy.rs
-
+#[doc(alias = "PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_strict_handle_check_policy)\]
 /// ≈ [PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY]
 ///

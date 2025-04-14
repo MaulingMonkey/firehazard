@@ -1,3 +1,4 @@
+#[doc(alias = "GetFinalPathNameByHandleA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlea)\]
 /// GetFinalPathNameByHandleA
 ///
@@ -20,6 +21,7 @@ pub fn get_final_path_name_by_handle_a_inplace<'path>(
 
 
 
+#[doc(alias = "GetFinalPathNameByHandleW")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlew)\]
 /// GetFinalPathNameByHandleW
 ///
@@ -42,6 +44,8 @@ pub fn get_final_path_name_by_handle_w_inplace<'path>(
 
 
 
+#[doc(alias = "GetFinalPathNameByHandle")]
+#[doc(alias = "GetFinalPathNameByHandleW")]
 #[cfg(std)]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-getfinalpathnamebyhandlew)\]
 /// GetFinalPathNameByHandleW

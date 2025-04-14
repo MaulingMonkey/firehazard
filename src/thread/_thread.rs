@@ -10,6 +10,7 @@ mod thread_handles;                     pub use thread_handles::*;
 /// DWORD / u32 thread identifier.  In practice, only 16 bits are generally used - reuse / collisions can occur quickly.
 pub type Id = u32;
 
+#[doc(alias = "HANDLE")]
 /// [`OwnedHandle`] | [`PsuedoHandle`] | [`None`]
 pub unsafe trait AsHandleOrNone                                 { fn as_handle_or_none(&self) -> Option<winapi::shared::ntdef::HANDLE>; }
 unsafe impl AsHandleOrNone for Option<core::convert::Infallible>{ fn as_handle_or_none(&self) -> Option<winapi::shared::ntdef::HANDLE> { None } }

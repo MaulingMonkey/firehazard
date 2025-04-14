@@ -1,3 +1,4 @@
+#[doc(alias = "ImpersonateNamedPipeClient")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-impersonatenamedpipeclient)\]
 /// ImpersonateNamedPipeClient
 ///

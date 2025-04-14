@@ -4,6 +4,7 @@ use bytemuck::*;
 
 
 
+#[doc(alias = "PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-process_mitigation_user_pointer_auth_policy)\]
 /// ≈ PROCESS_MITIGATION_USER_POINTER_AUTH_POLICY
 ///

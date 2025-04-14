@@ -1,3 +1,5 @@
+#[doc(alias = "CallNamedPipe")]
+#[doc(alias = "CallNamedPipeW")]
 #[cfg(std)] // required for OsStr / encode_wide
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-callnamedpipew)\]
 /// CallNamedPipeW
@@ -19,6 +21,7 @@ pub fn call_named_pipe<'out_buffer>(
 
 
 
+#[doc(alias = "CallNamedPipeA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-callnamedpipea)\]
 /// CallNamedPipeA
 ///
@@ -51,6 +54,8 @@ pub fn call_named_pipe_a<'out_buffer>(
 
 
 
+#[doc(alias = "CallNamedPipe")]
+#[doc(alias = "CallNamedPipeW")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-callnamedpipew)\]
 /// CallNamedPipeW
 ///

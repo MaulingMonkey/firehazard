@@ -5,6 +5,7 @@ use winapi::um::winnt::*;
 
 
 
+#[doc(alias = "PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_control_flow_guard_policy)\]
 /// ≈ [PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY]
 ///
@@ -55,6 +56,7 @@ pub struct ControlFlowGuardPolicy {
     /// *   [`process::creation::mitigation_policy::control_flow_guard::ALWAYS_ON`] (allows a parent process to enable CFG even for non-CFG-aware binaries?)
     /// *   [Control Flow Guard](https://learn.microsoft.com/en-us/windows/win32/secbp/control-flow-guard) (learn.microsoft.com)
     /// *   [Control-flow integrity: Microsoft Control Flow Guard](https://en.wikipedia.org/wiki/Control-flow_integrity#Microsoft_Control_Flow_Guard) (en.wikipedia.org)
+    ///
     pub enable_control_flow_guard:  bool,
 
     /// **Read Only.**
@@ -67,6 +69,7 @@ pub struct ControlFlowGuardPolicy {
     ///
     /// ### See Also
     /// *   [`process::creation::mitigation_policy::control_flow_guard::EXPORT_SUPPRESSION`] (allows a parent process to enable this at launch time)
+    ///
     pub enable_export_suppression:  bool,
 
     /// **Consider enabling:**  Refuse to load any new DLLs that weren't built with CFG.
@@ -84,10 +87,10 @@ pub struct ControlFlowGuardPolicy {
     /// i686-pc-windows-msvc.rustflags   = ["-Ccontrol-flow-guard=checks"]
     /// ```
     ///
-    ///
     /// ### See Also
     /// *   [`process::creation::mitigation_policy2::strict_control_flow_guard::ALWAYS_ON`] (allows a parent process to enable this at launch time)
     /// *   [`process::mitigation::BinarySignaturePolicy::microsoft_signed_only`] - another DLL-blocking security policy, with a list of third party DLLs that could be affected.
+    ///
     pub strict_mode:                bool,
 
     /// **Read Only?**
@@ -105,11 +108,13 @@ pub struct ControlFlowGuardPolicy {
     /// *   [`process::creation::mitigation_policy2::xtended_control_flow_guard::ALWAYS_ON`] (allows a parent process to enable this at launch time)
     /// *   [Exploit Development: Between a Rock and a (Xtended Flow) Guard Place: Examining XFG](https://connormcgarr.github.io/examining-xfg/) (github.io)
     /// *   [Control-flow integrity: Microsoft eXtended Flow Guard](https://en.wikipedia.org/wiki/Control-flow_integrity#Microsoft_eXtended_Flow_Guard) (en.wikipedia.org)
+    ///
     pub enable_xfg: bool,
 
     /// **Disable for security:**  Weaken [`enable_xfg`](Self::enable_xfg) so it logs (to the Event Log?) instead of protecting.
     ///
     /// I'm not sure if this means logging DLLs that would otherwise be blocked from loading, or if it means logging function signature check failures.
+    ///
     pub enable_xfg_audit_mode: bool,
 
     #[doc(hidden)] pub _reserved_flags: ()

@@ -9,6 +9,7 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
+#[doc(alias = "TOKEN_GROUPS_AND_PRIVILEGES")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_groups_and_privileges)\]
 /// ≈ `Box<(TOKEN_GROUPS_AND_PRIVILEGES, ..)>`
 ///

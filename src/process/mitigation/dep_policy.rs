@@ -5,6 +5,7 @@ use winapi::um::winnt::*;
 
 
 
+#[doc(alias = "PROCESS_MITIGATION_DEP_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_dep_policy)\]
 /// ≈ [PROCESS_MITIGATION_DEP_POLICY]
 ///
@@ -38,17 +39,20 @@ pub struct DepPolicy {
     /// **Enable Always:**
     /// Prevents the execution of pages not marked executable.
     /// The only reason you'd wish to disable this, is to work with legacy code that can't be fixed/updated, that fails to properly mark pages as executable before executing them.
+    ///
     pub enable:                         bool,
 
     /// **Enable Always:**
     /// Disables some (security weakening?) workarounds for bugs in the ActiveX Template Library (version 7.1 and earlier) where it fails to properly mark pages as executable before executing them.
     /// Such emulation is unnecessary for ATL 8.0+ (released with Visual Studio 2005), or in the very likely case where you're not using ATL at all.
     /// The only reason you'd wish to disable this, is to work with legacy code that can't be fixed/updated, that uses ATL 7.1 or earlier.
+    ///
     pub disable_atl_thunk_emulation:    bool,
 
     /// **Enable Always:**
     /// Prevents disabling DEP at a later point in time.
     /// The only reason you'd wish to disable this, is to work with legacy code that can't be fixed/updated, that fails to properly mark pages as executable before executing them.
+    ///
     pub permanent:                      bool,
 
     #[doc(hidden)] pub _reserved_flags: ()

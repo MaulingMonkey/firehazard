@@ -8,6 +8,7 @@ use core::mem::{MaybeUninit, size_of_val, size_of};
 
 
 
+#[doc(alias = "ReadProcessMemory")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-readprocessmemory)\]
 /// ReadProcessMemory
 ///
@@ -26,6 +27,7 @@ use core::mem::{MaybeUninit, size_of_val, size_of};
 /// let copy = unsafe { read_process_memory(get_current_process(), original.as_ptr(), &mut copy[..]) }.unwrap();
 /// assert_eq!(copy[0], 42);
 /// ```
+///
 pub unsafe fn read_process_memory<'a, 'p, T>(
     process:        impl AsRef<process::PsuedoHandle<'p>>,
     base_address:   *const T,

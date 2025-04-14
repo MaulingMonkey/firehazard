@@ -4,6 +4,7 @@ use bytemuck::*;
 
 
 
+#[doc(alias = "PROCESS_MITIGATION_USER_SHADOW_STACK_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_user_shadow_stack_policy)\]
 /// ≈ PROCESS_MITIGATION_USER_SHADOW_STACK_POLICY
 ///

@@ -10,7 +10,9 @@ pub use ialloc::thin::Free as Deallocator;
 #[doc(no_inline)] pub use ialloc::allocator::win32::ProcessHeap as ProcessHeapAllocFree;
 #[doc(no_inline)] pub use ialloc::allocator::win32::Local as LocalAllocFree;
 
-/// [`FreeSid`](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-freesid)
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-freesid)
+/// FreeSid
+///
 #[derive(Clone, Copy, Debug, Default)] pub struct FreeSid;
 
 impl ialloc::meta::Meta for FreeSid {
@@ -23,6 +25,9 @@ impl ialloc::meta::Meta for FreeSid {
 
 unsafe impl ialloc::meta::Stateless for FreeSid {}
 
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-freesid)
+/// FreeSid
+///
 unsafe impl ialloc::thin::Free for FreeSid {
     unsafe fn free_nullable(&self, mem: *mut MaybeUninit<u8>) {
         assert!(unsafe { winapi::um::securitybaseapi::FreeSid(mem.cast()) }.is_null())

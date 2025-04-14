@@ -1,3 +1,4 @@
+#[doc(alias = "GetNamedPipeInfo")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-getnamedpipeinfo)\]
 /// GetNamedPipeInfo
 ///

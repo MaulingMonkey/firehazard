@@ -7,8 +7,10 @@ use core::ptr::NonNull;
 
 
 
+#[doc(alias = "HDESK")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopa)\]
 /// `HDESK` to a desktop
+///
 #[repr(transparent)] pub struct OwnedHandle(NonNull<HDESK__>);
 
 handles!(unsafe impl *LocalHandleNN<HDESK__>        for desktop::{OwnedHandle});
@@ -18,6 +20,8 @@ handles!(unsafe impl {AsRef, From}                  for desktop::{OwnedHandle});
 handles!(unsafe impl {AsRef<@base>, From<@base>}    for desktop::{OwnedHandle});
 handles!(       impl Debug                          for desktop::{OwnedHandle});
 
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-closedesktop)\]
+/// CloseDesktop
 impl Drop for OwnedHandle { fn drop(&mut self) {
     let h = self.as_handle();
     assert!(0 != unsafe { CloseDesktop(h) }, "CloseDesktop({h:?}) failed with GetLastError()={:?}", Error::get_last());

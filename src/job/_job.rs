@@ -18,9 +18,25 @@ pub mod object {
     pub mod uilimit;
 
     // Valid Job Object Limits - C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h
+
+    #[doc(alias = "JOB_OBJECT_LIMIT_VALID_FLAGS")]
+    /// \[<strike>microsoft.com</strike>\]
+    /// JOB_OBJECT_LIMIT_VALID_FLAGS
     pub const LIMIT_VALID_FLAGS              : limit::FlagsMask = limit::FlagsMask(winapi::um::winnt::JOB_OBJECT_LIMIT_VALID_FLAGS);
+
+    #[doc(alias = "JOB_OBJECT_BASIC_LIMIT_VALID_FLAGS")]
+    /// \[<strike>microsoft.com</strike>\]
+    /// JOB_OBJECT_BASIC_LIMIT_VALID_FLAGS
     pub const BASIC_LIMIT_VALID_FLAGS        : limit::FlagsMask = limit::FlagsMask(winapi::um::winnt::JOB_OBJECT_BASIC_LIMIT_VALID_FLAGS);
+
+    #[doc(alias = "JOB_OBJECT_EXTENDED_LIMIT_VALID_FLAGS")]
+    /// \[<strike>microsoft.com</strike>\]
+    /// JOB_OBJECT_EXTENDED_LIMIT_VALID_FLAGS
     pub const EXTENDED_LIMIT_VALID_FLAGS     : limit::FlagsMask = limit::FlagsMask(winapi::um::winnt::JOB_OBJECT_EXTENDED_LIMIT_VALID_FLAGS);
+
+    #[doc(alias = "JOB_OBJECT_NOTIFICATION_LIMIT_VALID_FLAGS")]
+    /// \[<strike>microsoft.com</strike>\]
+    /// JOB_OBJECT_NOTIFICATION_LIMIT_VALID_FLAGS
     pub const NOTIFICATION_LIMIT_VALID_FLAGS : limit::FlagsMask = limit::FlagsMask(winapi::um::winnt::JOB_OBJECT_NOTIFICATION_LIMIT_VALID_FLAGS);
 
     mod basic_accounting_information;       pub use basic_accounting_information::*;

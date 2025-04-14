@@ -4,6 +4,8 @@ use winapi::um::winnt::SID_MAX_SUB_AUTHORITIES;
 
 
 
+#[doc(alias = "SID")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)\]
 /// Create a [`sid::Ptr`] at compile time via e.g. `sid!(S-1-0-0)`
 ///
 /// ### Examples
@@ -19,10 +21,11 @@ use winapi::um::winnt::SID_MAX_SUB_AUTHORITIES;
 /// ```
 ///
 /// ### Compile Error
-/// ```no_compile
+/// ```compile_fail
 /// # use firehazard::*;
 /// let too_many_subauthorities = sid!(S-1-1-1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16);
 /// ```
+///
 #[macro_export] macro_rules! sid {
     (S-$rev:literal-$identifier_authority:literal$(-$sub_authority:literal)*) => {{
         const SUB_AUTHORITIES : [u32; {[0u32 $(,$sub_authority)*].len()-1}] = [$($sub_authority),*];

@@ -1,3 +1,4 @@
+#[doc(alias = "GetHandleInformation")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-gethandleinformation)\]
 /// GetHandleInformation
 ///
@@ -12,6 +13,7 @@
 /// close_handle(thread).unwrap();
 /// # }
 /// ```
+///
 pub fn get_handle_information<'a>(object: impl AsRef<firehazard::handle::Borrowed<'a>>) -> Result<firehazard::handle::Flags, firehazard::Error> {
     use firehazard::*;
 

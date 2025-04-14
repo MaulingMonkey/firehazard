@@ -8,6 +8,7 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
+#[doc(alias = "TOKEN_DEFAULT_DACL")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_default_dacl)\]
 /// ≈ `Box<(TOKEN_DEFAULT_DACL, ..)>`
 ///
