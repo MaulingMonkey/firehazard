@@ -26,17 +26,19 @@ use core::ptr::null;
 ///
 /// Note the awkward error type: ([desktop::OwnedHandle], [Error])
 ///
-/// ### Example
+/// ### Examples
 /// ```
 /// # use firehazard::*;
 /// # use firehazard::access::*;
 /// # use abistr::cstr;
 /// # use winapi::shared::winerror::*;
-/// let desktop1 = create_desktop_a(cstr!("close_desktop_1"), (), None, None, GENERIC_ALL, None).unwrap();
-/// close_desktop(desktop1).unwrap();
+/// let desktop1name = cstr!("close_desktop_1");
+/// let desktop1 = create_desktop_a(desktop1name, (), None, None, GENERIC_ALL, None).unwrap();
+/// close_desktop(desktop1).unwrap(); // ≈ drop(desktop1), but explicit error checking
 ///
-/// let desktop2a   = create_desktop_a(cstr!("close_desktop_2"), (), None, None, GENERIC_ALL, None).unwrap();
-/// let desktop2bee = open_desktop_a(  cstr!("close_desktop_2"), None, false, GENERIC_ALL).unwrap();
+/// let desktop2name= cstr!("close_desktop_2");
+/// let desktop2a   = create_desktop_a(desktop2name, (), None, None, GENERIC_ALL, None).unwrap();
+/// let desktop2bee = open_desktop_a(  desktop2name, None, false, GENERIC_ALL).unwrap();
 /// with_thread_desktop(&desktop2a, || {
 ///     close_desktop(desktop2bee).unwrap(); // closeable
 ///
@@ -49,12 +51,17 @@ use core::ptr::null;
 ///     std::mem::forget(desktop2a); // uncurse: eliminate 2nd owner of same handle
 ///     assert_eq!(ERROR_BUSY, error); // handle in use by current thread
 /// }).unwrap();
-/// let _ : () = close_desktop(desktop2a).unwrap();
-///
+/// ```
+/// ```compile_fail
+/// # use firehazard::*;
+/// # use firehazard::access::*;
+/// # use abistr::cstr;
+/// # use winapi::shared::winerror::*;
 /// // No, you can't use `close_handle`:
-/// let desktop = create_desktop_a(cstr!("close_desktop_3"), (), None, None, GENERIC_ALL, None).unwrap();
+/// let desktop_name = cstr!("close_desktop_3");
+/// let desktop = create_desktop_a(desktop_name, (), None, None, GENERIC_ALL, None).unwrap();
 /// let dupe = unsafe { desktop::OwnedHandle::from_raw_nn(desktop.as_handle_nn()) };
-/// assert_eq!(ERROR_INVALID_HANDLE, close_handle(dupe).unwrap_err());
+/// assert_eq!(ERROR_INVALID_HANDLE, close_handle(dupe).unwrap_err()); // now a compile error
 /// let _ : () = close_desktop(desktop).unwrap();
 /// ```
 ///
