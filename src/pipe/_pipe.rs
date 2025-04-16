@@ -41,3 +41,5 @@ pub(crate) mod values {
     mod pipe_flags;             pub use pipe_flags::*;
     mod pipe_max_instances;     pub use pipe_max_instances::*;
 }
+
+mod pipe_handles;               pub use pipe_handles::*;
