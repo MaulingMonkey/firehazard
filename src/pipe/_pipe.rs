@@ -1,9 +1,33 @@
 //! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/ipc/pipes)\]
 //! Anonymous and named pipe APIs
 //!
+//!
+//!
+//! ### Handle Types
+//!
+//! | [`firehazard`]        | [`std`]                                                                               | Notes                                                                                 |
+//! | ----------------------| --------------------------------------------------------------------------------------| --------------------------------------------------------------------------------------|
+//! | **Owned Handles**     |                                                                                       | [`std`] equivalents are cross-platform, nullable, not FFI-friendly                    |
+//! | [`pipe::DuplexNN`]    | <span style="opacity: 50%">[`std::fs::File`]?</span>                                  | + [`File`](std::fs::File) is [`Seek`](std::io::Seek)able, which is inappropriate      |
+//! | [`pipe::ReaderNN`]    | [`std::io::PipeReader`](https://doc.rust-lang.org/beta/std/io/struct.PipeReader.html) | + [`std`] is beta                                                                     |
+//! | [`pipe::WriterNN`]    | [`std::io::PipeWriter`](https://doc.rust-lang.org/beta/std/io/struct.PipeWriter.html) | + [`std`] is beta                                                                     |
+//! | [`handle::Owned`]     | [`…::OwnedHandle`](std::os::windows::io::OwnedHandle)                                 | entirely generic, [`std`] *is* FFI-friendly (although nullable)                       |
+//! | |
+//! | **Borrowed Handles**  |                                                                                       | Borrowed handles are semi-generic (could be sockets or files)                         |
+//! | [`io::ReadHandle`]    | <code>&dyn [std::io::Read]</code>                                                     | [`std`] isn't FFI-friendly                                                            |
+//! | [`io::WriteHandle`]   | <code>&dyn [std::io::Write]</code>                                                    | [`std`] isn't FFI-friendly                                                            |
+//! | [`handle::Borrowed`]  |                                                                                       | entirely generic, but psuedo-handles are forbidden                                    |
+//! | [`handle::Psuedo`]    | [`…::BorrowedHandle`](std::os::windows::io::BorrowedHandle)                           | entirely generic, [`std`] *is* FFI-friendly (although nullable)                       |
+//!
+//!
+//!
 //! ### References
 //! *   <https://learn.microsoft.com/en-us/windows/win32/ipc/pipes>
 //! *   <https://learn.microsoft.com/en-us/windows/win32/ipc/multithreaded-pipe-server>
+
+#[cfg(doc)] use crate::{self as firehazard, *};
+
+
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/ipc/anonymous-pipes)\]
 /// Anonymous Pipes
