@@ -139,7 +139,7 @@ pub fn one(target: settings::Target) {
     };
     set_thread_token(&pi.thread, &tokens.permissive).unwrap();
     job::relimit(&job, 0);
-    resume_thread(&pi.thread).unwrap();
+    unsafe { resume_thread(&pi.thread) }.unwrap(); // SAFETY: this resumes the main thread in another process that was started in a suspended state via create_process_as_user_w(... | process::CREATE_SUSPENDED | ...)
 
     #[cfg(std)] let conio = {
         use std::io::{BufReader, BufRead};

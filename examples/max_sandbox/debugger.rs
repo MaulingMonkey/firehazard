@@ -112,12 +112,12 @@ pub fn debug_loop(
                 };
                 println!("[{dwProcessId}:{dwThreadId}] debug string: {:?}", narrow);
                 if narrow == "sandbox" {
-                    for thread in threads.values() { suspend_thread(thread).unwrap(); }
+                    for thread in threads.values() { unsafe { suspend_thread(thread) }.unwrap(); }
                     debug_active_process_stop(pi.process_id).unwrap();
                     // XXX: This seems to cause the child process to die with 101 / ERROR_EXCL_SEM_ALREADY_OWNED ?
                     //open_process_token(&pi.process, token::ADJUST_DEFAULT).unwrap().set_integrity_level(sid::AndAttributes::new(target.lockdown.integrity.sid(), None)).unwrap();
                     for thread in threads.values() { set_thread_token(thread, None).unwrap(); }
-                    for thread in threads.values() { resume_thread(thread).unwrap(); }
+                    for thread in threads.values() { unsafe { resume_thread(thread) }.unwrap(); }
                     threads.clear();
                     sandboxed = true;
                     println!("[{dwProcessId}:{dwThreadId}] sandboxed");
