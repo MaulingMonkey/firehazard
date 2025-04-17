@@ -53,6 +53,30 @@ handles!(unsafe impl @convert thread::Handle<'_>        => handle::Borrowed<'_> 
 handles!(unsafe impl @convert thread::Handle<'_>        => handle::Psuedo<'_>       );
 handles!(unsafe impl @convert thread::PsuedoHandle<'_>  => handle::Psuedo<'_>       );
 
+impl TryFrom<handle::Owned> for thread::OwnedHandle {
+    type Error = handle::Owned; // XXX: Create a newtype wrapper that has the handle, but can also convert into firehazard::Error(ERROR_INVALID_HANDLE)?
+    fn try_from(handle: handle::Owned) -> Result<Self, Self::Error> {
+        if !is_thread_handle(&handle) { return Err(handle); }
+        Ok(unsafe { core::mem::transmute(handle) })
+    }
+}
+
+impl<'a> TryFrom<handle::Borrowed<'a>> for thread::Handle<'a> {
+    type Error = handle::Borrowed<'a>; // XXX: Create a newtype wrapper that has the handle, but can also convert into firehazard::Error(ERROR_INVALID_HANDLE)?
+    fn try_from(handle: handle::Borrowed<'a>) -> Result<Self, Self::Error> {
+        if !is_thread_handle(&handle) { return Err(handle); }
+        Ok(unsafe { core::mem::transmute(handle) })
+    }
+}
+
+impl<'a> TryFrom<handle::Psuedo<'a>> for thread::PsuedoHandle<'a> {
+    type Error = handle::Psuedo<'a>; // XXX: Create a newtype wrapper that has the handle, but can also convert into firehazard::Error(ERROR_INVALID_HANDLE)?
+    fn try_from(handle: handle::Psuedo<'a>) -> Result<Self, Self::Error> {
+        if !is_thread_handle(&handle) { return Err(handle); }
+        Ok(unsafe { core::mem::transmute(handle) })
+    }
+}
+
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]

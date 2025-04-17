@@ -10,6 +10,7 @@ pub(crate) mod funcs {
     include!(r"funcs\get_current_thread_id.rs");
     include!(r"funcs\get_current_thread.rs");
     include!(r"funcs\get_exit_code_thread.rs");
+    include!(r"funcs\get_thread_id.rs");
     include!(r"funcs\is_thread_running.rs");
     include!(r"funcs\resume_thread.rs");
     include!(r"funcs\suspend_thread.rs");
