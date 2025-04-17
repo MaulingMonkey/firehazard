@@ -3,8 +3,23 @@
 
 use crate::*;
 
-#[path = "thread_funcs.rs"]
-pub(crate) mod funcs;                   pub use funcs::*;
+pub use funcs::*;
+pub(crate) mod funcs {
+    use crate as firehazard;
+    include!(r"funcs\exit_thread.rs");
+    include!(r"funcs\get_current_thread_id.rs");
+    include!(r"funcs\get_current_thread.rs");
+    include!(r"funcs\get_exit_code_thread.rs");
+    include!(r"funcs\is_thread_running.rs");
+    include!(r"funcs\resume_thread.rs");
+    include!(r"funcs\suspend_thread.rs");
+    include!(r"funcs\wait_for_thread.rs");
+}
+
+#[cfg(test)] mod tests {
+    include!(r"tests\test_wait_exit.rs");
+}
+
 mod thread_handles;                     pub use thread_handles::*;
 
 /// DWORD / u32 thread identifier.  In practice, only 16 bits are generally used - reuse / collisions can occur quickly.
