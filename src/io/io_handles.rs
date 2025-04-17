@@ -12,7 +12,7 @@ use core::marker::PhantomData;
 
 
 #[doc(alias = "HANDLE")]
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea)\] Owned non-null file `HANDLE`
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea)\] Owned non-null non-OVERLAPPED file `HANDLE`
 ///
 /// ### Alternatives
 /// *   [`std::fs::File`](https://doc.rust-lang.org/std/fs/struct.File.html) &mdash; cross platform, no ABI guarantees
@@ -28,7 +28,7 @@ use core::marker::PhantomData;
 
 
 #[doc(alias = "HANDLE")]
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea)\] Borrowed non-null file `HANDLE`
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilea)\] Borrowed non-null non-OVERLAPPED file `HANDLE`
 ///
 /// ### Alternatives
 /// *   [`std::fs::File`](https://doc.rust-lang.org/std/fs/struct.File.html) &mdash; owned instead of borrowed, cross platform, no ABI guarantees
@@ -40,7 +40,7 @@ use core::marker::PhantomData;
 #[repr(transparent)] pub struct FileHandle<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
 
 #[doc(alias = "HANDLE")]
-/// Borrowed non-null readable pipe or file `HANDLE`
+/// Borrowed non-null non-OVERLAPPED readable pipe or file `HANDLE`
 ///
 /// ### Alternatives
 /// *   [`std::io::PipeReader`](https://doc.rust-lang.org/beta/std/io/struct.PipeReader.html) &mdash; owned instead of borrowed, cross platform, no ABI guarantees, not yet stable
@@ -52,7 +52,7 @@ use core::marker::PhantomData;
 #[repr(transparent)] pub struct ReadHandle<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
 
 #[doc(alias = "HANDLE")]
-/// Borrowed non-null writeable pipe or file `HANDLE`
+/// Borrowed non-null non-OVERLAPPED writeable pipe or file `HANDLE`
 ///
 /// ### Alternatives
 /// *   [`std::io::PipeWriter`](https://doc.rust-lang.org/beta/std/io/struct.PipeWriter.html) &mdash; owned instead of borrowed, cross platform, no ABI guarantees, not yet stable
