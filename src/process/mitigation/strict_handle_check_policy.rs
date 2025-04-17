@@ -20,11 +20,13 @@ use winapi::um::winnt::*;
 /// }).unwrap();
 /// # #[cfg(nope)] unsafe {
 ///
-/// // This would previously return false and set GetLastError() == ERROR_INVALID_HANDLE
-/// // After enabling strict handle checks, this kills with: STATUS_INVALID_HANDLE (0xC0000008)
+/// // This would previously return FALSE and sets GetLastError() == ERROR_INVALID_HANDLE.
+/// // After enabling strict handle checks, this throws STATUS_INVALID_HANDLE (0xC0000008)
+/// // This *can* be caught with e.g. `__try { ... } __except( ... ) { ... }`...
+/// // but doesn't that defeat the whole point of enabling strict handle checks?
 /// ReadFile(0x12345678_usize as *mut _, ..);
 ///
-/// // These remain non-fatal when I last tested:
+/// // These remain non-exceptional when I last tested:
 /// ReadFile(null_mut(), ..);                   // GetLastError() == ERROR_INVALID_HANDLE
 /// ReadFile(INVALID_HANDLE_VALUE, ..);         // GetLastError() == ERROR_INVALID_HANDLE
 /// CloseHandle(null_mut());                    // GetLastError() == ERROR_INVALID_HANDLE
