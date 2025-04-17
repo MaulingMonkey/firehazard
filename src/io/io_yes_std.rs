@@ -21,9 +21,15 @@ impl From<std::fs::File> for FileNN { fn from(file: std::fs::File) -> Self {
 
 impl From<FileNN> for std::fs::File { fn from(file: FileNN) -> Self { unsafe { std::fs::File::from_raw_handle(file.into_handle()) } } }
 
-impl AsLocalHandle for std::fs::File { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
-
-
+impl    AsLocalHandle for std::fs::File                 { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
+impl    AsLocalHandle for std::io::Stderr               { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
+impl    AsLocalHandle for std::io::Stdin                { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
+impl    AsLocalHandle for std::io::Stdout               { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
+impl    AsLocalHandle for std::process::Child           { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
+impl    AsLocalHandle for std::process::ChildStderr     { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
+impl    AsLocalHandle for std::process::ChildStdin      { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
+impl    AsLocalHandle for std::process::ChildStdout     { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
+impl<T> AsLocalHandle for std::thread::JoinHandle<T>    { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
 
 #[cfg(test)] mod tests {
     use super::*;
