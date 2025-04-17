@@ -11,7 +11,7 @@ use core::marker::PhantomData;
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createthread)\]
-/// `HANDLE` to a thread
+/// _Owned_, _non-null_ `HANDLE` to a _thread_.
 ///
 #[repr(transparent)] pub struct OwnedHandle(HANDLENN);
 
@@ -19,7 +19,7 @@ use core::marker::PhantomData;
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createthread)\]
-/// `HANDLE` to a thread
+/// _Borrowed_, _non-null_ `HANDLE` to a _thread_.
 ///
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Handle<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
@@ -28,7 +28,9 @@ use core::marker::PhantomData;
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createthread)\]
-/// `HANDLE` to a thread
+/// _Borrowed_ or _[psuedo](handle::Psuedo)_, _non-null_ `HANDLE` to a _thread_.
+///
+/// The only currently known thread psuedo handle is <code>[get_current_thread]\(\)</code> (currently -2).
 ///
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct PsuedoHandle<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
@@ -36,11 +38,22 @@ use core::marker::PhantomData;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for thread::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
-handles!(unsafe impl AsRef<Self>                    for thread::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
-handles!(unsafe impl Send                           for thread::{OwnedHandle});
-handles!(unsafe impl {AsRef, From}                  for thread::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
-handles!(unsafe impl {AsRef<@base>, From<@base>}    for thread::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
-handles!(impl Debug                                 for thread::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
+handles!(       impl AsRef<Self>                    for thread::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
+handles!(unsafe impl Send                           for thread::{OwnedHandle, Handle<'_>}); // PsuedoHandle excluded: includes "GetCurrentThread", which shouldn't be sent.
+handles!(       impl Debug                          for thread::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
+
+handles!(unsafe impl @convert &'_ thread::OwnedHandle   => thread::Handle<'_>       );
+handles!(unsafe impl @convert &'_ thread::OwnedHandle   => thread::PsuedoHandle<'_> );
+handles!(unsafe impl @convert thread::Handle<'_>        => thread::PsuedoHandle<'_> );
+
+handles!(unsafe impl @convert     thread::OwnedHandle   => handle::Owned            );
+handles!(unsafe impl @convert &'_ thread::OwnedHandle   => handle::Borrowed<'_>     );
+handles!(unsafe impl @convert &'_ thread::OwnedHandle   => handle::Psuedo<'_>       );
+handles!(unsafe impl @convert thread::Handle<'_>        => handle::Borrowed<'_>     );
+handles!(unsafe impl @convert thread::Handle<'_>        => handle::Psuedo<'_>       );
+handles!(unsafe impl @convert thread::PsuedoHandle<'_>  => handle::Psuedo<'_>       );
+
+
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
 /// CloseHandle

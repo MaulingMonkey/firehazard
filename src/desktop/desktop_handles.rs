@@ -9,14 +9,13 @@ use core::ptr::NonNull;
 
 #[doc(alias = "HDESK")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopa)\]
-/// `HDESK` to a desktop
+/// _Owned_, _non-null_ `HDESK` to a *desktop*.
 ///
 #[repr(transparent)] pub struct OwnedHandle(NonNull<HDESK__>);
 
 handles!(unsafe impl *LocalHandleNN<HDESK__>        for desktop::{OwnedHandle});
-handles!(unsafe impl AsRef<Self>                    for desktop::{OwnedHandle});
+handles!(       impl AsRef<Self>                    for desktop::{OwnedHandle});
 handles!(unsafe impl Send                           for desktop::{OwnedHandle});
-handles!(unsafe impl {AsRef, From}                  for desktop::{OwnedHandle});
 handles!(       impl Debug                          for desktop::{OwnedHandle});
 
 //ndles!(unsafe impl @convert     desktop::OwnedHandle => handle::Owned         ); // XXX: inappropriate - desktops cannot be `CloseHandle(...)d`.

@@ -55,30 +55,7 @@ macro_rules! handles {
         }
     };
 
-    // "Legacy"
 
-    (unsafe impl {AsRef<@base>, From<@base>} for $mod:ident :: { $owned:ident $(,$( $borrowed:ident<'_> $(,$( $psuedo:ident<'_> )?)? )?)? } ) => {
-            handles!(unsafe impl @convert     $mod::$owned      => handle::Owned        );
-            handles!(unsafe impl @convert &'_ $mod::$owned      => handle::Borrowed<'_> );
-            handles!(unsafe impl @convert &'_ $mod::$owned      => handle::Psuedo<'_>   );
-        $($(
-            handles!(unsafe impl @convert $mod::$borrowed<'_>   => handle::Borrowed<'_> );
-            handles!(unsafe impl @convert $mod::$borrowed<'_>   => handle::Psuedo<'_>   );
-        $($(
-            handles!(unsafe impl @convert $mod::$psuedo<'_>     => handle::Psuedo<'_>   );
-        )?)?
-        )?)?
-    };
-
-    (unsafe impl {AsRef, From} for $mod:ident :: { $owned:ident $(,$( $borrowed:ident<'_> $(,$( $psuedo:ident<'_> )?)? )?)? } ) => {
-        $($(
-            handles!(unsafe impl @convert &'_ $mod::$owned => $mod::$borrowed<'_>);
-        $($(
-            handles!(unsafe impl @convert &'_ $mod::$owned    => $mod::$psuedo<'_>);
-            handles!(unsafe impl @convert $mod::$borrowed<'_> => $mod::$psuedo<'_>);
-        )?)?
-        )?)?
-    };
 
     // Multi-impls
 

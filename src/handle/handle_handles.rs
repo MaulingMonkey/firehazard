@@ -8,7 +8,11 @@ use core::marker::PhantomData;
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
-/// Owned `HANDLE` to a kernel object (will [`CloseHandle`] on [`Drop`])
+/// _Owned_, _non-null_ `HANDLE`.
+///
+/// Will ≈[`close_handle`] on [`Drop`].
+/// It's worth noting that some `HANDLE` types cannot be [`close_handle`]d but *are* compatible with other `HANDLE`-accepting functions.
+/// These will generally have their own handle types that won't convert to [`handle::Owned`], but *may* convert to [`handle::Borrowed`].
 ///
 /// [`CloseHandle`]:    https://learn.microsoft.com/en-us/wsindows/win32/api/handleapi/nf-handleapi-closehandle
 ///
@@ -18,7 +22,7 @@ use core::marker::PhantomData;
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
-/// Borrowed `HANDLE` to a kernel object
+/// _Borrowed_, _non-null_ `HANDLE` to a kernel object.
 ///
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)] #[repr(transparent)] pub struct Borrowed<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
 
@@ -26,16 +30,48 @@ use core::marker::PhantomData;
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
-/// Borrowed or psuedo-`HANDLE` to a kernel object
+/// _Borrowed_ or _[psuedo](handle::Psuedo)_, _non-null_ `HANDLE` to a kernel object.
 ///
+/// Psuedo handles include, but may not be limited to:
+///
+/// | Function                          | Current <br> Value    |
+/// | ----------------------------------|:---------------------:|
+/// | GetCurrentProcess()               | -1 |
+/// | GetCurrentThread()                | -2 |
+/// | GetCurrentSession()               | -3 |
+/// | GetCurrentProcessToken()          | -4 |
+/// | GetCurrentThreadToken()           | -5 |
+/// | GetCurrentThreadEffectiveToken()  | -6 |
+///
+/// Several of these change meaning if sent between threads.
+/// As such, <code>[Psuedo] : \![Send] + \![Sync]</code>:
+///
+/// ```compile_fail
+/// # use firehazard::*;
+/// let h : handle::Psuedo = get_current_thread().into();
+/// std::thread::spawn(move ||{
+///     let _h = h; // error[E0277]: `NonNull<c_void>` cannot be shared between threads safely
+/// }).join().unwrap();
+/// ```
+///
+/// ```compile_fail
+/// # use firehazard::*;
+/// # let h : handle::Psuedo = get_current_thread().into();
+/// std::thread::spawn(||{
+///     let _h = &h; // error[E0277]: `NonNull<c_void>` cannot be shared between threads safely
+/// }).join().unwrap();
+/// ```
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)] #[repr(transparent)] pub struct Psuedo<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
 
 
 
 handles!(unsafe impl *LocalHandleNN<c_void> for handle::{Owned, Borrowed<'_>, Psuedo<'_>});
-handles!(unsafe impl AsRef<Self>            for handle::{Owned, Borrowed<'_>, Psuedo<'_>});
-handles!(unsafe impl {AsRef, From}          for handle::{Owned, Borrowed<'_>, Psuedo<'_>});
-handles!(impl Debug                         for handle::{Owned, Borrowed<'_>, Psuedo<'_>});
+handles!(       impl AsRef<Self>            for handle::{Owned, Borrowed<'_>, Psuedo<'_>});
+handles!(       impl Debug                  for handle::{Owned, Borrowed<'_>, Psuedo<'_>});
+
+handles!(unsafe impl @convert &'_ handle::Owned     => handle::Borrowed<'_> );
+handles!(unsafe impl @convert &'_ handle::Owned     => handle::Psuedo<'_>   );
+handles!(unsafe impl @convert handle::Borrowed<'_>  => handle::Psuedo<'_>   );
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
 /// CloseHandle

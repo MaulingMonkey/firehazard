@@ -8,7 +8,7 @@ use core::marker::PhantomData;
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/procthread/job-objects)\]
-/// _Owned_ `HANDLE` to a job
+/// _Owned_, _non-null_, `HANDLE` to a *job*.
 ///
 #[repr(transparent)] pub struct OwnedHandle(HANDLENN);
 
@@ -16,7 +16,7 @@ use core::marker::PhantomData;
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/procthread/job-objects)\]
-/// _Borrowed_ `HANDLE` to a job
+/// _Borrowed_, _non-null_, `HANDLE` to a *job*.
 ///
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Handle<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
@@ -28,11 +28,16 @@ use core::marker::PhantomData;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for job::{OwnedHandle, Handle<'_>});
-handles!(unsafe impl AsRef<Self>                    for job::{OwnedHandle, Handle<'_>});
+handles!(       impl AsRef<Self>                    for job::{OwnedHandle, Handle<'_>});
 handles!(unsafe impl Send                           for job::{OwnedHandle});
-handles!(unsafe impl {AsRef, From}                  for job::{OwnedHandle, Handle<'_>});
-handles!(unsafe impl {AsRef<@base>, From<@base>}    for job::{OwnedHandle, Handle<'_>});
-handles!(impl Debug                                 for job::{OwnedHandle, Handle<'_>});
+handles!(       impl Debug                          for job::{OwnedHandle, Handle<'_>});
+
+handles!(unsafe impl @convert &'_ job::OwnedHandle  => job::Handle<'_>      );
+handles!(unsafe impl @convert     job::OwnedHandle  => handle::Owned        );
+handles!(unsafe impl @convert &'_ job::OwnedHandle  => handle::Borrowed<'_> );
+handles!(unsafe impl @convert &'_ job::OwnedHandle  => handle::Psuedo<'_>   );
+handles!(unsafe impl @convert job::Handle<'_>       => handle::Borrowed<'_> );
+handles!(unsafe impl @convert job::Handle<'_>       => handle::Psuedo<'_>   );
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
 /// CloseHandle
