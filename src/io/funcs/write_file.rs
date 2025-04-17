@@ -2,6 +2,20 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-writefile)\]
 /// WriteFile(..., nullptr)
 ///
+///
+///
+/// ### Safety
+/// Use this only on `handle`s that were *not* created using `FILE_FLAG_OVERLAPPED`.
+///
+/// Per [`rust-lang/rust#81357` File implementation on Windows has unsound methods](https://github.com/rust-lang/rust/issues/81357) under the header **read** (which applies to write too):
+/// *   If `handle` was created with `FILE_FLAG_OVERLAPPED`
+/// *   If multiple I/O requests are made to `handle`
+///
+/// This function can return a "successful" 0-byte write in response to a *different* I/O request completing,
+/// when it is in fact still asyncronously reading from `buffer` (and accessing a dropped `WriteFile`-internal `OVERLAPPED`?)
+///
+///
+///
 /// ### Errors
 ///
 /// | `handle`                  | Error <br> (via GetLastError)                 | Exception <br> [(Strict Handle Checks)](crate::process::mitigation::StrictHandleCheckPolicy)  |
@@ -35,6 +49,18 @@ tests! {
     use winapi::shared::winerror::{ERROR_ACCESS_DENIED, ERROR_INVALID_HANDLE};
 
     #[test] #[strict_handle_check_exception = 0] // no exception
+    fn write_file_basic() {
+        use std::os::windows::fs::OpenOptionsExt;
+        let file = std::fs::OpenOptions::new()
+            .write(true).create(true)
+            .custom_flags(winapi::um::winbase::FILE_FLAG_DELETE_ON_CLOSE)
+            .open("target/write_file.bin").unwrap();
+        assert_eq!(Ok(0), unsafe { write_file(&file, &[], None) });
+        assert_eq!(Ok(4), unsafe { write_file(&file, &[0u8; 4], None) });
+        assert_eq!(Ok(0), unsafe { write_file(&file, &[], None) });
+    }
+
+    #[test] #[strict_handle_check_exception = 0] // no exception
     fn write_file_null() {
         let r = unsafe { write_file(&crate::handle::invalid::null(), &[0u8; 1024], None) };
         assert_eq!(r, Err(Error(ERROR_INVALID_HANDLE)));
@@ -62,6 +88,14 @@ tests! {
     fn write_file_not_writeable() {
         let unwriteable = std::fs::File::open("Readme.md").unwrap();
         let r = unsafe { write_file(&unwriteable, &[0u8; 1024], None) };
+        drop(unwriteable);
+        assert_eq!(r, Err(Error(ERROR_ACCESS_DENIED)));
+    }
+
+    #[test] #[strict_handle_check_exception = 0] // no exception
+    fn write_file_not_writeable_0_bytes() {
+        let unwriteable = std::fs::File::open("Readme.md").unwrap();
+        let r = unsafe { write_file(&unwriteable, &[], None) };
         drop(unwriteable);
         assert_eq!(r, Err(Error(ERROR_ACCESS_DENIED)));
     }

@@ -2,6 +2,20 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-readfile)\]
 /// ReadFile(..., nullptr)
 ///
+///
+///
+/// ### Safety
+/// Use this only on `handle`s that were *not* created using `FILE_FLAG_OVERLAPPED`.
+///
+/// Per [`rust-lang/rust#81357` File implementation on Windows has unsound methods](https://github.com/rust-lang/rust/issues/81357) under the header **read**:
+/// *   If `handle` was created with `FILE_FLAG_OVERLAPPED`
+/// *   If multiple I/O requests are made to `handle`
+///
+/// This function can return a "successful" 0-byte read in response to a *different* I/O request completing,
+/// when it is in fact still asyncronously writing to `buffer` (and accessing a dropped `ReadFile`-internal `OVERLAPPED`?)
+///
+///
+///
 /// ### Errors
 ///
 /// | `handle`                  | Error <br> (via GetLastError)                 | Exception <br> [(Strict Handle Checks)](crate::process::mitigation::StrictHandleCheckPolicy)  |
@@ -35,6 +49,14 @@ tests! {
     use winapi::shared::winerror::{ERROR_ACCESS_DENIED, ERROR_INVALID_HANDLE};
 
     #[test] #[strict_handle_check_exception = 0] // no exception
+    fn read_file_basic() {
+        let file = std::fs::File::open("Readme.md").unwrap();
+        assert_eq!(Ok(0), unsafe { read_file(&file, &mut [], None) });
+        assert_eq!(Ok(4), unsafe { read_file(&file, &mut [0u8; 4], None) });
+        assert_eq!(Ok(0), unsafe { read_file(&file, &mut [], None) });
+    }
+
+    #[test] #[strict_handle_check_exception = 0] // no exception
     fn read_file_null() {
         let r = unsafe { read_file(&crate::handle::invalid::null(), &mut [0u8; 1024], None) };
         assert_eq!(r, Err(Error(ERROR_INVALID_HANDLE)));
@@ -66,6 +88,18 @@ tests! {
             .custom_flags(winapi::um::winbase::FILE_FLAG_DELETE_ON_CLOSE)
             .open("target/read_file_not_readable.bin").unwrap();
         let r = unsafe { read_file(&unreadable, &mut [0u8; 1024], None) };
+        drop(unreadable);
+        assert_eq!(r, Err(Error(ERROR_ACCESS_DENIED)));
+    }
+
+    #[test] #[strict_handle_check_exception = 0] // no exception
+    fn read_file_not_readable_0_bytes() {
+        use std::os::windows::fs::OpenOptionsExt;
+        let unreadable = std::fs::OpenOptions::new()
+            .write(true).create(true)
+            .custom_flags(winapi::um::winbase::FILE_FLAG_DELETE_ON_CLOSE)
+            .open("target/read_file_not_readable_0_bytes.bin").unwrap();
+        let r = unsafe { read_file(&unreadable, &mut [], None) };
         drop(unreadable);
         assert_eq!(r, Err(Error(ERROR_ACCESS_DENIED)));
     }
