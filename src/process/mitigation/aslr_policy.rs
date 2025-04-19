@@ -7,7 +7,7 @@ use winapi::um::winnt::*;
 
 #[doc(alias = "PROCESS_MITIGATION_ASLR_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_aslr_policy)\]
-/// ≈ [PROCESS_MITIGATION_ASLR_POLICY]
+/// ≈ PROCESS_MITIGATION_ASLR_POLICY
 ///
 /// Enable [Address Space Layout Randomization](https://en.wikipedia.org/wiki/Address_space_layout_randomization).
 /// This presumably can only apply to newly loaded DLLs - existing DLLs and the executable were already loaded.

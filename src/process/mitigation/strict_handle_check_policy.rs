@@ -7,7 +7,7 @@ use winapi::um::winnt::*;
 
 #[doc(alias = "PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_strict_handle_check_policy)\]
-/// ≈ [PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY]
+/// ≈ PROCESS_MITIGATION_STRICT_HANDLE_CHECK_POLICY
 ///
 /// ### Example
 /// ```

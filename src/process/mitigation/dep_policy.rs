@@ -7,7 +7,7 @@ use winapi::um::winnt::*;
 
 #[doc(alias = "PROCESS_MITIGATION_DEP_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_dep_policy)\]
-/// ≈ [PROCESS_MITIGATION_DEP_POLICY]
+/// ≈ PROCESS_MITIGATION_DEP_POLICY
 ///
 /// Data Execution Prevention (DEP) policies, preventing the execution of arbitrary data.
 /// This makes the exploitation of buffer overflows for code execution vulnerabilities more difficult.

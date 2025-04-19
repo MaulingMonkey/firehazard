@@ -7,7 +7,7 @@ use winapi::um::winnt::*;
 
 #[doc(alias = "PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_control_flow_guard_policy)\]
-/// ≈ [PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY]
+/// ≈ PROCESS_MITIGATION_CONTROL_FLOW_GUARD_POLICY
 ///
 /// Function pointer validation settings.
 ///

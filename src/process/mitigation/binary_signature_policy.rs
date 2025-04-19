@@ -7,7 +7,7 @@ use winapi::um::winnt::*;
 
 #[doc(alias = "PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_binary_signature_policy)\]
-/// ≈ [PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY]
+/// ≈ PROCESS_MITIGATION_BINARY_SIGNATURE_POLICY
 ///
 /// Control who must sign binaries/images/dlls in order for them to be loadable.
 /// This presumably can only apply to newly loaded DLLs - existing DLLs and the executable were already loaded.

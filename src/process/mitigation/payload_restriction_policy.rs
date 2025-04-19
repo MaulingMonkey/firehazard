@@ -7,7 +7,7 @@ use winapi::um::winnt::*;
 
 #[doc(alias = "PROCESS_MITIGATION_PAYLOAD_RESTRICTION_POLICY")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-process_mitigation_payload_restriction_policy)\]
-/// ≈ [PROCESS_MITIGATION_PAYLOAD_RESTRICTION_POLICY]
+/// ≈ PROCESS_MITIGATION_PAYLOAD_RESTRICTION_POLICY
 ///
 #[derive(Clone, Copy, Debug)]
 #[derive(Default, Zeroable)]
