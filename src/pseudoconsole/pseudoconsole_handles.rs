@@ -8,7 +8,7 @@ use winapi::ctypes::c_void;
 
 #[doc(alias = "HPCON")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/console/creating-a-pseudoconsole-session)\]
-/// _Owned_, _non-null_ `HPCON` to a *psuedo console*.
+/// _Owned_, _non-null_ `HPCON` to a *pseudo console*.
 ///
 #[repr(transparent)] pub struct Owned(pub(super) HANDLENN);
 
@@ -21,12 +21,12 @@ handles!(       impl Debug                      for pseudoconsole::{Owned});
 
 //ndles!(unsafe impl @convert     pseudoconsole::Owned   => handle::Owned        ); // XXX: closed via ClosePseudoConsole, not CloseHandle
 //ndles!(unsafe impl @convert &'_ pseudoconsole::Owned   => handle::Borrowed<'_> ); // XXX: Maybe?
-//ndles!(unsafe impl @convert &'_ pseudoconsole::Owned   => handle::Psuedo<'_>   ); // XXX: Maybe?
+//ndles!(unsafe impl @convert &'_ pseudoconsole::Owned   => handle::Pseudo<'_>   ); // XXX: Maybe?
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/console/closepseudoconsole)\]
 /// ClosePseudoConsole
 impl Drop for Owned { fn drop(&mut self) {
-    // NOTE: ClosePsuedoConsole returns no errors
+    // NOTE: ClosePseudoConsole returns no errors
     let h = self.as_handle();
     unsafe { winapi::um::consoleapi::ClosePseudoConsole(h) };
 }}

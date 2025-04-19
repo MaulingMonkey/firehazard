@@ -25,7 +25,7 @@ pub struct AslrPolicy {
     /// Noop for 32-bit code, so limited virtual address space shouldn't be a concern.
     /// For 64-bit code, implied by `link.exe`'s [`/DYNAMICBASE`], which is enabled by default.
     ///
-    /// This may also (vastly?) improve the entropy of forced regular psuedo-ASLR on some systems?
+    /// This may also (vastly?) improve the entropy of forced regular pseudo-ASLR on some systems?
     /// *   <https://blog.didierstevens.com/2011/09/01/bottom-up-randomization-saves-mandatory-aslr/>
     /// *   <https://blog.didierstevens.com/2011/08/16/so-how-good-is-pseudo-aslr/>
     ///

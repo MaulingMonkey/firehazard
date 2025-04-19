@@ -7,7 +7,7 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentprocesstoken)\]
 /// GetCurrentProcessToken
 ///
-#[inline(always)] pub const fn get_current_process_token() -> crate::token::PsuedoHandle<'static> { unsafe { crate::token::PsuedoHandle::from_raw_const(-4) } }
+#[inline(always)] pub const fn get_current_process_token() -> crate::token::PseudoHandle<'static> { unsafe { crate::token::PseudoHandle::from_raw_const(-4) } }
 
 
 
@@ -15,7 +15,7 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentthreadtoken)\]
 /// GetCurrentThreadToken
 ///
-#[inline(always)] pub const fn get_current_thread_token() -> crate::token::PsuedoHandle<'static> { unsafe { crate::token::PsuedoHandle::from_raw_const(-5) } }
+#[inline(always)] pub const fn get_current_thread_token() -> crate::token::PseudoHandle<'static> { unsafe { crate::token::PseudoHandle::from_raw_const(-5) } }
 
 
 
@@ -23,7 +23,7 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentthreadeffectivetoken)\]
 /// GetCurrentThreadEffectiveToken
 ///
-#[inline(always)] pub const fn get_current_thread_effective_token() -> crate::token::PsuedoHandle<'static> { unsafe { crate::token::PsuedoHandle::from_raw_const(-6) } }
+#[inline(always)] pub const fn get_current_thread_effective_token() -> crate::token::PseudoHandle<'static> { unsafe { crate::token::PseudoHandle::from_raw_const(-6) } }
 
 
 

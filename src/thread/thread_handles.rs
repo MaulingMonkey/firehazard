@@ -28,30 +28,32 @@ use core::marker::PhantomData;
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createthread)\]
-/// _Borrowed_ or _[psuedo](handle::Psuedo)_, _non-null_ `HANDLE` to a _thread_.
+/// _Borrowed_ or _[pseudo](handle::Pseudo)_, _non-null_ `HANDLE` to a _thread_.
 ///
-/// The only currently known thread psuedo handle is <code>[get_current_thread]\(\)</code> (currently -2).
+/// The only currently known thread pseudo handle is <code>[get_current_thread]\(\)</code> (currently -2).
 ///
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[repr(transparent)] pub struct PsuedoHandle<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
+#[repr(transparent)] pub struct PseudoHandle<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
+
+#[doc(hidden)] #[deprecated = "it's spelled PseudoHandle"] pub use PseudoHandle as PsuedoHandle;
 
 
 
-handles!(unsafe impl *LocalHandleNN<c_void>         for thread::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
-handles!(       impl AsRef<Self>                    for thread::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
-handles!(unsafe impl Send                           for thread::{OwnedHandle, Handle<'_>}); // PsuedoHandle excluded: includes "GetCurrentThread", which shouldn't be sent.
-handles!(       impl Debug                          for thread::{OwnedHandle, Handle<'_>, PsuedoHandle<'_>});
+handles!(unsafe impl *LocalHandleNN<c_void>         for thread::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
+handles!(       impl AsRef<Self>                    for thread::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
+handles!(unsafe impl Send                           for thread::{OwnedHandle, Handle<'_>}); // PseudoHandle excluded: includes "GetCurrentThread", which shouldn't be sent.
+handles!(       impl Debug                          for thread::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
 
 handles!(unsafe impl @convert &'_ thread::OwnedHandle   => thread::Handle<'_>       );
-handles!(unsafe impl @convert &'_ thread::OwnedHandle   => thread::PsuedoHandle<'_> );
-handles!(unsafe impl @convert thread::Handle<'_>        => thread::PsuedoHandle<'_> );
+handles!(unsafe impl @convert &'_ thread::OwnedHandle   => thread::PseudoHandle<'_> );
+handles!(unsafe impl @convert thread::Handle<'_>        => thread::PseudoHandle<'_> );
 
 handles!(unsafe impl @convert     thread::OwnedHandle   => handle::Owned            );
 handles!(unsafe impl @convert &'_ thread::OwnedHandle   => handle::Borrowed<'_>     );
-handles!(unsafe impl @convert &'_ thread::OwnedHandle   => handle::Psuedo<'_>       );
+handles!(unsafe impl @convert &'_ thread::OwnedHandle   => handle::Pseudo<'_>       );
 handles!(unsafe impl @convert thread::Handle<'_>        => handle::Borrowed<'_>     );
-handles!(unsafe impl @convert thread::Handle<'_>        => handle::Psuedo<'_>       );
-handles!(unsafe impl @convert thread::PsuedoHandle<'_>  => handle::Psuedo<'_>       );
+handles!(unsafe impl @convert thread::Handle<'_>        => handle::Pseudo<'_>       );
+handles!(unsafe impl @convert thread::PseudoHandle<'_>  => handle::Pseudo<'_>       );
 
 impl TryFrom<handle::Owned> for thread::OwnedHandle {
     type Error = HandleConversionError<handle::Owned>;
@@ -69,9 +71,9 @@ impl<'a> TryFrom<handle::Borrowed<'a>> for thread::Handle<'a> {
     }
 }
 
-impl<'a> TryFrom<handle::Psuedo<'a>> for thread::PsuedoHandle<'a> {
-    type Error = HandleConversionError<handle::Psuedo<'a>>;
-    fn try_from(handle: handle::Psuedo<'a>) -> Result<Self, Self::Error> {
+impl<'a> TryFrom<handle::Pseudo<'a>> for thread::PseudoHandle<'a> {
+    type Error = HandleConversionError<handle::Pseudo<'a>>;
+    fn try_from(handle: handle::Pseudo<'a>) -> Result<Self, Self::Error> {
         if !is_thread_handle(&handle) { return Err(HandleConversionError { unconverted: handle }) }
         Ok(unsafe { core::mem::transmute(handle) })
     }
@@ -87,4 +89,4 @@ impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle_nn(s
 
 unsafe impl valrow::Borrowable for OwnedHandle       { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for Handle<'_>        { type Abi = HANDLENN; }
-unsafe impl valrow::Borrowable for PsuedoHandle<'_>  { type Abi = HANDLENN; }
+unsafe impl valrow::Borrowable for PseudoHandle<'_>  { type Abi = HANDLENN; }

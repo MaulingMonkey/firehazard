@@ -2,11 +2,11 @@
 /// ```no_compile
 /// handles!(unsafe impl *LocalHandle<HANDLE> for token::{Owned});
 /// handles!(unsafe impl *LocalHandle<HANDLE> for token::{Owned, Borrowed<'_>});
-/// handles!(unsafe impl *LocalHandle<HANDLE> for token::{Owned, Borrowed<'_>, Psuedo<'_>});
+/// handles!(unsafe impl *LocalHandle<HANDLE> for token::{Owned, Borrowed<'_>, Pseudo<'_>});
 ///
 /// handles!(impl Debug for token::{Owned});
 /// handles!(impl Debug for token::{Owned, Borrowed<'_>});
-/// handles!(impl Debug for token::{Owned, Borrowed<'_>, Psuedo<'_>});
+/// handles!(impl Debug for token::{Owned, Borrowed<'_>, Pseudo<'_>});
 /// ```
 macro_rules! handles {
     // impl Trait for mod::{Ty...}

@@ -2,7 +2,7 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadid)\]
 /// GetThreadId
 ///
-pub fn get_thread_id<'a>(thread: impl Into<firehazard::thread::PsuedoHandle<'a>>) -> Result<firehazard::thread::Id, firehazard::Error> {
+pub fn get_thread_id<'a>(thread: impl Into<firehazard::thread::PseudoHandle<'a>>) -> Result<firehazard::thread::Id, firehazard::Error> {
     use crate::AsLocalHandle;
     let id = unsafe { winapi::um::processthreadsapi::GetThreadId(thread.into().as_handle()) };
     firehazard::Error::get_last_if(id == 0)?;
@@ -46,7 +46,7 @@ tests! {
     #[test] #[strict_handle_check_exception = 0] fn is_thread_handle_invalid_handle_value()             { assert!(!is_thread_handle(&crate::handle::invalid::invalid_value()                                )) }
     #[test] #[isolate] #[strict_handle_check_exception = 0xC0000008] fn is_thread_handle_never_valid()  { assert!(!is_thread_handle(&crate::handle::invalid::never_valid()                                  )) }
     #[test] #[isolate] #[strict_handle_check_exception = 0xC0000008] fn is_thread_handle_dangling()     { assert!(!is_thread_handle(&crate::handle::invalid::dangling()                                     )) }
-    #[test] #[strict_handle_check_exception = 0] fn is_thread_handle_access_token_psuedo()              { assert!(!is_thread_handle(&get_current_process_token()                                            )) }
+    #[test] #[strict_handle_check_exception = 0] fn is_thread_handle_access_token_pseudo()              { assert!(!is_thread_handle(&get_current_process_token()                                            )) }
     #[test] #[strict_handle_check_exception = 0] fn is_thread_handle_access_token_process()             { assert!(!is_thread_handle(&open_process_token(get_current_process(), token::ALL_ACCESS).unwrap()  )) }
     #[test] #[strict_handle_check_exception = 0] fn is_thread_handle_access_token_impersonation() {
         let token = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
@@ -67,7 +67,7 @@ tests! {
     }
 
     #[test] #[strict_handle_check_exception = 0]
-    fn is_thread_handle_process_psuedo() {
+    fn is_thread_handle_process_pseudo() {
         assert!(!is_thread_handle(&get_current_process()));
     }
 
@@ -82,7 +82,7 @@ tests! {
     }
 
     #[test] #[strict_handle_check_exception = 0]
-    fn is_thread_handle_thread_psuedo() {
+    fn is_thread_handle_thread_pseudo() {
         assert!(is_thread_handle(&get_current_thread()));
     }
 

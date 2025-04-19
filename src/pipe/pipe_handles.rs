@@ -69,17 +69,17 @@ handles!(unsafe impl @convert &'_ pipe::DuplexNN => io::ReadHandle<'_>      );
 handles!(unsafe impl @convert &'_ pipe::DuplexNN => io::WriteHandle<'_>     );
 handles!(unsafe impl @convert     pipe::DuplexNN => handle::Owned           );
 handles!(unsafe impl @convert &'_ pipe::DuplexNN => handle::Borrowed<'_>    );
-handles!(unsafe impl @convert &'_ pipe::DuplexNN => handle::Psuedo<'_>      );
+handles!(unsafe impl @convert &'_ pipe::DuplexNN => handle::Pseudo<'_>      );
 
 handles!(unsafe impl @convert &'_ pipe::ReaderNN => io::ReadHandle<'_>      );
 handles!(unsafe impl @convert     pipe::ReaderNN => handle::Owned           );
 handles!(unsafe impl @convert &'_ pipe::ReaderNN => handle::Borrowed<'_>    );
-handles!(unsafe impl @convert &'_ pipe::ReaderNN => handle::Psuedo<'_>      );
+handles!(unsafe impl @convert &'_ pipe::ReaderNN => handle::Pseudo<'_>      );
 
 handles!(unsafe impl @convert &'_ pipe::WriterNN => io::WriteHandle<'_>     );
 handles!(unsafe impl @convert     pipe::WriterNN => handle::Owned           );
 handles!(unsafe impl @convert &'_ pipe::WriterNN => handle::Borrowed<'_>    );
-handles!(unsafe impl @convert &'_ pipe::WriterNN => handle::Psuedo<'_>      );
+handles!(unsafe impl @convert &'_ pipe::WriterNN => handle::Pseudo<'_>      );
 
 #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for DuplexNN { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for ReaderNN { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }

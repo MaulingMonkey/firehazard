@@ -16,8 +16,8 @@
 //! | **Borrowed Handles**  |                                                                                       | Borrowed handles are semi-generic (could be sockets or files)                         |
 //! | [`io::ReadHandle`]    | <code>&dyn [std::io::Read]</code>                                                     | [`std`] isn't FFI-friendly                                                            |
 //! | [`io::WriteHandle`]   | <code>&dyn [std::io::Write]</code>                                                    | [`std`] isn't FFI-friendly                                                            |
-//! | [`handle::Borrowed`]  |                                                                                       | entirely generic, but psuedo-handles are forbidden                                    |
-//! | [`handle::Psuedo`]    | [`…::BorrowedHandle`](std::os::windows::io::BorrowedHandle)                           | entirely generic, [`std`] *is* FFI-friendly (although nullable)                       |
+//! | [`handle::Borrowed`]  |                                                                                       | entirely generic, but Pseudo-handles are forbidden                                    |
+//! | [`handle::Pseudo`]    | [`…::BorrowedHandle`](std::os::windows::io::BorrowedHandle)                           | entirely generic, [`std`] *is* FFI-friendly (although nullable)                       |
 //!
 //!
 //!

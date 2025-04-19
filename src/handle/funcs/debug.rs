@@ -5,7 +5,7 @@ pub(crate) fn debug<T>(fmt: &mut core::fmt::Formatter, module: &str, name: &str,
         // #define MEMORY_CURRENT_PARTITION_HANDLE         ((HANDLE) (LONG_PTR) -1)
         // #define MEMORY_SYSTEM_PARTITION_HANDLE          ((HANDLE) (LONG_PTR) -2)
         // #define MEMORY_EXISTING_VAD_PARTITION_HANDLE    ((HANDLE) (LONG_PTR) -3)
-        // presumably these handles would be blocked from being convertable to generic handle::Psuedo handles.
+        // presumably these handles would be blocked from being convertable to generic handle::Pseudo handles.
         -1  => write!(fmt, "-1 aka GetCurrentProcess()"),
         -2  => write!(fmt, "-2 aka GetCurrentThread()"),
         -3  => write!(fmt, "-3 aka GetCurrentSession()"),               // https://stackoverflow.com/a/45632388/953531

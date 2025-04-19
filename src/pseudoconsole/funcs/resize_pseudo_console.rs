@@ -2,7 +2,7 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/console/resizepseudoconsole?source=recommendations)\]
 /// ResizePseudoConsole
 ///
-pub fn resize_psuedo_console(
+pub fn resize_pseudo_console(
     pcon:   &firehazard::pseudoconsole::Owned,
     size:   impl firehazard::pseudoconsole::IntoSize,
 ) -> Result<(), firehazard::Error> {

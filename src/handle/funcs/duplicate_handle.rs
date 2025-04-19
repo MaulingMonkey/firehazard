@@ -6,12 +6,12 @@
 /// ```
 /// # use firehazard::*;
 /// # use winapi::shared::winerror::*;
-/// // You can duplicate process/thread psuedo-handles to get real handles:
+/// // You can duplicate process/thread pseudo-handles to get real handles:
 /// let process = duplicate_handle_local(get_current_process(), access::GENERIC_ALL, false).unwrap();
 /// let thread  = duplicate_handle_local(get_current_thread(),  access::GENERIC_ALL, false).unwrap();
 ///
-/// # #[cfg(nope)] { // current disabled: token::Psuedo -> handle::Psuedo conversion
-/// // You *cannot* duplicate token psuedo-handles to get real handles:
+/// # #[cfg(nope)] { // current disabled: token::Pseudo -> handle::Pseudo conversion
+/// // You *cannot* duplicate token pseudo-handles to get real handles:
 /// let t = duplicate_handle_local(get_current_process_token(), access::GENERIC_ALL, false);
 /// assert_eq!(ERROR_INVALID_HANDLE, t.unwrap_err());
 /// let t = duplicate_handle_local(get_current_thread_token(), access::GENERIC_ALL, false);
@@ -22,7 +22,7 @@
 /// ```
 ///
 pub fn duplicate_handle_local<'a>(
-    source:         impl AsRef<firehazard::handle::Psuedo<'a>>,
+    source:         impl AsRef<firehazard::handle::Pseudo<'a>>,
     access:         impl Into<firehazard::access::Mask>,
     inherit_handle: bool,
 ) -> Result<firehazard::handle::Owned, firehazard::Error> { // TODO: better handle type inference
@@ -55,12 +55,12 @@ pub fn duplicate_handle_local<'a>(
 /// ```
 /// # use firehazard::*;
 /// # use winapi::shared::winerror::*;
-/// // You can duplicate process/thread psuedo-handles to get real handles:
+/// // You can duplicate process/thread pseudo-handles to get real handles:
 /// let process = duplicate_handle_local_same_access(get_current_process(), false).unwrap();
 /// let thread  = duplicate_handle_local_same_access(get_current_thread(),  false).unwrap();
 ///
-/// # #[cfg(nope)] { // current disabled: token::Psuedo -> handle::Psuedo conversion
-/// // You *cannot* duplicate token psuedo-handles to get real handles:
+/// # #[cfg(nope)] { // current disabled: token::Pseudo -> handle::Pseudo conversion
+/// // You *cannot* duplicate token pseudo-handles to get real handles:
 /// let t = duplicate_handle_local_same_access(get_current_process_token(), false);
 /// assert_eq!(ERROR_INVALID_HANDLE, t.unwrap_err());
 /// let t = duplicate_handle_local_same_access(get_current_thread_token(), false);
@@ -71,7 +71,7 @@ pub fn duplicate_handle_local<'a>(
 /// ```
 ///
 pub fn duplicate_handle_local_same_access<'a>(
-    source:         impl AsRef<firehazard::handle::Psuedo<'a>>,
+    source:         impl AsRef<firehazard::handle::Pseudo<'a>>,
     inherit_handle: bool,
 ) -> Result<firehazard::handle::Owned, firehazard::Error> { // TODO: better handle type inference
     use firehazard::*;

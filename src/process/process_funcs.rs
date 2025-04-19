@@ -325,7 +325,7 @@ pub fn exit_process(exit_code: u32) -> ! { unsafe { ExitProcess(exit_code); core
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentprocess)\]
 /// GetCurrentProcess
 ///
-pub fn get_current_process() -> process::PsuedoHandle<'static> { unsafe { process::PsuedoHandle::from_raw(GetCurrentProcess()).unwrap() } }
+pub fn get_current_process() -> process::PseudoHandle<'static> { unsafe { process::PseudoHandle::from_raw(GetCurrentProcess()).unwrap() } }
 
 
 
@@ -364,7 +364,7 @@ pub fn get_exit_code_process<'a>(process: impl AsRef<process::Handle<'a>>) -> Re
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\]
 /// GetProcessMitigationPolicy
 ///
-pub fn get_process_mitigation_policy<'a, P: process::mitigation::GetPolicy>(process: impl AsRef<process::PsuedoHandle<'a>>) -> Result<P, Error> {
+pub fn get_process_mitigation_policy<'a, P: process::mitigation::GetPolicy>(process: impl AsRef<process::PseudoHandle<'a>>) -> Result<P, Error> {
     let mut p = P::Raw::default();
     Error::get_last_if(0 == unsafe { GetProcessMitigationPolicy(process.as_ref().as_handle(), P::ty() as u32, &mut p as *mut P::Raw as *mut _, size_of::<P::Raw>()) })?;
     Ok(P::from_policy(p))

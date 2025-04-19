@@ -24,7 +24,7 @@ use core::ptr::null_mut;
 /// assign_process_to_job_object(&anon, get_current_process()).unwrap();
 /// ```
 ///
-pub fn assign_process_to_job_object<'a>(job: &job::OwnedHandle, process: impl AsRef<process::PsuedoHandle<'a>>) -> Result<(), Error> {
+pub fn assign_process_to_job_object<'a>(job: &job::OwnedHandle, process: impl AsRef<process::PseudoHandle<'a>>) -> Result<(), Error> {
     Error::get_last_if(FALSE == unsafe { AssignProcessToJobObject(job.as_handle(), process.as_ref().as_handle()) })
 }
 
@@ -91,7 +91,7 @@ pub fn create_job_object_w(job_attributes: Option<core::convert::Infallible>, na
 /// assert_eq!(Ok(true),  is_process_in_job(get_current_process(), None));
 /// ```
 ///
-pub fn is_process_in_job<'a>(process: impl AsRef<process::PsuedoHandle<'a>>, job: Option<&job::OwnedHandle>) -> Result<bool, Error> {
+pub fn is_process_in_job<'a>(process: impl AsRef<process::PseudoHandle<'a>>, job: Option<&job::OwnedHandle>) -> Result<bool, Error> {
     let mut r = 0;
     Error::get_last_if(FALSE == unsafe { IsProcessInJob(process.as_ref().as_handle(), job.map_or(null_mut(), |j| j.as_handle()), &mut r) })?;
     Ok(r != FALSE)

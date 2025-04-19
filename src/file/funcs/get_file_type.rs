@@ -79,7 +79,7 @@ tests! {
     }
 
     #[test] #[strict_handle_check_exception = 0]
-    fn get_file_type_access_token_psuedo() {
+    fn get_file_type_access_token_pseudo() {
         let r = get_file_type(&get_current_process_token());
         assert_eq!(r, Err(Error(ERROR_INVALID_HANDLE)));
     }
@@ -114,7 +114,7 @@ tests! {
     }
 
     #[test] #[strict_handle_check_exception = 0]
-    fn get_file_type_process_psuedo() {
+    fn get_file_type_process_pseudo() {
         let r = get_file_type(&get_current_process());
         assert_eq!(r, Err(Error(ERROR_INVALID_HANDLE)));
     }
@@ -131,7 +131,7 @@ tests! {
     }
 
     #[test] #[strict_handle_check_exception = 0]
-    fn get_file_type_thread_psuedo() {
+    fn get_file_type_thread_pseudo() {
         let r = get_file_type(&get_current_thread());
         assert_eq!(r, Err(Error(ERROR_INVALID_HANDLE)));
     }

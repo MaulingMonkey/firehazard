@@ -4,8 +4,8 @@
 ///
 /// ### Arguments
 /// -   `size` &mdash; the initial width and height of the pseudo-console
-/// -   `input` &mdash; a pipe the psuedo-console will read input from
-/// -   `output` &mdash; a pipe the psuedo-console will write output to
+/// -   `input` &mdash; a pipe the pseudo-console will read input from
+/// -   `output` &mdash; a pipe the pseudo-console will write output to
 /// -   `flags` &mdash; `0` | `pseudoconsole::INHERIT_CURSOR`
 ///
 /// ### Safety

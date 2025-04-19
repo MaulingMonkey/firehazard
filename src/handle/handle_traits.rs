@@ -16,7 +16,7 @@ use core::ptr::NonNull;
 /// No other code should close or attempt to claim ownership over said handle, and `Self` will typically
 /// call [`CloseHandle`] (or `CloseDesktop` or `FreeLibrary` or ...) when `Drop`ed.
 ///
-/// If `Self<'a>` is a *borrowed* or *psuedo* handle, `handle` must remain valid for the lifetime of `'a`.
+/// If `Self<'a>` is a *borrowed* or *pseudo* handle, `handle` must remain valid for the lifetime of `'a`.
 /// This is likely longer than the lifetime of `Self` if `Self` is `Clone` or `Copy` - e.g. if `Self` is `Handle<'static>`, `handle` should remain permanently opened.
 ///
 /// #### Soundness

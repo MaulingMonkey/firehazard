@@ -22,7 +22,7 @@ handles!(       impl Debug                          for winsta::{OwnedHandle});
 
 //ndles!(unsafe impl @convert     winsta::OwnedHandle   => handle::Owned        ); // XXX: closed via CloseWindowStation, not CloseHandle
 handles!(unsafe impl @convert &'_ winsta::OwnedHandle   => handle::Borrowed<'_> );
-handles!(unsafe impl @convert &'_ winsta::OwnedHandle   => handle::Psuedo<'_>   );
+handles!(unsafe impl @convert &'_ winsta::OwnedHandle   => handle::Pseudo<'_>   );
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-closewindowstation)\]
 /// CloseWindowStation

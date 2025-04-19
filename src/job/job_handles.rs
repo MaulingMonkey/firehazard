@@ -23,7 +23,7 @@ use core::marker::PhantomData;
 
 
 
-// No psuedo job handles?
+// No pseudo job handles?
 
 
 
@@ -35,9 +35,9 @@ handles!(       impl Debug                          for job::{OwnedHandle, Handl
 handles!(unsafe impl @convert &'_ job::OwnedHandle  => job::Handle<'_>      );
 handles!(unsafe impl @convert     job::OwnedHandle  => handle::Owned        );
 handles!(unsafe impl @convert &'_ job::OwnedHandle  => handle::Borrowed<'_> );
-handles!(unsafe impl @convert &'_ job::OwnedHandle  => handle::Psuedo<'_>   );
+handles!(unsafe impl @convert &'_ job::OwnedHandle  => handle::Pseudo<'_>   );
 handles!(unsafe impl @convert job::Handle<'_>       => handle::Borrowed<'_> );
-handles!(unsafe impl @convert job::Handle<'_>       => handle::Psuedo<'_>   );
+handles!(unsafe impl @convert job::Handle<'_>       => handle::Pseudo<'_>   );
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
 /// CloseHandle

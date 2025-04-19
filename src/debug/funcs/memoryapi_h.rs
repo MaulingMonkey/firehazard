@@ -29,7 +29,7 @@ use core::mem::{MaybeUninit, size_of_val, size_of};
 /// ```
 ///
 pub unsafe fn read_process_memory<'a, 'p, T>(
-    process:        impl AsRef<process::PsuedoHandle<'p>>,
+    process:        impl AsRef<process::PseudoHandle<'p>>,
     base_address:   *const T,
     buffer:         &'a mut [MaybeUninit<T>],
 ) -> Result<&'a [T], Error> {

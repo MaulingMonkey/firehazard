@@ -88,18 +88,18 @@ handles!(unsafe impl @convert &'_ io::FileNN        => io::FileHandle<'_>       
 handles!(unsafe impl @convert &'_ io::FileNN        => io::ReadHandle<'_>       );
 handles!(unsafe impl @convert &'_ io::FileNN        => io::WriteHandle<'_>      );
 handles!(unsafe impl @convert &'_ io::FileNN        => handle::Borrowed<'_>     );
-handles!(unsafe impl @convert &'_ io::FileNN        => handle::Psuedo<'_>       );
+handles!(unsafe impl @convert &'_ io::FileNN        => handle::Pseudo<'_>       );
 
 handles!(unsafe impl @convert io::FileHandle<'_>    => io::ReadHandle<'_>       );
 handles!(unsafe impl @convert io::FileHandle<'_>    => io::WriteHandle<'_>      );
 handles!(unsafe impl @convert io::FileHandle<'_>    => handle::Borrowed<'_>     );
-handles!(unsafe impl @convert io::FileHandle<'_>    => handle::Psuedo<'_>       );
+handles!(unsafe impl @convert io::FileHandle<'_>    => handle::Pseudo<'_>       );
 
 handles!(unsafe impl @convert io::ReadHandle<'_>    => handle::Borrowed<'_>     );
-handles!(unsafe impl @convert io::ReadHandle<'_>    => handle::Psuedo<'_>       );
+handles!(unsafe impl @convert io::ReadHandle<'_>    => handle::Pseudo<'_>       );
 
 handles!(unsafe impl @convert io::WriteHandle<'_>   => handle::Borrowed<'_>     );
-handles!(unsafe impl @convert io::WriteHandle<'_>   => handle::Psuedo<'_>       );
+handles!(unsafe impl @convert io::WriteHandle<'_>   => handle::Pseudo<'_>       );
 
 
 
