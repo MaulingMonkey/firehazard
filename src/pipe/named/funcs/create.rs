@@ -44,14 +44,9 @@ pub fn create<'a, 'b: 'a>(
     default_timeout:        impl Into<firehazard::NMPWAIT>, // A slightly awkward fit, but 0 (NMPWAIT::USE_DEFAULT_WAIT) gets interpreted as "make WaitNamedPipe(..., NMPWAIT::USE_DEFAULT_WAIT) use the default timeout of 50ms"
     security_attributes:    impl Into<Option<&'a firehazard::security::Attributes<'b>>>,
 ) -> Result<firehazard::handle::Owned, firehazard::Error> {
-    use winapi::shared::winerror::ERROR_ILLEGAL_CHARACTER;
-    use std::os::windows::ffi::OsStrExt;
-
-    let name = name.as_ref();
-    let name = name.encode_wide().chain(Some(0)).collect::<std::vec::Vec<_>>();
-    let name = abistr::CStrNonNull::from_units_with_nul(&name).map_err(|_| ERROR_ILLEGAL_CHARACTER)?;
     create_w(
-        name, open_mode, pipe_mode, max_instances, out_buffer_size,
+        crate::util::osstr_to_wide0(name.as_ref(), &mut std::vec::Vec::new())?,
+        open_mode, pipe_mode, max_instances, out_buffer_size,
         in_buffer_size, default_timeout, security_attributes,
     )
 }

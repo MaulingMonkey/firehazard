@@ -8,13 +8,10 @@ pub fn wait(
     name:           impl AsRef<std::ffi::OsStr>,
     timeout:        impl Into<firehazard::NMPWAIT>,
 ) -> Result<(), firehazard::Error> {
-    use winapi::shared::winerror::ERROR_ILLEGAL_CHARACTER;
-    use std::os::windows::ffi::OsStrExt;
-
-    let name = name.as_ref();
-    let name = name.encode_wide().chain(Some(0)).collect::<std::vec::Vec<_>>();
-    let name = abistr::CStrNonNull::from_units_with_nul(&name).map_err(|_| ERROR_ILLEGAL_CHARACTER)?;
-    wait_w(name, timeout)
+    wait_w(
+        crate::util::osstr_to_wide0(name.as_ref(), &mut std::vec::Vec::new())?,
+        timeout,
+    )
 }
 
 

@@ -110,19 +110,22 @@ pub fn create_process_a(
     current_directory:      impl TryIntoAsOptCStr,
     startup_info:           &impl process::AsStartupInfoA,
 ) -> Result<process::Information, Error> {
-    if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be NUL terminated
+    if let Some(command_line) = command_line.as_ref() {
+        let interior = command_line.strip_suffix(&[0]).ok_or(Error(E_STRING_NOT_NULL_TERMINATED as _))?; // must be NUL terminated
+        if interior.contains(&0) { return Err(Error(ERROR_ILLEGAL_CHARACTER)) }
+    }
     let creation_flags = creation_flags.into().into();
     let mut process_information = Default::default();
 
     Error::get_last_if(0 == unsafe { CreateProcessA(
-        application_name.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
+        application_name.try_into()?.as_opt_cstr(),
         command_line.as_ref().map_or(null(), |c| c.as_ptr()) as *mut _,
         process_attributes.map_or(null(), |a| a) as *mut _,
         thread_attributes.map_or(null(), |a| a) as *mut _,
         inherit_handles as _,
         creation_flags,
         environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?,
-        current_directory.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
+        current_directory.try_into()?.as_opt_cstr(),
         startup_info.as_winapi()?,
         &mut process_information
     )})?;
@@ -150,19 +153,22 @@ pub fn create_process_w(
     current_directory:      impl TryIntoAsOptCStr<u16>,
     startup_info:           &impl process::AsStartupInfoW,
 ) -> Result<process::Information, Error> {
-    if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be NUL terminated
+    if let Some(command_line) = command_line.as_ref() {
+        let interior = command_line.strip_suffix(&[0]).ok_or(Error(E_STRING_NOT_NULL_TERMINATED as _))?; // must be NUL terminated
+        if interior.contains(&0) { return Err(Error(ERROR_ILLEGAL_CHARACTER)) }
+    }
     let creation_flags = creation_flags.into().into();
     let mut process_information = Default::default();
 
     Error::get_last_if(0 == unsafe { CreateProcessW(
-        application_name.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
+        application_name.try_into()?.as_opt_cstr(),
         command_line.as_mut().map_or(null_mut(), |c| c.as_mut_ptr()),
         process_attributes.map_or(null(), |a| a) as *mut _,
         thread_attributes.map_or(null(), |a| a) as *mut _,
         inherit_handles as _,
         creation_flags,
         environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?,
-        current_directory.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
+        current_directory.try_into()?.as_opt_cstr(),
         startup_info.as_winapi()?,
         &mut process_information
     )})?;
@@ -175,6 +181,8 @@ pub fn create_process_w(
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasusera)\]
 /// CreateProcessAsUserA
 ///
+/// ### Errors
+///
 /// | Error                         | Condition |
 /// | ----------------------------- | --------- |
 /// | ERROR_INCORRECT_SIZE          | If using [process::EXTENDED_STARTUPINFO_PRESENT] with [process::StartupInfoW] instead of [process::StartupInfoExW]
@@ -186,10 +194,13 @@ pub fn create_process_w(
 /// | ERROR_ACCESS_DENIED           | Various path access errors
 /// | ERROR_ACCESS_DENIED           | [process::creation::mitigation_policy2::block_non_cet_binaries::ALWAYS_ON] on a non-CET binrary<br>Various path access errors?
 /// | ERROR_STRICT_CFG_VIOLATION    | [process::creation::mitigation_policy2::strict_control_flow_guard::ALWAYS_ON] on a partially CFG-enabled binary?
+/// | ERROR_ILLEGAL_CHARACTER       | `application_name` contains interior `\0`s
+/// | ERROR_ILLEGAL_CHARACTER       | `command_line` contains interior `\0`s
+/// | ERROR_ILLEGAL_CHARACTER       | `current_directory` contains interior `\0`s
 /// | ERROR_BAD_ENVIRONMENT         | `environment` was ANSI despite `creation_flags` containing `CREATE_UNICODE_ENVIRONMENT`
 /// | ERROR_BAD_ENVIRONMENT         | `environment` was UTF16 despite `creation_flags` lacking `CREATE_UNICODE_ENVIRONMENT`
 /// | E_STRING_NOT_NULL_TERMINATED  | `environment` was missing `\0\0` terminator
-/// | E_STRING_NOT_NULL_TERMINATED  | `application_name`, `command_line`, or `current_directory` was missing `\0` terminator
+/// | E_STRING_NOT_NULL_TERMINATED  | `command_line` was missing a `\0` terminator
 ///
 pub fn create_process_as_user_a(
     token:                  &crate::token::OwnedHandle,
@@ -203,7 +214,10 @@ pub fn create_process_as_user_a(
     current_directory:      impl TryIntoAsOptCStr,
     startup_info:           &impl process::AsStartupInfoA,
 ) -> Result<process::Information, Error> {
-    if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be NUL terminated
+    if let Some(command_line) = command_line.as_ref() {
+        let interior = command_line.strip_suffix(&[0]).ok_or(Error(E_STRING_NOT_NULL_TERMINATED as _))?; // must be NUL terminated
+        if interior.contains(&0) { return Err(Error(ERROR_ILLEGAL_CHARACTER)) }
+    }
     let creation_flags = creation_flags.into().into();
     let mut process_information = Default::default();
 
@@ -223,14 +237,14 @@ pub fn create_process_as_user_a(
 
     Error::get_last_if(0 == unsafe { CreateProcessAsUserA(
         token.as_handle(),
-        application_name.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
+        application_name.try_into()?.as_opt_cstr(),
         command_line.as_ref().map_or(null(), |c| c.as_ptr()) as *mut _,
         process_attributes.map_or(null(), |a| a) as *mut _,
         thread_attributes.map_or(null(), |a| a) as *mut _,
         inherit_handles as _,
         creation_flags,
         environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?,
-        current_directory.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
+        current_directory.try_into()?.as_opt_cstr(),
         startup_info.as_winapi()?,
         &mut process_information
     )})?;
@@ -241,6 +255,8 @@ pub fn create_process_as_user_a(
 #[doc(alias = "CreateProcessAsUser")]
 #[doc(alias = "CreateProcessAsUserW")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessasuserw)\] CreateProcessAsUserW
+///
+/// ### Errors
 ///
 /// | Error                         | Condition |
 /// | ----------------------------- | --------- |
@@ -253,10 +269,13 @@ pub fn create_process_as_user_a(
 /// | ERROR_ACCESS_DENIED           | Various path access errors
 /// | ERROR_ACCESS_DENIED           | [process::creation::mitigation_policy2::block_non_cet_binaries::ALWAYS_ON] on a non-CET binrary<br>Various path access errors?
 /// | ERROR_STRICT_CFG_VIOLATION    | [process::creation::mitigation_policy2::strict_control_flow_guard::ALWAYS_ON] on a partially CFG-enabled binary?
+/// | ERROR_ILLEGAL_CHARACTER       | `application_name` contains interior `\0`s
+/// | ERROR_ILLEGAL_CHARACTER       | `command_line` contains interior `\0`s
+/// | ERROR_ILLEGAL_CHARACTER       | `current_directory` contains interior `\0`s
 /// | ERROR_BAD_ENVIRONMENT         | `environment` was ANSI despite `creation_flags` containing `CREATE_UNICODE_ENVIRONMENT`
 /// | ERROR_BAD_ENVIRONMENT         | `environment` was UTF16 despite `creation_flags` lacking `CREATE_UNICODE_ENVIRONMENT`
 /// | E_STRING_NOT_NULL_TERMINATED  | `environment` was missing `\0\0` terminator
-/// | E_STRING_NOT_NULL_TERMINATED  | `application_name`, `command_line`, or `current_directory` was missing `\0` terminator
+/// | E_STRING_NOT_NULL_TERMINATED  | `command_line` was missing a `\0` terminator
 ///
 pub fn create_process_as_user_w(
     token:                  &crate::token::OwnedHandle,
@@ -273,20 +292,23 @@ pub fn create_process_as_user_w(
     current_directory:      impl TryIntoAsOptCStr<u16>,
     startup_info:           &impl process::AsStartupInfoW,
 ) -> Result<process::Information, Error> {
-    if !command_line.as_ref().map_or(false, |c| c.ends_with(&[0]))  { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) } // must be NUL terminated
+    if let Some(command_line) = command_line.as_ref() {
+        let interior = command_line.strip_suffix(&[0]).ok_or(Error(E_STRING_NOT_NULL_TERMINATED as _))?; // must be NUL terminated
+        if interior.contains(&0) { return Err(Error(ERROR_ILLEGAL_CHARACTER)) }
+    }
     let creation_flags = creation_flags.into().into();
     let mut process_information = Default::default();
 
     Error::get_last_if(0 == unsafe { CreateProcessAsUserW(
         token.as_handle(),
-        application_name.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
+        application_name.try_into()?.as_opt_cstr(),
         command_line.as_mut().map_or(null_mut(), |c| c.as_mut_ptr()),
         process_attributes.map_or(null(), |a| a) as *mut _,
         thread_attributes.map_or(null(), |a| a) as *mut _,
         inherit_handles as _,
         creation_flags,
         environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?,
-        current_directory.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
+        current_directory.try_into()?.as_opt_cstr(),
         startup_info.as_winapi()?,
         &mut process_information
     )})?;

@@ -3,7 +3,6 @@ use crate::*;
 use abistr::*;
 
 use winapi::shared::minwindef::FALSE;
-use winapi::shared::winerror::*;
 use winapi::um::jobapi::*;
 use winapi::um::jobapi2::*;
 use winapi::um::winbase::*;
@@ -43,7 +42,7 @@ pub fn assign_process_to_job_object<'a>(job: &job::OwnedHandle, process: impl As
 /// ```
 ///
 pub fn create_job_object_a(job_attributes: Option<core::convert::Infallible>, name: impl TryIntoAsOptCStr) -> Result<job::OwnedHandle, Error> {
-    let name = name.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?;
+    let name = name.try_into()?;
     let h = unsafe { CreateJobObjectA(none2null(job_attributes), name.as_opt_cstr()) };
     Error::get_last_if(h.is_null())?;
     unsafe { job::OwnedHandle::from_raw(h) }
@@ -65,7 +64,7 @@ pub fn create_job_object_a(job_attributes: Option<core::convert::Infallible>, na
 /// ```
 ///
 pub fn create_job_object_w(job_attributes: Option<core::convert::Infallible>, name: impl TryIntoAsOptCStr<u16>) -> Result<job::OwnedHandle, Error> {
-    let name = name.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?;
+    let name = name.try_into()?;
     let h = unsafe { CreateJobObjectW(none2null(job_attributes), name.as_opt_cstr()) };
     Error::get_last_if(h.is_null())?;
     unsafe { job::OwnedHandle::from_raw(h) }
@@ -114,7 +113,7 @@ pub fn is_process_in_job<'a>(process: impl AsRef<process::PseudoHandle<'a>>, job
 /// ```
 ///
 pub fn open_job_object_a(desired_access: impl Into<access::Mask>, inherit_handle: bool, name: impl TryIntoAsCStr) -> Result<job::OwnedHandle, Error> {
-    let name = name.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?;
+    let name = name.try_into()?;
     let h = unsafe { OpenJobObjectA(desired_access.into().into(), inherit_handle as _, name.as_cstr()) };
     Error::get_last_if(h.is_null())?;
     unsafe { job::OwnedHandle::from_raw(h) }
@@ -138,7 +137,7 @@ pub fn open_job_object_a(desired_access: impl Into<access::Mask>, inherit_handle
 /// ```
 ///
 pub fn open_job_object_w(desired_access: impl Into<access::Mask>, inherit_handle: bool, name: impl TryIntoAsCStr<u16>) -> Result<job::OwnedHandle, Error> {
-    let name = name.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?;
+    let name = name.try_into()?;
     let h = unsafe { OpenJobObjectW(desired_access.into().into(), inherit_handle as _, name.as_cstr()) };
     Error::get_last_if(h.is_null())?;
     unsafe { job::OwnedHandle::from_raw(h) }

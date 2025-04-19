@@ -10,13 +10,10 @@ pub fn call<'out_buffer>(
     out_buffer:         &'out_buffer mut [core::mem::MaybeUninit<u8>],
     timeout:            impl Into<firehazard::NMPWAIT>,
 ) -> Result<&'out_buffer mut [u8], firehazard::Error> {
-    use winapi::shared::winerror::ERROR_ILLEGAL_CHARACTER;
-    use std::os::windows::ffi::OsStrExt;
-
-    let name = name.as_ref();
-    let name = name.encode_wide().chain(Some(0)).collect::<std::vec::Vec<_>>();
-    let name = abistr::CStrNonNull::from_units_with_nul(&name).map_err(|_| ERROR_ILLEGAL_CHARACTER)?;
-    call_w(name, in_buffer, out_buffer, timeout)
+    call_w(
+        crate::util::osstr_to_wide0(name.as_ref(), &mut std::vec::Vec::new())?,
+        in_buffer, out_buffer, timeout,
+    )
 }
 
 

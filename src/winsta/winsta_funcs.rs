@@ -3,7 +3,6 @@ use abistr::*;
 use winapi::ctypes::c_char;
 use winapi::shared::minwindef::{FALSE, LPARAM, BOOL, TRUE};
 use winapi::shared::ntdef::HANDLE;
-use winapi::shared::winerror::*;
 use winapi::um::errhandlingapi::SetLastError;
 use winapi::um::handleapi::DuplicateHandle;
 use winapi::um::winnt::DUPLICATE_SAME_ACCESS;
@@ -37,7 +36,7 @@ pub fn create_window_station_a(
     sa:             Option<&security::Attributes>,
 ) -> Result<winsta::OwnedHandle, Error> {
     let handle = unsafe { CreateWindowStationA(
-        winsta.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
+        winsta.try_into()?.as_opt_cstr(),
         flags.into().into(),
         desired_access.into().into(),
         sa.map_or(null(), |sa| sa) as *mut _
@@ -74,7 +73,7 @@ pub fn create_window_station_w(
     sa:             Option<&security::Attributes>,
 ) -> Result<winsta::OwnedHandle, Error> {
     let handle = unsafe { CreateWindowStationW(
-        winsta.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_opt_cstr(),
+        winsta.try_into()?.as_opt_cstr(),
         flags.into().into(),
         desired_access.into().into(),
         sa.map_or(null(), |sa| sa) as *mut _
@@ -241,7 +240,7 @@ pub fn open_window_station_a(
     desired_access: impl Into<winsta::AccessRights>,
 ) -> Result<winsta::OwnedHandle, Error> {
     let handle = unsafe { OpenWindowStationA(
-        winsta.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_cstr(),
+        winsta.try_into()?.as_cstr(),
         inherit as _,
         desired_access.into().into()
     )};
@@ -269,7 +268,7 @@ pub fn open_window_station_w(
     desired_access: impl Into<winsta::AccessRights>,
 ) -> Result<winsta::OwnedHandle, Error> {
     let handle = unsafe { OpenWindowStationW(
-        winsta.try_into().map_err(|_| E_STRING_NOT_NULL_TERMINATED)?.as_cstr(),
+        winsta.try_into()?.as_cstr(),
         inherit as _,
         desired_access.into().into()
     )};

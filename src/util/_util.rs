@@ -1,4 +1,5 @@
 mod bits32;                     pub(crate) use bits32::*;
+mod string;                     pub(crate) use string::*;
 pub(crate) mod partition;
 mod provenance;                 pub(crate) use provenance::*;
 pub(crate) mod test;
