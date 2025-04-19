@@ -99,51 +99,6 @@ impl<'a> TryFrom<&'_ [ThreadAttributeRef<'a>]> for ThreadAttributeList<'a> {
 #[derive(Clone, Copy)] pub struct ThreadAttributeRef<'a>(usize, LPVOID, usize, PhantomData<&'a usize>);
 
 impl<'a> ThreadAttributeRef<'a> {
-    /// Used to implement the vast majority of [`ThreadAttributeRef`] constructors.
-    /// Generally, you should prefer one of the many *safe* static `fn`s that individually handle a specific attribute.
-    ///
-    /// Given: `ThreadAttributeRef::from_raw(attribute, &value)`
-    ///
-    /// Then: `UpdateProcThreadAttribute(..., attribute, &value, sizeof(value), ...)` will be called when this is converted into part of a thread attribute list.
-    ///
-    /// ### Errata
-    ///
-    /// Per [`microsoft/terminal#6705`](https://github.com/microsoft/terminal/issues/6705) as
-    /// [brought to my attention by chrisd](https://discord.com/channels/273534239310479360/583054410670669833/1362882021860577380),
-    /// `PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE` breaks from the typical pattern, and is kept broken for backwards compatability concerns:
-    ///
-    /// ```ignore
-    /// // sane API design:
-    /// UpdateProcThreadAttribute(.., PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE, &hpc, sizeof(hpc), ..)
-    /// // *actually* expected (note the missing `&`):
-    /// UpdateProcThreadAttribute(.., PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE, hpc, sizeof(hpc), ..)
-    /// ```
-    ///
-    /// As such, do *not* call [`ThreadAttributeRef::from_raw`] for `PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE`.
-    /// Instead, use [`ThreadAttributeRef::from_raw_value`], or better yet, use [`ThreadAttributeRef::pseudoconsole`].
-    ///
-    /// ### Safety
-    /// -   `attribute` should be a valid `PROC_THREAD_ATTRIBUTE_*`, without any errata such as `PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE`.
-    /// -   `value` must be of an appropriate type and value for `attribute`.
-    ///
-    pub unsafe fn from_raw<T: ?Sized + 'a>(attribute: usize, value: &'a T) -> Self {
-        debug_assert!(
-            attribute != PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE,
-            "per https://github.com/microsoft/terminal/issues/6705 , PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE is quirky and passes a handle directly to UpdateProcThreadAttribute, rather than a pointer to the handle.  Use `from_raw_value` instead of `from_raw_ref`."
-        );
-        Self(attribute, value as *const _ as *mut _, size_of_val(value), PhantomData)
-    }
-
-    /// Generally, you should prefer one of the many *safe* static `fn`s that individually handle a specific attribute.
-    ///
-    /// Given: `ThreadAttributeRef::from_raw_value(attribute, value, size)`
-    ///
-    /// Then: `UpdateProcThreadAttribute(..., attribute, value, size, ...)` will be called when this is converted into part of a thread attribute list.
-    ///
-    pub unsafe fn from_raw_value(attribute: usize, value: LPVOID, size: usize) -> Self { Self(attribute, value, size, PhantomData) }
-}
-
-impl<'a> ThreadAttributeRef<'a> {
     #[doc(alias = "PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY")]
     /// (PROC_THREAD_ATTRIBUTE_GROUP_AFFINITY, [GROUP_AFFINITY](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-group_affinity))
     ///
@@ -281,6 +236,55 @@ impl<'a> ThreadAttributeRef<'a> {
     /// | ❌ | Windows Server 2019  | 10.0.17763.3534   |
     ///
     pub fn component_filter_flags(component_flags: &'a DWORD) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_COMPONENT_FILTER, component_flags) } }
+
+
+
+    // ==============================================  raw constructors  ==============================================
+
+
+
+    /// Used to implement the vast majority of [`ThreadAttributeRef`] constructors.
+    /// Generally, you should prefer one of the many *safe* static `fn`s that individually handle a specific attribute.
+    ///
+    /// Given: `ThreadAttributeRef::from_raw(attribute, &value)`
+    ///
+    /// Then: `UpdateProcThreadAttribute(..., attribute, &value, sizeof(value), ...)` will be called when this is converted into part of a thread attribute list.
+    ///
+    /// ### Errata
+    ///
+    /// Per [`microsoft/terminal#6705`](https://github.com/microsoft/terminal/issues/6705) as
+    /// [brought to my attention by chrisd](https://discord.com/channels/273534239310479360/583054410670669833/1362882021860577380),
+    /// `PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE` breaks from the typical pattern, and is kept broken for backwards compatability concerns:
+    ///
+    /// ```ignore
+    /// // sane API design:
+    /// UpdateProcThreadAttribute(.., PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE, &hpc, sizeof(hpc), ..)
+    /// // *actually* expected (note the missing `&`):
+    /// UpdateProcThreadAttribute(.., PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE, hpc, sizeof(hpc), ..)
+    /// ```
+    ///
+    /// As such, do *not* call [`ThreadAttributeRef::from_raw`] for `PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE`.
+    /// Instead, use [`ThreadAttributeRef::from_raw_value`], or better yet, use [`ThreadAttributeRef::pseudoconsole`].
+    ///
+    /// ### Safety
+    /// -   `attribute` should be a valid `PROC_THREAD_ATTRIBUTE_*`, without any errata such as `PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE`.
+    /// -   `value` must be of an appropriate type and value for `attribute`.
+    ///
+    pub unsafe fn from_raw<T: ?Sized + 'a>(attribute: usize, value: &'a T) -> Self {
+        debug_assert!(
+            attribute != PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE,
+            "per https://github.com/microsoft/terminal/issues/6705 , PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE is quirky and passes a handle directly to UpdateProcThreadAttribute, rather than a pointer to the handle.  Use `from_raw_value` instead of `from_raw_ref`."
+        );
+        Self(attribute, value as *const _ as *mut _, size_of_val(value), PhantomData)
+    }
+
+    /// Generally, you should prefer one of the many *safe* static `fn`s that individually handle a specific attribute.
+    ///
+    /// Given: `ThreadAttributeRef::from_raw_value(attribute, value, size)`
+    ///
+    /// Then: `UpdateProcThreadAttribute(..., attribute, value, size, ...)` will be called when this is converted into part of a thread attribute list.
+    ///
+    pub unsafe fn from_raw_value(attribute: usize, value: LPVOID, size: usize) -> Self { Self(attribute, value, size, PhantomData) }
 }
 
 
