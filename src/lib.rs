@@ -40,6 +40,7 @@ pub use winapi::shared::ntdef::HANDLE;
 #[path = r"pipe\_pipe.rs"]                  pub mod pipe;           #[doc(hidden)] pub use pipe::NMPWAIT;
 #[path = r"privilege\_privilege.rs"]        pub mod privilege;      #[doc(hidden)] pub use privilege::funcs::*;
 #[path = r"process\_process.rs"]            pub mod process;        #[doc(hidden)] pub use process::funcs::*;
+#[path = r"pseudoconsole\_pseudoconsole.rs"]pub mod pseudoconsole;  #[doc(hidden)] pub use pseudoconsole::funcs::*;
 #[path = r"security\_security.rs"]          pub mod security;       //#[doc(hidden)] pub use security::funcs::*;
 #[path = r"sid\_sid.rs"]                    pub mod sid;            #[doc(hidden)] pub use sid::funcs::*;
 #[path = r"thread\_thread.rs"]              pub mod thread;         #[doc(hidden)] pub use thread::funcs::*;

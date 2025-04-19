@@ -28,6 +28,7 @@
 //! | [Pipe] (Bytewise)<br>(Anonymous or Named)     | [pipe::DuplexNN]<br>[pipe::ReaderNN]<br>[pipe::WriterNN]<br><br>*Not yet stable:*<br>[std::io::PipeReader]<br>[std::io::PipeWriter] | [io::ReadHandle]<br>[io::WriteHandle] | | IPC
 //! | [Pipe] (Message-based)<br>(Named Only)        |                                                                           |                                                               |                           | IPC
 //! | [Process]                                     | [process::OwnedHandle]<br>[std::process::Child]                           | [process::Handle]                                             | [process::PsuedoHandle]   | Access restriction <br> IPC
+//! | [Pseudo Console]                              | [pseudoconsole::Owned]                                                    |                                                               |                           | IPC?
 //! | [Semaphore]                                   |                                                                           |                                                               |                           | IPC
 //! | ~~[Socket]~~ <br> (not a `HANDLE`)            | [std::net::TcpListener] <br> [std::net::TcpStream] <br> [std::net::UdpSocket] <br><br> *transparent `SOCKET`:* <br> [std::...::OwnedSocket]   | *transparent `SOCKET`:* <br> [std::...::BorrowedSocket] | | IPC
 //! | [Thread]                                      | [thread::OwnedHandle]<br>[std::thread::JoinHandle]                        | [thread::Handle]                                              | [thread::PsuedoHandle]    | Access restriction
@@ -75,6 +76,7 @@
 //! [Mutex]:                            https://learn.microsoft.com/en-us/windows/win32/sync/mutex-objects
 //! [Pipe]:                             https://learn.microsoft.com/en-us/windows/win32/ipc/about-pipes
 //! [Process]:                          https://learn.microsoft.com/en-us/windows/win32/procthread/about-processes-and-threads
+//! [Pseudo Console]:                   https://learn.microsoft.com/en-us/windows/console/pseudoconsoles
 //! [Semaphore]:                        https://learn.microsoft.com/en-us/windows/win32/sync/semaphore-objects
 //! [Socket]:                           https://learn.microsoft.com/en-us/windows/win32/winsock/getting-started-with-winsock
 //! [Thread]:                           https://learn.microsoft.com/en-us/windows/win32/procthread/about-processes-and-threads
