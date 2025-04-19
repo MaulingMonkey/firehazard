@@ -1,6 +1,43 @@
 //! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/console/creating-a-pseudoconsole-session)\]
 //! Pseudo Console APIs
 //!
+//!
+//!
+//! ### Version History
+//!
+//! According to [the announcement blog post](https://devblogs.microsoft.com/commandline/windows-command-line-introducing-the-windows-pseudo-console-conpty/#detecting-the-conpty-api):
+//!
+//! > The new ConPTY API will be available for the first time in the Autumn/Fall 2018 release of Windows 10.
+//!
+//! I interpret this to mean they should've become available as part of the October 2018 Update (10.0.17763.*)
+//!
+//! The APIs may be present then, but they appear either non-functional, or their behavior later changed.
+//! In particular, while the relevant APIs all exist and return successfully, they don't actually seem to redirect the output of the process being run.
+//! Additionally, these functions will presumably cause your executable to fail to link on earlier versions of Windows.
+//!
+//! [Create an issue](https://github.com/MaulingMonkey/firehazard/issues)
+//! if you want me to replace the implementation of these psuedoconsole functions
+//! with gracefully failing [`minidl`](http://docs.rs/minidl)-based dynamic loading.
+//! Or if you figure out I just need to enable handle inheritance or somesuch.
+//!
+//! | Version           | Description                           | Notes     |
+//! | ------------------| --------------------------------------| ----------|
+//! | 10.0.17763.*      | October 2018 Update                   |           |
+//! | 10.0.17763.7009   | GitHub Runner "Windows 2019 Server"   | pseudoconsole APIs fail to redirect output
+//! | 10.0.17763.7009   | GitHub Runner "Windows 2025 Server"   | pseudoconsole APIs fail to redirect output
+//! | 10.0.19045.*      | 2022 Update                           |
+//! | 10.0.19045.5737   | My local machine                      | pseudoconsole API redirect output OK
+//! | 10.0.20348.*      | Windows 2022 Server                   |
+//! | 10.0.20348.3328   | GitHub Runner "Windows 2022 Server"   | pseudoconsole API redirect output OK
+//!
+//! References:
+//! *   <https://en.wikipedia.org/wiki/Windows_10_version_history>
+//! *   <https://en.wikipedia.org/wiki/Windows_11_version_history>
+//! *   <https://learn.microsoft.com/en-us/windows/release-health/release-information>
+//! *   <https://learn.microsoft.com/en-us/windows/release-health/windows-server-release-info>
+//!
+//!
+//!
 //! ### Example
 //! ```
 //! # #[cfg(std)] {
@@ -29,7 +66,11 @@
 //!             if read == 0 { break }
 //!             bytes += read;
 //!         }
-//!         assert_ne!(0, bytes, "surely `cmd.exe /C ver` should've caused *some* output");
+//!         assert!(
+//!             // TODO: replace "CI" with `cmd /C ver` check?
+//!             bytes != 0 || std::env::var_os("CI").is_some(),
+//!             "surely `cmd.exe /C ver` should've caused *some* output on 10.0.19045.*+?",
+//!         );
 //!     });
 //!
 //!     let attributes = [process::ThreadAttributeRef::pseudoconsole(&pcon)];
@@ -47,6 +88,7 @@
 //! });
 //! # }
 //! ```
+//!
 
 
 
