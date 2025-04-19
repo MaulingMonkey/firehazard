@@ -37,27 +37,7 @@ pub mod anonymous {
 }
 pub use anonymous::create;
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/ipc/named-pipes)\]
-/// Named Pipes
-pub mod named {
-    use crate as firehazard;
-    include!(r"named\funcs\call.rs");
-    include!(r"named\funcs\create.rs");
-    include!(r"named\funcs\connect.rs");
-    include!(r"named\funcs\disconnect.rs");
-    include!(r"named\funcs\get_client_computer_name.rs");
-    include!(r"named\funcs\get_client_process_id.rs");
-    include!(r"named\funcs\get_client_session_id.rs");
-    include!(r"named\funcs\get_handle_state.rs");
-    include!(r"named\funcs\get_info.rs");
-    include!(r"named\funcs\get_server_process_id.rs");
-    include!(r"named\funcs\get_server_session_id.rs");
-    include!(r"named\funcs\impersonate_client.rs");
-    include!(r"named\funcs\peek.rs");
-    include!(r"named\funcs\set_handle_state.rs");
-    include!(r"named\funcs\transact.rs");
-    include!(r"named\funcs\wait.rs");
-}
+#[path = r"named\_named.rs"] pub mod named;
 
 pub use values::*;
 pub(crate) mod values {
