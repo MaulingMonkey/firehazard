@@ -375,9 +375,26 @@ pub fn get_process_mitigation_policy<'a, P: process::mitigation::GetPolicy>(proc
 #[doc(alias = "WaitForSingleObject")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\]
 /// WaitForSingleObject(process, 0) == WAIT_TIMEOUT
-pub fn is_process_running<'a>(process: impl AsRef<process::Handle<'a>>) -> bool {
+///
+/// | Process State     | Returns   |
+/// | ------------------| ----------|
+/// | Running           | true      |
+/// | Blocked           | true      |
+/// | Suspended         | true      |
+/// | Exited            | false     |
+/// | Killed            | false     |
+///
+/// Since [`process::Handle`](crate::process::Handle) should be a valid handle,
+/// it's "impossible" to pass a dangling/invalid handle.  If you do anyways,
+/// the return value is indeterminite, `STATUS_INVALID_HANDLE` may be thrown if
+/// [strict handle checks](crate::process::mitigation::StrictHandleCheckPolicy)
+/// are enabled.
+///
+pub fn is_process_alive<'a>(process: impl AsRef<process::Handle<'a>>) -> bool {
     WAIT_TIMEOUT == unsafe { WaitForSingleObject(process.as_ref().as_handle(), 0) }
 }
+
+#[doc(hidden)] #[deprecated = "renamed to is_process_alive: will return `true` for suspended processes, which isn't \"running\" per se"] pub use is_process_alive as is_process_running;
 
 
 
