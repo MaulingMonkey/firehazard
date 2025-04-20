@@ -23,7 +23,7 @@ pub(crate) mod funcs {
 
 mod thread_handles;                     pub use thread_handles::*;
 
-/// DWORD / u32 thread identifier.  In practice, only 16 bits are generally used - reuse / collisions can occur quickly.
+/// DWORD / u32 thread identifier.
 pub type Id = u32;
 
 #[doc(alias = "HANDLE")]

@@ -13,6 +13,10 @@ use core::marker::PhantomData;
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createthread)\]
 /// _Owned_, _non-null_ `HANDLE` to a _thread_.
 ///
+/// ### Alternatives
+///
+/// *   <code>std::thread::[Thread](std::thread::Thread)</code> &mdash; cross platform, no stable ABI, no access to the underlying system handle
+///
 #[repr(transparent)] pub struct OwnedHandle(HANDLENN);
 
 
@@ -20,6 +24,10 @@ use core::marker::PhantomData;
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createthread)\]
 /// _Borrowed_, _non-null_ `HANDLE` to a _thread_.
+///
+/// ### Alternatives
+///
+/// *   <code>&amp;std::thread::[Thread](std::thread::Thread)</code> &mdash; cross platform, no stable ABI, no access to the underlying system handle
 ///
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct Handle<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
@@ -90,3 +98,7 @@ impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle_nn(s
 unsafe impl valrow::Borrowable for OwnedHandle       { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for Handle<'_>        { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for PseudoHandle<'_>  { type Abi = HANDLENN; }
+
+impl OwnedHandle        { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self)           -> Result<thread::OwnedHandle, Error> { Ok(OwnedHandle(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
+impl Handle<'_>         { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> Result<thread::OwnedHandle, Error> { Ok(OwnedHandle(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
+impl PseudoHandle<'_>   { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> Result<thread::OwnedHandle, Error> { Ok(OwnedHandle(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }

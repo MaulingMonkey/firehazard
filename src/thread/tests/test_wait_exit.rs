@@ -3,7 +3,7 @@
     use winapi::um::minwinbase::STILL_ACTIVE;
     use std::thread::*;
 
-    let child = spawn(|| { sleep(core::time::Duration::from_millis(500)); exit_thread(3); });
+    let child = spawn(|| { sleep(core::time::Duration::from_millis(500)); unsafe { exit_thread(3) }; });
     let child = thread::OwnedHandle::from(child);
 
     assert!(is_thread_running(&child));

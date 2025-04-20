@@ -2,6 +2,25 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreadid)\]
 /// GetThreadId
 ///
+/// Get a thread's ID.
+/// May fail if `thread` lacks the [`THREAD_QUERY_LIMITED_INFORMATION` access right](https://learn.microsoft.com/en-us/windows/win32/procthread/thread-security-and-access-rights).
+/// For a more durable reference to a thread, consider using a handle instead.
+///
+/// ### Alternatives
+///
+/// *   <code>std::thread::[Thread](std::thread::Thread)::[id](std::thread::Thread::id)()</code> &mdash; cross platform, 64+ bit, but unrelated to system thread IDs
+///
+/// ### Example
+///
+/// ```
+/// # use firehazard::*;
+/// let tid = get_thread_id(get_current_thread()).unwrap();
+/// assert_eq!(tid, get_current_thread_id());
+///
+/// // while Win32 thread IDs and std ThreadId s are unrelated, this *could* occasionally fail:
+/// // assert_ne!(u64::from(tid), std::thread::current().id().as_u64().get());
+/// ```
+///
 pub fn get_thread_id<'a>(thread: impl Into<firehazard::thread::PseudoHandle<'a>>) -> Result<firehazard::thread::Id, firehazard::Error> {
     use crate::AsLocalHandle;
     let id = unsafe { winapi::um::processthreadsapi::GetThreadId(thread.into().as_handle()) };
