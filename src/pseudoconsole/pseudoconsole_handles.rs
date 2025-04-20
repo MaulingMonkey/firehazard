@@ -20,8 +20,8 @@ handles!(unsafe impl Send                       for pseudoconsole::{Owned});
 handles!(       impl Debug                      for pseudoconsole::{Owned});
 
 //ndles!(unsafe impl @convert     pseudoconsole::Owned   => handle::Owned        ); // XXX: closed via ClosePseudoConsole, not CloseHandle
-//ndles!(unsafe impl @convert &'_ pseudoconsole::Owned   => handle::Borrowed<'_> ); // XXX: Maybe?
-//ndles!(unsafe impl @convert &'_ pseudoconsole::Owned   => handle::Pseudo<'_>   ); // XXX: Maybe?
+handles!(unsafe impl @convert &'_ pseudoconsole::Owned   => handle::Borrowed<'_> );
+handles!(unsafe impl @convert &'_ pseudoconsole::Owned   => handle::Pseudo<'_>   );
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/console/closepseudoconsole)\]
 /// ClosePseudoConsole
@@ -32,3 +32,5 @@ impl Drop for Owned { fn drop(&mut self) {
 }}
 
 unsafe impl valrow::Borrowable for Owned { type Abi = NonNull<c_void>; }
+
+impl Owned { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> Result<Owned, Error> { Ok(Owned(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }

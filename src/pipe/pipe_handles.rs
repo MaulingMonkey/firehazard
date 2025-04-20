@@ -49,17 +49,17 @@ use winapi::ctypes::c_void;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for pipe::{DuplexNN});
-handles!(unsafe impl AsRef<Self>                    for pipe::{DuplexNN});
+handles!(       impl AsRef<Self>                    for pipe::{DuplexNN});
 handles!(unsafe impl {Send, Sync}                   for pipe::{DuplexNN}); // SAFETY: `std::io::PipeReader` is `Send+Sync` despite `try_clone(&self)`, `impl Read for &PipeReader`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for pipe::{DuplexNN});
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for pipe::{ReaderNN});
-handles!(unsafe impl AsRef<Self>                    for pipe::{ReaderNN});
+handles!(       impl AsRef<Self>                    for pipe::{ReaderNN});
 handles!(unsafe impl {Send, Sync}                   for pipe::{ReaderNN}); // SAFETY: `std::io::PipeReader` is `Send+Sync` despite `try_clone(&self)`, `impl Read for &PipeReader`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for pipe::{ReaderNN});
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for pipe::{WriterNN});
-handles!(unsafe impl AsRef<Self>                    for pipe::{WriterNN});
+handles!(       impl AsRef<Self>                    for pipe::{WriterNN});
 handles!(unsafe impl {Send, Sync}                   for pipe::{WriterNN}); // SAFETY: `std::io::PipeWriter` is `Send+Sync` despite `try_clone(&self)`, `impl Write for &PipeWriter`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for pipe::{WriterNN});
 
@@ -107,6 +107,10 @@ impl crate::os::windows::io::IntoRawHandle for pipe::WriterNN   { fn into_raw_ha
 unsafe impl valrow::Borrowable for pipe::DuplexNN      { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for pipe::ReaderNN      { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for pipe::WriterNN      { type Abi = HANDLENN; }
+
+impl pipe::DuplexNN { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> Result<Self, Error> { Ok(Self(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
+impl pipe::ReaderNN { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> Result<Self, Error> { Ok(Self(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
+impl pipe::WriterNN { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> Result<Self, Error> { Ok(Self(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
 
 
 
