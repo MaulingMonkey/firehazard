@@ -29,13 +29,19 @@ use core::mem::{MaybeUninit, size_of_val, size_of};
 /// ```
 ///
 pub unsafe fn read_process_memory<'a, 'p, T>(
-    process:        impl AsRef<process::PseudoHandle<'p>>,
+    process:        impl Into<process::PseudoHandle<'p>>,
     base_address:   *const T,
     buffer:         &'a mut [MaybeUninit<T>],
 ) -> Result<&'a [T], Error> {
     let size = size_of_val(buffer);
     let mut read = 0;
-    Error::get_last_if(FALSE == unsafe { ReadProcessMemory(process.as_ref().as_handle(), base_address.cast(), buffer.as_mut_ptr().cast(), size, &mut read) })?;
+    Error::get_last_if(FALSE == unsafe { ReadProcessMemory(
+        process.into().as_handle(),
+        base_address.cast(),
+        buffer.as_mut_ptr().cast(),
+        size,
+        &mut read,
+    )})?;
     if read > size { return Err(Error(ERROR_BUFFER_OVERFLOW)) }
     let n = read/size_of::<T>();
     Ok(unsafe { slice_assume_init_ref(&buffer[..n]) })

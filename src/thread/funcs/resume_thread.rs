@@ -16,9 +16,9 @@
 /// *   `Err(ERROR_BAD_ACCESS)`?        &mdash; if `thread`'s handle lacks the `THREAD_SUSPEND_RESUME` access right
 /// *   `Err(ERROR_INVALID_HANDLE)`?    &mdash; if `thread`'s handle is invalid (or not a thread)
 ///
-pub unsafe fn resume_thread<'a>(thread: impl AsRef<firehazard::thread::Handle<'a>>) -> Result<u32, firehazard::Error> {
+pub unsafe fn resume_thread<'a>(thread: impl Into<firehazard::thread::Handle<'a>>) -> Result<u32, firehazard::Error> {
     use firehazard::AsLocalHandle;
-    let r = unsafe { winapi::um::processthreadsapi::ResumeThread(thread.as_ref().as_handle()) };
+    let r = unsafe { winapi::um::processthreadsapi::ResumeThread(thread.into().as_handle()) };
     firehazard::Error::get_last_if(r as i32 == -1)?;
     Ok(r)
 }

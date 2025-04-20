@@ -123,7 +123,7 @@ pub fn create_app_container_profile(
 ///
 #[cfg(std)] // minidl requires std for now: https://github.com/MaulingMonkey/minidl/issues/1
 pub fn create_app_container_token<'a>(
-    token:      impl AsRef<token::Handle<'a>>,
+    token:      impl Into<token::Handle<'a>>,
     security:   &security::Capabilities<'a>,
 ) -> Result<token::OwnedHandle, Error> {
     use winapi::shared::minwindef::*;
@@ -138,7 +138,7 @@ pub fn create_app_container_token<'a>(
 
     let mut out_token = null_mut();
     Error::get_last_if(0 == unsafe { CreateAppContainerToken(
-        token.as_ref().as_handle(),
+        token.into().as_handle(),
         security.into(),
         &mut out_token,
     )})?;

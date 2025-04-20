@@ -22,19 +22,18 @@
 /// ```
 ///
 pub fn duplicate_handle_local<'a>(
-    source:         impl AsRef<firehazard::handle::Pseudo<'a>>,
+    source:         impl Into<firehazard::handle::Pseudo<'a>>,
     access:         impl Into<firehazard::access::Mask>,
     inherit_handle: bool,
 ) -> Result<firehazard::handle::Owned, firehazard::Error> { // TODO: better handle type inference
     use firehazard::*;
 
     let process = get_current_process();
-    let source = source.as_ref();
 
     let mut target = core::ptr::null_mut();
     Error::get_last_if(0 == unsafe { winapi::um::handleapi::DuplicateHandle(
         process.as_handle(),
-        source.as_handle(),
+        source.into().as_handle(),
         process.as_handle(),
         &mut target,
         access.into().into(),
@@ -71,18 +70,17 @@ pub fn duplicate_handle_local<'a>(
 /// ```
 ///
 pub fn duplicate_handle_local_same_access<'a>(
-    source:         impl AsRef<firehazard::handle::Pseudo<'a>>,
+    source:         impl Into<firehazard::handle::Pseudo<'a>>,
     inherit_handle: bool,
 ) -> Result<firehazard::handle::Owned, firehazard::Error> { // TODO: better handle type inference
     use firehazard::*;
 
     let process = get_current_process();
-    let source = source.as_ref();
 
     let mut target = core::ptr::null_mut();
     Error::get_last_if(0 == unsafe { winapi::um::handleapi::DuplicateHandle(
         process.as_handle(),
-        source.as_handle(),
+        source.into().as_handle(),
         process.as_handle(),
         &mut target,
         0,

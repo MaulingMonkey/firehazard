@@ -23,9 +23,9 @@ use core::time::Duration;
 /// assert_eq!(a, b);
 /// ```
 ///
-pub fn check_remote_debugger_present<'a>(process: impl AsRef<process::PseudoHandle<'a>>) -> Result<bool, Error> {
+pub fn check_remote_debugger_present<'a>(process: impl Into<process::PseudoHandle<'a>>) -> Result<bool, Error> {
     let mut result = 0;
-    Error::get_last_if(FALSE == unsafe { CheckRemoteDebuggerPresent(process.as_ref().as_handle(), &mut result) })?;
+    Error::get_last_if(FALSE == unsafe { CheckRemoteDebuggerPresent(process.into().as_handle(), &mut result) })?;
     Ok(result != FALSE)
 }
 

@@ -15,14 +15,14 @@
 /// ```
 ///
 pub fn set_handle_information<'a>(
-    object:     impl AsRef<firehazard::handle::Borrowed<'a>>,
+    object:     impl Into<firehazard::handle::Borrowed<'a>>,
     mask:       impl Into<firehazard::handle::FlagsMask>,
     flags:      impl Into<firehazard::handle::Flags>,
 ) -> Result<(), firehazard::Error> {
     use firehazard::*;
 
     Error::get_last_if(0 == unsafe { winapi::um::handleapi::SetHandleInformation(
-        object.as_ref().as_handle(),
+        object.into().as_handle(),
         mask.into().into(),
         flags.into().into(),
     )})

@@ -83,9 +83,9 @@ unsafe impl valrow::Borrowable for Owned         { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for Borrowed<'_>  { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for Pseudo<'_>    { type Abi = HANDLENN; }
 
-impl Owned          { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self)           -> Result<Owned, Error> { Ok(Owned(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
-impl Borrowed<'_>   { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> Result<Owned, Error> { Ok(Owned(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
-impl Pseudo<'_>     { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> Result<Owned, Error> { Ok(Owned(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
+impl Owned          { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self)           -> Result<Owned, Error> { Ok(Owned(duplicate_handle_local_same_access( self, false)?.into_handle_nn())) } }
+impl Borrowed<'_>   { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> Result<Owned, Error> { Ok(Owned(duplicate_handle_local_same_access(*self, false)?.into_handle_nn())) } }
+impl Pseudo<'_>     { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> Result<Owned, Error> { Ok(Owned(duplicate_handle_local_same_access(*self, false)?.into_handle_nn())) } }
 
 
 
