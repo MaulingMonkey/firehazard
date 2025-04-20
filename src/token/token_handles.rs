@@ -38,7 +38,6 @@ use core::marker::PhantomData;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for token::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
-handles!(       impl AsRef<Self>                    for token::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
 handles!(unsafe impl Send                           for token::{OwnedHandle});
 handles!(       impl Debug                          for token::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
 

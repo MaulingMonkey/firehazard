@@ -47,7 +47,6 @@ use core::marker::PhantomData;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for thread::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
-handles!(       impl AsRef<Self>                    for thread::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
 handles!(unsafe impl Send                           for thread::{OwnedHandle, Handle<'_>}); // PseudoHandle excluded: includes "GetCurrentThread", which shouldn't be sent.
 handles!(       impl Debug                          for thread::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
 

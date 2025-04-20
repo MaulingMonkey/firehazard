@@ -14,7 +14,6 @@ use core::ptr::NonNull;
 #[repr(transparent)] pub struct OwnedHandle(NonNull<HDESK__>);
 
 handles!(unsafe impl *LocalHandleNN<HDESK__>        for desktop::{OwnedHandle});
-handles!(       impl AsRef<Self>                    for desktop::{OwnedHandle});
 handles!(unsafe impl Send                           for desktop::{OwnedHandle});
 handles!(       impl Debug                          for desktop::{OwnedHandle});
 

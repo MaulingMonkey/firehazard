@@ -28,7 +28,6 @@ use core::marker::PhantomData;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for job::{OwnedHandle, Handle<'_>});
-handles!(       impl AsRef<Self>                    for job::{OwnedHandle, Handle<'_>});
 handles!(unsafe impl Send                           for job::{OwnedHandle});
 handles!(       impl Debug                          for job::{OwnedHandle, Handle<'_>});
 

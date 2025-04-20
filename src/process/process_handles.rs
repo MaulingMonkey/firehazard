@@ -39,7 +39,6 @@ use core::marker::PhantomData;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for process::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
-handles!(       impl AsRef<Self>                    for process::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
 handles!(unsafe impl Send                           for process::{OwnedHandle, Handle<'_>, PseudoHandle<'_>}); // sending GetCurrentProcess between threads is sane enough
 handles!(       impl Debug                          for process::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
 

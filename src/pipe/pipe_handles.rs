@@ -49,17 +49,14 @@ use winapi::ctypes::c_void;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for pipe::{DuplexNN});
-handles!(       impl AsRef<Self>                    for pipe::{DuplexNN});
 handles!(unsafe impl {Send, Sync}                   for pipe::{DuplexNN}); // SAFETY: `std::io::PipeReader` is `Send+Sync` despite `try_clone(&self)`, `impl Read for &PipeReader`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for pipe::{DuplexNN});
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for pipe::{ReaderNN});
-handles!(       impl AsRef<Self>                    for pipe::{ReaderNN});
 handles!(unsafe impl {Send, Sync}                   for pipe::{ReaderNN}); // SAFETY: `std::io::PipeReader` is `Send+Sync` despite `try_clone(&self)`, `impl Read for &PipeReader`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for pipe::{ReaderNN});
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for pipe::{WriterNN});
-handles!(       impl AsRef<Self>                    for pipe::{WriterNN});
 handles!(unsafe impl {Send, Sync}                   for pipe::{WriterNN}); // SAFETY: `std::io::PipeWriter` is `Send+Sync` despite `try_clone(&self)`, `impl Write for &PipeWriter`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for pipe::{WriterNN});
 

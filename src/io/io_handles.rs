@@ -66,17 +66,14 @@ use core::marker::PhantomData;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for io::{FileNN, FileHandle<'_>});
-handles!(unsafe impl AsRef<Self>                    for io::{FileNN, FileHandle<'_>});
 handles!(unsafe impl {Send, Sync}                   for io::{FileNN, FileHandle<'_>}); // SAFETY: `std::fs::File` is `Send+Sync` despite `try_clone(&self)`, `impl Read for &FileNN`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for io::{FileNN, FileHandle<'_>});
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for io::{ReadHandle<'_>});
-handles!(unsafe impl AsRef<Self>                    for io::{ReadHandle<'_>});
 handles!(unsafe impl {Send, Sync}                   for io::{ReadHandle<'_>}); // SAFETY: `std::io::PipeReader` is `Send+Sync` despite `try_clone(&self)`, `impl Read for &PipeReader`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for io::{ReadHandle<'_>});
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for io::{WriteHandle<'_>});
-handles!(unsafe impl AsRef<Self>                    for io::{WriteHandle<'_>});
 handles!(unsafe impl {Send, Sync}                   for io::{WriteHandle<'_>}); // SAFETY: `std::io::PipeWriter` is `Send+Sync` despite `try_clone(&self)`, `impl Write for &PipeWriter`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for io::{WriteHandle<'_>});
 

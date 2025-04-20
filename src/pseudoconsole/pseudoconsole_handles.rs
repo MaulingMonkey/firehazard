@@ -15,7 +15,6 @@ use winapi::ctypes::c_void;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void>     for pseudoconsole::{Owned});
-handles!(       impl AsRef<Self>                for pseudoconsole::{Owned});
 handles!(unsafe impl Send                       for pseudoconsole::{Owned});
 handles!(       impl Debug                      for pseudoconsole::{Owned});
 

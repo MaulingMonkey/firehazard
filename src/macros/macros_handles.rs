@@ -14,7 +14,6 @@ macro_rules! handles {
     (  unsafe   impl Send                       for $mo:ident::{$($ty:ident$(<$l:lifetime>)?),+$(,)?} ) => {$( handles!(unsafe impl Send                    for $mo::$ty$(<$l>)?); )+};
     (  unsafe   impl Sync                       for $mo:ident::{$($ty:ident$(<$l:lifetime>)?),+$(,)?} ) => {$( handles!(unsafe impl Sync                    for $mo::$ty$(<$l>)?); )+};
     (  unsafe   impl FromLocalHandle<$raw:ty>   for $mo:ident::{$($ty:ident$(<$l:lifetime>)?),+$(,)?} ) => {$( handles!(unsafe impl FromLocalHandle<$raw>   for $mo::$ty$(<$l>)?); )+};
-    ($(unsafe)? impl AsRef<Self>                for $mo:ident::{$($ty:ident$(<$l:lifetime>)?),+$(,)?} ) => {$( handles!(       impl AsRef<Self>             for $mo::$ty$(<$l>)?); )+};
     ($(unsafe)? impl AsLocalHandleNN<$raw:ty>   for $mo:ident::{$($ty:ident$(<$l:lifetime>)?),+$(,)?} ) => {$( handles!(       impl AsLocalHandleNN<$raw>   for $mo::$ty$(<$l>)?); )+};
     ($(unsafe)? impl Debug                      for $mo:ident::{$($ty:ident$(<$l:lifetime>)?),+$(,)?} ) => {$( handles!(       impl Debug                   for $mo::$ty$(<$l>)?); )+};
 
@@ -34,8 +33,6 @@ macro_rules! handles {
             unsafe fn borrow_from_raw_nn(handle: &core::ptr::NonNull<$raw>) -> &Self { unsafe { core::mem::transmute(handle) } }
         }
     };
-    ($(unsafe)? impl AsRef<Self> for $mo:ident::$ty:ident<'_>) => { impl<'a> AsRef<$mo::$ty<'a>> for $mo::$ty<'a> { fn as_ref(&self) -> &Self { self } } };
-    ($(unsafe)? impl AsRef<Self> for $mo:ident::$ty:ident    ) => { impl     AsRef<$mo::$ty    > for $mo::$ty     { fn as_ref(&self) -> &Self { self } } };
     ($(unsafe)? impl AsLocalHandleNN<$raw:ty> for $ty:ty) => {
         impl AsLocalHandleNN<$raw> for $ty {
             fn as_handle_nn(&self) -> core::ptr::NonNull<$raw> { self.0 }
@@ -72,18 +69,15 @@ macro_rules! handles {
     // unsafe impl @convert Src => Dest
 
     (unsafe impl @convert $($src:ident)::+ => $($dst:ident)::+) => {
-        impl AsRef<$($dst)::+> for $($src)::+ { fn as_ref(&self) -> &$($dst)::+ { unsafe { core::mem::transmute(self) } } }
-        impl From<$($src)::+> for $($dst)::+ { fn from(h: $($src)::+) -> Self { unsafe { core::mem::transmute(h) } } }
-        impl<'a> From<&'a $($src)::+> for &'a $($dst)::+ { fn from(h: &'a $($src)::+ ) -> Self { unsafe { core::mem::transmute(h) } } }
+        impl     From<    $($src)::+> for     $($dst)::+ { fn from(h:     $($src)::+) -> Self { unsafe { Self::from_raw_nn(h.into_handle_nn().cast()) } } }
+        impl<'a> From<&'a $($src)::+> for &'a $($dst)::+ { fn from(h: &'a $($src)::+) -> Self { unsafe { core::mem::transmute(h) } } }
     };
 
     (unsafe impl @convert &'_ $($src:ident)::+ => $($dst:ident)::+<'_>) => {
-        impl<'a> AsRef<$($dst)::+<'a>> for &'a $($src)::+ { fn as_ref(&self) -> &$($dst)::+<'a> { unsafe { core::mem::transmute(*self) } } }
         impl<'a> From<&'a $($src)::+> for $($dst)::+<'a> { fn from(h: &'a $($src)::+) -> Self { unsafe { Self::from_raw_nn(h.as_handle_nn().cast()) } } }
     };
 
     (unsafe impl @convert $($src:ident)::+<'_> => $($dst:ident)::+<'_>) => {
-        impl<'a> AsRef<$($dst)::+<'a>> for $($src)::+<'a> { fn as_ref(&self) -> &$($dst)::+<'a> { unsafe { core::mem::transmute(self) } } }
         impl<'a> From<$($src)::+<'a>> for $($dst)::+<'a> { fn from(h: $($src)::+<'a>) -> Self { unsafe { Self::from_raw_nn(h.as_handle_nn()) } } }
     };
 }

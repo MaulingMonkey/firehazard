@@ -68,7 +68,6 @@ use core::marker::PhantomData;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void> for handle::{Owned, Borrowed<'_>, Pseudo<'_>});
-handles!(       impl AsRef<Self>            for handle::{Owned, Borrowed<'_>, Pseudo<'_>});
 handles!(       impl Debug                  for handle::{Owned, Borrowed<'_>, Pseudo<'_>});
 
 handles!(unsafe impl @convert &'_ handle::Owned     => handle::Borrowed<'_> );
