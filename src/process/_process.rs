@@ -13,7 +13,7 @@ mod process_thread_attribute_list;      pub use process_thread_attribute_list::*
 #[path = r"mitigation\_mitigation.rs"]  pub mod mitigation;
 #[path = r"process_environment.rs"]     pub mod environment;
 
-/// DWORD / u32 process identifier.  In practice, only 16 bits are generally used - reuse / collisions can occur quickly.
+/// DWORD / u32 process identifier.
 pub type Id = u32;
 
 pub use mitigation::Policy::*; // export e.g. `ProcessDEPPolicy` as `process::DEPPolicy`

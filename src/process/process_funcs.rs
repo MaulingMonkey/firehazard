@@ -339,6 +339,25 @@ fn _create_process_with_token_w() -> Result<process::Information, Error> { unimp
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-exitprocess)\]
 /// ExitProcess
 ///
+/// Exit the current process with a specific exit code (typically `0` to indicate success, nonzero to indicate failure.)
+///
+/// ### Alternatives
+///
+/// *   <code>std::process::[exit](std::process::exit)(exit_code)</code> &mdash; cross platform, expects a signed value, requires [`std`].
+///
+/// ### Examples
+///
+/// ```
+/// # use firehazard::*;
+/// # if false {
+/// exit_process(0); // success
+/// // unreachable
+///
+/// exit_process(42); // error
+/// // unreachable
+/// # }
+/// ```
+///
 pub fn exit_process(exit_code: u32) -> ! { unsafe { ExitProcess(exit_code); core::hint::unreachable_unchecked() } }
 
 
@@ -347,6 +366,16 @@ pub fn exit_process(exit_code: u32) -> ! { unsafe { ExitProcess(exit_code); core
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentprocess)\]
 /// GetCurrentProcess
 ///
+/// Get a pseudo-handle (currently `-1`) to the current process.
+///
+/// ### Example
+///
+/// ```
+/// # use firehazard::*;
+/// let pseudo_handle   : process::PseudoHandle = get_current_process();
+/// let real_handle     : process::OwnedHandle  = pseudo_handle.try_clone_to_owned().unwrap();
+/// ```
+///
 pub fn get_current_process() -> process::PseudoHandle<'static> { unsafe { process::PseudoHandle::from_raw(GetCurrentProcess()).unwrap() } }
 
 
@@ -354,6 +383,21 @@ pub fn get_current_process() -> process::PseudoHandle<'static> { unsafe { proces
 #[doc(alias = "GetCurrentProcessId")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getcurrentprocessid)\]
 /// GetCurrentProcessId
+///
+/// Gets the caller's process ID.
+/// For a more durable reference to a process, consider using a handle instead.
+///
+/// ### Alternatives
+///
+/// *   <code>std::process::[id](std::process::id)()</code> &mdash; cross platform, requires [`std`].
+///
+/// ### Example
+///
+/// ```
+/// # use firehazard::*;
+/// let pid = get_current_process_id();
+/// dbg!(pid); // display some process ID
+/// ```
 ///
 pub fn get_current_process_id() -> process::Id { unsafe { GetCurrentProcessId() } }
 
@@ -367,16 +411,44 @@ pub fn get_current_process_id() -> process::Id { unsafe { GetCurrentProcessId() 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodeprocess)\]
 /// GetExitCodeProcess
 ///
-/// ### Returns
-/// *   `Ok(STILL_ACTIVE)` / `Ok(STATUS_PENDING)`   if `process` is still running
-/// *   `Ok(0)`                                     if `process` exited "successfully"
-/// *   `Ok(exit_code)`                             if `process` exited otherwise
-/// *   `Err(...)`                                  if `process` lacks appropriate querying permissions?
-/// *   `Err(...)`                                  if `process` is an invalid handle?
+/// ### Alternatives
 ///
-pub fn get_exit_code_process<'a>(process: impl AsRef<process::Handle<'a>>) -> Result<u32, Error> {
+/// *   <code>std::process::[ExitStatus](std::process::ExitStatus)::[code](std::process::ExitStatus::code)()</code> &mdash; cross platform, requires [`std`], child processes only.
+/// *   [`wait_for_process`] &mdash; waits for the process to exit before calling `GetExitCodeProcess`.
+///
+/// ### Returns
+///
+/// *   `Ok(259)` (`STILL_ACTIVE` / `STATUS_PENDING`)   &mdash; if `process` is still running
+/// *   `Ok(0)`                                         &mdash; if `process` exited "successfully"
+/// *   `Ok(exit_code)`                                 &mdash; if `process` exited otherwise
+/// *   `Err(...)`                                      &mdash; if `process` lacks `PROCESS_QUERY_[LIMITED_]INFORMATION ` permission?
+/// *   `Err(...)`                                      &mdash; if `process` is an invalid handle?
+///
+/// ### Example
+///
+/// ```
+/// # use firehazard::*;
+/// # #[cfg(std)] {
+/// #
+/// let mut process = std::process::Command::new("ping.exe")
+///     .args("localhost -n 2".split(' '))
+///     .spawn().unwrap();
+///
+/// // while (probably) running
+/// assert_eq!(Ok(259), get_exit_code_process(&process)); // STILL_ACTIVE
+///
+/// std::thread::sleep(std::time::Duration::from_secs(2));
+///
+/// // after (probably) running
+/// assert_eq!(Ok(0), get_exit_code_process(&process));
+/// assert_eq!(Some(0), process.wait().unwrap().code());
+/// #
+/// # }
+/// ```
+///
+pub fn get_exit_code_process<'a>(process: impl Into<process::Handle<'a>>) -> Result<u32, Error> {
     let mut exit_code = 0;
-    Error::get_last_if(0 == unsafe { GetExitCodeProcess(process.as_ref().as_handle(), &mut exit_code) })?;
+    Error::get_last_if(0 == unsafe { GetExitCodeProcess(process.into().as_handle(), &mut exit_code) })?;
     Ok(exit_code)
 }
 
@@ -386,9 +458,9 @@ pub fn get_exit_code_process<'a>(process: impl AsRef<process::Handle<'a>>) -> Re
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\]
 /// GetProcessMitigationPolicy
 ///
-pub fn get_process_mitigation_policy<'a, P: process::mitigation::GetPolicy>(process: impl AsRef<process::PseudoHandle<'a>>) -> Result<P, Error> {
+pub fn get_process_mitigation_policy<'a, P: process::mitigation::GetPolicy>(process: impl Into<process::PseudoHandle<'a>>) -> Result<P, Error> {
     let mut p = P::Raw::default();
-    Error::get_last_if(0 == unsafe { GetProcessMitigationPolicy(process.as_ref().as_handle(), P::ty() as u32, &mut p as *mut P::Raw as *mut _, size_of::<P::Raw>()) })?;
+    Error::get_last_if(0 == unsafe { GetProcessMitigationPolicy(process.into().as_handle(), P::ty() as u32, &mut p as *mut P::Raw as *mut _, size_of::<P::Raw>()) })?;
     Ok(P::from_policy(p))
 }
 
@@ -398,13 +470,14 @@ pub fn get_process_mitigation_policy<'a, P: process::mitigation::GetPolicy>(proc
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\]
 /// WaitForSingleObject(process, 0) == WAIT_TIMEOUT
 ///
-/// | Process State     | Returns   |
-/// | ------------------| ----------|
-/// | Running           | true      |
-/// | Blocked           | true      |
-/// | Suspended         | true      |
-/// | Exited            | false     |
-/// | Killed            | false     |
+/// | Process/Handle State              | Returns   |
+/// | ----------------------------------| ----------|
+/// | *no `SYNCHRONIZE` permissions*    | false?    |
+/// | Running                           | true      |
+/// | Blocked                           | true      |
+/// | Suspended                         | true      |
+/// | Exited                            | false     |
+/// | Killed                            | false     |
 ///
 /// Since [`process::Handle`](crate::process::Handle) should be a valid handle,
 /// it's "impossible" to pass a dangling/invalid handle.  If you do anyways,
@@ -412,8 +485,29 @@ pub fn get_process_mitigation_policy<'a, P: process::mitigation::GetPolicy>(proc
 /// [strict handle checks](crate::process::mitigation::StrictHandleCheckPolicy)
 /// are enabled.
 ///
-pub fn is_process_alive<'a>(process: impl AsRef<process::Handle<'a>>) -> bool {
-    WAIT_TIMEOUT == unsafe { WaitForSingleObject(process.as_ref().as_handle(), 0) }
+/// ### Example
+///
+/// ```
+/// # use firehazard::*;
+/// # #[cfg(std)] {
+/// #
+/// let mut process = std::process::Command::new("ping.exe")
+///     .args("localhost -n 2".split(' '))
+///     .spawn().unwrap();
+///
+/// // while (probably) running
+/// assert_eq!(true, is_process_alive(&process));
+///
+/// std::thread::sleep(std::time::Duration::from_secs(2));
+///
+/// // after (probably) running
+/// assert_eq!(false, is_process_alive(&process));
+/// #
+/// # }
+/// ```
+///
+pub fn is_process_alive<'a>(process: impl Into<process::Handle<'a>>) -> bool {
+    WAIT_TIMEOUT == unsafe { WaitForSingleObject(process.into().as_handle(), 0) }
 }
 
 #[doc(hidden)] #[deprecated = "renamed to is_process_alive: will return `true` for suspended processes, which isn't \"running\" per se"] pub use is_process_alive as is_process_running;
@@ -435,8 +529,38 @@ pub fn set_process_mitigation_policy<P: process::mitigation::SetPolicy>(policy: 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitforsingleobject)\] WaitForSingleObject(process, INFINITE) +<br>
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getexitcodeprocess)\] GetExitCodeProcess
 ///
-pub fn wait_for_process<'a>(process: impl AsRef<process::Handle<'a>>) -> Result<u32, Error> {
-    match unsafe { WaitForSingleObject(process.as_ref().as_handle(), INFINITE) } {
+/// ### Alternatives
+///
+/// *   <code>std::process::[Child](std::process::Child)::[wait](std::process::Child)()?.[code](std::process::ExitStatus::code)()?</code> &mdash; cross platform, requires [`std`], child processes only, consumes handle.
+/// *   [`get_exit_code_process`] &mdash; works on running processes without waiting for them
+///
+/// ### Returns
+///
+/// *   `Ok(0)`         &mdash; if `process` exited "successfully"
+/// *   `Ok(exit_code)` &mdash; if `process` exited otherwise
+/// *   `Err(...)`      &mdash; if `process` lacks `PROCESS_QUERY_[LIMITED_]INFORMATION ` permission?
+/// *   `Err(...)`      &mdash; if `process` lacks `SYNCHRONIZE` permission?
+/// *   `Err(...)`      &mdash; if `process` is an invalid handle?
+///
+/// ### Example
+///
+/// ```
+/// # use firehazard::*;
+/// # #[cfg(std)] {
+/// #
+/// let mut process = std::process::Command::new("ping.exe")
+///     .args("localhost -n 2".split(' '))
+///     .spawn().unwrap();
+///
+/// assert_eq!(Ok(0), wait_for_process(&process));
+/// assert_eq!(Some(0), process.wait().unwrap().code());
+/// #
+/// # }
+/// ```
+///
+pub fn wait_for_process<'a>(process: impl Into<process::Handle<'a>>) -> Result<u32, Error> {
+    let process = process.into();
+    match unsafe { WaitForSingleObject(process.as_handle(), INFINITE) } {
         WAIT_OBJECT_0       => {},
         WAIT_ABANDONED_0    => return Err(Error(ERROR_ABANDONED_WAIT_0)),   // shouldn't happen as `process` isn't a mutex, right?
         WAIT_TIMEOUT        => return Err(Error(ERROR_ABANDONED_WAIT_63)),  // shouldn't happen - hopefully the `63` hints that something is funky?

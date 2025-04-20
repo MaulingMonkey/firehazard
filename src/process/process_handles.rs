@@ -2,8 +2,7 @@ use crate::*;
 
 use winapi::ctypes::c_void;
 
-#[cfg(std)] use std::os::windows::io::IntoRawHandle;
-#[cfg(std)] use std::process::Child;
+#[cfg(std)] use std::os::windows::io::{AsRawHandle, IntoRawHandle};
 
 use core::marker::PhantomData;
 
@@ -56,14 +55,22 @@ handles!(unsafe impl @convert process::Handle<'_>       => handle::Pseudo<'_>   
 
 handles!(unsafe impl @convert process::PseudoHandle<'_> => handle::Pseudo<'_>           );
 
+#[cfg(std)] impl AsLocalHandleNN for std::process::Child { fn as_handle_nn(&self) -> HANDLENN { HANDLENN::new(self.as_raw_handle().cast()).expect("undefined behavior? std::process::Child somehow had a null handle") } }
+
+#[cfg(std)] impl     From<    std::process::Child> for process::OwnedHandle         { fn from(h:     std::process::Child) -> Self { unsafe { Self::from_raw(h.into_raw_handle().cast()).expect("undefined behavior? std::process::Child somehow had a null handle") } } }
+#[cfg(std)] impl<'a> From<&'a std::process::Child> for process::Handle<'a>          { fn from(h: &'a std::process::Child) -> Self { unsafe { Self::from_raw_nn(h.as_handle_nn().cast()) } } }
+#[cfg(std)] impl<'a> From<&'a std::process::Child> for process::PseudoHandle<'a>    { fn from(h: &'a std::process::Child) -> Self { unsafe { Self::from_raw_nn(h.as_handle_nn().cast()) } } }
+
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
 /// CloseHandle
 impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 
-#[cfg(std)] impl From<Child> for OwnedHandle { fn from(c: Child) -> Self { unsafe { Self::from_raw(c.into_raw_handle().cast()).unwrap() } } }
-
 unsafe impl valrow::Borrowable for OwnedHandle       { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for Handle<'_>        { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for PseudoHandle<'_>  { type Abi = HANDLENN; }
+
+impl OwnedHandle        { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self)           -> Result<OwnedHandle, Error> { Ok(OwnedHandle(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
+impl Handle<'_>         { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> Result<OwnedHandle, Error> { Ok(OwnedHandle(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
+impl PseudoHandle<'_>   { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> Result<OwnedHandle, Error> { Ok(OwnedHandle(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
