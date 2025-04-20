@@ -34,7 +34,6 @@ impl    AsLocalHandle for std::process::Child           { fn as_handle(&self) ->
 impl    AsLocalHandle for std::process::ChildStderr     { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
 impl    AsLocalHandle for std::process::ChildStdin      { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
 impl    AsLocalHandle for std::process::ChildStdout     { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
-impl<T> AsLocalHandle for std::thread::JoinHandle<T>    { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
 
 #[cfg(test)] mod tests {
     #[allow(unused_imports)] use super::*;

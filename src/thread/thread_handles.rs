@@ -2,8 +2,7 @@ use crate::*;
 
 use winapi::ctypes::c_void;
 
-#[cfg(std)] use std::os::windows::io::IntoRawHandle;
-#[cfg(std)] use std::thread::JoinHandle;
+#[cfg(std)] use std::os::windows::io::{AsRawHandle, IntoRawHandle};
 
 use core::marker::PhantomData;
 
@@ -63,6 +62,12 @@ handles!(unsafe impl @convert thread::Handle<'_>        => handle::Borrowed<'_> 
 handles!(unsafe impl @convert thread::Handle<'_>        => handle::Pseudo<'_>       );
 handles!(unsafe impl @convert thread::PseudoHandle<'_>  => handle::Pseudo<'_>       );
 
+#[cfg(std)] impl<T> AsLocalHandleNN for std::thread::JoinHandle<T> { fn as_handle_nn(&self) -> HANDLENN { HANDLENN::new(self.as_raw_handle().cast()).expect("undefined behavior? std::thread::JoinHandle somehow had a null handle") } }
+
+#[cfg(std)] impl<    T> From<    std::thread::JoinHandle<T>> for thread::OwnedHandle        { fn from(h:     std::thread::JoinHandle<T>) -> Self { unsafe { Self::from_raw(h.into_raw_handle().cast()).expect("undefined behavior? std::thread::JoinHandle somehow had a null handle") } } }
+#[cfg(std)] impl<'a, T> From<&'a std::thread::JoinHandle<T>> for thread::Handle<'a>         { fn from(h: &'a std::thread::JoinHandle<T>) -> Self { unsafe { Self::from_raw_nn(h.as_handle_nn().cast()) } } }
+#[cfg(std)] impl<'a, T> From<&'a std::thread::JoinHandle<T>> for thread::PseudoHandle<'a>   { fn from(h: &'a std::thread::JoinHandle<T>) -> Self { unsafe { Self::from_raw_nn(h.as_handle_nn().cast()) } } }
+
 impl TryFrom<handle::Owned> for thread::OwnedHandle {
     type Error = HandleConversionError<handle::Owned>;
     fn try_from(handle: handle::Owned) -> Result<Self, Self::Error> {
@@ -92,8 +97,6 @@ impl<'a> TryFrom<handle::Pseudo<'a>> for thread::PseudoHandle<'a> {
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
 /// CloseHandle
 impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
-
-#[cfg(std)] impl<T> From<JoinHandle<T>> for OwnedHandle { fn from(jh: JoinHandle<T>) -> Self { unsafe { Self::from_raw(jh.into_raw_handle().cast()).unwrap() } } }
 
 unsafe impl valrow::Borrowable for OwnedHandle       { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for Handle<'_>        { type Abi = HANDLENN; }
