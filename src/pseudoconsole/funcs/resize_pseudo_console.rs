@@ -3,16 +3,14 @@
 /// ResizePseudoConsole
 ///
 pub fn resize_pseudo_console(
-    pcon:   &firehazard::pseudoconsole::Owned,
-    size:   impl firehazard::pseudoconsole::IntoSize,
-) -> Result<(), firehazard::Error> {
-    use firehazard::AsLocalHandle;
-
+    pcon:   &pseudoconsole::Owned,
+    size:   impl pseudoconsole::IntoSize,
+) -> firehazard::Result<()> {
     let hr = unsafe { winapi::um::consoleapi::ResizePseudoConsole(
         pcon.as_handle(),
         size.into(),
     )};
 
-    if !winapi::shared::winerror::SUCCEEDED(hr) { return Err(firehazard::Error(hr as _)) }
+    if !SUCCEEDED(hr) { return Err(firehazard::Error(hr as _)) }
     Ok(())
 }

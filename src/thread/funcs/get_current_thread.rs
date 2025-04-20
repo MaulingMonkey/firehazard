@@ -23,7 +23,6 @@
 /// //sert_eq!(b.as_handle(), c.as_raw_handle()); // XXX: Thread doesn't impl AsRawHandle
 /// ```
 ///
-pub fn get_current_thread() -> firehazard::thread::PseudoHandle<'static> {
-    use firehazard::FromLocalHandle;
-    unsafe { firehazard::thread::PseudoHandle::from_raw(winapi::um::processthreadsapi::GetCurrentThread()).unwrap() }
+pub fn get_current_thread() -> thread::PseudoHandle<'static> {
+    unsafe { thread::PseudoHandle::from_raw(winapi::um::processthreadsapi::GetCurrentThread()).unwrap() }
 }

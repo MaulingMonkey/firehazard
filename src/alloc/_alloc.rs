@@ -7,5 +7,6 @@ mod cstring;                    pub use cstring::*;
 
 pub use funcs::*;
 pub(crate) mod funcs {
+    use crate::prelude::*;
     include!(r"funcs\heap_enable_termination_on_corruption.rs");
 }

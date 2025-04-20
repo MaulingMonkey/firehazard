@@ -1,6 +1,5 @@
-use crate::*;
+use crate::prelude::*;
 
-use winapi::shared::winerror::*;
 use winapi::shared::ntstatus::STATUS_SUCCESS;
 use winapi::um::lsalookup::{LSA_OBJECT_ATTRIBUTES, LSA_REFERENCED_DOMAIN_LIST, LSA_TRANSLATED_NAME};
 use winapi::um::ntlsa::*;
@@ -9,7 +8,6 @@ use winapi::um::winnt::*;
 
 use core::fmt::{self, Debug, Formatter};
 use core::hash::Hash;
-use core::ptr::null_mut;
 
 
 
@@ -46,7 +44,7 @@ impl Value {
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/ntsecapi/nf-ntsecapi-lsalookupsids2)\]
     /// LsaLookupSids2
     ///
-    #[cfg(std)] pub fn lsa_lookup_sids2(&self) -> Result<std::string::String, Error> {
+    #[cfg(std)] pub fn lsa_lookup_sids2(&self) -> firehazard::Result<std::string::String> {
         if self.0.is_null() { return Err(Error(E_STRING_NOT_NULL_TERMINATED as _)) }
         // .cast() spam notes:
         // it appears PLSA_HANDLE points to void, not LSA_HANDLE, for whatever twisted reason.
@@ -112,7 +110,7 @@ impl Value {
         Ok(result)
     }
 
-    #[cfg(not(std))] fn lsa_lookup_sids2(&self) -> Result<&'static str, Error> { Err(Error(ERROR_CALL_NOT_IMPLEMENTED)) }
+    #[cfg(not(std))] fn lsa_lookup_sids2(&self) -> firehazard::Result<&'static str> { Err(Error(ERROR_CALL_NOT_IMPLEMENTED)) }
 }
 
 impl PartialEq  for Value { fn eq(&self, other: &Self) -> bool { 0 != unsafe { EqualSid(self.as_psid(), other.as_psid()) } } }

@@ -1,4 +1,4 @@
-#[cfg(doc)] use crate::*;
+use crate::prelude::*;
 
 use bytemuck::{Pod, Zeroable};
 use core::fmt::{self, Debug, Formatter};
@@ -108,6 +108,6 @@ impl Debug for NMPWAIT {
 }
 
 /// USE_DEFAULT_WAIT
-impl From<Option<core::convert::Infallible>> for NMPWAIT {
-    fn from(_none: Option<core::convert::Infallible>) -> Self { NMPWAIT::USE_DEFAULT_WAIT }
+impl From<Option<Infallible>> for NMPWAIT {
+    fn from(_none: Option<Infallible>) -> Self { NMPWAIT::USE_DEFAULT_WAIT }
 }

@@ -1,4 +1,6 @@
-pub(crate) fn debug<T>(fmt: &mut core::fmt::Formatter, module: &str, name: &str, handle: core::ptr::NonNull<T>) -> core::fmt::Result {
+use core::fmt::{self, Formatter};
+
+pub(crate) fn debug<T>(fmt: &mut Formatter, module: &str, name: &str, handle: NonNull<T>) -> fmt::Result {
     write!(fmt, "{module}::{name}(")?;
     match handle.as_ptr() as isize {
         // N.B. these are semi-ambiguous: C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h:

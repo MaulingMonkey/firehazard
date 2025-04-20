@@ -1,12 +1,7 @@
-use crate::*;
+use crate::prelude::*;
 
-use abistr::CStrNonNull;
-
-use winapi::shared::winerror::ERROR_INCORRECT_SIZE;
 use winapi::um::processthreadsapi::{STARTUPINFOA, STARTUPINFOW};
 use winapi::um::winbase::{STARTUPINFOEXA, STARTUPINFOEXW};
-
-use core::mem::{size_of, transmute};
 
 
 
@@ -18,7 +13,7 @@ use core::mem::{size_of, transmute};
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfoa)\]
 /// STARTUPINFOA param for the CreateProcess family of functions
 ///
-pub unsafe trait AsStartupInfoA { fn as_winapi(&self) -> Result<*mut STARTUPINFOA, Error>; }
+pub unsafe trait AsStartupInfoA { fn as_winapi(&self) -> firehazard::Result<*mut STARTUPINFOA>; }
 
 
 
@@ -26,7 +21,7 @@ pub unsafe trait AsStartupInfoA { fn as_winapi(&self) -> Result<*mut STARTUPINFO
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/ns-processthreadsapi-startupinfow)\]
 /// STARTUPINFOW param for the CreateProcess family of functions
 ///
-pub unsafe trait AsStartupInfoW { fn as_winapi(&self) -> Result<*mut STARTUPINFOW, Error>; }
+pub unsafe trait AsStartupInfoW { fn as_winapi(&self) -> firehazard::Result<*mut STARTUPINFOW>; }
 
 
 
@@ -164,10 +159,10 @@ impl StartupInfoW<'_> { pub unsafe fn from_raw(pi: STARTUPINFOW) -> Self { unsaf
 impl StartupInfoExA<'_> { pub unsafe fn from_raw(pi: STARTUPINFOEXA) -> Self { unsafe { transmute(pi) } } }
 impl StartupInfoExW<'_> { pub unsafe fn from_raw(pi: STARTUPINFOEXW) -> Self { unsafe { transmute(pi) } } }
 
-unsafe impl AsStartupInfoA for StartupInfoA<'_>   { fn as_winapi(&self) -> Result<*mut STARTUPINFOA, Error> { if usize::from32(self             .cb) != size_of::<Self>() { Err(Error(ERROR_INCORRECT_SIZE)) } else { Ok(self as *const _ as *mut _) } } }
-unsafe impl AsStartupInfoW for StartupInfoW<'_>   { fn as_winapi(&self) -> Result<*mut STARTUPINFOW, Error> { if usize::from32(self             .cb) != size_of::<Self>() { Err(Error(ERROR_INCORRECT_SIZE)) } else { Ok(self as *const _ as *mut _) } } }
-unsafe impl AsStartupInfoA for StartupInfoExA<'_> { fn as_winapi(&self) -> Result<*mut STARTUPINFOA, Error> { if usize::from32(self.startup_info.cb) != size_of::<Self>() { Err(Error(ERROR_INCORRECT_SIZE)) } else { Ok(&self.startup_info as *const _ as *mut _) } } }
-unsafe impl AsStartupInfoW for StartupInfoExW<'_> { fn as_winapi(&self) -> Result<*mut STARTUPINFOW, Error> { if usize::from32(self.startup_info.cb) != size_of::<Self>() { Err(Error(ERROR_INCORRECT_SIZE)) } else { Ok(&self.startup_info as *const _ as *mut _) } } }
+unsafe impl AsStartupInfoA for StartupInfoA<'_>   { fn as_winapi(&self) -> firehazard::Result<*mut STARTUPINFOA> { if usize::from32(self             .cb) != size_of::<Self>() { Err(Error(ERROR_INCORRECT_SIZE)) } else { Ok(self as *const _ as *mut _) } } }
+unsafe impl AsStartupInfoW for StartupInfoW<'_>   { fn as_winapi(&self) -> firehazard::Result<*mut STARTUPINFOW> { if usize::from32(self             .cb) != size_of::<Self>() { Err(Error(ERROR_INCORRECT_SIZE)) } else { Ok(self as *const _ as *mut _) } } }
+unsafe impl AsStartupInfoA for StartupInfoExA<'_> { fn as_winapi(&self) -> firehazard::Result<*mut STARTUPINFOA> { if usize::from32(self.startup_info.cb) != size_of::<Self>() { Err(Error(ERROR_INCORRECT_SIZE)) } else { Ok(&self.startup_info as *const _ as *mut _) } } }
+unsafe impl AsStartupInfoW for StartupInfoExW<'_> { fn as_winapi(&self) -> firehazard::Result<*mut STARTUPINFOW> { if usize::from32(self.startup_info.cb) != size_of::<Self>() { Err(Error(ERROR_INCORRECT_SIZE)) } else { Ok(&self.startup_info as *const _ as *mut _) } } }
 
 // XXX: startup info isn't optional IME (results in ERROR_INVALID_PARAMETER), so don't implement the trait for now
 // unsafe impl AsOptStartupInfoA for Option<&'_ StartupInfoA<'_>>   { fn as_winapi(self) -> Result<*mut STARTUPINFOA, Error> { match self { None => Ok(null_mut()), Some(si) => si.as_winapi() } } }

@@ -1,4 +1,4 @@
-use crate::*;
+use crate::prelude::*;
 use winapi::um::winnt::{JOBOBJECT_BASIC_LIMIT_INFORMATION, JOBOBJECT_EXTENDED_LIMIT_INFORMATION, JobObjectBasicLimitInformation, JobObjectExtendedLimitInformation};
 
 
@@ -59,12 +59,12 @@ structure!(@assert layout ExtendedLimitInformation => JOBOBJECT_EXTENDED_LIMIT_I
 
 
 
-impl job::QueryInformationJobObject for JOBOBJECT_BASIC_LIMIT_INFORMATION        { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicLimitInformation) } } }
-impl job::QueryInformationJobObject for job::object::BasicLimitInformation       { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicLimitInformation) } } }
-impl job::QueryInformationJobObject for JOBOBJECT_EXTENDED_LIMIT_INFORMATION     { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectExtendedLimitInformation) } } }
-impl job::QueryInformationJobObject for job::object::ExtendedLimitInformation    { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectExtendedLimitInformation) } } }
+impl job::QueryInformationJobObject for JOBOBJECT_BASIC_LIMIT_INFORMATION        { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectBasicLimitInformation) } } }
+impl job::QueryInformationJobObject for job::object::BasicLimitInformation       { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectBasicLimitInformation) } } }
+impl job::QueryInformationJobObject for JOBOBJECT_EXTENDED_LIMIT_INFORMATION     { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectExtendedLimitInformation) } } }
+impl job::QueryInformationJobObject for job::object::ExtendedLimitInformation    { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectExtendedLimitInformation) } } }
 
-impl job::SetInformationJobObject for JOBOBJECT_BASIC_LIMIT_INFORMATION          { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectBasicLimitInformation, &self) } } }
-impl job::SetInformationJobObject for job::object::BasicLimitInformation         { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectBasicLimitInformation, &self) } } }
-impl job::SetInformationJobObject for JOBOBJECT_EXTENDED_LIMIT_INFORMATION       { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectExtendedLimitInformation, &self) } } }
-impl job::SetInformationJobObject for job::object::ExtendedLimitInformation      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectExtendedLimitInformation, &self) } } }
+impl job::SetInformationJobObject for JOBOBJECT_BASIC_LIMIT_INFORMATION          { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectBasicLimitInformation, &self) } } }
+impl job::SetInformationJobObject for job::object::BasicLimitInformation         { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectBasicLimitInformation, &self) } } }
+impl job::SetInformationJobObject for JOBOBJECT_EXTENDED_LIMIT_INFORMATION       { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectExtendedLimitInformation, &self) } } }
+impl job::SetInformationJobObject for job::object::ExtendedLimitInformation      { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectExtendedLimitInformation, &self) } } }

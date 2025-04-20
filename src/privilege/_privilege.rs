@@ -9,6 +9,7 @@ mod privilege_name;                 pub use privilege_name::*;
 
 pub use funcs::*;
 pub(crate) mod funcs {
-    mod adjust_token_privileges;        pub use adjust_token_privileges::*;
-    mod lookup_privilege;               pub use lookup_privilege::*;
+    use crate::prelude::*;
+    include!(r"funcs\adjust_token_privileges.rs");
+    include!(r"funcs\lookup_privilege.rs");
 }

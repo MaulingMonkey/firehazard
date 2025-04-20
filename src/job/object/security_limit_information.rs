@@ -7,7 +7,7 @@
 
 #![allow(dead_code)]
 
-use crate::*;
+use crate::prelude::*;
 use winapi::um::winnt::JOBOBJECT_SECURITY_LIMIT_INFORMATION;
 
 

@@ -1,4 +1,4 @@
-use crate::*;
+use crate::prelude::*;
 use winapi::um::winnt::*;
 
 
@@ -48,9 +48,9 @@ structure!(@assert layout BasicAndIoAccountingInformation => JOBOBJECT_BASIC_AND
 
 
 
-impl job::QueryInformationJobObject for JOBOBJECT_BASIC_ACCOUNTING_INFORMATION           { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicAccountingInformation) } } }
-impl job::QueryInformationJobObject for job::object::BasicAccountingInformation          { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicAccountingInformation) } } }
-impl job::QueryInformationJobObject for JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION    { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicAndIoAccountingInformation) } } }
-impl job::QueryInformationJobObject for job::object::BasicAndIoAccountingInformation     { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicAndIoAccountingInformation) } } }
+impl job::QueryInformationJobObject for JOBOBJECT_BASIC_ACCOUNTING_INFORMATION           { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectBasicAccountingInformation) } } }
+impl job::QueryInformationJobObject for job::object::BasicAccountingInformation          { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectBasicAccountingInformation) } } }
+impl job::QueryInformationJobObject for JOBOBJECT_BASIC_AND_IO_ACCOUNTING_INFORMATION    { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectBasicAndIoAccountingInformation) } } }
+impl job::QueryInformationJobObject for job::object::BasicAndIoAccountingInformation     { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectBasicAndIoAccountingInformation) } } }
 
 // not implemented: job::SetInformationJobObject

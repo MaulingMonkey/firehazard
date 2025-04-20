@@ -1,13 +1,8 @@
-use crate::*;
+use crate::prelude::*;
 
-use abistr::*;
-
-use winapi::shared::minwindef::FALSE;
 use winapi::um::jobapi::*;
 use winapi::um::jobapi2::*;
 use winapi::um::winbase::*;
-
-use core::ptr::null_mut;
 
 
 
@@ -26,8 +21,8 @@ use core::ptr::null_mut;
 pub fn assign_process_to_job_object<'a>(
     job:            &job::OwnedHandle,
     process:        impl Into<process::PseudoHandle<'a>>,
-) -> Result<(), Error> {
-    Error::get_last_if(FALSE == unsafe { AssignProcessToJobObject(
+) -> firehazard::Result<()> {
+    firehazard::Error::get_last_if(FALSE == unsafe { AssignProcessToJobObject(
         job.as_handle(),
         process.into().as_handle()
     )})
@@ -47,10 +42,10 @@ pub fn assign_process_to_job_object<'a>(
 /// let named = create_job_object_a(None, cstr!("Local/win32_security_playground/tests/create_job_object_a")).unwrap();
 /// ```
 ///
-pub fn create_job_object_a(job_attributes: Option<core::convert::Infallible>, name: impl TryIntoAsOptCStr) -> Result<job::OwnedHandle, Error> {
+pub fn create_job_object_a(job_attributes: Option<core::convert::Infallible>, name: impl TryIntoAsOptCStr) -> firehazard::Result<job::OwnedHandle> {
     let name = name.try_into()?;
     let h = unsafe { CreateJobObjectA(none2null(job_attributes), name.as_opt_cstr()) };
-    Error::get_last_if(h.is_null())?;
+    firehazard::Error::get_last_if(h.is_null())?;
     unsafe { job::OwnedHandle::from_raw(h) }
 }
 
@@ -69,10 +64,10 @@ pub fn create_job_object_a(job_attributes: Option<core::convert::Infallible>, na
 /// let named = create_job_object_w(None, cstr16!("Local/win32_security_playground/tests/create_job_object_a")).unwrap();
 /// ```
 ///
-pub fn create_job_object_w(job_attributes: Option<core::convert::Infallible>, name: impl TryIntoAsOptCStr<u16>) -> Result<job::OwnedHandle, Error> {
+pub fn create_job_object_w(job_attributes: Option<core::convert::Infallible>, name: impl TryIntoAsOptCStr<u16>) -> firehazard::Result<job::OwnedHandle> {
     let name = name.try_into()?;
     let h = unsafe { CreateJobObjectW(none2null(job_attributes), name.as_opt_cstr()) };
-    Error::get_last_if(h.is_null())?;
+    firehazard::Error::get_last_if(h.is_null())?;
     unsafe { job::OwnedHandle::from_raw(h) }
 }
 
@@ -99,9 +94,9 @@ pub fn create_job_object_w(job_attributes: Option<core::convert::Infallible>, na
 pub fn is_process_in_job<'a>(
     process:        impl Into<process::PseudoHandle<'a>>,
     job:            Option<&job::OwnedHandle>,
-) -> Result<bool, Error> {
+) -> firehazard::Result<bool> {
     let mut r = 0;
-    Error::get_last_if(FALSE == unsafe { IsProcessInJob(
+    firehazard::Error::get_last_if(FALSE == unsafe { IsProcessInJob(
         process.into().as_handle(),
         job.map_or(null_mut(), |j| j.as_handle()),
         &mut r,
@@ -125,10 +120,14 @@ pub fn is_process_in_job<'a>(
 /// let err  = open_job_object_a(GENERIC_ALL, false, cstr!("Local/nope")).unwrap_err();
 /// ```
 ///
-pub fn open_job_object_a(desired_access: impl Into<access::Mask>, inherit_handle: bool, name: impl TryIntoAsCStr) -> Result<job::OwnedHandle, Error> {
+pub fn open_job_object_a(
+    desired_access:     impl Into<access::Mask>,
+    inherit_handle:     bool,
+    name:               impl TryIntoAsCStr,
+) -> firehazard::Result<job::OwnedHandle> {
     let name = name.try_into()?;
     let h = unsafe { OpenJobObjectA(desired_access.into().into(), inherit_handle as _, name.as_cstr()) };
-    Error::get_last_if(h.is_null())?;
+    firehazard::Error::get_last_if(h.is_null())?;
     unsafe { job::OwnedHandle::from_raw(h) }
 }
 
@@ -149,10 +148,14 @@ pub fn open_job_object_a(desired_access: impl Into<access::Mask>, inherit_handle
 /// let err  = open_job_object_w(GENERIC_ALL, false, cstr16!("Local/nope")).unwrap_err();
 /// ```
 ///
-pub fn open_job_object_w(desired_access: impl Into<access::Mask>, inherit_handle: bool, name: impl TryIntoAsCStr<u16>) -> Result<job::OwnedHandle, Error> {
+pub fn open_job_object_w(
+    desired_access:     impl Into<access::Mask>,
+    inherit_handle:     bool,
+    name:               impl TryIntoAsCStr<u16>,
+) -> firehazard::Result<job::OwnedHandle> {
     let name = name.try_into()?;
     let h = unsafe { OpenJobObjectW(desired_access.into().into(), inherit_handle as _, name.as_cstr()) };
-    Error::get_last_if(h.is_null())?;
+    firehazard::Error::get_last_if(h.is_null())?;
     unsafe { job::OwnedHandle::from_raw(h) }
 }
 
@@ -170,7 +173,7 @@ pub fn open_job_object_w(desired_access: impl Into<access::Mask>, inherit_handle
 /// let restrictions : BasicUiRestrictions = query_information_job_object(&job).unwrap();
 /// ```
 ///
-pub fn query_information_job_object<Info: job::QueryInformationJobObject>(job: &job::OwnedHandle) -> Result<Info, Error> { Info::query_from(job) }
+pub fn query_information_job_object<Info: job::QueryInformationJobObject>(job: &job::OwnedHandle) -> firehazard::Result<Info> { Info::query_from(job) }
 
 
 
@@ -208,7 +211,7 @@ pub fn query_information_job_object<Info: job::QueryInformationJobObject>(job: &
 /// assert_eq!(ERROR_INVALID_PARAMETER, err);
 /// ```
 ///
-pub fn set_information_job_object(job: &job::OwnedHandle, information: impl job::SetInformationJobObject) -> Result<(), Error> { information.set_on(job) }
+pub fn set_information_job_object(job: &job::OwnedHandle, information: impl job::SetInformationJobObject) -> firehazard::Result<()> { information.set_on(job) }
 
 
 
@@ -230,6 +233,12 @@ pub fn set_information_job_object(job: &job::OwnedHandle, information: impl job:
 /// terminate_job_object(&job, 0).unwrap();
 /// ```
 ///
-pub fn terminate_job_object(job: &job::OwnedHandle, exit_code: u32) -> Result<(), Error> {
-    Error::get_last_if(FALSE == unsafe { TerminateJobObject(job.as_handle(), exit_code) })
+pub fn terminate_job_object(
+    job:            &job::OwnedHandle,
+    exit_code:      u32,
+) -> firehazard::Result<()> {
+    firehazard::Error::get_last_if(FALSE == unsafe { TerminateJobObject(
+        job.as_handle(),
+        exit_code,
+    )})
 }

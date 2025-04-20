@@ -1,7 +1,7 @@
 //! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/ipc/named-pipes)\]
 //! Named Pipes
 
-use crate as firehazard;
+use crate::prelude::*;
 
 include!(r"funcs\call.rs");
 include!(r"funcs\create.rs");

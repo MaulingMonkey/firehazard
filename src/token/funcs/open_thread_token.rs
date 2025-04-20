@@ -29,9 +29,8 @@ pub fn open_thread_token<'a>(
     desired_access:     impl Into<crate::token::AccessRights>,
     open_as_self:       bool,
 ) -> Result<crate::token::OwnedHandle, crate::Error> {
-    use crate::*;
-    let mut h = core::ptr::null_mut();
-    Error::get_last_if(0 == unsafe { winapi::um::processthreadsapi::OpenThreadToken(
+    let mut h = null_mut();
+    firehazard::Error::get_last_if(0 == unsafe { winapi::um::processthreadsapi::OpenThreadToken(
         thread.into().as_handle(),
         desired_access.into().into(),
         open_as_self as _,

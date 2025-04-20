@@ -1,5 +1,5 @@
 #![allow(non_upper_case_globals)]
-use crate::*;
+use crate::prelude::*;
 use winapi::um::winnt::*;
 use core::fmt::{self, Debug, Formatter};
 

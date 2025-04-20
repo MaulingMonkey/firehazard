@@ -1,3 +1,5 @@
+use crate::prelude::*;
+
 use ialloc::allocator::{adapt::PanicOverAlign, win32::ProcessHeap};
 use ialloc::fat;
 use ialloc::meta::Stateless;
@@ -5,10 +7,7 @@ use ialloc::thin::Free;
 
 use core::alloc::Layout;
 use core::fmt::{self, Debug, Formatter};
-use core::marker::PhantomData;
-use core::mem::{align_of, size_of};
 use core::ops::*;
-use core::ptr::NonNull;
 
 
 

@@ -1,7 +1,7 @@
 //! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_ui_restrictions)\]
 //! JOB_OBJECT_UILIMIT_*
 
-#[allow(unused_imports)] use crate::*;
+#[allow(unused_imports)] use crate::prelude::*;
 use core::fmt::{self, Debug, Formatter};
 
 

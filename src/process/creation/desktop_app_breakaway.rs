@@ -4,7 +4,7 @@
 //!
 //! Windows 10 version 1703 +
 
-use crate::*;
+use crate::prelude::*;
 use process::creation::DesktopAppPolicyFlags;
 use core::fmt::{self, Debug, Formatter};
 

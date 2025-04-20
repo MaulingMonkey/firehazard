@@ -1,12 +1,10 @@
-use crate::*;
+use crate::prelude::*;
 
 use winapi::shared::minwindef::{BYTE, DWORD};
 use winapi::shared::winerror::*;
 use winapi::um::winnt::{SID, SID_IDENTIFIER_AUTHORITY};
 
 use core::fmt::{self, Debug, Formatter};
-use core::marker::PhantomData;
-use core::mem::size_of;
 use core::ops::Deref;
 
 
@@ -30,7 +28,7 @@ impl Ptr<'_> {
     /// ### Safety
     /// `sid` should be null, or point to a valid [`SID`](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-sid)
     /// for the lifetime of the [`sid::Ptr`].
-    pub unsafe fn from_raw(sid: *mut SID, bytes: usize) -> Result<Self, Error> {
+    pub unsafe fn from_raw(sid: *mut SID, bytes: usize) -> firehazard::Result<Self> {
         if sid.is_null() { return Ok(Self(sid, PhantomData)) }
         if bytes < size_of::<Header>() { return Err(Error(ERROR_INVALID_SID)) }
         let header : Header = unsafe { core::ptr::read(sid.cast()) };

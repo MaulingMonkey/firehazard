@@ -21,16 +21,12 @@
 /// ### Errors
 /// *   `ERROR_BAD_TOKEN_TYPE`  if `token` is a primary token instead of an impersonation token
 ///
-pub fn set_thread_token<'t>(thread: impl crate::thread::AsHandleOrNone, token: impl Into<Option<&'t crate::token::OwnedHandle>>) -> Result<(), crate::Error> {
-    use crate::*;
-    use winapi::um::processthreadsapi::SetThreadToken;
-    use core::ptr::null_mut;
-
-    let mut thread = thread.as_handle_or_none();
-    let thread = thread.as_mut().map_or(null_mut(), |t| t);
-
-    let token = token.into();
-    let token = token.map_or(null_mut(), |t| t.as_handle());
-
-    Error::get_last_if(0 == unsafe { SetThreadToken(thread, token) })
+pub fn set_thread_token<'t>(
+    thread:         impl thread::AsHandleOrNone,
+    token:          impl Into<Option<&'t token::OwnedHandle>>,
+) -> firehazard::Result<()> {
+    firehazard::Error::get_last_if(0 == unsafe { winapi::um::processthreadsapi::SetThreadToken(
+        thread  .as_handle_or_none().as_mut().map_or(null_mut(), |t| t),
+        token   .into().map_or(null_mut(), |t| t.as_handle()),
+    )})
 }

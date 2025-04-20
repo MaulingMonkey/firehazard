@@ -1,13 +1,11 @@
-use crate::*;
-use abistr::*;
+use crate::prelude::*;
 use winapi::ctypes::c_char;
-use winapi::shared::minwindef::{FALSE, LPARAM, BOOL, TRUE};
+use winapi::shared::minwindef::LPARAM;
 use winapi::shared::ntdef::HANDLE;
 use winapi::um::errhandlingapi::SetLastError;
 use winapi::um::handleapi::DuplicateHandle;
 use winapi::um::winnt::DUPLICATE_SAME_ACCESS;
 use winapi::um::winuser::*;
-use core::ptr::null;
 
 
 
@@ -34,14 +32,14 @@ pub fn create_window_station_a(
     flags:          impl Into<winsta::CreateWindowFlags>,
     desired_access: impl Into<winsta::AccessRights>,
     sa:             Option<&security::Attributes>,
-) -> Result<winsta::OwnedHandle, Error> {
+) -> firehazard::Result<winsta::OwnedHandle> {
     let handle = unsafe { CreateWindowStationA(
         winsta.try_into()?.as_opt_cstr(),
         flags.into().into(),
         desired_access.into().into(),
         sa.map_or(null(), |sa| sa) as *mut _
     )};
-    Error::get_last_if(handle.is_null())?;
+    firehazard::Error::get_last_if(handle.is_null())?;
     unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
@@ -71,14 +69,14 @@ pub fn create_window_station_w(
     flags:          impl Into<winsta::CreateWindowFlags>,
     desired_access: impl Into<winsta::AccessRights>,
     sa:             Option<&security::Attributes>,
-) -> Result<winsta::OwnedHandle, Error> {
+) -> firehazard::Result<winsta::OwnedHandle> {
     let handle = unsafe { CreateWindowStationW(
         winsta.try_into()?.as_opt_cstr(),
         flags.into().into(),
         desired_access.into().into(),
         sa.map_or(null(), |sa| sa) as *mut _
     )};
-    Error::get_last_if(handle.is_null())?;
+    firehazard::Error::get_last_if(handle.is_null())?;
     unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
@@ -101,8 +99,8 @@ pub fn create_window_station_w(
 //
 pub fn close_window_station(
     winsta:     impl Into<winsta::OwnedHandle>,
-) -> Result<(), Error> {
-    Error::get_last_if(0 == unsafe { winapi::um::winuser::CloseWindowStation(
+) -> firehazard::Result<()> {
+    firehazard::Error::get_last_if(0 == unsafe { winapi::um::winuser::CloseWindowStation(
         core::mem::ManuallyDrop::new(winsta.into()).as_handle_nn().as_ptr().cast()
     )})
 }
@@ -133,12 +131,24 @@ pub fn close_window_station(
 /// "Service-0x0-21cd8$"
 /// ```
 ///
-pub fn enum_window_stations_a<F: FnMut(CStrPtr) -> Result<(), Error>>(mut enum_func: F) -> Result<(), Error> {
+pub fn enum_window_stations_a<
+    F: FnMut(CStrPtr) -> firehazard::Result<()>
+>(
+    mut enum_func: F,
+) -> firehazard::Result<()> {
     let enum_func : *mut F = &mut enum_func;
-    Error::get_last_if(FALSE == unsafe { EnumWindowStationsA(Some(fwd_enum_window_stations_a::<F>), enum_func as LPARAM) })
+    firehazard::Error::get_last_if(FALSE == unsafe { EnumWindowStationsA(
+        Some(fwd_enum_window_stations_a::<F>),
+        enum_func as LPARAM,
+    )})
 }
 
-unsafe extern "system" fn fwd_enum_window_stations_a<F: FnMut(CStrPtr) -> Result<(), Error>>(winsta: *mut c_char, param: LPARAM) -> BOOL {
+unsafe extern "system" fn fwd_enum_window_stations_a<
+    F: FnMut(CStrPtr) -> firehazard::Result<()>
+>(
+    winsta:     *mut c_char,
+    param:      LPARAM,
+) -> BOOL {
     let winsta = unsafe { CStrPtr::from_ptr_unbounded(winsta) };
     let f = unsafe { &mut *(param as *mut F) };
     match f(winsta) {
@@ -177,12 +187,24 @@ unsafe extern "system" fn fwd_enum_window_stations_a<F: FnMut(CStrPtr) -> Result
 /// "Service-0x0-21cd8$"
 /// ```
 ///
-pub fn enum_window_stations_w<F: FnMut(CStrPtr<u16>) -> Result<(), Error>>(mut enum_func: F) -> Result<(), Error> {
+pub fn enum_window_stations_w<
+    F: FnMut(CStrPtr<u16>) -> firehazard::Result<()>,
+>(
+    mut enum_func: F,
+) -> firehazard::Result<()> {
     let enum_func : *mut F = &mut enum_func;
-    Error::get_last_if(FALSE == unsafe { EnumWindowStationsW(Some(fwd_enum_window_stations_w::<F>), enum_func as LPARAM) })
+    firehazard::Error::get_last_if(FALSE == unsafe { EnumWindowStationsW(
+        Some(fwd_enum_window_stations_w::<F>),
+        enum_func as LPARAM,
+    )})
 }
 
-unsafe extern "system" fn fwd_enum_window_stations_w<F: FnMut(CStrPtr<u16>) -> Result<(), Error>>(winsta: *mut u16, param: LPARAM) -> BOOL {
+unsafe extern "system" fn fwd_enum_window_stations_w<
+    F: FnMut(CStrPtr<u16>) -> firehazard::Result<()>
+>(
+    winsta:         *mut u16,
+    param:          LPARAM,
+) -> BOOL {
     let winsta = unsafe { CStrPtr::<u16>::from_ptr_unbounded(winsta) };
     let f = unsafe { &mut *(param as *mut F) };
     match f(winsta) {
@@ -212,12 +234,20 @@ unsafe extern "system" fn fwd_enum_window_stations_w<F: FnMut(CStrPtr<u16>) -> R
 ///
 /// A borrowed handle is super awkward here, so this function returns a *duplicated* handle that can be closed instead.
 ///
-pub fn open_process_window_station() -> Result<winsta::OwnedHandle, Error> {
+pub fn open_process_window_station() -> firehazard::Result<winsta::OwnedHandle> {
     // "Do not close the handle returned by this function." - so we return a closeable clone instead
     let mut winsta : HANDLE = unsafe { GetProcessWindowStation() }.cast();
-    Error::get_last_if(winsta.is_null())?;
+    firehazard::Error::get_last_if(winsta.is_null())?;
     let process = get_current_process().as_handle();
-    Error::get_last_if(FALSE == unsafe { DuplicateHandle(process, winsta, process, &mut winsta, 0, 0, DUPLICATE_SAME_ACCESS) })?;
+    firehazard::Error::get_last_if(FALSE == unsafe { DuplicateHandle(
+        process,
+        winsta,
+        process,
+        &mut winsta,
+        0,
+        0,
+        DUPLICATE_SAME_ACCESS,
+    )})?;
     unsafe { winsta::OwnedHandle::from_raw(winsta.cast()) }
 }
 
@@ -238,13 +268,13 @@ pub fn open_window_station_a(
     winsta:         impl TryIntoAsCStr,
     inherit:        bool,
     desired_access: impl Into<winsta::AccessRights>,
-) -> Result<winsta::OwnedHandle, Error> {
+) -> firehazard::Result<winsta::OwnedHandle> {
     let handle = unsafe { OpenWindowStationA(
         winsta.try_into()?.as_cstr(),
         inherit as _,
         desired_access.into().into()
     )};
-    Error::get_last_if(handle.is_null())?;
+    firehazard::Error::get_last_if(handle.is_null())?;
     unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
@@ -266,13 +296,13 @@ pub fn open_window_station_w(
     winsta:         impl TryIntoAsCStr<u16>,
     inherit:        bool,
     desired_access: impl Into<winsta::AccessRights>,
-) -> Result<winsta::OwnedHandle, Error> {
+) -> firehazard::Result<winsta::OwnedHandle> {
     let handle = unsafe { OpenWindowStationW(
         winsta.try_into()?.as_cstr(),
         inherit as _,
         desired_access.into().into()
     )};
-    Error::get_last_if(handle.is_null())?;
+    firehazard::Error::get_last_if(handle.is_null())?;
     unsafe { winsta::OwnedHandle::from_raw(handle) }
 }
 
@@ -290,6 +320,6 @@ pub fn open_window_station_w(
 /// # std::mem::forget(winsta); // will ERROR_BUSY otherwise
 /// ```
 ///
-pub fn set_process_window_station(winsta: &winsta::OwnedHandle) -> Result<(), Error> {
-    Error::get_last_if(FALSE == unsafe { SetProcessWindowStation(winsta.as_handle()) })
+pub fn set_process_window_station(winsta: &winsta::OwnedHandle) -> firehazard::Result<()> {
+    firehazard::Error::get_last_if(FALSE == unsafe { SetProcessWindowStation(winsta.as_handle()) })
 }

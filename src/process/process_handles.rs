@@ -1,10 +1,6 @@
-use crate::*;
-
-use winapi::ctypes::c_void;
+use crate::prelude::*;
 
 #[cfg(std)] use std::os::windows::io::{AsRawHandle, IntoRawHandle};
-
-use core::marker::PhantomData;
 
 
 
@@ -70,6 +66,6 @@ unsafe impl valrow::Borrowable for OwnedHandle       { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for Handle<'_>        { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for PseudoHandle<'_>  { type Abi = HANDLENN; }
 
-impl OwnedHandle        { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self)           -> Result<OwnedHandle, Error> { Ok(OwnedHandle(duplicate_handle_local_same_access( self, false)?.into_handle_nn())) } }
-impl Handle<'_>         { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> Result<OwnedHandle, Error> { Ok(OwnedHandle(duplicate_handle_local_same_access(*self, false)?.into_handle_nn())) } }
-impl PseudoHandle<'_>   { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> Result<OwnedHandle, Error> { Ok(OwnedHandle(duplicate_handle_local_same_access(*self, false)?.into_handle_nn())) } }
+impl OwnedHandle        { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self)           -> firehazard::Result<OwnedHandle> { Ok(OwnedHandle(duplicate_handle_local_same_access( self, false)?.into_handle_nn())) } }
+impl Handle<'_>         { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> firehazard::Result<OwnedHandle> { Ok(OwnedHandle(duplicate_handle_local_same_access(*self, false)?.into_handle_nn())) } }
+impl PseudoHandle<'_>   { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> firehazard::Result<OwnedHandle> { Ok(OwnedHandle(duplicate_handle_local_same_access(*self, false)?.into_handle_nn())) } }

@@ -7,6 +7,6 @@ mod file_constants;             pub use file_constants::*;
 
 pub use funcs::*;
 pub(crate) mod funcs {
-    use crate as firehazard;
+    use crate::prelude::*;
     include!(r"funcs\get_file_type.rs");
 }

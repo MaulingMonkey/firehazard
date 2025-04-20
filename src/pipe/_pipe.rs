@@ -32,7 +32,7 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/ipc/anonymous-pipes)\]
 /// Anonymous Pipes
 pub mod anonymous {
-    use crate as firehazard;
+    use crate::prelude::*;
     include!(r"anonymous\funcs\create.rs");
 }
 pub use anonymous::create;

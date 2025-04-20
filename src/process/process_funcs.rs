@@ -1,9 +1,7 @@
-use crate::*;
+use crate::prelude::*;
 use crate::process::environment::*;
 
-use abistr::{TryIntoAsOptCStr, AsOptCStr};
-
-use winapi::shared::minwindef::{BOOL, LPVOID, DWORD};
+use winapi::shared::minwindef::{LPVOID, DWORD};
 use winapi::shared::ntdef::{LPCSTR, LPSTR, HANDLE};
 use winapi::shared::winerror::*;
 use winapi::um::minwinbase::LPSECURITY_ATTRIBUTES;
@@ -15,9 +13,6 @@ use winapi::um::winbase::*;
 #[cfg(std)] use std::os::windows::ffi::OsStrExt;
 #[cfg(std)] use std::path::Path;
 #[cfg(std)] use std::vec::Vec;
-
-use core::mem::size_of;
-use core::ptr::{null_mut, null};
 
 
 
@@ -109,7 +104,7 @@ pub fn create_process_a(
     environment:            impl TryIntoEnvironment,
     current_directory:      impl TryIntoAsOptCStr,
     startup_info:           &impl process::AsStartupInfoA,
-) -> Result<process::Information, Error> {
+) -> firehazard::Result<process::Information> {
     if let Some(command_line) = command_line.as_ref() {
         let interior = command_line.strip_suffix(&[0]).ok_or(Error(E_STRING_NOT_NULL_TERMINATED as _))?; // must be NUL terminated
         if interior.contains(&0) { return Err(Error(ERROR_ILLEGAL_CHARACTER)) }
@@ -117,7 +112,7 @@ pub fn create_process_a(
     let creation_flags = creation_flags.into().into();
     let mut process_information = Default::default();
 
-    Error::get_last_if(0 == unsafe { CreateProcessA(
+    firehazard::Error::get_last_if(0 == unsafe { CreateProcessA(
         application_name.try_into()?.as_opt_cstr(),
         command_line.as_ref().map_or(null(), |c| c.as_ptr()) as *mut _,
         process_attributes.map_or(null(), |a| a) as *mut _,
@@ -152,7 +147,7 @@ pub fn create_process_w(
     environment:            impl TryIntoEnvironment,
     current_directory:      impl TryIntoAsOptCStr<u16>,
     startup_info:           &impl process::AsStartupInfoW,
-) -> Result<process::Information, Error> {
+) -> firehazard::Result<process::Information> {
     if let Some(command_line) = command_line.as_ref() {
         let interior = command_line.strip_suffix(&[0]).ok_or(Error(E_STRING_NOT_NULL_TERMINATED as _))?; // must be NUL terminated
         if interior.contains(&0) { return Err(Error(ERROR_ILLEGAL_CHARACTER)) }
@@ -160,7 +155,7 @@ pub fn create_process_w(
     let creation_flags = creation_flags.into().into();
     let mut process_information = Default::default();
 
-    Error::get_last_if(0 == unsafe { CreateProcessW(
+    firehazard::Error::get_last_if(0 == unsafe { CreateProcessW(
         application_name.try_into()?.as_opt_cstr(),
         command_line.as_mut().map_or(null_mut(), |c| c.as_mut_ptr()),
         process_attributes.map_or(null(), |a| a) as *mut _,
@@ -213,7 +208,7 @@ pub fn create_process_as_user_a(
     environment:            impl TryIntoEnvironment,
     current_directory:      impl TryIntoAsOptCStr,
     startup_info:           &impl process::AsStartupInfoA,
-) -> Result<process::Information, Error> {
+) -> firehazard::Result<process::Information> {
     if let Some(command_line) = command_line.as_ref() {
         let interior = command_line.strip_suffix(&[0]).ok_or(Error(E_STRING_NOT_NULL_TERMINATED as _))?; // must be NUL terminated
         if interior.contains(&0) { return Err(Error(ERROR_ILLEGAL_CHARACTER)) }
@@ -235,7 +230,7 @@ pub fn create_process_as_user_a(
         lpProcessInformation: LPPROCESS_INFORMATION,
     ) -> BOOL;}
 
-    Error::get_last_if(0 == unsafe { CreateProcessAsUserA(
+    firehazard::Error::get_last_if(0 == unsafe { CreateProcessAsUserA(
         token.as_handle(),
         application_name.try_into()?.as_opt_cstr(),
         command_line.as_ref().map_or(null(), |c| c.as_ptr()) as *mut _,
@@ -291,7 +286,7 @@ pub fn create_process_as_user_w(
     environment:            impl TryIntoEnvironment,
     current_directory:      impl TryIntoAsOptCStr<u16>,
     startup_info:           &impl process::AsStartupInfoW,
-) -> Result<process::Information, Error> {
+) -> firehazard::Result<process::Information> {
     if let Some(command_line) = command_line.as_ref() {
         let interior = command_line.strip_suffix(&[0]).ok_or(Error(E_STRING_NOT_NULL_TERMINATED as _))?; // must be NUL terminated
         if interior.contains(&0) { return Err(Error(ERROR_ILLEGAL_CHARACTER)) }
@@ -299,7 +294,7 @@ pub fn create_process_as_user_w(
     let creation_flags = creation_flags.into().into();
     let mut process_information = Default::default();
 
-    Error::get_last_if(0 == unsafe { CreateProcessAsUserW(
+    firehazard::Error::get_last_if(0 == unsafe { CreateProcessAsUserW(
         token.as_handle(),
         application_name.try_into()?.as_opt_cstr(),
         command_line.as_mut().map_or(null_mut(), |c| c.as_mut_ptr()),
@@ -322,7 +317,7 @@ pub fn create_process_as_user_w(
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createprocesswithlogonw)\]
 /// CreateProcessWithLogonW
 ///
-fn _create_process_with_logon_w() -> Result<process::Information, Error> { unimplemented!() }
+fn _create_process_with_logon_w() -> firehazard::Result<process::Information> { unimplemented!() }
 
 
 
@@ -331,7 +326,7 @@ fn _create_process_with_logon_w() -> Result<process::Information, Error> { unimp
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createprocesswithtokenw)\]
 /// CreateProcessWithTokenW
 ///
-fn _create_process_with_token_w() -> Result<process::Information, Error> { unimplemented!() }
+fn _create_process_with_token_w() -> firehazard::Result<process::Information> { unimplemented!() }
 
 
 
@@ -446,9 +441,12 @@ pub fn get_current_process_id() -> process::Id { unsafe { GetCurrentProcessId() 
 /// # }
 /// ```
 ///
-pub fn get_exit_code_process<'a>(process: impl Into<process::Handle<'a>>) -> Result<u32, Error> {
+pub fn get_exit_code_process<'a>(process: impl Into<process::Handle<'a>>) -> firehazard::Result<u32> {
     let mut exit_code = 0;
-    Error::get_last_if(0 == unsafe { GetExitCodeProcess(process.into().as_handle(), &mut exit_code) })?;
+    firehazard::Error::get_last_if(0 == unsafe { GetExitCodeProcess(
+        process.into().as_handle(),
+        &mut exit_code,
+    )})?;
     Ok(exit_code)
 }
 
@@ -458,9 +456,14 @@ pub fn get_exit_code_process<'a>(process: impl Into<process::Handle<'a>>) -> Res
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getprocessmitigationpolicy)\]
 /// GetProcessMitigationPolicy
 ///
-pub fn get_process_mitigation_policy<'a, P: process::mitigation::GetPolicy>(process: impl Into<process::PseudoHandle<'a>>) -> Result<P, Error> {
+pub fn get_process_mitigation_policy<'a, P: process::mitigation::GetPolicy>(process: impl Into<process::PseudoHandle<'a>>) -> firehazard::Result<P> {
     let mut p = P::Raw::default();
-    Error::get_last_if(0 == unsafe { GetProcessMitigationPolicy(process.into().as_handle(), P::ty() as u32, &mut p as *mut P::Raw as *mut _, size_of::<P::Raw>()) })?;
+    firehazard::Error::get_last_if(0 == unsafe { GetProcessMitigationPolicy(
+        process.into().as_handle(),
+        P::ty() as u32,
+        &mut p as *mut P::Raw as *mut _,
+        size_of::<P::Raw>(),
+    )})?;
     Ok(P::from_policy(p))
 }
 
@@ -518,8 +521,12 @@ pub fn is_process_alive<'a>(process: impl Into<process::Handle<'a>>) -> bool {
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setprocessmitigationpolicy)\]
 /// SetProcessMitigationPolicy
 ///
-pub fn set_process_mitigation_policy<P: process::mitigation::SetPolicy>(policy: P) -> Result<(), Error> {
-    Error::get_last_if(0 == unsafe { SetProcessMitigationPolicy(P::ty() as u32, &policy.into_policy() as *const P::Raw as *mut _, size_of::<P::Raw>()) })
+pub fn set_process_mitigation_policy<P: process::mitigation::SetPolicy>(policy: P) -> firehazard::Result<()> {
+    firehazard::Error::get_last_if(0 == unsafe { SetProcessMitigationPolicy(
+        P::ty() as u32,
+        &policy.into_policy() as *const P::Raw as *mut _,
+        size_of::<P::Raw>(),
+    )})
 }
 
 
@@ -558,14 +565,14 @@ pub fn set_process_mitigation_policy<P: process::mitigation::SetPolicy>(policy: 
 /// # }
 /// ```
 ///
-pub fn wait_for_process<'a>(process: impl Into<process::Handle<'a>>) -> Result<u32, Error> {
+pub fn wait_for_process<'a>(process: impl Into<process::Handle<'a>>) -> firehazard::Result<u32> {
     let process = process.into();
     match unsafe { WaitForSingleObject(process.as_handle(), INFINITE) } {
         WAIT_OBJECT_0       => {},
-        WAIT_ABANDONED_0    => return Err(Error(ERROR_ABANDONED_WAIT_0)),   // shouldn't happen as `process` isn't a mutex, right?
-        WAIT_TIMEOUT        => return Err(Error(ERROR_ABANDONED_WAIT_63)),  // shouldn't happen - hopefully the `63` hints that something is funky?
-        WAIT_FAILED         => return Err(Error::get_last()),
-        _                   => return Err(Error(ERROR_ABANDONED_WAIT_63)),  // shouldn't happen - hopefully the `63` hints that something is funky?
+        WAIT_ABANDONED_0    => return Err(firehazard::Error(ERROR_ABANDONED_WAIT_0)),   // shouldn't happen as `process` isn't a mutex, right?
+        WAIT_TIMEOUT        => return Err(firehazard::Error(ERROR_ABANDONED_WAIT_63)),  // shouldn't happen - hopefully the `63` hints that something is funky?
+        WAIT_FAILED         => return Err(firehazard::Error::get_last()),
+        _                   => return Err(firehazard::Error(ERROR_ABANDONED_WAIT_63)),  // shouldn't happen - hopefully the `63` hints that something is funky?
     }
     get_exit_code_process(process)
 }

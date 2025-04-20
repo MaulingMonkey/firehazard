@@ -8,8 +8,10 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-pub(crate) trait ResultErrorExt<R>             { fn unerr(self, err: u32, remap: R) -> Self; }
-impl<R> ResultErrorExt<R> for Result<R, Error> { fn unerr(self, err: u32, remap: R) -> Self { match self { Err(e) if e == err => Ok(remap), r => r } } }
+pub type Result<T> = core::result::Result<T, crate::Error>;
+
+pub(crate) trait ResultErrorExt<R>      { fn unerr(self, err: u32, remap: R) -> Self; }
+impl<R> ResultErrorExt<R> for Result<R> { fn unerr(self, err: u32, remap: R) -> Self { match self { Err(e) if e == err => Ok(remap), r => r } } }
 
 
 
@@ -31,7 +33,7 @@ impl Error {
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)\]
     /// GetLastError if `error`
     ///
-    pub fn get_last_if(error: bool) -> Result<(), Self> { if !error { Ok(()) } else { Err(Self::get_last()) } }
+    pub fn get_last_if(error: bool) -> Result<()> { if !error { Ok(()) } else { Err(Self::get_last()) } }
 
     pub fn friendly(self) -> &'static str {
         match self.0 {

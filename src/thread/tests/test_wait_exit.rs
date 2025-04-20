@@ -1,5 +1,4 @@
 #[cfg(std)] #[test] fn test_wait_exit() {
-    use crate::*;
     use winapi::um::minwinbase::STILL_ACTIVE;
     use std::thread::*;
 

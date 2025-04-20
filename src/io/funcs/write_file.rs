@@ -103,7 +103,7 @@ tests! {
 
 #[ignore] // XXX: This test takes a good minute
 #[cfg(target_pointer_width = "64")] #[cfg(std)] #[test] fn read_write_file_5_gib() {
-    use crate::*;
+    use crate::prelude::*;
     use std::os::windows::fs::OpenOptionsExt;
 
     let file = std::fs::OpenOptions::new()

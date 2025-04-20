@@ -1,4 +1,4 @@
-use crate::*;
+use crate::prelude::*;
 use winapi::um::winnt::{JOBOBJECT_BASIC_UI_RESTRICTIONS, JobObjectBasicUIRestrictions};
 
 
@@ -16,10 +16,10 @@ structure!(@assert layout BasicUiRestrictions => JOBOBJECT_BASIC_UI_RESTRICTIONS
     ui_restrictions_class   == UIRestrictionsClass,
 });
 
-impl job::QueryInformationJobObject for JOBOBJECT_BASIC_UI_RESTRICTIONS  { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicUIRestrictions) } } }
-impl job::QueryInformationJobObject for job::object::BasicUiRestrictions { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicUIRestrictions) } } }
-impl job::QueryInformationJobObject for job::object::uilimit::Flags      { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectBasicUIRestrictions) } } }
+impl job::QueryInformationJobObject for JOBOBJECT_BASIC_UI_RESTRICTIONS  { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectBasicUIRestrictions) } } }
+impl job::QueryInformationJobObject for job::object::BasicUiRestrictions { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectBasicUIRestrictions) } } }
+impl job::QueryInformationJobObject for job::object::uilimit::Flags      { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectBasicUIRestrictions) } } }
 
-impl job::SetInformationJobObject   for JOBOBJECT_BASIC_UI_RESTRICTIONS  { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectBasicUIRestrictions, &self) } } }
-impl job::SetInformationJobObject   for job::object::BasicUiRestrictions { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectBasicUIRestrictions, &self) } } }
-impl job::SetInformationJobObject   for job::object::uilimit::Flags      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectBasicUIRestrictions, &self) } } }
+impl job::SetInformationJobObject   for JOBOBJECT_BASIC_UI_RESTRICTIONS  { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectBasicUIRestrictions, &self) } } }
+impl job::SetInformationJobObject   for job::object::BasicUiRestrictions { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectBasicUIRestrictions, &self) } } }
+impl job::SetInformationJobObject   for job::object::uilimit::Flags      { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectBasicUIRestrictions, &self) } } }

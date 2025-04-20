@@ -23,12 +23,9 @@ pub fn duplicate_token_ex(
     token_attributes:       Option<&crate::security::Attributes>,
     impersonation_level:    crate::security::ImpersonationLevel,
     token_type:             crate::token::Type,
-) -> Result<crate::token::OwnedHandle, crate::Error> {
-    use crate::*;
-    use core::ptr::{null, null_mut};
-
+) -> firehazard::Result<crate::token::OwnedHandle> {
     let mut new = null_mut();
-    Error::get_last_if(0 == unsafe { winapi::um::securitybaseapi::DuplicateTokenEx(
+    firehazard::Error::get_last_if(0 == unsafe { winapi::um::securitybaseapi::DuplicateTokenEx(
         token.as_handle(),
         desired_access.into().into(),
         token_attributes.map_or(null(), |a| a) as *mut _,

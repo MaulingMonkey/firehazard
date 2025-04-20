@@ -1,4 +1,4 @@
-use crate::*;
+use crate::prelude::*;
 use winapi::um::winnt::{JOBOBJECT_NET_RATE_CONTROL_INFORMATION, JobObjectNetRateControlInformation};
 use core::fmt::{self, Debug, Formatter};
 
@@ -112,8 +112,8 @@ pub const NET_RATE_CONTROL_VALID_FLAGS      : NetRateControlFlagsMask   = NetRat
 
 
 
-impl job::QueryInformationJobObject for JOBOBJECT_NET_RATE_CONTROL_INFORMATION   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectNetRateControlInformation) } } }
-impl job::QueryInformationJobObject for job::object::NetRateControlInformation   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectNetRateControlInformation) } } }
+impl job::QueryInformationJobObject for JOBOBJECT_NET_RATE_CONTROL_INFORMATION   { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectNetRateControlInformation) } } }
+impl job::QueryInformationJobObject for job::object::NetRateControlInformation   { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectNetRateControlInformation) } } }
 
-impl job::SetInformationJobObject for JOBOBJECT_NET_RATE_CONTROL_INFORMATION     { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectNetRateControlInformation, &self) } } }
-impl job::SetInformationJobObject for job::object::NetRateControlInformation     { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectNetRateControlInformation, &self) } } }
+impl job::SetInformationJobObject for JOBOBJECT_NET_RATE_CONTROL_INFORMATION     { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectNetRateControlInformation, &self) } } }
+impl job::SetInformationJobObject for job::object::NetRateControlInformation     { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectNetRateControlInformation, &self) } } }

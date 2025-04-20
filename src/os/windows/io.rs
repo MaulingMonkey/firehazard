@@ -1,18 +1,14 @@
 //! [`std::os::windows::io`] re-export or [`no_std`](https://docs.rust-embedded.org/book/intro/no-std.html) placeholders
 
-use crate::*;
+use crate::prelude::*;
 use crate::os::windows::raw::{*, HANDLE};
 
-use winapi::shared::minwindef::FALSE;
 use winapi::um::handleapi::{CloseHandle, DuplicateHandle, INVALID_HANDLE_VALUE};
 use winapi::um::processthreadsapi::GetCurrentProcess;
 use winapi::um::winnt::DUPLICATE_SAME_ACCESS;
 
-use core::error::Error;
 use core::fmt::{self, Debug, Display, Formatter};
-use core::marker::PhantomData;
 use core::mem::ManuallyDrop;
-use core::ptr::null_mut;
 
 
 
@@ -98,8 +94,8 @@ impl Debug for NullHandleError      { fn fmt(&self, fmt: &mut Formatter) -> fmt:
 impl Display for InvalidHandleError { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { fmt.write_str("`handle` was `INVALID_HANDLE_VALUE`") } }
 impl Display for NullHandleError    { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { fmt.write_str("`handle` was null") } }
 
-impl Error for InvalidHandleError   { fn description(&self) -> &str { "`handle` was `INVALID_HANDLE_VALUE`" } }
-impl Error for NullHandleError      { fn description(&self) -> &str { "`handle` was null" } }
+impl core::error::Error for InvalidHandleError   { fn description(&self) -> &str { "`handle` was `INVALID_HANDLE_VALUE`" } }
+impl core::error::Error for NullHandleError      { fn description(&self) -> &str { "`handle` was null" } }
 
 impl FromRawHandle for OwnedHandle { unsafe fn from_raw_handle(handle: RawHandle) -> Self { Self { handle } } }
 impl IntoRawHandle for OwnedHandle { fn into_raw_handle(self) -> RawHandle { let this = ManuallyDrop::new(self); this.handle } }

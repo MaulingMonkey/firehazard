@@ -2,7 +2,7 @@
 //! UpdateProcThreadAttribute value constants for use with<br>
 //! PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY
 
-use crate::*;
+use crate::prelude::*;
 use process::creation::{MitigationPolicyFlags1, MitigationPolicyFlags1Mask};
 use core::fmt::{self, Debug, Formatter};
 

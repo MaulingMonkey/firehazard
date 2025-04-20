@@ -16,9 +16,8 @@ pub fn open_process_token<'a>(
     process:            impl Into<crate::process::PseudoHandle<'a>>,
     desired_access:     impl Into<crate::token::AccessRights>,
 ) -> Result<crate::token::OwnedHandle, crate::Error> {
-    use crate::*;
-    let mut h = core::ptr::null_mut();
-    Error::get_last_if(0 == unsafe { winapi::um::processthreadsapi::OpenProcessToken(
+    let mut h = null_mut();
+    firehazard::Error::get_last_if(0 == unsafe { winapi::um::processthreadsapi::OpenProcessToken(
         process.into().as_handle(),
         desired_access.into().into(),
         &mut h,

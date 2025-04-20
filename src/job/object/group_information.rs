@@ -1,4 +1,4 @@
-use crate::*;
+use crate::prelude::*;
 use winapi::shared::ntdef;
 use winapi::um::winnt::{self, JobObjectGroupInformation, JobObjectGroupInformationEx};
 
@@ -36,20 +36,18 @@ structure!(@assert layout GroupAffinity => winnt::GROUP_AFFINITY {
     _reserved   == Reserved,
 });
 
-#[cfg(std)] impl job::QueryInformationJobObject for std::vec::Vec<Group>                   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_vec(job, JobObjectGroupInformation  ) } } }
-#[cfg(std)] impl job::QueryInformationJobObject for std::vec::Vec<GroupAffinity>           { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_vec(job, JobObjectGroupInformationEx) } } }
-#[cfg(std)] impl job::QueryInformationJobObject for std::vec::Vec<ntdef::GROUP_AFFINITY>   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_vec(job, JobObjectGroupInformationEx) } } }
-#[cfg(std)] impl job::QueryInformationJobObject for std::vec::Vec<winnt::GROUP_AFFINITY>   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_vec(job, JobObjectGroupInformationEx) } } }
+#[cfg(std)] impl job::QueryInformationJobObject for std::vec::Vec<Group>                   { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_vec(job, JobObjectGroupInformation  ) } } }
+#[cfg(std)] impl job::QueryInformationJobObject for std::vec::Vec<GroupAffinity>           { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_vec(job, JobObjectGroupInformationEx) } } }
+#[cfg(std)] impl job::QueryInformationJobObject for std::vec::Vec<ntdef::GROUP_AFFINITY>   { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_vec(job, JobObjectGroupInformationEx) } } }
+#[cfg(std)] impl job::QueryInformationJobObject for std::vec::Vec<winnt::GROUP_AFFINITY>   { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_vec(job, JobObjectGroupInformationEx) } } }
 
 //impl job::SetInformationJobObject for &'_ [u16]                      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectGroupInformation, self) } } }
-impl job::SetInformationJobObject for &'_ [Group]                    { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectGroupInformation, self) } } }
-impl job::SetInformationJobObject for &'_ [GroupAffinity]            { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectGroupInformationEx, self) } } }
-impl job::SetInformationJobObject for &'_ [ntdef::GROUP_AFFINITY]    { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectGroupInformationEx, self) } } }
-impl job::SetInformationJobObject for &'_ [winnt::GROUP_AFFINITY]    { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectGroupInformationEx, self) } } }
+impl job::SetInformationJobObject for &'_ [Group]                    { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectGroupInformation, self) } } }
+impl job::SetInformationJobObject for &'_ [GroupAffinity]            { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectGroupInformationEx, self) } } }
+impl job::SetInformationJobObject for &'_ [ntdef::GROUP_AFFINITY]    { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectGroupInformationEx, self) } } }
+impl job::SetInformationJobObject for &'_ [winnt::GROUP_AFFINITY]    { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectGroupInformationEx, self) } } }
 
 #[test] fn group_invalid() {
-    use winapi::shared::winerror::ERROR_INVALID_PARAMETER;
-
     let job = create_job_object_a(None, ()).unwrap();
     let err = set_information_job_object(&job, &[Group(0xFFFF)][..]).unwrap_err();
     assert_eq!(ERROR_INVALID_PARAMETER, err);

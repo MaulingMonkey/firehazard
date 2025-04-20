@@ -1,4 +1,8 @@
-#[allow(dead_code)] pub(crate) unsafe fn slice_assume_init<T>(slice: &[core::mem::MaybeUninit<T>]) -> &[T] {
+// replace if/when `#![feature(maybe_uninit_slice)]` stabilizes
+// <https://github.com/rust-lang/rust/issues/63569>
+// <https://doc.rust-lang.org/core/mem/union.MaybeUninit.html#method.slice_assume_init_ref>
+
+pub(crate) unsafe fn slice_assume_init_ref<T>(slice: &[core::mem::MaybeUninit<T>]) -> &[T] {
     let len = slice.len();
     unsafe { core::slice::from_raw_parts(slice.as_ptr().cast(), len) }
 }

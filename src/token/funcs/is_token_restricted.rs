@@ -10,6 +10,5 @@
 /// ```
 ///
 pub fn is_token_restricted(token: &crate::token::OwnedHandle) -> bool {
-    use crate::*;
     0 != unsafe { winapi::um::securitybaseapi::IsTokenRestricted(token.as_handle()) }
 }

@@ -3,9 +3,7 @@
 /// <strike>CompareObjectHandles</strike>
 ///
 #[cfg(doc)] /// NYI (windows SDK too early to link this API?)
-pub fn compare_object_handles(first: &firehazard::handle::Owned, second: &firehazard::handle::Owned) -> bool {
-    use firehazard::*;
-
+pub fn compare_object_handles(first: &handle::Owned, second: &handle::Owned) -> bool {
     // #[link(name = "kernelbase")] extern {} // unable to link against kernelbase?
     0 != unsafe { winapi::um::handleapi::CompareObjectHandles(first.as_handle(), second.as_handle()) }
 }

@@ -3,15 +3,13 @@
 /// GetNamedPipeHandleStateA
 ///
 pub fn get_handle_state_a<'a, 'b, 'c, 'd, 'e>(
-    handle:                     &impl firehazard::AsLocalHandle, // XXX
+    handle:                     &impl AsLocalHandle, // XXX
     state:                      impl Into<Option<&'a mut u32>>,
     current_instances:          impl Into<Option<&'b mut u32>>,
     max_collection_count:       impl Into<Option<&'c mut u32>>,
     collect_data_timeout_ms:    impl Into<Option<&'d mut u32>>,
     user_name:                  impl Into<Option<&'e mut [u8]>>,
-) -> Result<(), firehazard::Error> {
-    use core::ptr::null_mut;
-
+) -> firehazard::Result<()> {
     let user_name = user_name.into();
     let user_name_len = user_name.as_ref().map_or(0, |un| un.len());
 
@@ -34,15 +32,13 @@ pub fn get_handle_state_a<'a, 'b, 'c, 'd, 'e>(
 /// GetNamedPipeHandleStateW
 ///
 pub fn get_handle_state_w<'a, 'b, 'c, 'd, 'e>(
-    handle:                     &impl firehazard::AsLocalHandle, // XXX
+    handle:                     &impl AsLocalHandle, // XXX
     state:                      impl Into<Option<&'a mut u32>>,
     current_instances:          impl Into<Option<&'b mut u32>>,
     max_collection_count:       impl Into<Option<&'c mut u32>>,
     collect_data_timeout_ms:    impl Into<Option<&'d mut u32>>,
     user_name:                  impl Into<Option<&'e mut [u16]>>,
-) -> Result<(), firehazard::Error> {
-    use core::ptr::null_mut;
-
+) -> firehazard::Result<()> {
     let user_name = user_name.into();
     let user_name_len = user_name.as_ref().map_or(0, |un| un.len());
 

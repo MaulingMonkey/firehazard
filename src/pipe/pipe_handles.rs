@@ -1,7 +1,4 @@
-#[cfg(doc)] use crate as firehazard;
-use crate::*;
-
-use winapi::ctypes::c_void;
+use crate::prelude::*;
 
 
 
@@ -105,16 +102,15 @@ unsafe impl valrow::Borrowable for pipe::DuplexNN      { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for pipe::ReaderNN      { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for pipe::WriterNN      { type Abi = HANDLENN; }
 
-impl pipe::DuplexNN { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> Result<Self, Error> { Ok(Self(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
-impl pipe::ReaderNN { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> Result<Self, Error> { Ok(Self(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
-impl pipe::WriterNN { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> Result<Self, Error> { Ok(Self(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
+impl pipe::DuplexNN { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> firehazard::Result<Self> { Ok(Self(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
+impl pipe::ReaderNN { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> firehazard::Result<Self> { Ok(Self(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
+impl pipe::WriterNN { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> firehazard::Result<Self> { Ok(Self(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
 
 
 
 #[cfg(test)] mod tests {
-    use crate::*;
+    use crate::prelude::*;
     use crate::os::windows::io::FromRawHandle;
-    use core::ptr::null_mut;
 
     #[test] #[should_panic = "undefined behavior"] fn null_firehazard_pipe_duplex() {
         let _null = unsafe { pipe::DuplexNN::from_raw_handle(null_mut()) };

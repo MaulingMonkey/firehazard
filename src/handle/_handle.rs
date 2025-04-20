@@ -84,7 +84,7 @@
 //! [Update Resource]:                  https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-updateresourcea
 //! [Window Station]:                   https://learn.microsoft.com/en-us/windows/win32/winstation/window-stations
 
-#[allow(unused_imports)] use crate::*;
+#[allow(unused_imports)] use crate::prelude::*;
 #[allow(unused_imports)] use winapi::shared::ntdef::HANDLE;
 
 
@@ -95,7 +95,7 @@
 
 pub use funcs::*;
 pub mod funcs {
-    use crate as firehazard;
+    use crate::prelude::*;
     include!(r"funcs\close_handle.rs");
     include!(r"funcs\compare_object_handles.rs");
     include!(r"funcs\duplicate_handle.rs");

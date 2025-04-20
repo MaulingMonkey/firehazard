@@ -39,13 +39,16 @@ impl SetFilePointerEx_IntoSeekFrom for crate::io::SeekFrom { fn into_distance_me
 ///
 // TODO: Errors
 #[allow(dead_code)]
-pub(crate) unsafe fn set_file_pointer(handle: &impl firehazard::AsLocalHandle, distance_method: impl SetFilePointer_IntoSeekFrom) -> Result<u64, firehazard::Error> {
+pub(crate) unsafe fn set_file_pointer(
+    handle:             &impl AsLocalHandle,
+    distance_method:    impl SetFilePointer_IntoSeekFrom,
+) -> firehazard::Result<u64> {
     let (lo, mut hi, method) = distance_method.into_lo_hi_method();
 
     firehazard::Error::get_last_if(0 == unsafe { winapi::um::fileapi::SetFilePointer(
         handle.as_handle().cast(),
         lo,
-        hi.as_mut().map_or(core::ptr::null_mut(), |hi| hi), // in + out
+        hi.as_mut().map_or(null_mut(), |hi| hi), // in + out
         method,
     )})?;
 
@@ -69,7 +72,10 @@ pub(crate) unsafe fn set_file_pointer(handle: &impl firehazard::AsLocalHandle, d
 /// *   [`firehazard::set_file_pointer`]    &mdash; fiddly edge cases
 ///
 // TODO: Errors
-pub(crate) unsafe fn set_file_pointer_ex(handle: &impl firehazard::AsLocalHandle, distance_method: impl SetFilePointerEx_IntoSeekFrom) -> Result<u64, firehazard::Error> {
+pub(crate) unsafe fn set_file_pointer_ex(
+    handle:             &impl AsLocalHandle,
+    distance_method:    impl SetFilePointerEx_IntoSeekFrom,
+) -> firehazard::Result<u64> {
     let (distance, method) = distance_method.into_distance_method();
     let mut new_file_pointer : u64 = 0;
 

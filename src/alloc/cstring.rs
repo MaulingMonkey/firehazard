@@ -1,4 +1,4 @@
-use crate::*;
+use crate::prelude::*;
 
 use abistr::{CStrPtr, Unit};
 
@@ -6,7 +6,6 @@ use ialloc::meta::Stateless;
 use ialloc::thin::Free;
 
 use core::fmt::{self, Debug, Display, Formatter};
-use core::marker::PhantomData;
 
 
 

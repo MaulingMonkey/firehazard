@@ -1,7 +1,7 @@
 #![doc = include_str!("sid_integrity.md")]
 #![allow(non_upper_case_globals)] // enum-like values
 
-use crate::*;
+use crate::prelude::*;
 
 use core::fmt::{self, Debug, Formatter};
 use core::hash::Hash;

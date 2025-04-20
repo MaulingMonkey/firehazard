@@ -15,14 +15,12 @@
 /// -   `flags` being invalid has not been tested
 ///
 pub unsafe fn create_pseudo_console<'i, 'o>(
-    size:   impl firehazard::pseudoconsole::IntoSize,
-    input:  impl Into<firehazard::io::ReadHandle<'i>>,
-    output: impl Into<firehazard::io::WriteHandle<'o>>,
+    size:   impl pseudoconsole::IntoSize,
+    input:  impl Into<io::ReadHandle<'i>>,
+    output: impl Into<io::WriteHandle<'o>>,
     flags:  u32, // TODO: replace with a better type?
-) -> Result<firehazard::pseudoconsole::Owned, firehazard::Error> {
-    use firehazard::AsLocalHandle;
-
-    let mut pcon = core::ptr::null_mut();
+) -> firehazard::Result<pseudoconsole::Owned> {
+    let mut pcon = null_mut();
     let hr = unsafe { winapi::um::consoleapi::CreatePseudoConsole(
         size.into(),
         input.into().as_handle().cast(),
@@ -31,7 +29,7 @@ pub unsafe fn create_pseudo_console<'i, 'o>(
         &mut pcon,
     )};
 
-    if !winapi::shared::winerror::SUCCEEDED(hr) { return Err(firehazard::Error(hr as _)) }
-    let pcon = core::ptr::NonNull::new(pcon).ok_or(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE))?;
-    Ok(firehazard::pseudoconsole::Owned(pcon))
+    if !SUCCEEDED(hr) { return Err(firehazard::Error(hr as _)) }
+    let pcon = NonNull::new(pcon).ok_or(ERROR_INVALID_HANDLE)?;
+    Ok(pseudoconsole::Owned(pcon))
 }

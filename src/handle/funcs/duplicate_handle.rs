@@ -22,16 +22,14 @@
 /// ```
 ///
 pub fn duplicate_handle_local<'a>(
-    source:         impl Into<firehazard::handle::Pseudo<'a>>,
+    source:         impl Into<firehazard::handle::Pseudo<'a>>, // TODO: better handle type inference
     access:         impl Into<firehazard::access::Mask>,
     inherit_handle: bool,
-) -> Result<firehazard::handle::Owned, firehazard::Error> { // TODO: better handle type inference
-    use firehazard::*;
-
+) -> firehazard::Result<handle::Owned> {
     let process = get_current_process();
 
-    let mut target = core::ptr::null_mut();
-    Error::get_last_if(0 == unsafe { winapi::um::handleapi::DuplicateHandle(
+    let mut target = null_mut();
+    firehazard::Error::get_last_if(0 == unsafe { winapi::um::handleapi::DuplicateHandle(
         process.as_handle(),
         source.into().as_handle(),
         process.as_handle(),
@@ -70,15 +68,13 @@ pub fn duplicate_handle_local<'a>(
 /// ```
 ///
 pub fn duplicate_handle_local_same_access<'a>(
-    source:         impl Into<firehazard::handle::Pseudo<'a>>,
+    source:         impl Into<firehazard::handle::Pseudo<'a>>, // TODO: better handle type inference
     inherit_handle: bool,
-) -> Result<firehazard::handle::Owned, firehazard::Error> { // TODO: better handle type inference
-    use firehazard::*;
-
+) -> firehazard::Result<handle::Owned> {
     let process = get_current_process();
 
-    let mut target = core::ptr::null_mut();
-    Error::get_last_if(0 == unsafe { winapi::um::handleapi::DuplicateHandle(
+    let mut target = null_mut();
+    firehazard::Error::get_last_if(0 == unsafe { winapi::um::handleapi::DuplicateHandle(
         process.as_handle(),
         source.into().as_handle(),
         process.as_handle(),

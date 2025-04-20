@@ -94,7 +94,7 @@
 
 pub use funcs::*;
 pub(crate) mod funcs {
-    use crate as firehazard;
+    use crate::prelude::*;
     include!(r"funcs\close_pseudo_console.rs");
     include!(r"funcs\create_pseudo_console.rs");
     include!(r"funcs\resize_pseudo_console.rs");

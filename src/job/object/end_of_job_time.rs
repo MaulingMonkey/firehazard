@@ -1,4 +1,4 @@
-use crate::*;
+use crate::prelude::*;
 use winapi::um::winnt::*;
 use core::fmt::{self, Debug, Formatter};
 
@@ -56,10 +56,10 @@ impl Debug for EndOfJobTimeAction {
 
 
 
-impl job::QueryInformationJobObject for JOBOBJECT_END_OF_JOB_TIME_INFORMATION    { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
-impl job::QueryInformationJobObject for job::object::EndOfJobTimeInformation     { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
-impl job::QueryInformationJobObject for job::object::EndOfJobTimeAction          { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
+impl job::QueryInformationJobObject for JOBOBJECT_END_OF_JOB_TIME_INFORMATION    { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
+impl job::QueryInformationJobObject for job::object::EndOfJobTimeInformation     { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
+impl job::QueryInformationJobObject for job::object::EndOfJobTimeAction          { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectEndOfJobTimeInformation) } } }
 
-impl job::SetInformationJobObject for JOBOBJECT_END_OF_JOB_TIME_INFORMATION      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectEndOfJobTimeInformation, &self) } } }
-impl job::SetInformationJobObject for job::object::EndOfJobTimeInformation       { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectEndOfJobTimeInformation, &self) } } }
-impl job::SetInformationJobObject for job::object::EndOfJobTimeAction            { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectEndOfJobTimeInformation, &self) } } }
+impl job::SetInformationJobObject for JOBOBJECT_END_OF_JOB_TIME_INFORMATION      { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectEndOfJobTimeInformation, &self) } } }
+impl job::SetInformationJobObject for job::object::EndOfJobTimeInformation       { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectEndOfJobTimeInformation, &self) } } }
+impl job::SetInformationJobObject for job::object::EndOfJobTimeAction            { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectEndOfJobTimeInformation, &self) } } }

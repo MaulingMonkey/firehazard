@@ -16,7 +16,7 @@ mod io_handles;                     pub use io_handles::*;
 
 pub use funcs::*;
 pub(crate) mod funcs {
-    use crate as firehazard;
+    use crate::prelude::*;
     include!(r"funcs\get_final_path_name_by_handle.rs");
     include!(r"funcs\read_file.rs");
     include!(r"funcs\set_file_pointer.rs");

@@ -3,18 +3,14 @@
 /// CreateRestrictedToken
 ///
 pub fn create_restricted_token(
-    existing_token_handle:  &crate::token::OwnedHandle,
-    flags:                  impl Into<crate::token::RestrictedFlags>,
-    sids_to_disable:        Option<&[crate::sid::AndAttributes]>,
-    privileges_to_delete:   Option<&[crate::privilege::LuidAndAttributes]>,
-    sids_to_restrict:       Option<&[crate::sid::AndAttributes]>,
-) -> Result<crate::token::OwnedHandle, crate::Error> {
-    use crate::*;
-    use winapi::shared::winerror::*;
-    use core::ptr::*;
-
+    existing_token_handle:  &token::OwnedHandle,
+    flags:                  impl Into<token::RestrictedFlags>,
+    sids_to_disable:        Option<&[sid::AndAttributes]>,
+    privileges_to_delete:   Option<&[privilege::LuidAndAttributes]>,
+    sids_to_restrict:       Option<&[sid::AndAttributes]>,
+) -> firehazard::Result<token::OwnedHandle> {
     let mut new_handle = null_mut();
-    Error::get_last_if(0 == unsafe { winapi::um::securitybaseapi::CreateRestrictedToken(
+    firehazard::Error::get_last_if(0 == unsafe { winapi::um::securitybaseapi::CreateRestrictedToken(
         existing_token_handle.as_handle(),
         flags.into().into(),
         u32::try_from(sids_to_disable.map_or(0, |s| s.len())).map_err(|_| ERROR_INVALID_PARAMETER)?,
@@ -35,14 +31,12 @@ pub fn create_restricted_token(
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-createrestrictedtoken)\] CreateRestrictedToken
 ///
 pub fn create_restricted_token_filter(
-    existing_token_handle:  &crate::token::OwnedHandle,
-    flags:                  impl Into<crate::token::RestrictedFlags>,
-    sids_to_disable:        impl FnMut(&crate::sid::AndAttributes           ) -> bool,
-    privileges_to_delete:   impl FnMut(&crate::privilege::LuidAndAttributes ) -> bool,
-    sids_to_restrict:       Option<&[crate::sid::AndAttributes]>,
-) -> Result<crate::token::OwnedHandle, crate::Error> {
-    use crate::*;
-
+    existing_token_handle:  &token::OwnedHandle,
+    flags:                  impl Into<token::RestrictedFlags>,
+    sids_to_disable:        impl FnMut(&sid::AndAttributes           ) -> bool,
+    privileges_to_delete:   impl FnMut(&privilege::LuidAndAttributes ) -> bool,
+    sids_to_restrict:       Option<&[sid::AndAttributes]>,
+) -> firehazard::Result<token::OwnedHandle> {
     let mut gap = existing_token_handle.groups_and_privileges()?;
     let sids  = partition::in_place_unstable(gap.sids_mut(), sids_to_disable);
     let privs = partition::in_place_unstable(gap.privileges_mut(), privileges_to_delete);

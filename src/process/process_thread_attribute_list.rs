@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use crate::*;
+use crate::prelude::*;
 use crate::alloc::CBox;
 
 use winapi::shared::basetsd::DWORD64;
@@ -10,9 +10,6 @@ use winapi::um::processthreadsapi::*;
 use winapi::um::winnt::SECURITY_CAPABILITIES;
 
 use core::fmt::{self, Debug, Formatter};
-use core::marker::PhantomData;
-use core::mem::size_of_val;
-use core::ptr::null_mut;
 
 
 
@@ -50,11 +47,11 @@ impl<'a> ThreadAttributeList<'a> {
     /// ### Errors
     /// *   `ERROR_INVALID_PARAMETER` if `attributes` > `27` as of Windows 10.0.19043.1889
     ///
-    pub fn with_attribute_capacity(attributes: u32) -> Result<Self, Error> {
+    pub fn with_attribute_capacity(attributes: u32) -> firehazard::Result<Self> {
         let mut bytes = 0;
         let _ = unsafe { InitializeProcThreadAttributeList(null_mut(), attributes, 0, &mut bytes) }; // fails w/ ERROR_INSUFFICIENT_BUFFER
         let mut cb = CBox::<PROC_THREAD_ATTRIBUTE_LIST>::new_oversized(Default::default(), bytes);
-        Error::get_last_if(FALSE == unsafe { InitializeProcThreadAttributeList(cb.as_mut_ptr(), attributes, 0, &mut bytes) })?;
+        firehazard::Error::get_last_if(FALSE == unsafe { InitializeProcThreadAttributeList(cb.as_mut_ptr(), attributes, 0, &mut bytes) })?;
         Ok(Self(cb, PhantomData))
     }
 
@@ -62,8 +59,8 @@ impl<'a> ThreadAttributeList<'a> {
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
     /// UpdateProcThreadAttribute
     ///
-    pub fn update<'s>(&'s mut self, ThreadAttributeRef(attribute, value, size, _): ThreadAttributeRef<'a>) -> Result<&'s mut Self, Error> where 'a : 's {
-        Error::get_last_if(FALSE == unsafe { UpdateProcThreadAttribute(
+    pub fn update<'s>(&'s mut self, ThreadAttributeRef(attribute, value, size, _): ThreadAttributeRef<'a>) -> firehazard::Result<&'s mut Self> where 'a : 's {
+        firehazard::Error::get_last_if(FALSE == unsafe { UpdateProcThreadAttribute(
             self.0.as_mut_ptr(),
             0,              // flags            (reserved: must be 0)
             attribute,
@@ -77,8 +74,8 @@ impl<'a> ThreadAttributeList<'a> {
 }
 
 impl<'a> TryFrom<&'_ [ThreadAttributeRef<'a>]> for ThreadAttributeList<'a> {
-    type Error = Error;
-    fn try_from(refs: &'_ [ThreadAttributeRef<'a>]) -> Result<Self, Error> {
+    type Error = firehazard::Error;
+    fn try_from(refs: &'_ [ThreadAttributeRef<'a>]) -> Result<Self, Self::Error> {
         let len = refs.len().try_into().unwrap_or(!0u32);
         let mut list = Self::with_attribute_capacity(len)?;
         for r in refs.iter().copied() { list.update(r)?; }

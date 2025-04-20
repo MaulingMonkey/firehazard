@@ -29,12 +29,10 @@
 /// | closed/dangling           | ERROR_INVALID_HANDLE                          | <span style="opacity: 50%">None</span>                                                        |
 /// | never valid               | ERROR_INVALID_HANDLE                          | <span style="opacity: 50%">None</span>                                                        |
 ///
-pub fn close_handle(object: impl Into<firehazard::handle::Owned>) -> Result<(), firehazard::Error> {
-    use firehazard::*;
-
+pub fn close_handle(object: impl Into<handle::Owned>) -> firehazard::Result<()> {
     let object = object.into();
     let h = core::mem::ManuallyDrop::new(object).as_handle();
-    Error::get_last_if(0 == unsafe { winapi::um::handleapi::CloseHandle(h) })
+    firehazard::Error::get_last_if(0 == unsafe { winapi::um::handleapi::CloseHandle(h) })
 }
 
 
@@ -43,7 +41,7 @@ pub fn close_handle(object: impl Into<firehazard::handle::Owned>) -> Result<(), 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
 /// CloseHandle or panic
 ///
-#[track_caller] pub(crate) unsafe fn drop_close_handle_nn<T>(this: &mut impl firehazard::AsLocalHandleNN<T>) {
+#[track_caller] pub(crate) unsafe fn drop_close_handle_nn<T>(this: &mut impl AsLocalHandleNN<T>) {
     let handle = this.as_handle_nn().as_ptr().cast();
     if 0 != unsafe { winapi::um::handleapi::CloseHandle(handle) } { return }
     panic!("CloseHandle(0x{:X}) failed with GetLastError()={:?}", handle as usize, firehazard::Error::get_last());
@@ -56,14 +54,12 @@ pub fn close_handle(object: impl Into<firehazard::handle::Owned>) -> Result<(), 
 /// <strike>DuplicateHandle(process, handle, 0, 0, 0, DUPLICATE_CLOSE_SOURCE)</strike>
 ///
 #[cfg(doc)]
-pub unsafe fn close_remote_handle(process: &firehazard::process::Handle, handle: firehazard::HANDLE) -> Result<(), firehazard::Error> {
-    use firehazard::*;
-
-    Error::get_last_if(0 == unsafe { winapi::um::handleapi::DuplicateHandle(
+pub unsafe fn close_remote_handle(process: &process::Handle, handle: HANDLE) -> firehazard::Result<()> {
+    firehazard::Error::get_last_if(0 == unsafe { winapi::um::handleapi::DuplicateHandle(
         process.as_handle(),
         handle,
-        core::ptr::null_mut(),
-        core::ptr::null_mut(),
+        null_mut(),
+        null_mut(),
         0,
         false as _,
         winapi::um::winnt::DUPLICATE_CLOSE_SOURCE
@@ -73,13 +69,12 @@ pub unsafe fn close_remote_handle(process: &firehazard::process::Handle, handle:
 
 
 tests! {
-    use winapi::shared::winerror::ERROR_INVALID_HANDLE;
     use winapi::um::handleapi::{CloseHandle, INVALID_HANDLE_VALUE};
     use winapi::um::errhandlingapi::{GetLastError, SetLastError};
 
     #[test] #[strict_handle_check_exception = 0] // no exception
     fn close_handle_null() {
-        assert!(0 == unsafe { CloseHandle(core::ptr::null_mut()) });
+        assert!(0 == unsafe { CloseHandle(null_mut()) });
         assert_eq!(ERROR_INVALID_HANDLE, unsafe { GetLastError() });
     }
 

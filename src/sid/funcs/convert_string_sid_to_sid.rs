@@ -1,15 +1,3 @@
-use crate::*;
-use crate::sid::Box as SidBox;
-
-use abistr::{AsCStr, TryIntoAsCStr};
-
-use winapi::shared::sddl::{ConvertStringSidToSidW, ConvertStringSidToSidA};
-use winapi::shared::winerror::*;
-
-use core::ptr::null_mut;
-
-
-
 #[doc(alias = "ConvertStringSidToSidA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/sddl/nf-sddl-convertstringsidtosida)\]
 /// ConvertStringSidToSidA - convert e.g. `"S-1-0-0"` to [`sid::Box`]
@@ -28,11 +16,11 @@ use core::ptr::null_mut;
 /// ### See Also
 /// *   [sid!] for compile-time validated error-free [`sid::Ptr`]s.
 ///
-pub fn convert_string_sid_to_sid_a(s: impl TryIntoAsCStr) -> Result<SidBox<alloc::LocalAllocFree>, Error> {
+pub fn convert_string_sid_to_sid_a(s: impl TryIntoAsCStr) -> firehazard::Result<sid::Box<alloc::LocalAllocFree>> {
     let s = s.try_into()?;
     let mut sid = null_mut();
-    Error::get_last_if(0 == unsafe { ConvertStringSidToSidA(s.as_cstr(), &mut sid) })?;
-    unsafe { SidBox::from_raw(sid.cast()) }.ok_or(Error(ERROR_INVALID_SID))
+    firehazard::Error::get_last_if(0 == unsafe { winapi::shared::sddl::ConvertStringSidToSidA(s.as_cstr(), &mut sid) })?;
+    Ok(unsafe { sid::Box::from_raw(sid.cast()) }.ok_or(ERROR_INVALID_SID)?)
 }
 
 
@@ -54,9 +42,9 @@ pub fn convert_string_sid_to_sid_a(s: impl TryIntoAsCStr) -> Result<SidBox<alloc
 /// ### See Also
 /// *   [sid!] for compile-time validated error-free [`sid::Ptr`]s.
 ///
-pub fn convert_string_sid_to_sid_w(s: impl TryIntoAsCStr<u16>) -> Result<SidBox<alloc::LocalAllocFree>, Error> {
+pub fn convert_string_sid_to_sid_w(s: impl TryIntoAsCStr<u16>) -> firehazard::Result<sid::Box<alloc::LocalAllocFree>> {
     let s = s.try_into()?;
     let mut sid = null_mut();
-    Error::get_last_if(0 == unsafe { ConvertStringSidToSidW(s.as_cstr(), &mut sid) })?;
-    unsafe { SidBox::from_raw(sid.cast()) }.ok_or(Error(ERROR_INVALID_SID))
+    firehazard::Error::get_last_if(0 == unsafe { winapi::shared::sddl::ConvertStringSidToSidW(s.as_cstr(), &mut sid) })?;
+    Ok(unsafe { sid::Box::from_raw(sid.cast()) }.ok_or(ERROR_INVALID_SID)?)
 }

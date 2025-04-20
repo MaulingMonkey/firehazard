@@ -1,6 +1,6 @@
 //! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-jobobject_basic_limit_information#members)\] JOB_OBJECT_LIMIT_*
 
-#[allow(unused_imports)] use crate::*;
+#[allow(unused_imports)] use crate::prelude::*;
 use core::fmt::{self, Debug, Formatter};
 
 

@@ -38,14 +38,14 @@ pub fn create<'a, 'b: 'a>(
     name:                   impl AsRef<std::ffi::OsStr>,
     open_mode:              u32, // TODO: type
     pipe_mode:              u32, // TODO: type
-    max_instances:          impl Into<firehazard::pipe::MaxInstances>,
+    max_instances:          impl Into<pipe::MaxInstances>,
     out_buffer_size:        u32,
     in_buffer_size:         u32,
-    default_timeout:        impl Into<firehazard::NMPWAIT>, // A slightly awkward fit, but 0 (NMPWAIT::USE_DEFAULT_WAIT) gets interpreted as "make WaitNamedPipe(..., NMPWAIT::USE_DEFAULT_WAIT) use the default timeout of 50ms"
-    security_attributes:    impl Into<Option<&'a firehazard::security::Attributes<'b>>>,
-) -> Result<firehazard::handle::Owned, firehazard::Error> {
+    default_timeout:        impl Into<NMPWAIT>, // A slightly awkward fit, but 0 (NMPWAIT::USE_DEFAULT_WAIT) gets interpreted as "make WaitNamedPipe(..., NMPWAIT::USE_DEFAULT_WAIT) use the default timeout of 50ms"
+    security_attributes:    impl Into<Option<&'a security::Attributes<'b>>>,
+) -> firehazard::Result<handle::Owned> {
     create_w(
-        crate::util::osstr_to_wide0(name.as_ref(), &mut std::vec::Vec::new())?,
+        osstr_to_wide0(name.as_ref(), &mut std::vec::Vec::new())?,
         open_mode, pipe_mode, max_instances, out_buffer_size,
         in_buffer_size, default_timeout, security_attributes,
     )
@@ -88,18 +88,15 @@ pub fn create<'a, 'b: 'a>(
 /// ```
 ///
 pub fn create_a<'a, 'b: 'a>(
-    name:                   impl abistr::TryIntoAsCStr,
+    name:                   impl TryIntoAsCStr,
     open_mode:              u32, // TODO: type
     pipe_mode:              u32, // TODO: type
-    max_instances:          impl Into<firehazard::pipe::MaxInstances>,
+    max_instances:          impl Into<pipe::MaxInstances>,
     out_buffer_size:        u32,
     in_buffer_size:         u32,
-    default_timeout:        impl Into<firehazard::NMPWAIT>, // A slightly awkward fit, but 0 (NMPWAIT::USE_DEFAULT_WAIT) gets interpreted as "make WaitNamedPipe(..., NMPWAIT::USE_DEFAULT_WAIT) use the default timeout of 50ms"
-    security_attributes:    impl Into<Option<&'a firehazard::security::Attributes<'b>>>,
-) -> Result<firehazard::handle::Owned, firehazard::Error> {
-    use crate::FromLocalHandle;
-    use abistr::AsCStr;
-
+    default_timeout:        impl Into<NMPWAIT>, // A slightly awkward fit, but 0 (NMPWAIT::USE_DEFAULT_WAIT) gets interpreted as "make WaitNamedPipe(..., NMPWAIT::USE_DEFAULT_WAIT) use the default timeout of 50ms"
+    security_attributes:    impl Into<Option<&'a security::Attributes<'b>>>,
+) -> firehazard::Result<handle::Owned> {
     let handle = unsafe { winapi::um::winbase::CreateNamedPipeA(
         name.try_into()?.as_cstr(),
         open_mode,
@@ -108,10 +105,10 @@ pub fn create_a<'a, 'b: 'a>(
         out_buffer_size,
         in_buffer_size,
         default_timeout.into().0,
-        security_attributes.into().map_or(core::ptr::null(), |sa| sa) as *mut _,
+        security_attributes.into().map_or(null(), |sa| sa) as *mut _,
     )};
     firehazard::Error::get_last_if(handle.is_null() || handle == winapi::um::handleapi::INVALID_HANDLE_VALUE)?;
-    unsafe { firehazard::handle::Owned::from_raw(handle) }
+    unsafe { handle::Owned::from_raw(handle) }
 }
 
 
@@ -152,18 +149,15 @@ pub fn create_a<'a, 'b: 'a>(
 /// ```
 ///
 pub fn create_w<'a, 'b: 'a>(
-    name:                   impl abistr::TryIntoAsCStr<u16>,
+    name:                   impl TryIntoAsCStr<u16>,
     open_mode:              u32, // TODO: type
     pipe_mode:              u32, // TODO: type
-    max_instances:          impl Into<firehazard::pipe::MaxInstances>,
+    max_instances:          impl Into<pipe::MaxInstances>,
     out_buffer_size:        u32,
     in_buffer_size:         u32,
-    default_timeout:        impl Into<firehazard::NMPWAIT>, // A slightly awkward fit, but 0 (NMPWAIT::USE_DEFAULT_WAIT) gets interpreted as "make WaitNamedPipe(..., NMPWAIT::USE_DEFAULT_WAIT) use the default timeout of 50ms"
-    security_attributes:    impl Into<Option<&'a firehazard::security::Attributes<'b>>>,
-) -> Result<firehazard::handle::Owned, firehazard::Error> {
-    use crate::FromLocalHandle;
-    use abistr::AsCStr;
-
+    default_timeout:        impl Into<NMPWAIT>, // A slightly awkward fit, but 0 (NMPWAIT::USE_DEFAULT_WAIT) gets interpreted as "make WaitNamedPipe(..., NMPWAIT::USE_DEFAULT_WAIT) use the default timeout of 50ms"
+    security_attributes:    impl Into<Option<&'a security::Attributes<'b>>>,
+) -> firehazard::Result<handle::Owned> {
     let handle = unsafe { winapi::um::namedpipeapi::CreateNamedPipeW(
         name.try_into()?.as_cstr(),
         open_mode,
@@ -172,8 +166,8 @@ pub fn create_w<'a, 'b: 'a>(
         out_buffer_size,
         in_buffer_size,
         default_timeout.into().0,
-        security_attributes.into().map_or(core::ptr::null(), |sa| sa) as *mut _,
+        security_attributes.into().map_or(null(), |sa| sa) as *mut _,
     )};
     firehazard::Error::get_last_if(handle.is_null() || handle == winapi::um::handleapi::INVALID_HANDLE_VALUE)?;
-    unsafe { firehazard::handle::Owned::from_raw(handle) }
+    unsafe { handle::Owned::from_raw(handle) }
 }

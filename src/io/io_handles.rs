@@ -1,9 +1,4 @@
-#[cfg(doc)] use crate as firehazard;
-use crate::*;
-
-use winapi::ctypes::c_void;
-
-use core::marker::PhantomData;
+use crate::prelude::*;
 
 #[doc(hidden)] #[deprecated = "use `firehazard::io::FileNN` instead"        ] pub type File         = FileNN;
 #[doc(hidden)] #[deprecated = "use `firehazard::pipe::ReaderNN` instead"    ] pub type ReadPipe     = pipe::ReaderNN;
@@ -132,10 +127,10 @@ unsafe impl valrow::Borrowable for FileHandle<'_>    { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for ReadHandle<'_>    { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for WriteHandle<'_>   { type Abi = HANDLENN; }
 
-impl io::FileNN             { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self)           -> Result<io::FileNN,       Error> { Ok(io::FileNN(duplicate_handle_local_same_access( self, false)?.into_handle_nn())) } }
-impl io::FileHandle<'_>     { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> Result<io::FileNN,       Error> { Ok(io::FileNN(duplicate_handle_local_same_access(*self, false)?.into_handle_nn())) } }
-//pl io::ReadHandle<'_>     { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> Result<pipe::ReaderNN,   Error> { Ok(pipe::ReaderNN(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
-//pl io::WriteHandle<'_>    { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> Result<pipe::WriterNN,   Error> { Ok(pipe::WriterNN(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
+impl io::FileNN             { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self)           -> firehazard::Result<io::FileNN      > { Ok(io::FileNN(duplicate_handle_local_same_access( self, false)?.into_handle_nn())) } }
+impl io::FileHandle<'_>     { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> firehazard::Result<io::FileNN      > { Ok(io::FileNN(duplicate_handle_local_same_access(*self, false)?.into_handle_nn())) } }
+//pl io::ReadHandle<'_>     { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> firehazard::Result<pipe::ReaderNN  > { Ok(pipe::ReaderNN(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
+//pl io::WriteHandle<'_>    { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> firehazard::Result<pipe::WriterNN  > { Ok(pipe::WriterNN(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
 
 // It might be appropriate to impl TryFrom<OwnedHandle> for FileNN, PipeReaderNN, PipeWriterNN?
 // ~~Constructing `crate::os::windows::io::NullHandleError` is awkward though.~~ Just use OwnedHandle::try_from(HandleOrNull)?
@@ -144,9 +139,9 @@ impl io::FileHandle<'_>     { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[mic
 
 
 #[cfg(test)] mod tests {
+    use crate::prelude::*;
     use crate::io::*;
     use crate::os::windows::io::FromRawHandle;
-    use core::ptr::null_mut;
 
     #[test] #[should_panic = "undefined behavior"] fn null_firehazard_io_file() {
         let _null = unsafe { FileNN::from_raw_handle(null_mut()) };

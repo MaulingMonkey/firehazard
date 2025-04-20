@@ -1,11 +1,11 @@
 //! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createthread)\]
 //! Thread [`OwnedHandle`] and related fns
 
-use crate::*;
+use crate::prelude::*;
 
 pub use funcs::*;
 pub(crate) mod funcs {
-    use crate as firehazard;
+    use crate::prelude::*;
     include!(r"funcs\exit_thread.rs");
     include!(r"funcs\get_current_thread_id.rs");
     include!(r"funcs\get_current_thread.rs");
@@ -18,6 +18,7 @@ pub(crate) mod funcs {
 }
 
 #[cfg(test)] mod tests {
+    use crate::prelude::*;
     include!(r"tests\test_wait_exit.rs");
 }
 

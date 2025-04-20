@@ -1,8 +1,4 @@
-use crate::*;
-
-use core::ptr::NonNull;
-
-use winapi::ctypes::c_void;
+use crate::prelude::*;
 
 
 
@@ -32,4 +28,4 @@ impl Drop for Owned { fn drop(&mut self) {
 
 unsafe impl valrow::Borrowable for Owned { type Abi = NonNull<c_void>; }
 
-impl Owned { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> Result<Owned, Error> { Ok(Owned(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
+impl Owned { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> firehazard::Result<Owned> { Ok(Owned(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }

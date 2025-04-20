@@ -1,4 +1,4 @@
-use crate::*;
+use crate::prelude::*;
 use winapi::um::winnt::*;
 
 
@@ -87,12 +87,12 @@ structure!(@assert layout LimitViolationInformation2 => JOBOBJECT_LIMIT_VIOLATIO
 
 
 
-impl job::QueryInformationJobObject for JOBOBJECT_LIMIT_VIOLATION_INFORMATION     { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectLimitViolationInformation) } } }
-impl job::QueryInformationJobObject for job::object::LimitViolationInformation    { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectLimitViolationInformation) } } }
-impl job::QueryInformationJobObject for JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectLimitViolationInformation2) } } }
-impl job::QueryInformationJobObject for job::object::LimitViolationInformation2   { fn query_from(job: &job::OwnedHandle) -> Result<Self, Error> { unsafe { job::query_fixed(job, JobObjectLimitViolationInformation2) } } }
+impl job::QueryInformationJobObject for JOBOBJECT_LIMIT_VIOLATION_INFORMATION     { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectLimitViolationInformation) } } }
+impl job::QueryInformationJobObject for job::object::LimitViolationInformation    { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectLimitViolationInformation) } } }
+impl job::QueryInformationJobObject for JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2   { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectLimitViolationInformation2) } } }
+impl job::QueryInformationJobObject for job::object::LimitViolationInformation2   { fn query_from(job: &job::OwnedHandle) -> firehazard::Result<Self> { unsafe { job::query_fixed(job, JobObjectLimitViolationInformation2) } } }
 
-impl job::SetInformationJobObject for JOBOBJECT_LIMIT_VIOLATION_INFORMATION       { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectLimitViolationInformation, &self) } } }
-impl job::SetInformationJobObject for job::object::LimitViolationInformation      { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectLimitViolationInformation, &self) } } }
-impl job::SetInformationJobObject for JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2     { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectLimitViolationInformation2, &self) } } }
-impl job::SetInformationJobObject for job::object::LimitViolationInformation2     { fn set_on(self, job: &job::OwnedHandle) -> Result<(), Error> { unsafe { job::set(job, JobObjectLimitViolationInformation2, &self) } } }
+impl job::SetInformationJobObject for JOBOBJECT_LIMIT_VIOLATION_INFORMATION       { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectLimitViolationInformation, &self) } } }
+impl job::SetInformationJobObject for job::object::LimitViolationInformation      { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectLimitViolationInformation, &self) } } }
+impl job::SetInformationJobObject for JOBOBJECT_LIMIT_VIOLATION_INFORMATION_2     { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectLimitViolationInformation2, &self) } } }
+impl job::SetInformationJobObject for job::object::LimitViolationInformation2     { fn set_on(self, job: &job::OwnedHandle) -> firehazard::Result<()> { unsafe { job::set(job, JobObjectLimitViolationInformation2, &self) } } }

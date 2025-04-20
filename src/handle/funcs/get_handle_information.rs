@@ -15,12 +15,10 @@
 /// ```
 ///
 pub fn get_handle_information<'a>(
-    object:     impl Into<firehazard::handle::Borrowed<'a>>,
-) -> Result<firehazard::handle::Flags, firehazard::Error> {
-    use firehazard::*;
-
+    object:     impl Into<handle::Borrowed<'a>>,
+) -> firehazard::Result<handle::Flags> {
     let mut flags = 0;
-    Error::get_last_if(0 == unsafe { winapi::um::handleapi::GetHandleInformation(
+    firehazard::Error::get_last_if(0 == unsafe { winapi::um::handleapi::GetHandleInformation(
         object.into().as_handle(),
         &mut flags,
     )})?;

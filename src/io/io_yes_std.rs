@@ -1,6 +1,6 @@
 #![cfg(std)]
 
-#[allow(unused_imports)] use crate::{AsLocalHandle, HANDLE, HANDLENN};
+use crate::prelude::*;
 use crate::io::FileNN;
 use crate::os::windows::prelude::*;
 
@@ -35,12 +35,11 @@ impl    AsLocalHandle for std::process::ChildStdin      { fn as_handle(&self) ->
 impl    AsLocalHandle for std::process::ChildStdout     { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
 
 #[cfg(test)] mod tests {
-    #[allow(unused_imports)] use super::*;
-    #[allow(unused_imports)] use core::ptr::null_mut;
+    #[allow(unused_imports)] use crate::prelude::*;
 
     #[cfg(nope)] // File → FileNN currently disabled
     #[test] #[should_panic = "undefined behavior"] fn null_std_fs_file() {
         let null = unsafe { std::fs::File::from_raw_handle(null_mut()) }; // arguably u.b.
-        let _panic = crate::io::FileNN::from(null); // u.b. detected
+        let _panic = io::FileNN::from(null); // u.b. detected
     }
 }

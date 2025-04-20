@@ -3,14 +3,11 @@
 /// PeekNamedPipe
 ///
 pub fn peek<'buffer, 'a, 'b>(
-    handle:                     &impl firehazard::AsLocalHandle, // XXX
+    handle:                     &impl AsLocalHandle, // XXX
     buffer:                     impl Into<Option<&'buffer mut [core::mem::MaybeUninit<u8>]>>,
     total_bytes_avail:          impl Into<Option<&'a mut u32>>,
     bytes_left_this_message:    impl Into<Option<&'b mut u32>>,
-) -> Result<Option<&'buffer mut [u8]>, firehazard::Error> {
-    use crate::From32;
-    use core::ptr::null_mut;
-
+) -> firehazard::Result<Option<&'buffer mut [u8]>> {
     let mut buffer = buffer.into();
     let buffer_len32 = u32::try_from(buffer.as_ref().map_or(0, |b| (*b).as_ref().len())).unwrap_or(!0);
     let mut bytes_read = 0;
@@ -24,5 +21,5 @@ pub fn peek<'buffer, 'a, 'b>(
         bytes_left_this_message .into().map_or(null_mut(), |v| v),
     )})?;
 
-    Ok(buffer.map(|b| unsafe { crate::slice_assume_init_mut(&mut (*b)[..usize::from32(bytes_read)]) }))
+    Ok(buffer.map(|b| unsafe { slice_assume_init_mut(&mut (*b)[..usize::from32(bytes_read)]) }))
 }

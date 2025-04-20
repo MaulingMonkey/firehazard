@@ -1,4 +1,4 @@
-use crate::*;
+use crate::prelude::*;
 
 use ialloc::meta::Stateless;
 use ialloc::thin::Free;
@@ -6,7 +6,6 @@ use ialloc::thin::Free;
 use winapi::um::winnt::SID;
 
 use core::fmt::{self, Debug, Formatter};
-use core::marker::PhantomData;
 use core::ops::Deref;
 
 

@@ -20,12 +20,12 @@
 
 #![allow(non_upper_case_globals)]
 
-use crate::*;
+use crate::prelude::*;
 
 
 
 /// <code>\([id](Self::id)(), [sid](Self::sid)()\) = \(`"internetClient"`, [sid!]\(S-1-15-3-1\)\)</code>
-#[derive(Clone, Copy, Debug)] #[repr(transparent)] pub struct Constant(abistr::CStrNonNull<'static, u16>);
+#[derive(Clone, Copy, Debug)] #[repr(transparent)] pub struct Constant(CStrNonNull<'static, u16>);
 
 /// ≈ [sid::Box]
 #[derive(Debug)] #[repr(transparent)] pub struct Sid(pub sid::Box<alloc::LocalAllocFree>); // XXX?
@@ -33,7 +33,7 @@ impl core::ops::Deref for Sid { type Target = sid::Box<alloc::LocalAllocFree>; f
 
 impl Constant {
     /// Human readable name like `internetClient`
-    pub fn id(&self) -> abistr::CStrNonNull<'static, u16> { self.0 }
+    pub fn id(&self) -> CStrNonNull<'static, u16> { self.0 }
 
     /// SID like `S-1-15-3-1`
     ///
@@ -50,7 +50,7 @@ macro_rules! constants { ( $( pub const $id:ident = $label:tt; )* ) => {
     // TODO: doc attr support
     $(
         #[doc = concat!("`\"", $label, "\"`")]
-        pub const $id : Constant = Constant(abistr::cstr16!($label));
+        pub const $id : Constant = Constant(cstr16!($label));
     )*
 }}
 

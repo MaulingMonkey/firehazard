@@ -36,7 +36,7 @@ pub fn in_place_unstable<T>(slice: &mut [T], mut cond: impl FnMut(&T) -> bool) -
 }
 
 #[test] fn part() {
-    use crate::*;
+    use crate::prelude::*;
 
     let mut a = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     let (even, odd) = partition::in_place_unstable_split(&mut a[..], |i| i%2==0);

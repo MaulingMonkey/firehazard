@@ -1,7 +1,8 @@
+use crate::prelude::*;
+
 use winapi::shared::ntdef::HANDLE;
 use winapi::um::minwinbase::*;
 
-use core::marker::PhantomData;
 use core::ops::Deref;
 
 

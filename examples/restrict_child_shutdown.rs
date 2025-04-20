@@ -27,7 +27,7 @@ fn main() {
     assert!(matches!(r, Ok(ERROR_ACCESS_DENIED)), "`shutdown /s /t 3600` succeeded despite trying to throw away `SeShutdownPrivilege`: {r:?}");
 }
 
-fn shutdown_as_user(args: &str, token: &token::OwnedHandle) -> Result<u32, Error> {
+fn shutdown_as_user(args: &str, token: &token::OwnedHandle) -> firehazard::Result<u32> {
     let mut args = format!("shutdown {args}\0").encode_utf16().collect::<Vec<_>>();
     let si = process::StartupInfoW::default();
     let cmd = create_process_as_user_w(token, (), Some(&mut args[..]), None, None, false, process::DETACHED_PROCESS, process::environment::Inherit, (), &si)?;

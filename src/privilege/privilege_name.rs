@@ -1,6 +1,5 @@
-use crate::*;
+use crate::prelude::*;
 
-use abistr::CStrNonNull;
 use winapi::um::winnt::LUID;
 
 
@@ -24,7 +23,7 @@ impl Name {
     /// *   `ERROR_NO_SUCH_PRIVILEGE`   if `name` doesn't name a known privilege in this version of Windows
     /// *   `ERROR_INVALID_HANDLE`      on some permission lookup errors (e.g. if the current process's token was restricted, and excluded [`sid::builtin::alias::USERS`](crate::sid::builtin::alias::USERS))
     ///
-    pub fn lookup_luid(self) -> Result<privilege::Luid, Error> {
+    pub fn lookup_luid(self) -> firehazard::Result<privilege::Luid> {
         privilege::lookup_privilege_value_a(self.name)
     }
 
@@ -57,7 +56,7 @@ pub mod name {
             #[doc = concat!(stringify!($name))]
             ///
             pub const $id : Name = Name {
-                name:       abistr::cstr!($name),
+                name:       cstr8!($name),
                 hardcoded:  privilege::Luid(Luid(LUID { HighPart: 0, LowPart: $luid })),
             };
         )*

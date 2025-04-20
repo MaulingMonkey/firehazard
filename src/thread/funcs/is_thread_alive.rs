@@ -16,9 +16,8 @@
 /// [strict handle checks](crate::process::mitigation::StrictHandleCheckPolicy)
 /// are enabled.
 ///
-pub fn is_thread_alive<'a>(thread: impl Into<firehazard::thread::Handle<'a>>) -> bool {
-    use firehazard::AsLocalHandle;
-    winapi::shared::winerror::WAIT_TIMEOUT == unsafe { winapi::um::synchapi::WaitForSingleObject(
+pub fn is_thread_alive<'a>(thread: impl Into<thread::Handle<'a>>) -> bool {
+    WAIT_TIMEOUT == unsafe { winapi::um::synchapi::WaitForSingleObject(
         thread.into().as_handle(),
         0, // wait duration
     )}

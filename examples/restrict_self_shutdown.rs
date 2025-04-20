@@ -28,6 +28,6 @@ fn main() {
     assert!(matches!(r, Ok(Some(ERROR_ACCESS_DENIED))), "initial `shutdown /a` succeeded despite trying to throw away `SeShutdownPrivilege`: {r:?}");
 }
 
-fn shutdown(args: &str) -> Result<Option<u32>, io::Error> {
+fn shutdown(args: &str) -> io::Result<Option<u32>> {
     Command::new("shutdown").args(args.split(' ')).stderr(Stdio::null()).status().map(|s| s.code().map(|c| c as _))
 }

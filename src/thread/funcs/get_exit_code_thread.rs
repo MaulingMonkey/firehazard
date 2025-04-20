@@ -9,8 +9,7 @@
 /// *   `Err(...)`                                  if `thread` lacks appropriate querying permissions?
 /// *   `Err(...)`                                  if `thread` is an invalid handle?
 ///
-pub fn get_exit_code_thread<'a>(thread: impl Into<firehazard::thread::Handle<'a>>) -> Result<u32, firehazard::Error> {
-    use firehazard::AsLocalHandle;
+pub fn get_exit_code_thread<'a>(thread: impl Into<thread::Handle<'a>>) -> firehazard::Result<u32> {
     let mut exit_code = 0;
     firehazard::Error::get_last_if(0 == unsafe { winapi::um::processthreadsapi::GetExitCodeThread(
         thread.into().as_handle(),

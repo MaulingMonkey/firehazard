@@ -1,14 +1,12 @@
-use crate::*;
-use abistr::*;
+use crate::prelude::*;
 use winapi::ctypes::c_char;
-use winapi::shared::minwindef::{FALSE, LPARAM, BOOL, TRUE};
+use winapi::shared::minwindef::LPARAM;
 use winapi::shared::ntdef::HANDLE;
 use winapi::shared::windef::HDESK;
 use winapi::um::errhandlingapi::SetLastError;
 use winapi::um::handleapi::DuplicateHandle;
 use winapi::um::winnt::DUPLICATE_SAME_ACCESS;
 use winapi::um::winuser::*;
-use core::ptr::null;
 
 
 
@@ -64,13 +62,13 @@ use core::ptr::null;
 /// let _ : () = close_desktop(desktop).unwrap();
 /// ```
 ///
-pub fn close_desktop(desktop: impl Into<desktop::OwnedHandle>) -> Result<(), (desktop::OwnedHandle, Error)> {
+pub fn close_desktop(desktop: impl Into<desktop::OwnedHandle>) -> Result<(), (desktop::OwnedHandle, firehazard::Error)> {
     let desktop = desktop.into();
     if FALSE != unsafe { CloseDesktop(desktop.as_handle()) } {
         core::mem::forget(desktop);
         Ok(())
     } else {
-        Err((desktop, Error::get_last()))
+        Err((desktop, firehazard::Error::get_last()))
     }
 }
 
@@ -98,7 +96,7 @@ pub fn create_desktop_a(
     flags:          impl Into<desktop::Flags>,
     desired_access: impl Into<desktop::AccessRights>,
     sa:             Option<&security::Attributes>,
-) -> Result<desktop::OwnedHandle, Error> {
+) -> firehazard::Result<desktop::OwnedHandle> {
     let handle = unsafe { CreateDesktopA(
         desktop.try_into()?.as_cstr(),
         device.try_into()?.as_opt_cstr(),
@@ -107,7 +105,7 @@ pub fn create_desktop_a(
         desired_access.into().into(),
         sa.map_or(null(), |sa| sa) as *mut _
     )};
-    Error::get_last_if(handle.is_null())?;
+    firehazard::Error::get_last_if(handle.is_null())?;
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
@@ -136,7 +134,7 @@ pub fn create_desktop_w(
     flags:          impl Into<desktop::Flags>,
     desired_access: impl Into<desktop::AccessRights>,
     sa:             Option<&security::Attributes>,
-) -> Result<desktop::OwnedHandle, Error> {
+) -> firehazard::Result<desktop::OwnedHandle> {
     let handle = unsafe { CreateDesktopW(
         desktop.try_into()?.as_cstr(),
         device.try_into()?.as_opt_cstr(),
@@ -145,7 +143,7 @@ pub fn create_desktop_w(
         desired_access.into().into(),
         sa.map_or(null(), |sa| sa) as *mut _
     )};
-    Error::get_last_if(handle.is_null())?;
+    firehazard::Error::get_last_if(handle.is_null())?;
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
@@ -188,15 +186,23 @@ pub fn create_desktop_w(
 /// *window stations* instead of enumerating *desktops of said window station*.  As such, I've made `winsta` a non-optional
 /// type in this function.
 ///
-pub fn enum_desktops_a<F: FnMut(CStrPtr) -> Result<(), Error>>(
+pub fn enum_desktops_a<
+    F: FnMut(CStrPtr) -> firehazard::Result<()>
+>(
     winsta:         &winsta::OwnedHandle,
     mut enum_func:  F,
-) -> Result<(), Error> {
+) -> firehazard::Result<()> {
     let enum_func : *mut F = &mut enum_func;
-    Error::get_last_if(FALSE == unsafe { EnumDesktopsA(winsta.as_handle(), Some(fwd_enum_desktops_a::<F>), enum_func as LPARAM) })
+    firehazard::Error::get_last_if(FALSE == unsafe { EnumDesktopsA(
+        winsta.as_handle(),
+        Some(fwd_enum_desktops_a::<F>),
+        enum_func as LPARAM,
+    )})
 }
 
-unsafe extern "system" fn fwd_enum_desktops_a<F: FnMut(CStrPtr) -> Result<(), Error>>(desktop: *mut c_char, param: LPARAM) -> BOOL {
+unsafe extern "system" fn fwd_enum_desktops_a<
+    F: FnMut(CStrPtr) -> firehazard::Result<()>
+>(desktop: *mut c_char, param: LPARAM) -> BOOL {
     let desktop = unsafe { CStrPtr::from_ptr_unbounded(desktop) };
     let f = unsafe { &mut *(param as *mut F) };
     match f(desktop) {
@@ -238,15 +244,17 @@ unsafe extern "system" fn fwd_enum_desktops_a<F: FnMut(CStrPtr) -> Result<(), Er
 /// *window stations* instead of enumerating *desktops of said window station*.  As such, I've made `winsta` a non-optional
 /// type in this function.
 ///
-pub fn enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(), Error>>(
+pub fn enum_desktops_w<F: FnMut(CStrPtr<u16>) -> firehazard::Result<()>>(
     winsta:         &winsta::OwnedHandle,
     mut enum_func:  F,
-) -> Result<(), Error> {
+) -> firehazard::Result<()> {
     let enum_func : *mut F = &mut enum_func;
-    Error::get_last_if(FALSE == unsafe { EnumDesktopsW(winsta.as_handle(), Some(fwd_enum_desktops_w::<F>), enum_func as LPARAM) })
+    firehazard::Error::get_last_if(FALSE == unsafe { EnumDesktopsW(winsta.as_handle(), Some(fwd_enum_desktops_w::<F>), enum_func as LPARAM) })
 }
 
-unsafe extern "system" fn fwd_enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(), Error>>(desktop: *mut u16, param: LPARAM) -> BOOL {
+unsafe extern "system" fn fwd_enum_desktops_w<
+    F: FnMut(CStrPtr<u16>) -> firehazard::Result<()>
+>(desktop: *mut u16, param: LPARAM) -> BOOL {
     let desktop = unsafe { CStrPtr::<u16>::from_ptr_unbounded(desktop) };
     let f = unsafe { &mut *(param as *mut F) };
     match f(desktop) {
@@ -281,11 +289,11 @@ unsafe extern "system" fn fwd_enum_desktops_w<F: FnMut(CStrPtr<u16>) -> Result<(
 ///
 /// A borrowed handle is super awkward here, so this function returns a *duplicated* handle that can be closed instead.
 ///
-pub fn open_thread_desktop(thread_id: thread::Id) -> Result<desktop::OwnedHandle, Error> {
+pub fn open_thread_desktop(thread_id: thread::Id) -> firehazard::Result<desktop::OwnedHandle> {
     let mut desktop : HANDLE = unsafe { GetThreadDesktop(thread_id) }.cast();
-    Error::get_last_if(desktop.is_null())?;
+    firehazard::Error::get_last_if(desktop.is_null())?;
     let process = get_current_process().as_handle();
-    Error::get_last_if(FALSE == unsafe { DuplicateHandle(process, desktop, process, &mut desktop, 0, 0, DUPLICATE_SAME_ACCESS) })?;
+    firehazard::Error::get_last_if(FALSE == unsafe { DuplicateHandle(process, desktop, process, &mut desktop, 0, 0, DUPLICATE_SAME_ACCESS) })?;
     unsafe { desktop::OwnedHandle::from_raw(desktop.cast()) }
 }
 
@@ -310,14 +318,14 @@ pub fn open_desktop_a(
     flags:          impl Into<desktop::Flags>,
     inherit:        bool,
     desired_access: impl Into<desktop::AccessRights>,
-) -> Result<desktop::OwnedHandle, Error> {
+) -> firehazard::Result<desktop::OwnedHandle> {
     let handle = unsafe { OpenDesktopA(
         desktop.try_into()?.as_cstr(),
         flags.into().into(),
         inherit as _,
         desired_access.into().into()
     )};
-    Error::get_last_if(handle.is_null())?;
+    firehazard::Error::get_last_if(handle.is_null())?;
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
@@ -343,14 +351,14 @@ pub fn open_desktop_w(
     flags:          impl Into<desktop::Flags>,
     inherit:        bool,
     desired_access: impl Into<desktop::AccessRights>,
-) -> Result<desktop::OwnedHandle, Error> {
+) -> firehazard::Result<desktop::OwnedHandle> {
     let handle = unsafe { OpenDesktopW(
         desktop.try_into()?.as_cstr(),
         flags.into().into(),
         inherit as _,
         desired_access.into().into()
     )};
-    Error::get_last_if(handle.is_null())?;
+    firehazard::Error::get_last_if(handle.is_null())?;
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
@@ -371,9 +379,9 @@ pub fn open_input_desktop(
     flags:          impl Into<desktop::Flags>,
     inherit:        bool,
     desired_access: impl Into<desktop::AccessRights>,
-) -> Result<desktop::OwnedHandle, Error> {
+) -> firehazard::Result<desktop::OwnedHandle> {
     let handle = unsafe { OpenInputDesktop(flags.into().into(), inherit as _, desired_access.into().into()) };
-    Error::get_last_if(handle.is_null())?;
+    firehazard::Error::get_last_if(handle.is_null())?;
     unsafe { desktop::OwnedHandle::from_raw(handle) }
 }
 
@@ -401,8 +409,8 @@ pub fn open_input_desktop(
 /// switch_desktop(&original).unwrap();
 /// ```
 ///
-pub fn switch_desktop(desktop: &desktop::OwnedHandle) -> Result<(), Error> {
-    Error::get_last_if(FALSE == unsafe { SwitchDesktop(desktop.as_handle()) })
+pub fn switch_desktop(desktop: &desktop::OwnedHandle) -> firehazard::Result<()> {
+    firehazard::Error::get_last_if(FALSE == unsafe { SwitchDesktop(desktop.as_handle()) })
 }
 
 
@@ -454,12 +462,12 @@ pub fn switch_desktop(desktop: &desktop::OwnedHandle) -> Result<(), Error> {
 /// *   By strictly enforcing LIFO stacking order / borrowing for the thread's desktops, [`with_thread_desktop`] avoids the
 ///     awkward ownership issues of `'static` lifetimes that would be involved with directly exposing SetThreadDesktop.
 ///
-pub fn with_thread_desktop<R>(desktop: &desktop::OwnedHandle, f: impl FnOnce()->R) -> Result<R, Error> {
+pub fn with_thread_desktop<R>(desktop: &desktop::OwnedHandle, f: impl FnOnce()->R) -> firehazard::Result<R> {
     let thread = get_current_thread_id();
     let original = unsafe { GetThreadDesktop(thread) };
     let desktop = desktop.as_handle();
-    Error::get_last_if(original.is_null())?;
-    Error::get_last_if(FALSE == unsafe { SetThreadDesktop(desktop) })?;
+    firehazard::Error::get_last_if(original.is_null())?;
+    firehazard::Error::get_last_if(FALSE == unsafe { SetThreadDesktop(desktop) })?;
 
     struct RestoreDesktopOnDrop(HDESK);
     impl Drop for RestoreDesktopOnDrop { fn drop(&mut self) { assert_eq!(FALSE, unsafe { SetThreadDesktop(self.0) }) } }
@@ -469,6 +477,6 @@ pub fn with_thread_desktop<R>(desktop: &desktop::OwnedHandle, f: impl FnOnce()->
 
     debug_assert_eq!(desktop, unsafe { GetThreadDesktop(thread) });
     core::mem::forget(restore_desktop); // manually restore for error codes:
-    Error::get_last_if(FALSE == unsafe { SetThreadDesktop(original) })?;
+    firehazard::Error::get_last_if(FALSE == unsafe { SetThreadDesktop(original) })?;
     Ok(r)
 }

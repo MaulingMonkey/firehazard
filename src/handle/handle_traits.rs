@@ -1,6 +1,4 @@
-use crate::*;
-use winapi::ctypes::c_void;
-use core::ptr::NonNull;
+use crate::prelude::*;
 
 
 
@@ -39,8 +37,8 @@ pub trait FromLocalHandle<H=c_void> : Sized {
     /// Assuming `handle` isn't null:
     /// *   `handle` should have the correct [type](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects) (passing an HDESK where HWINSTA was expected may be undefined behavior)
     /// *   `handle` will be borrowed for `'a` by `Self<'a>` or have ownership transfered to `Self` (destroying the handle out from underneath either may be undefined behavior)
-    unsafe fn from_raw(handle: *mut H) -> Result<Self, Error> {
-        let handle = core::ptr::NonNull::new(handle).ok_or(Error(winapi::shared::winerror::ERROR_INVALID_HANDLE))?;
+    unsafe fn from_raw(handle: *mut H) -> firehazard::Result<Self> {
+        let handle = NonNull::new(handle).ok_or(ERROR_INVALID_HANDLE)?;
         Ok(unsafe { Self::from_raw_nn(handle) })
     }
 
@@ -53,8 +51,8 @@ pub trait FromLocalHandle<H=c_void> : Sized {
     /// Assuming `*handle` isn't null:
     /// *   `*handle` should have the correct [type](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects) (passing an HDESK where HWINSTA was expected may be undefined behavior)
     /// *   `*handle` will be borrowed for `'a` by `&'a Self<'a>` (destroying the handle out from underneath either may be undefined behavior)
-    unsafe fn borrow_from_raw(handle: &*mut H) -> Result<&Self, Error> {
-        if handle.is_null() { return Err(Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)) }
+    unsafe fn borrow_from_raw(handle: &*mut H) -> firehazard::Result<&Self> {
+        NonNull::new(*handle).ok_or(ERROR_INVALID_HANDLE)?;
         Ok(unsafe { Self::borrow_from_raw_nn(core::mem::transmute(handle)) })
     }
 

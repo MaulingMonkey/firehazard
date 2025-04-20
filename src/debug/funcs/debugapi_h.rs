@@ -1,4 +1,4 @@
-use crate::*;
+use crate::prelude::*;
 use crate::debug::DebugEvent;
 
 use abistr::AsCStr;
@@ -23,9 +23,9 @@ use core::time::Duration;
 /// assert_eq!(a, b);
 /// ```
 ///
-pub fn check_remote_debugger_present<'a>(process: impl Into<process::PseudoHandle<'a>>) -> Result<bool, Error> {
+pub fn check_remote_debugger_present<'a>(process: impl Into<process::PseudoHandle<'a>>) -> firehazard::Result<bool> {
     let mut result = 0;
-    Error::get_last_if(FALSE == unsafe { CheckRemoteDebuggerPresent(process.into().as_handle(), &mut result) })?;
+    firehazard::Error::get_last_if(FALSE == unsafe { CheckRemoteDebuggerPresent(process.into().as_handle(), &mut result) })?;
     Ok(result != FALSE)
 }
 
@@ -35,8 +35,8 @@ pub fn check_remote_debugger_present<'a>(process: impl Into<process::PseudoHandl
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-continuedebugevent)\]
 /// ContinueDebugEvent
 ///
-pub fn continue_debug_event(process_id: process::Id, thread_id: thread::Id, continue_status: u32) -> Result<(), Error> {
-    Error::get_last_if(FALSE == unsafe { ContinueDebugEvent(process_id, thread_id, continue_status) })
+pub fn continue_debug_event(process_id: process::Id, thread_id: thread::Id, continue_status: u32) -> firehazard::Result<()> {
+    firehazard::Error::get_last_if(FALSE == unsafe { ContinueDebugEvent(process_id, thread_id, continue_status) })
 }
 
 
@@ -55,8 +55,8 @@ pub fn continue_debug_event(process_id: process::Id, thread_id: thread::Id, cont
 /// debug_active_process(pid).unwrap();
 /// ```
 ///
-pub fn debug_active_process(process_id: process::Id) -> Result<(), Error> {
-    Error::get_last_if(FALSE == unsafe { DebugActiveProcess(process_id) })
+pub fn debug_active_process(process_id: process::Id) -> firehazard::Result<()> {
+    firehazard::Error::get_last_if(FALSE == unsafe { DebugActiveProcess(process_id) })
 }
 
 
@@ -76,8 +76,8 @@ pub fn debug_active_process(process_id: process::Id) -> Result<(), Error> {
 /// debug_active_process_stop(pid).expect("stop debugging self");
 /// ```
 ///
-pub fn debug_active_process_stop(process_id: process::Id) -> Result<(), Error> {
-    Error::get_last_if(FALSE == unsafe { DebugActiveProcessStop(process_id) })
+pub fn debug_active_process_stop(process_id: process::Id) -> firehazard::Result<()> {
+    firehazard::Error::get_last_if(FALSE == unsafe { DebugActiveProcessStop(process_id) })
 }
 
 
@@ -156,10 +156,10 @@ pub fn output_debug_string_w(output_string: impl AsCStr<u16>) {
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-waitfordebugevent)\]
 /// WaitForDebugEvent
 ///
-pub fn wait_for_debug_event(timeout: impl Into<Option<Duration>>) -> Result<DebugEvent, Error> {
+pub fn wait_for_debug_event(timeout: impl Into<Option<Duration>>) -> firehazard::Result<DebugEvent> {
     let timeout_ms = timeout.into().map_or(INFINITE, |d| u32::try_from(d.as_millis()).unwrap_or(INFINITE).max(INFINITE-1));
     let mut de = Default::default();
-    Error::get_last_if(FALSE == unsafe { WaitForDebugEvent(&mut de, timeout_ms) })?;
+    firehazard::Error::get_last_if(FALSE == unsafe { WaitForDebugEvent(&mut de, timeout_ms) })?;
     Ok(unsafe { DebugEvent::from_raw(de) })
 }
 
@@ -169,9 +169,9 @@ pub fn wait_for_debug_event(timeout: impl Into<Option<Duration>>) -> Result<Debu
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-waitfordebugeventex)\]
 /// WaitForDebugEventEx
 ///
-pub fn wait_for_debug_event_ex(timeout: impl Into<Option<Duration>>) -> Result<DebugEvent, Error> {
+pub fn wait_for_debug_event_ex(timeout: impl Into<Option<Duration>>) -> firehazard::Result<DebugEvent> {
     let timeout_ms = timeout.into().map_or(INFINITE, |d| u32::try_from(d.as_millis()).unwrap_or(INFINITE).max(INFINITE-1));
     let mut de = Default::default();
-    Error::get_last_if(FALSE == unsafe { WaitForDebugEventEx(&mut de, timeout_ms) })?;
+    firehazard::Error::get_last_if(FALSE == unsafe { WaitForDebugEventEx(&mut de, timeout_ms) })?;
     Ok(unsafe { DebugEvent::from_raw(de) })
 }

@@ -16,7 +16,8 @@ mod sid_value;                          pub use sid_value::*;
 
 pub use funcs::*;
 pub(crate) mod funcs {
-    mod convert_sid_to_string_sid;  pub use convert_sid_to_string_sid::*;
-    mod convert_string_sid_to_sid;  pub use convert_string_sid_to_sid::*;
+    use crate::prelude::*;
+    include!(r"funcs\convert_sid_to_string_sid.rs");
+    include!(r"funcs\convert_string_sid_to_sid.rs");
     include!(r"funcs\equal_sid.rs");
 }

@@ -43,14 +43,12 @@
 /// ```
 ///
 pub fn get_info<'a, 'b, 'c, 'd>(
-    handle:             &impl firehazard::AsLocalHandle,
+    handle:             &impl AsLocalHandle,
     flags:              impl Into<Option<&'a mut u32>>,
     out_buffer_size:    impl Into<Option<&'b mut u32>>,
     in_buffer_size:     impl Into<Option<&'c mut u32>>,
-    max_instances:      impl Into<Option<&'d mut firehazard::pipe::MaxInstances>>,
-) -> Result<(), firehazard::Error> {
-    use core::ptr::null_mut;
-
+    max_instances:      impl Into<Option<&'d mut pipe::MaxInstances>>,
+) -> firehazard::Result<()> {
     firehazard::Error::get_last_if(0 == unsafe { winapi::um::namedpipeapi::GetNamedPipeInfo(
         handle          .as_handle(),
         flags           .into().map_or(null_mut(), |r| r),

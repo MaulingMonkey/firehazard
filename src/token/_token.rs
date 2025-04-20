@@ -30,6 +30,7 @@ mod values {
 
 pub use funcs::*;
 pub(crate) mod funcs {
+    use crate::prelude::*;
     include!(r"funcs\create_restricted_token.rs");
     include!(r"funcs\duplicate_token_ex.rs");
     include!(r"funcs\get_current_x_token.rs");
