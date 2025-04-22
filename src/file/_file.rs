@@ -9,4 +9,6 @@ pub use funcs::*;
 pub(crate) mod funcs {
     use crate::prelude::*;
     include!(r"funcs\get_file_type.rs");
+    include!(r"funcs\get_final_path_name_by_handle.rs");
+    include!(r"funcs\set_file_pointer.rs");
 }
