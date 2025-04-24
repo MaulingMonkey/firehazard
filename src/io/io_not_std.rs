@@ -29,7 +29,7 @@ enum ErrorImpl {
 }
 
 impl Error {
-    // fn new
+    pub fn new(kind: ErrorKind, _message: &'static str) -> Self { Self(ErrorImpl::Kind(kind)) }
     // fn other
     pub fn last_os_error() -> Self { Self::from_raw_os_error(crate::Error::get_last().into()) }
     pub fn from_raw_os_error(code: i32) -> Self { Self(ErrorImpl::Code(code)) }
