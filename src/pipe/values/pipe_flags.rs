@@ -1,3 +1,4 @@
+#[allow(unused_imports)] use crate::prelude::*;
 use winapi::shared::minwindef::DWORD;
 use winapi::um::winbase::*;
 
@@ -51,9 +52,13 @@ pub const TYPE_MESSAGE : DWORD = PIPE_TYPE_MESSAGE;
 ///
 pub const WAIT : DWORD = PIPE_WAIT;
 
+#[deprecated = "Microsoft LAN Manager 2.0 compatability cruft that should not be used"]
 #[doc(alias = "PIPE_NOWAIT")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew#parameters)\]
 /// PIPE_NOWAIT
+///
+/// Microsoft LAN Manager 2.0 compatability cruft that should not be used.
+/// ReadFile, WriteFile, and [`pipe::named::connect`] will always return immediately.
 ///
 pub const NOWAIT : DWORD = PIPE_NOWAIT;
 
