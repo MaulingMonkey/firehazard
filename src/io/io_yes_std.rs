@@ -6,22 +6,26 @@ use crate::os::windows::prelude::*;
 
 
 
+/// <code>std::os::windows::io::[FromRawHandle::from_raw_handle](std::os::windows::io::FromRawHandle::from_raw_handle)</code> reads:
+/// "The handle passed in must: [...] be an owned handle; in particular, it must be open."
+///
+/// As such, I believe <code>std::fs::[File](std::fs::File)::[from_raw_handle](std::fs::File::from_raw_handle)(core::ptr::[null_mut](core::ptr::null_mut)())</code> is undefined behavior.
+/// This is further evidenced by <code>std::os::windows::io::[HandleOrNull::from_raw_handle](std::os::windows::io::HandleOrNull::from_raw_handle)</code>, which reads:
+/// "The passed handle value must either satisfy the safety requirements of FromRawHandle::from_raw_handle, or be null."
+///
+/// This implies null does *not* meet the baseline requirements of [`FromRawHandle::from_raw_handle`](std::os::windows::io::FromRawHandle::from_raw_handle)
+///
+const EXPECT_NONNULL_STD_FILE : &'static str = r#"undefined behavior: `std::fs::File::from_raw_handle(core::ptr::null_mut())` was presumably called earlier - but null is not an open, owned handle, as required per `std::os::windows::io::FromRawHandle::from_raw_handle`'s "Safety" docs."#;
+
 /// XXX: FileNN currently assumes the handle was created without using `FILE_FLAG_OVERLAPPED`.
 /// However, std::fs::File may wrap a handle that *was* created using `FILE_FLAG_OVERLAPPED`.
 /// See https://github.com/rust-lang/rust/issues/81357 for notes on the required workarounds for soundness.
 #[cfg(nope)] // See also disabled unit test bellow
-impl From<std::fs::File> for FileNN { fn from(file: std::fs::File) -> Self {
-    // [`FromRawHandle::from_raw_handle`](https://doc.rust-lang.org/std/os/windows/io/trait.FromRawHandle.html#tymethod.from_raw_handle) reads:
-    // "The handle passed in must: [...] be an owned handle; in particular, it must be open."
-    //
-    // As such, I believe `File::from_raw_handle(null_ptr())` is undefined behavior. This is further evidenced by
-    // [`HandleOrNull::from_raw_handle`](https://doc.rust-lang.org/std/os/windows/io/struct.HandleOrNull.html#method.from_raw_handle), which reads:
-    // "The passed handle value must either satisfy the safety requirements of FromRawHandle::from_raw_handle, or be null."
-    //
-    // This implies null does *not* meet the baseline requirements of `FromRawHandle::from_raw_handle`.
-    //
-    Self(HANDLENN::new(file.into_raw_handle()).expect("undefined behavior: `std::fs::File::from_raw_handle(null_ptr())` was presumably called earlier, but null is not an open, owned handle")) }
-}
+impl     From<    std::fs::File> for FileNN                 { fn from(file:     std::fs::File) -> Self { unsafe { Self::from_raw(file.into_raw_handle()  .cast()) }.expect(EXPECT_NONNULL_STD_FILE) } }
+// yep:
+impl     From<    std::fs::File> for handle::Owned          { fn from(file:     std::fs::File) -> Self { unsafe { Self::from_raw(file.into_raw_handle()  .cast()) }.expect(EXPECT_NONNULL_STD_FILE) } }
+impl<'a> From<&'a std::fs::File> for handle::Borrowed<'a>   { fn from(file: &'a std::fs::File) -> Self { unsafe { Self::from_raw(file.as_raw_handle()    .cast()) }.expect(EXPECT_NONNULL_STD_FILE) } }
+impl<'a> From<&'a std::fs::File> for handle::Pseudo<'a>     { fn from(file: &'a std::fs::File) -> Self { unsafe { Self::from_raw(file.as_raw_handle()    .cast()) }.expect(EXPECT_NONNULL_STD_FILE) } }
 
 // FileNN → File should be sound since the former currently forbids `FILE_FLAG_OVERLAPPED`.
 impl From<FileNN> for std::fs::File { fn from(file: FileNN) -> Self { unsafe { std::fs::File::from_raw_handle(file.into_handle()) } } }
@@ -35,11 +39,30 @@ impl    AsLocalHandle for std::process::ChildStdin      { fn as_handle(&self) ->
 impl    AsLocalHandle for std::process::ChildStdout     { fn as_handle(&self) -> HANDLE { self.as_raw_handle().cast() } }
 
 #[cfg(test)] mod tests {
-    #[allow(unused_imports)] use crate::prelude::*;
+    use crate::prelude::*;
+    #[cfg(std)] use std::os::windows::io::*;
 
     #[cfg(nope)] // File → FileNN currently disabled
-    #[test] #[should_panic = "undefined behavior"] fn null_std_fs_file() {
+    #[test] #[should_panic = "undefined behavior"] fn null_std_fs_file_to_filenn() {
         let null = unsafe { std::fs::File::from_raw_handle(null_mut()) }; // arguably u.b.
         let _panic = io::FileNN::from(null); // u.b. detected
+    }
+
+    #[cfg(std)]
+    #[test] #[should_panic = "undefined behavior"] fn null_std_fs_file_to_owned() {
+        let null = unsafe { std::fs::File::from_raw_handle(null_mut()) }; // arguably u.b.
+        let _panic = handle::Owned::from(null); // u.b. detected
+    }
+
+    #[cfg(std)]
+    #[test] #[should_panic = "undefined behavior"] fn null_std_fs_file_to_borrowed() {
+        let null = unsafe { std::fs::File::from_raw_handle(null_mut()) }; // arguably u.b.
+        let _panic = handle::Borrowed::from(&null); // u.b. detected
+    }
+
+    #[cfg(std)]
+    #[test] #[should_panic = "undefined behavior"] fn null_std_fs_file_to_pseudo() {
+        let null = unsafe { std::fs::File::from_raw_handle(null_mut()) }; // arguably u.b.
+        let _panic = handle::Pseudo::from(&null); // u.b. detected
     }
 }
