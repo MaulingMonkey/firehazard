@@ -96,10 +96,18 @@ pub const READMODE_MESSAGE : DWORD = PIPE_READMODE_MESSAGE;
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-getnamedpipeinfo)\]
 /// PIPE_CLIENT_END
 ///
+/// Pipe was created with `CreateFile*`, not `CreateNamedPipe*`.
+///
+/// This (currently) includes the "write" pipe created through [`pipe::create`] (and other `CreatePipe` wrappers), but not the "read" pipe.
+///
 pub const CLIENT_END : DWORD = PIPE_CLIENT_END;
 
 #[doc(alias = "PIPE_SERVER_END")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-getnamedpipeinfo)\]
 /// PIPE_SERVER_END
+///
+/// Pipe was created with `CreateNamedPipe*`, not `CreateFile*`.
+///
+/// This (currently) includes the "read" pipe created through [`pipe::create`] (and other `CreatePipe` wrappers), but not the "write" pipe.
 ///
 pub const SERVER_END : DWORD = PIPE_SERVER_END;
