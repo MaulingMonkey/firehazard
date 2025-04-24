@@ -9,8 +9,12 @@
 /// #
 /// let (read, write) = pipe::create(None, 0).unwrap();
 /// let local = pipe::named::create_w(
-///     cstr16!(r"\\.\pipe\local\firehazard_get_named_pipe_info_example"),
+///     cstr16!(r"\\.\pipe\local\firehazard_get_named_pipe_info_example_bytes"),
 ///     pipe::ACCESS_DUPLEX, 0, pipe::UNLIMITED_INSTANCES, 0, 0, None, None,
+/// ).unwrap();
+/// let messages = pipe::named::create_w(
+///     cstr16!(r"\\.\pipe\local\firehazard_get_named_pipe_info_example_messages"),
+///     pipe::ACCESS_DUPLEX, pipe::TYPE_MESSAGE | pipe::READMODE_MESSAGE, pipe::UNLIMITED_INSTANCES, 0, 0, None, None,
 /// ).unwrap();
 ///
 /// let mut flags = 0;
@@ -36,10 +40,17 @@
 /// dbg!(in_buffer_size ); // 0?
 /// assert_eq!(max_instances, pipe::UNLIMITED_INSTANCES);
 ///
+/// pipe::named::get_info(&messages, &mut flags, &mut out_buffer_size, &mut in_buffer_size, &mut max_instances).unwrap();
+/// assert_eq!(flags, pipe::SERVER_END | pipe::TYPE_MESSAGE); // n.b. no pipe::READMODE_MESSAGE
+/// dbg!(out_buffer_size); // 0?
+/// dbg!(in_buffer_size ); // 0?
+/// assert_eq!(max_instances, pipe::UNLIMITED_INSTANCES);
+///
 /// // Pointless noop, but they do at least "succeed":
-/// pipe::named::get_info(&read,  None, None, None, None).unwrap();
-/// pipe::named::get_info(&write, None, None, None, None).unwrap();
-/// pipe::named::get_info(&local, None, None, None, None).unwrap();
+/// pipe::named::get_info(&read,     None, None, None, None).unwrap();
+/// pipe::named::get_info(&write,    None, None, None, None).unwrap();
+/// pipe::named::get_info(&local,    None, None, None, None).unwrap();
+/// pipe::named::get_info(&messages, None, None, None, None).unwrap();
 /// ```
 ///
 pub fn get_info<'a, 'b, 'c, 'd>(
