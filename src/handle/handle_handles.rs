@@ -90,13 +90,16 @@ impl Pseudo<'_>     { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.c
     #[repr(transparent)] struct Invalid(HANDLE);
     #[repr(transparent)] struct InvalidNN(HANDLENN);
 
-    impl AsLocalHandle   for Invalid   { fn as_handle(&self) -> HANDLE { self.0 } }
-    impl AsLocalHandleNN for InvalidNN { fn as_handle_nn(&self) -> HANDLENN { self.0 } }
+    impl AsLocalHandle   for Invalid                { fn as_handle(&self)       -> HANDLE   { self.0 } }
+    impl AsLocalHandleNN for InvalidNN              { fn as_handle_nn(&self)    -> HANDLENN { self.0 } }
+    impl From<InvalidNN> for handle::Owned          { fn from(_: InvalidNN) -> Self { unsafe { core::mem::transmute(winapi::um::handleapi::INVALID_HANDLE_VALUE) } } }
+    impl From<InvalidNN> for handle::Borrowed<'_>   { fn from(_: InvalidNN) -> Self { unsafe { core::mem::transmute(winapi::um::handleapi::INVALID_HANDLE_VALUE) } } }
+    impl From<InvalidNN> for handle::Pseudo<'_>     { fn from(_: InvalidNN) -> Self { unsafe { core::mem::transmute(winapi::um::handleapi::INVALID_HANDLE_VALUE) } } }
 
-    pub(crate) fn null()                    -> impl AsLocalHandle                   { Invalid(null_mut()) }
-    pub(crate) fn invalid_value()           -> impl AsLocalHandle + AsLocalHandleNN { InvalidNN(unsafe { NonNull::new_unchecked(winapi::um::handleapi::INVALID_HANDLE_VALUE.cast()) }) }
-    pub(crate) fn never_valid()             -> impl AsLocalHandle + AsLocalHandleNN { InvalidNN(unsafe { NonNull::new_unchecked(0x12345678_usize as *mut _) }) }
-    #[cfg(std)] pub(crate) fn dangling()    -> impl AsLocalHandle + AsLocalHandleNN {
+    pub(crate) fn null()                    -> impl AsLocalHandle                                                                                                           { Invalid(null_mut()) }
+    pub(crate) fn invalid_value()           -> impl AsLocalHandle + AsLocalHandleNN + Into<handle::Owned> + Into<handle::Borrowed<'static>> + Into<handle::Pseudo<'static>> { InvalidNN(unsafe { NonNull::new_unchecked(winapi::um::handleapi::INVALID_HANDLE_VALUE.cast()) }) }
+    pub(crate) fn never_valid()             -> impl AsLocalHandle + AsLocalHandleNN + Into<handle::Owned> + Into<handle::Borrowed<'static>> + Into<handle::Pseudo<'static>> { InvalidNN(unsafe { NonNull::new_unchecked(0x12345678_usize as *mut _) }) }
+    #[cfg(std)] pub(crate) fn dangling()    -> impl AsLocalHandle + AsLocalHandleNN + Into<handle::Owned> + Into<handle::Borrowed<'static>> + Into<handle::Pseudo<'static>> {
         use std::os::windows::io::AsRawHandle;
         let file = std::fs::File::open("Readme.md").unwrap();
         let dangling = file.as_raw_handle().cast();
