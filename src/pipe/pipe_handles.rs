@@ -79,13 +79,13 @@ handles!(unsafe impl @convert &'_ pipe::WriterNN => handle::Pseudo<'_>      );
 #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for ReaderNN { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for WriterNN { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 
-impl io::Read   for &'_ pipe::DuplexNN  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(*self, buf, None).map(usize::from32)?) } } }
+//pl io::Read   for &'_ pipe::DuplexNN  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(*self, buf, None).map(usize::from32)?) } } } // deadlock bait, do not implement - see "Quirks: Serialized I/O" rant on `mod pipe::named`
 impl io::Read   for     pipe::DuplexNN  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file( self, buf, None).map(usize::from32)?) } } }
 impl io::Read   for &'_ pipe::ReaderNN  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(*self, buf, None).map(usize::from32)?) } } }
 impl io::Read   for     pipe::ReaderNN  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file( self, buf, None).map(usize::from32)?) } } }
 
 // noop flush sane: https://github.com/rust-lang/rust/blob/c2110769cd58cd3b0c31f308c8cfeab5e19340fd/library/std/src/io/pipe.rs#L271-L274
-impl io::Write  for &'_ pipe::DuplexNN  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(*self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+//pl io::Write  for &'_ pipe::DuplexNN  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(*self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } } // deadlock bait, do not implement - see "Quirks: Serialized I/O" rant on `mod pipe::named`
 impl io::Write  for     pipe::DuplexNN  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file( self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
 impl io::Write  for &'_ pipe::WriterNN  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(*self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
 impl io::Write  for     pipe::WriterNN  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file( self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
