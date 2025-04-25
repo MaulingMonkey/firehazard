@@ -4,6 +4,26 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew)\]
 /// CreateNamedPipeW
 ///
+/// Create a handle to listen for inbound connections to a named pipe.
+///
+///
+///
+/// ### Arguments
+/// -   `name`                          &mdash; Name of the pipe to create for listening to, such as `\\.\pipe\example` (traditional) or `\\.\pipe\local\example` (AppContainer-friendly, inaccessible outside the current app's identifier.)
+/// -   `open_mode`                     &mdash; Direction data flows, from the perspective of the server.
+///     -   [`pipe::ACCESS_INBOUND`]        &mdash; client to server
+///     -   [`pipe::ACCESS_OUTBOUND`]       &mdash; server to client
+///     -   [`pipe::ACCESS_DUPLEX`]         &mdash; client to/from server
+/// -   `pipe_mode`                     &mdash; Various flags
+// TODO: more
+/// -   `max_instances`                 &mdash; Limit how many server pipes can be created.  All calls must agree on a limit for a given name.
+/// -   `out_buffer_size`               &mdash; Advisory/requested size, in bytes, for the server to client buffer size.  May be clamped by system limits / rounded up to page sizes.
+/// -   `in_buffer_size`                &mdash; Advisory/requested size, in bytes, for the client to server buffer size.  May be clamped by system limits / rounded up to page sizes.
+/// -   `default_timeout`               &mdash; How long [`pipe::named::wait`] should wait for an available pipe ([`NMPWAIT::USE_DEFAULT_WAIT`] → system default (50ms?) in this context.)
+/// -   `security_attributes`           &mdash; Security attributes for the pipe.  If [`None`] is specified, the default ACL grants full control to LocalSystem, administrators, and the creator, **and read access to Everyone + Anonymous!**
+///
+///
+///
 /// ### Example
 /// ```
 /// # use firehazard::*;
@@ -43,7 +63,7 @@ pub fn create<'a, 'b: 'a>(
     in_buffer_size:         u32,
     default_timeout:        impl Into<NMPWAIT>, // A slightly awkward fit, but 0 (NMPWAIT::USE_DEFAULT_WAIT) gets interpreted as "make WaitNamedPipe(..., NMPWAIT::USE_DEFAULT_WAIT) use the default timeout of 50ms"
     security_attributes:    impl Into<Option<&'a security::Attributes<'b>>>,
-) -> firehazard::Result<handle::Owned> {
+) -> firehazard::Result<pipe::named::Listener> {
     create_w(
         osstr_to_wide0(name.as_ref(), &mut std::vec::Vec::new())?,
         open_mode, pipe_mode, max_instances, out_buffer_size,
@@ -56,6 +76,26 @@ pub fn create<'a, 'b: 'a>(
 #[doc(alias = "CreateNamedPipeA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createnamedpipea)\]
 /// CreateNamedPipeA
+///
+/// Create a handle to listen for inbound connections to a named pipe.
+///
+///
+///
+/// ### Arguments
+/// -   `name`                          &mdash; Name of the pipe to create for listening to, such as `\\.\pipe\example` (traditional) or `\\.\pipe\local\example` (AppContainer-friendly, inaccessible outside the current app's identifier.)
+/// -   `open_mode`                     &mdash; Direction data flows, from the perspective of the server.
+///     -   [`pipe::ACCESS_INBOUND`]        &mdash; client to server
+///     -   [`pipe::ACCESS_OUTBOUND`]       &mdash; server to client
+///     -   [`pipe::ACCESS_DUPLEX`]         &mdash; client to/from server
+/// -   `pipe_mode`                     &mdash; Various flags
+// TODO: more
+/// -   `max_instances`                 &mdash; Limit how many server pipes can be created.  All calls must agree on a limit for a given name.
+/// -   `out_buffer_size`               &mdash; Advisory/requested size, in bytes, for the server to client buffer size.  May be clamped by system limits / rounded up to page sizes.
+/// -   `in_buffer_size`                &mdash; Advisory/requested size, in bytes, for the client to server buffer size.  May be clamped by system limits / rounded up to page sizes.
+/// -   `default_timeout`               &mdash; How long [`pipe::named::wait`] should wait for an available pipe ([`NMPWAIT::USE_DEFAULT_WAIT`] → system default (50ms?) in this context.)
+/// -   `security_attributes`           &mdash; Security attributes for the pipe.  If [`None`] is specified, the default ACL grants full control to LocalSystem, administrators, and the creator, **and read access to Everyone + Anonymous!**
+///
+///
 ///
 /// ### Example
 /// ```
@@ -96,7 +136,7 @@ pub fn create_a<'a, 'b: 'a>(
     in_buffer_size:         u32,
     default_timeout:        impl Into<NMPWAIT>, // A slightly awkward fit, but 0 (NMPWAIT::USE_DEFAULT_WAIT) gets interpreted as "make WaitNamedPipe(..., NMPWAIT::USE_DEFAULT_WAIT) use the default timeout of 50ms"
     security_attributes:    impl Into<Option<&'a security::Attributes<'b>>>,
-) -> firehazard::Result<handle::Owned> {
+) -> firehazard::Result<pipe::named::Listener> {
     let handle = unsafe { winapi::um::winbase::CreateNamedPipeA(
         name.try_into()?.as_cstr(),
         open_mode,
@@ -108,7 +148,7 @@ pub fn create_a<'a, 'b: 'a>(
         security_attributes.into().map_or(null(), |sa| sa) as *mut _,
     )};
     firehazard::Error::get_last_if(handle.is_null() || handle == winapi::um::handleapi::INVALID_HANDLE_VALUE)?;
-    unsafe { handle::Owned::from_raw(handle) }
+    unsafe { pipe::named::Listener::from_raw(handle) }
 }
 
 
@@ -117,6 +157,26 @@ pub fn create_a<'a, 'b: 'a>(
 #[doc(alias = "CreateNamedPipeW")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew)\]
 /// CreateNamedPipeW
+///
+/// Create a handle to listen for inbound connections to a named pipe.
+///
+///
+///
+/// ### Arguments
+/// -   `name`                          &mdash; Name of the pipe to create for listening to, such as `\\.\pipe\example` (traditional) or `\\.\pipe\local\example` (AppContainer-friendly, inaccessible outside the current app's identifier.)
+/// -   `open_mode`                     &mdash; Direction data flows, from the perspective of the server.
+///     -   [`pipe::ACCESS_INBOUND`]        &mdash; client to server
+///     -   [`pipe::ACCESS_OUTBOUND`]       &mdash; server to client
+///     -   [`pipe::ACCESS_DUPLEX`]         &mdash; client to/from server
+/// -   `pipe_mode`                     &mdash; Various flags
+// TODO: more
+/// -   `max_instances`                 &mdash; Limit how many server pipes can be created.  All calls must agree on a limit for a given name.
+/// -   `out_buffer_size`               &mdash; Advisory/requested size, in bytes, for the server to client buffer size.  May be clamped by system limits / rounded up to page sizes.
+/// -   `in_buffer_size`                &mdash; Advisory/requested size, in bytes, for the client to server buffer size.  May be clamped by system limits / rounded up to page sizes.
+/// -   `default_timeout`               &mdash; How long [`pipe::named::wait`] should wait for an available pipe ([`NMPWAIT::USE_DEFAULT_WAIT`] → system default (50ms?) in this context.)
+/// -   `security_attributes`           &mdash; Security attributes for the pipe.  If [`None`] is specified, the default ACL grants full control to LocalSystem, administrators, and the creator, **and read access to Everyone + Anonymous!**
+///
+///
 ///
 /// ### Example
 /// ```
@@ -157,7 +217,7 @@ pub fn create_w<'a, 'b: 'a>(
     in_buffer_size:         u32,
     default_timeout:        impl Into<NMPWAIT>, // A slightly awkward fit, but 0 (NMPWAIT::USE_DEFAULT_WAIT) gets interpreted as "make WaitNamedPipe(..., NMPWAIT::USE_DEFAULT_WAIT) use the default timeout of 50ms"
     security_attributes:    impl Into<Option<&'a security::Attributes<'b>>>,
-) -> firehazard::Result<handle::Owned> {
+) -> firehazard::Result<pipe::named::Listener> {
     let handle = unsafe { winapi::um::namedpipeapi::CreateNamedPipeW(
         name.try_into()?.as_cstr(),
         open_mode,
@@ -169,5 +229,5 @@ pub fn create_w<'a, 'b: 'a>(
         security_attributes.into().map_or(null(), |sa| sa) as *mut _,
     )};
     firehazard::Error::get_last_if(handle.is_null() || handle == winapi::um::handleapi::INVALID_HANDLE_VALUE)?;
-    unsafe { handle::Owned::from_raw(handle) }
+    unsafe { pipe::named::Listener::from_raw(handle) }
 }
