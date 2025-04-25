@@ -64,4 +64,14 @@ mod desktop_flags;                      pub use desktop_flags::*;
 mod desktop_handles;                    pub use desktop_handles::*;
 
 pub use funcs::*;
-#[path = "desktop_funcs.rs"] pub(crate) mod funcs;
+pub(crate) mod funcs {
+    use crate::prelude::*;
+    include!(r"funcs\close_desktop.rs");
+    include!(r"funcs\create_desktop.rs");
+    include!(r"funcs\enum_desktops.rs");
+    include!(r"funcs\open_desktop.rs");
+    include!(r"funcs\open_input_desktop.rs");
+    include!(r"funcs\open_thread_desktop.rs");
+    include!(r"funcs\switch_desktop.rs");
+    include!(r"funcs\with_thread_desktop.rs");
+}
