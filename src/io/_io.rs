@@ -1,6 +1,7 @@
-//! \[<strike>microsoft.com</strike>\] Generic I/O APIs
+//! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/fileio/synchronous-and-asynchronous-i-o)] Generic I/O APIs
 //!
 //! ### References
+//! *   <https://learn.microsoft.com/en-us/windows/win32/fileio/synchronous-and-asynchronous-i-o>
 //! *   <https://learn.microsoft.com/en-us/windows/win32/ipc/pipes>
 //! *   <https://learn.microsoft.com/en-us/windows/win32/ipc/multithreaded-pipe-server>
 
