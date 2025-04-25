@@ -4,6 +4,7 @@
 
 
 mod file_constants;             pub use file_constants::*;
+mod file_share;                 pub use file_share::*;
 
 pub use funcs::*;
 pub(crate) mod funcs {

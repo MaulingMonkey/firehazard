@@ -18,7 +18,7 @@
 /// let readme = create_file_a(
 ///     abistr::cstr!("Readme.md"),
 ///     access::GENERIC_READ,
-///     file::SHARE_READ,
+///     file::Share::READ,
 ///     None,
 ///     OPEN_EXISTING,
 ///     0,
@@ -29,7 +29,7 @@
 pub fn create_file_a<'a, 'b: 'a, 't>(
     name:                   impl TryIntoAsCStr,
     desired_access:         impl Into<access::Mask>,
-    share_mode:             u32, // XXX
+    share_mode:             impl Into<file::Share>,
     security_attributes:    impl Into<Option<&'a security::Attributes<'b>>>,
     creation_disposition:   u32, // XXX
     flags_and_attributes:   u32, // XXX
@@ -38,7 +38,7 @@ pub fn create_file_a<'a, 'b: 'a, 't>(
     let handle = NonNull::new(unsafe { winapi::um::fileapi::CreateFileA(
         name.try_into()?.as_cstr(),
         desired_access.into().into(),
-        share_mode,
+        share_mode.into().into(),
         security_attributes.into().map_or(null(), |a| a) as *mut _,
         creation_disposition,
         flags_and_attributes,
@@ -68,7 +68,7 @@ pub fn create_file_a<'a, 'b: 'a, 't>(
 /// let readme = create_file_w(
 ///     abistr::cstr16!("Readme.md"),
 ///     access::GENERIC_READ,
-///     file::SHARE_READ,
+///     file::Share::READ,
 ///     None,
 ///     OPEN_EXISTING,
 ///     0,
@@ -80,7 +80,7 @@ pub fn create_file_a<'a, 'b: 'a, 't>(
 pub fn create_file_w<'a, 'b: 'a>(
     name:                   impl TryIntoAsCStr<u16>,
     desired_access:         impl Into<access::Mask>,
-    share_mode:             u32, // XXX
+    share_mode:             impl Into<file::Share>,
     security_attributes:    impl Into<Option<&'a security::Attributes<'b>>>,
     creation_disposition:   u32, // XXX
     flags_and_attributes:   u32, // XXX
@@ -89,7 +89,7 @@ pub fn create_file_w<'a, 'b: 'a>(
     let handle = NonNull::new(unsafe { winapi::um::fileapi::CreateFileW(
         name.try_into()?.as_cstr(),
         desired_access.into().into(),
-        share_mode,
+        share_mode.into().into(),
         security_attributes.into().map_or(null(), |a| a) as *mut _,
         creation_disposition,
         flags_and_attributes,
@@ -121,7 +121,7 @@ pub fn create_file_w<'a, 'b: 'a>(
 /// let readme = create_file(
 ///     "Readme.md",
 ///     access::GENERIC_READ,
-///     file::SHARE_READ,
+///     file::Share::READ,
 ///     None,
 ///     OPEN_EXISTING,
 ///     0,
@@ -132,7 +132,7 @@ pub fn create_file_w<'a, 'b: 'a>(
 pub fn create_file<'a, 'b: 'a>(
     name:                   impl AsRef<std::path::Path>,
     desired_access:         impl Into<access::Mask>,
-    share_mode:             u32, // XXX
+    share_mode:             impl Into<file::Share>,
     security_attributes:    impl Into<Option<&'a security::Attributes<'b>>>,
     creation_disposition:   u32, // XXX
     flags_and_attributes:   u32, // XXX

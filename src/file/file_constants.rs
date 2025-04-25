@@ -71,27 +71,3 @@ pub const FLAG_FIRST_PIPE_INSTANCE : u32 = winapi::um::winbase::FILE_FLAG_FIRST_
 /// FILE_FLAG_OVERLAPPED
 ///
 pub const FLAG_OVERLAPPED : u32 = winapi::um::winbase::FILE_FLAG_OVERLAPPED;
-
-
-
-
-// C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h
-// line 14355+
-
-#[doc(alias = "FILE_SHARE_READ")]
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew#parameters)\]
-/// FILE_SHARE_READ
-///
-pub const SHARE_READ       : u32 = 0x00000001;
-
-#[doc(alias = "FILE_SHARE_WRITE")]
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew#parameters)\]
-/// FILE_SHARE_WRITE
-///
-pub const SHARE_WRITE      : u32 = 0x00000002;
-
-#[doc(alias = "FILE_SHARE_DELETE")]
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew#parameters)\]
-/// FILE_SHARE_DELETE
-///
-pub const SHARE_DELETE     : u32 = 0x00000004;
