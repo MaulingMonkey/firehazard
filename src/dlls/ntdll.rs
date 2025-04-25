@@ -77,7 +77,7 @@ lazy_static::lazy_static! {
     pub static ref NtQueryObject : firehazard::Result<unsafe extern "system" fn (
         handle:                     HANDLE,
         object_information_class:   OBJECT_INFORMATION_CLASS,
-        object_information:         *mut c_void,
+        object_information:         Option<NonNull<c_void>>,
         object_information_length:  ULONG,
         return_length:              Option<&mut ULONG>,
     ) -> NTSTATUS> = unsafe { func("NtQueryObject\0") };

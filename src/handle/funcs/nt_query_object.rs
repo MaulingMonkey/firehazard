@@ -22,10 +22,10 @@ pub(crate) fn nt_query_object<'h, Info: dlls::ntdll::OBJECT_INFORMATION>(
     #[allow(non_snake_case)] let NtQueryObject = (*dlls::ntdll::NtQueryObject)?;
 
     let mut size = 0;
-    let _tatus = unsafe { NtQueryObject(handle, Info::CLASS, null_mut(), 0, Some(&mut size)) };
+    let _tatus = unsafe { NtQueryObject(handle, Info::CLASS, None, 0, Some(&mut size)) };
     let mut info = alloc::CBoxSized::new_oversized(Info::default(), usize::from32(size));
 
-    let status = unsafe { NtQueryObject(handle, Info::CLASS, info.as_mut_ptr().cast(), size, None) };
+    let status = unsafe { NtQueryObject(handle, Info::CLASS, Some(info.as_non_null().cast()), size, None) };
     if status == 0 { // STATUS_SUCCESS
         Ok(info)
     } else {
