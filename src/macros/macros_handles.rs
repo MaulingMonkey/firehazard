@@ -78,6 +78,6 @@ macro_rules! handles {
     };
 
     (unsafe impl @convert $($src:ident)::+<'_> => $($dst:ident)::+<'_>) => {
-        impl<'a> From<$($src)::+<'a>> for $($dst)::+<'a> { fn from(h: $($src)::+<'a>) -> Self { unsafe { Self::from_raw_nn(h.as_handle_nn()) } } }
+        impl<'a> From<$($src)::+<'a>> for $($dst)::+<'a> { fn from(h: $($src)::+<'a>) -> Self { unsafe { Self::from_raw_nn(h.as_handle_nn().cast()) } } }
     };
 }
