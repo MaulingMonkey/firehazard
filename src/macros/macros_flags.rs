@@ -1,10 +1,11 @@
 macro_rules! flags {
     (impl .. for $flags:ident ( $($inner:ty),+ $(,)? ) - $mask:ident) => {
-        flags!(impl *LocalHandle<HANDLE> for $flags ( $($inner),+ ) - $mask);
-        flags!(impl @extra for $flags);
+        flags!(impl From<..>        for $flags ( $($inner),+ ) - $mask);
+        flags!(impl core::ops::*    for $flags ( $($inner),+ ) - $mask);
+        flags!(impl @extra          for $flags);
     };
 
-    (impl *LocalHandle<HANDLE> for $flags:ident ( $($inner:ty),+ $(,)? ) - $mask:ident) => {
+    (impl From<..> for $flags:ident ( $($inner:ty),+ $(,)? ) - $mask:ident) => {
         impl From<()                               > for $flags { fn from(_: ()                               ) -> Self { Self(0) } }
         impl From<()                               > for $mask  { fn from(_: ()                               ) -> Self { Self(0) } }
         impl From<Option<core::convert::Infallible>> for $flags { fn from(_: Option<core::convert::Infallible>) -> Self { Self(0) } }
@@ -13,7 +14,9 @@ macro_rules! flags {
     $(  impl From<$flags>                            for $inner { fn from(flags: $flags                       ) -> Self { flags.0 as _ } } )*
     $(  impl From<$mask >                            for $inner { fn from(mask:  $mask                        ) -> Self { mask .0 as _ } } )*
     $(  impl From<$inner>                            for $mask  { fn from(mask:  $inner                       ) -> Self { Self(mask as _) } } )*
+    };
 
+    (impl core::ops::* for $flags:ident ( $($inner:ty),+ $(,)? ) - $mask:ident) => {
         impl core::ops::BitAnd              for $flags { type Output = Self; fn bitand(self, rhs: Self) -> Self::Output { Self(self.0 & rhs.0) } }
         impl core::ops::BitOr               for $flags { type Output = Self; fn bitor (self, rhs: Self) -> Self::Output { Self(self.0 | rhs.0) } }
         impl core::ops::BitAndAssign        for $flags { fn bitand_assign(&mut self, rhs: Self) { self.0 &= rhs.0 } }
