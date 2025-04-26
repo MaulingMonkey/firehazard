@@ -64,6 +64,7 @@ use crate::prelude::*;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void> for handle::{Owned, Borrowed<'_>, Pseudo<'_>});
+handles!(unsafe impl TryCloneToOwned<Owned> for handle::{Owned, Borrowed<'_>, Pseudo<'_>});
 handles!(       impl Debug                  for handle::{Owned, Borrowed<'_>, Pseudo<'_>});
 
 handles!(unsafe impl @convert &'_ handle::Owned     => handle::Borrowed<'_> );
@@ -78,9 +79,9 @@ unsafe impl valrow::Borrowable for Owned         { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for Borrowed<'_>  { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for Pseudo<'_>    { type Abi = HANDLENN; }
 
-impl Owned          { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self)           -> firehazard::Result<Owned> { Ok(Owned(duplicate_handle_local_same_access( self, false)?.into_handle_nn())) } }
-impl Borrowed<'_>   { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> firehazard::Result<Owned> { Ok(Owned(duplicate_handle_local_same_access(*self, false)?.into_handle_nn())) } }
-impl Pseudo<'_>     { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> firehazard::Result<Owned> { Ok(Owned(duplicate_handle_local_same_access(*self, false)?.into_handle_nn())) } }
+impl CloneToOwned for Owned         {}
+impl CloneToOwned for Borrowed<'_>  {}
+//pl CloneToOwned for Pseudo<'_>    {} // XXX: token pseudo-handles can be converted to generic pseudo-handles, which will fail to clone
 
 
 

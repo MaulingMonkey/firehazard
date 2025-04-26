@@ -46,14 +46,17 @@ use crate::prelude::*;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for pipe::{DuplexNN});
+handles!(unsafe impl TryCloneToOwned<DuplexNN>      for pipe::{DuplexNN});
 handles!(unsafe impl {Send, Sync}                   for pipe::{DuplexNN}); // SAFETY: `std::io::PipeReader` is `Send+Sync` despite `try_clone(&self)`, `impl Read for &PipeReader`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for pipe::{DuplexNN});
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for pipe::{ReaderNN});
+handles!(unsafe impl TryCloneToOwned<ReaderNN>      for pipe::{ReaderNN});
 handles!(unsafe impl {Send, Sync}                   for pipe::{ReaderNN}); // SAFETY: `std::io::PipeReader` is `Send+Sync` despite `try_clone(&self)`, `impl Read for &PipeReader`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for pipe::{ReaderNN});
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for pipe::{WriterNN});
+handles!(unsafe impl TryCloneToOwned<WriterNN>      for pipe::{WriterNN});
 handles!(unsafe impl {Send, Sync}                   for pipe::{WriterNN}); // SAFETY: `std::io::PipeWriter` is `Send+Sync` despite `try_clone(&self)`, `impl Write for &PipeWriter`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for pipe::{WriterNN});
 
@@ -102,9 +105,9 @@ unsafe impl valrow::Borrowable for pipe::DuplexNN      { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for pipe::ReaderNN      { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for pipe::WriterNN      { type Abi = HANDLENN; }
 
-impl pipe::DuplexNN { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> firehazard::Result<Self> { Ok(Self(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
-impl pipe::ReaderNN { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> firehazard::Result<Self> { Ok(Self(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
-impl pipe::WriterNN { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> firehazard::Result<Self> { Ok(Self(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
+impl CloneToOwned for pipe::DuplexNN {}
+impl CloneToOwned for pipe::ReaderNN {}
+impl CloneToOwned for pipe::WriterNN {}
 
 
 

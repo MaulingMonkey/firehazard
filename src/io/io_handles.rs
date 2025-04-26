@@ -61,14 +61,17 @@ use crate::prelude::*;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for io::{FileNN, FileHandle<'_>});
+handles!(unsafe impl TryCloneToOwned<FileNN>        for io::{FileNN, FileHandle<'_>});
 handles!(unsafe impl {Send, Sync}                   for io::{FileNN, FileHandle<'_>}); // SAFETY: `std::fs::File` is `Send+Sync` despite `try_clone(&self)`, `impl Read for &FileNN`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for io::{FileNN, FileHandle<'_>});
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for io::{ReadHandle<'_>});
+handles!(unsafe impl TryCloneToOwned<pipe::ReaderNN>for io::{ReadHandle<'_>});
 handles!(unsafe impl {Send, Sync}                   for io::{ReadHandle<'_>}); // SAFETY: `std::io::PipeReader` is `Send+Sync` despite `try_clone(&self)`, `impl Read for &PipeReader`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for io::{ReadHandle<'_>});
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for io::{WriteHandle<'_>});
+handles!(unsafe impl TryCloneToOwned<pipe::WriterNN>for io::{WriteHandle<'_>});
 handles!(unsafe impl {Send, Sync}                   for io::{WriteHandle<'_>}); // SAFETY: `std::io::PipeWriter` is `Send+Sync` despite `try_clone(&self)`, `impl Write for &PipeWriter`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for io::{WriteHandle<'_>});
 
@@ -127,10 +130,10 @@ unsafe impl valrow::Borrowable for FileHandle<'_>    { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for ReadHandle<'_>    { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for WriteHandle<'_>   { type Abi = HANDLENN; }
 
-impl io::FileNN             { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self)           -> firehazard::Result<io::FileNN      > { Ok(io::FileNN(duplicate_handle_local_same_access( self, false)?.into_handle_nn())) } }
-impl io::FileHandle<'_>     { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> firehazard::Result<io::FileNN      > { Ok(io::FileNN(duplicate_handle_local_same_access(*self, false)?.into_handle_nn())) } }
-//pl io::ReadHandle<'_>     { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> firehazard::Result<pipe::ReaderNN  > { Ok(pipe::ReaderNN(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
-//pl io::WriteHandle<'_>    { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> firehazard::Result<pipe::WriterNN  > { Ok(pipe::WriterNN(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
+impl CloneToOwned for io::FileNN            {}
+impl CloneToOwned for io::FileHandle<'_>    {}
+impl CloneToOwned for io::ReadHandle<'_>    {}
+impl CloneToOwned for io::WriteHandle<'_>   {}
 
 // It might be appropriate to impl TryFrom<OwnedHandle> for FileNN, PipeReaderNN, PipeWriterNN?
 // ~~Constructing `crate::os::windows::io::NullHandleError` is awkward though.~~ Just use OwnedHandle::try_from(HandleOrNull)?

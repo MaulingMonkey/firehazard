@@ -14,6 +14,7 @@ use winapi::um::winuser::CloseWindowStation;
 
 
 handles!(unsafe impl *LocalHandleNN<HWINSTA__>      for winsta::{OwnedHandle});
+handles!(unsafe impl TryCloneToOwned<OwnedHandle>   for winsta::{OwnedHandle});
 handles!(unsafe impl Send                           for winsta::{OwnedHandle});
 handles!(       impl Debug                          for winsta::{OwnedHandle});
 
@@ -30,4 +31,4 @@ impl Drop for OwnedHandle { fn drop(&mut self) {
 
 unsafe impl valrow::Borrowable for OwnedHandle       { type Abi = NonNull<HWINSTA__>; }
 
-impl OwnedHandle { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> firehazard::Result<OwnedHandle> { Ok(OwnedHandle(duplicate_handle_local_same_access(self, false)?.into_handle_nn().cast())) } }
+impl CloneToOwned for OwnedHandle {}

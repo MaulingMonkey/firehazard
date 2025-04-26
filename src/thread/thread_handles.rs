@@ -43,6 +43,7 @@ use crate::prelude::*;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for thread::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
+handles!(unsafe impl TryCloneToOwned<OwnedHandle>   for thread::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
 handles!(unsafe impl Send                           for thread::{OwnedHandle, Handle<'_>}); // PseudoHandle excluded: includes "GetCurrentThread", which shouldn't be sent.
 handles!(       impl Debug                          for thread::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
 
@@ -97,6 +98,6 @@ unsafe impl valrow::Borrowable for OwnedHandle       { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for Handle<'_>        { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for PseudoHandle<'_>  { type Abi = HANDLENN; }
 
-impl OwnedHandle        { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self)           -> firehazard::Result<thread::OwnedHandle> { Ok(OwnedHandle(duplicate_handle_local_same_access( self, false)?.into_handle_nn())) } }
-impl Handle<'_>         { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> firehazard::Result<thread::OwnedHandle> { Ok(OwnedHandle(duplicate_handle_local_same_access(*self, false)?.into_handle_nn())) } }
-impl PseudoHandle<'_>   { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> firehazard::Result<thread::OwnedHandle> { Ok(OwnedHandle(duplicate_handle_local_same_access(*self, false)?.into_handle_nn())) } }
+impl CloneToOwned for OwnedHandle       {}
+impl CloneToOwned for Handle<'_>        {}
+impl CloneToOwned for PseudoHandle<'_>  {}

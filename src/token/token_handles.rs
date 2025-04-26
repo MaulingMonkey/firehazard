@@ -36,6 +36,7 @@ use crate::prelude::*;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void>         for token::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
+handles!(unsafe impl TryCloneToOwned<OwnedHandle>   for token::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
 handles!(unsafe impl Send                           for token::{OwnedHandle});
 handles!(       impl Debug                          for token::{OwnedHandle, Handle<'_>, PseudoHandle<'_>});
 
@@ -45,10 +46,10 @@ handles!(unsafe impl @convert token::Handle<'_>         => token::PseudoHandle<'
 
 handles!(unsafe impl @convert     token::OwnedHandle    => handle::Owned            );
 handles!(unsafe impl @convert &'_ token::OwnedHandle    => handle::Borrowed<'_>     );
-handles!(unsafe impl @convert &'_ token::OwnedHandle    => handle::Pseudo<'_>       ); // XXX: token PseudoHandles cannot be DuplicateHandle()d, so exclude them from conversion to generic handle::Pseudo s - see duplicate_handle_local[_same_access]
+handles!(unsafe impl @convert &'_ token::OwnedHandle    => handle::Pseudo<'_>       );
 handles!(unsafe impl @convert token::Handle<'_>         => handle::Borrowed<'_>     );
-handles!(unsafe impl @convert token::Handle<'_>         => handle::Pseudo<'_>       ); // XXX: token PseudoHandles cannot be DuplicateHandle()d, so exclude them from conversion to generic handle::Pseudo s - see duplicate_handle_local[_same_access]
-//ndles!(unsafe impl @convert token::PseudoHandle<'_>   => handle::Pseudo<'_>       ); // XXX: token PseudoHandles cannot be DuplicateHandle()d, so exclude them from conversion to generic handle::Pseudo s - see duplicate_handle_local[_same_access]
+handles!(unsafe impl @convert token::Handle<'_>         => handle::Pseudo<'_>       );
+handles!(unsafe impl @convert token::PseudoHandle<'_>   => handle::Pseudo<'_>       );
 
 impl PseudoHandle<'static> { pub(crate) const unsafe fn from_raw_const(c: isize) -> Self { assert!(c != 0); Self(unsafe{NonNull::new_unchecked(c as _)}, PhantomData) } }
 
@@ -60,6 +61,6 @@ unsafe impl valrow::Borrowable for OwnedHandle       { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for Handle<'_>        { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for PseudoHandle<'_>  { type Abi = HANDLENN; }
 
-impl OwnedHandle        { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self)           -> firehazard::Result<OwnedHandle> { Ok(OwnedHandle(duplicate_handle_local_same_access( self, false)?.into_handle_nn())) } }
-impl Handle<'_>         { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> firehazard::Result<OwnedHandle> { Ok(OwnedHandle(duplicate_handle_local_same_access(*self, false)?.into_handle_nn())) } }
-//pl PseudoHandle<'_>   { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone_to_owned(&self)  -> firehazard::Result<OwnedHandle> { Ok(OwnedHandle(duplicate_handle_local_same_access(*self, false)?.into_handle_nn())) } }
+impl CloneToOwned for OwnedHandle       {}
+impl CloneToOwned for Handle<'_>        {}
+//pl CloneToOwned for PseudoHandle<'_>  {} // token pseudo handles can't be DuplicateHandle d!

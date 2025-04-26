@@ -1,5 +1,33 @@
 #[doc(alias = "DuplicateHandle")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
+/// DuplicateHandle(-1, source, -1, access ?? 0, inherit, access ? 0 : DUPLICATE_SAME_ACCESS)
+///
+pub(crate) unsafe fn duplicate_handle_local_raw<'h, H>(
+    source:             *mut H,
+    replaced_access:    impl Into<Option<access::Mask>>,
+    inherit_handle:     bool,
+) -> firehazard::Result<*mut H> {
+    let process = get_current_process();
+    let replaced_access = replaced_access.into();
+
+    let mut target = null_mut();
+    firehazard::Error::get_last_if(0 == unsafe { winapi::um::handleapi::DuplicateHandle(
+        process.as_handle(),
+        source.cast(),
+        process.as_handle(),
+        &mut target,
+        replaced_access.map_or(0, |a| a.into()),
+        inherit_handle as _,
+        replaced_access.map_or(winapi::um::winnt::DUPLICATE_SAME_ACCESS, |_| 0),
+    )})?;
+
+    Ok(target.cast())
+}
+
+
+
+#[doc(alias = "DuplicateHandle")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
 /// DuplicateHandle(-1, source, -1, access, inherit, 0)
 ///
 /// ### Examples
@@ -21,25 +49,20 @@
 /// # }
 /// ```
 ///
-pub fn duplicate_handle_local<'a>(
-    source:         impl Into<firehazard::handle::Pseudo<'a>>, // TODO: better handle type inference
-    access:         impl Into<firehazard::access::Mask>,
+pub fn duplicate_handle_local<H>(
+    source:         H,
+    access:         impl Into<access::Mask>,
     inherit_handle: bool,
-) -> firehazard::Result<handle::Owned> {
-    let process = get_current_process();
-
-    let mut target = null_mut();
-    firehazard::Error::get_last_if(0 == unsafe { winapi::um::handleapi::DuplicateHandle(
-        process.as_handle(),
-        source.into().as_handle(),
-        process.as_handle(),
-        &mut target,
-        access.into().into(),
-        inherit_handle as _,
-        0
-    )})?;
-
-    unsafe { handle::Owned::from_raw(target) }
+) -> firehazard::Result<H::Owned> where
+    H           : CloneToOwned, // TODO: relax to TryCloneToOwned?
+    H           : AsLocalHandle,
+    H::Owned    : FromLocalHandle,
+{
+    Ok(unsafe { H::Owned::from_raw(duplicate_handle_local_raw(
+        source.as_handle().cast(),
+        access.into(),
+        inherit_handle,
+    )?)?})
 }
 
 
@@ -67,22 +90,17 @@ pub fn duplicate_handle_local<'a>(
 /// # }
 /// ```
 ///
-pub fn duplicate_handle_local_same_access<'a>(
-    source:         impl Into<firehazard::handle::Pseudo<'a>>, // TODO: better handle type inference
+pub fn duplicate_handle_local_same_access<H>(
+    source:         H,
     inherit_handle: bool,
-) -> firehazard::Result<handle::Owned> {
-    let process = get_current_process();
-
-    let mut target = null_mut();
-    firehazard::Error::get_last_if(0 == unsafe { winapi::um::handleapi::DuplicateHandle(
-        process.as_handle(),
-        source.into().as_handle(),
-        process.as_handle(),
-        &mut target,
-        0,
-        inherit_handle as _,
-        winapi::um::winnt::DUPLICATE_SAME_ACCESS,
-    )})?;
-
-    unsafe { handle::Owned::from_raw(target) }
+) -> firehazard::Result<H::Owned> where
+    H           : CloneToOwned, // TODO: relax to TryCloneToOwned?
+    H           : AsLocalHandle,
+    H::Owned    : FromLocalHandle,
+{
+    Ok(unsafe { H::Owned::from_raw(duplicate_handle_local_raw(
+        source.as_handle().cast(),
+        None,
+        inherit_handle,
+    )?)?})
 }

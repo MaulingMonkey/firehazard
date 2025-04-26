@@ -7,6 +7,7 @@
 impl Drop for pipe::named::Listener { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 
 handles!(unsafe impl *LocalHandleNN<c_void>     for self::{Listener});
+handles!(unsafe impl TryCloneToOwned<Listener>  for self::{Listener});
 handles!(unsafe impl {Send, Sync}               for self::{Listener});
 handles!(       impl Debug                      for self::{Listener});
 
@@ -20,6 +21,8 @@ impl crate::os::windows::io::FromRawHandle  for pipe::named::Listener { unsafe f
 impl crate::os::windows::io::IntoRawHandle  for pipe::named::Listener { fn into_raw_handle(self) -> crate::os::windows::io::RawHandle { self.into_handle().cast() } }
 
 unsafe impl valrow::Borrowable for pipe::named::Listener { type Abi = HANDLENN; }
+
+impl CloneToOwned for pipe::named::Listener {}
 
 
 
@@ -35,12 +38,4 @@ impl pipe::named::Listener {
             Ok(pipe::named::Connected(core::mem::ManuallyDrop::new(self).0))
         }
     }
-
-
-
-    #[doc(alias = "DuplicateHandle")]
-    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
-    /// DuplicateHandle
-    ///
-    pub fn try_clone(&self) -> firehazard::Result<Self> { Ok(Self(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) }
 }

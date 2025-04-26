@@ -84,8 +84,78 @@ pub trait AsLocalHandleNN<H=c_void> : AsLocalHandle<H> {
 
 impl<H, T: AsLocalHandleNN<H>> AsLocalHandle<H> for T { fn as_handle(&self) -> *mut H { self.as_handle_nn().as_ptr() } }
 
-// trait DuplicateFromLocal ?
 
-// pub unsafe trait DuplicateableHandle : AsLocalHandle {
-//     type Owned : FromLocalHandle;
-// }
+
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
+/// DuplicateHandle(-1, source, -1, 0, FALSE, DUPLICATE_SAME_ACCESS)
+///
+/// ### Safety
+///
+/// *   [`duplicate_handle_local_same_access`] and friends rely on `Self` and `Self::Owned` being compatible handles.
+///
+pub unsafe trait TryCloneToOwned {
+    type Owned;
+
+    #[doc(alias = "DuplicateHandle")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
+    /// DuplicateHandle(-1, source, -1, 0, FALSE, DUPLICATE_SAME_ACCESS)
+    ///
+    fn try_clone_to_owned(&self) -> firehazard::Result<Self::Owned>;
+}
+
+unsafe impl<T: TryCloneToOwned> TryCloneToOwned for &T {
+    type Owned = T::Owned;
+    fn try_clone_to_owned(&self) -> firehazard::Result<Self::Owned> { (*self).try_clone_to_owned() }
+}
+
+/// [`TryCloneToOwned`], but should only fail due to access permissions, quotas, or limits.
+///
+/// This is a marker trait indicating that [`TryCloneToOwned`] "should" be "infallible".
+/// In practice, *all* handles can fail to clone due to these reasons:
+///
+/// *   Handle access permissions
+/// *   Handle quotas/limits?
+/// *   Running out of memory?
+///
+/// However, the *main* reason this trait is distinct from [`TryCloneToOwned`] is to exclude [`token::PseudoHandle`],
+/// as none of the following can ever have their handles duplicated:
+///
+/// *   [get_current_process_token]\()
+/// *   [get_current_thread_token]\()
+/// *   [get_current_thread_effective_token]\()
+///
+/// Generally, you instead want e.g. [`duplicate_token_ex`] &mdash; which deep copies the underlying token,
+/// instead of shallow copying a mere reference to the object via a new handle.)
+///
+pub trait CloneToOwned : TryCloneToOwned {
+    #[doc(alias = "DuplicateHandle")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
+    /// DuplicateHandle(-1, source, -1, 0, FALSE, DUPLICATE_SAME_ACCESS)
+    ///
+    /// Panics on failure (bad access permissions, quotas/limits, OOM.)
+    /// To not panic, you could instead use [`try_clone_to_owned`](TryCloneToOwned::try_clone_to_owned).
+    ///
+    /// On the other hand, if you're failing due to quotas/limits/OOM,
+    /// other threads in your program have likely failed to duplicate handles in unexpected ways,
+    /// possibly causing undefined behavior if they were written in C++.
+    /// The better solution, IMO, to back off and limit your program's handle count,
+    /// such that you leave a healthy headroom and don't get too close to the limit in the first place.
+    ///
+    fn clone_to_owned(&self) -> Self::Owned {
+        self.try_clone_to_owned().expect("clone_to_owned: failed to clone handle (bad access permissions? quotas/limits? out of memory?)")
+    }
+}
+
+#[doc(alias = "DuplicateHandle")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
+/// DuplicateHandle(-1, source, -1, 0, FALSE, DUPLICATE_SAME_ACCESS)
+///
+pub trait TryClone : TryCloneToOwned<Owned = Self> + Sized {
+    #[doc(alias = "DuplicateHandle")]
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\]
+    /// DuplicateHandle(-1, source, -1, 0, FALSE, DUPLICATE_SAME_ACCESS)
+    ///
+    fn try_clone(&self) -> firehazard::Result<Self> { self.try_clone_to_owned() }
+}
+
+impl<T : TryCloneToOwned<Owned = T>> TryClone for T {}

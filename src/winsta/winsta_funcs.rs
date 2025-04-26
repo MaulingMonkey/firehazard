@@ -101,7 +101,7 @@ pub fn close_window_station(
     winsta:     impl Into<winsta::OwnedHandle>,
 ) -> firehazard::Result<()> {
     firehazard::Error::get_last_if(0 == unsafe { winapi::um::winuser::CloseWindowStation(
-        core::mem::ManuallyDrop::new(winsta.into()).as_handle_nn().as_ptr().cast()
+        core::mem::ManuallyDrop::new(winsta.into()).as_handle()
     )})
 }
 

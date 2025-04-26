@@ -11,6 +11,7 @@ use crate::prelude::*;
 
 
 handles!(unsafe impl *LocalHandleNN<c_void>     for pseudoconsole::{Owned});
+handles!(unsafe impl TryCloneToOwned<Owned>     for pseudoconsole::{Owned});
 handles!(unsafe impl Send                       for pseudoconsole::{Owned});
 handles!(       impl Debug                      for pseudoconsole::{Owned});
 
@@ -28,4 +29,4 @@ impl Drop for Owned { fn drop(&mut self) {
 
 unsafe impl valrow::Borrowable for Owned { type Abi = NonNull<c_void>; }
 
-impl Owned { #[doc(alias = "DuplicateHandle")] #[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-duplicatehandle)\] DuplicateHandle"] pub fn try_clone(&self) -> firehazard::Result<Owned> { Ok(Owned(duplicate_handle_local_same_access(self, false)?.into_handle_nn())) } }
+impl CloneToOwned for Owned {}
