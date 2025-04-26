@@ -21,8 +21,10 @@ impl<T, A: Free + Stateless> CBoxSized<T, A> {
 }
 
 impl<T, A: fat::Alloc + Free + Stateless> CBoxSized<T, A> {
+    /// Allocates `size_of::<T>()` bytes exactly
     pub fn new(value: T) -> Self { Self::new_oversized(value, 0) }
 
+    /// Allocates `size_of::<T>().max(total_bytes)` bytes
     pub fn new_oversized(value: T, total_bytes: usize) -> Self {
         use ialloc::fat::Alloc as _;
         let total_bytes = size_of::<T>().max(total_bytes);
