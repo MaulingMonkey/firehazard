@@ -74,10 +74,16 @@ impl Error {
             ERROR_NOT_APPCONTAINER          => "ERROR_NOT_APPCONTAINER",        // 4250
             0x800700B7                      => "HRESULT_FROM_WIN32(ERROR_ALREADY_EXISTS)",
             _                               => match self.0 as _ {
+                STATUS_BUFFER_OVERFLOW          => "STATUS_BUFFER_OVERFLOW",            // 0x80000005
                 E_STRING_NOT_NULL_TERMINATED    => "E_STRING_NOT_NULL_TERMINATED",      // 0x80000017
                 E_INVALIDARG                    => "E_INVALIDARG",                      // 0x80070057
+                STATUS_INVALID_INFO_CLASS       => "STATUS_INVALID_INFO_CLASS",         // 0xC0000003
+                STATUS_INFO_LENGTH_MISMATCH     => "STATUS_INFO_LENGTH_MISMATCH",       // 0xC0000004
+                STATUS_ACCESS_VIOLATION         => "STATUS_ACCESS_VIOLATION",           // 0xC0000005
                 STATUS_INVALID_HANDLE           => "STATUS_INVALID_HANDLE",             // 0xC0000008
                 STATUS_ACCESS_DENIED            => "STATUS_ACCESS_DENIED",              // 0xC0000022
+                STATUS_BUFFER_TOO_SMALL         => "STATUS_BUFFER_TOO_SMALL",           // 0xC0000023
+                STATUS_OBJECT_TYPE_MISMATCH     => "STATUS_OBJECT_TYPE_MISMATCH",       // 0xC0000024
                 STATUS_NONE_MAPPED              => "STATUS_NONE_MAPPED",                // 0xC0000073
                 STATUS_BAD_IMPERSONATION_LEVEL  => "STATUS_BAD_IMPERSONATION_LEVEL",    // 0xC00000A5
                 STATUS_DLL_NOT_FOUND            => "STATUS_DLL_NOT_FOUND",              // 0xC0000135
