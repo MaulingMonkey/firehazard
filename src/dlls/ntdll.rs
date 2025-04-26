@@ -1,8 +1,11 @@
+//! ntdll.dll
+
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
 
 use crate::prelude::*;
+use super::OptionalLibrary;
 use bytemuck::*;
 use winapi::shared::minwindef::ULONG;
 use winapi::shared::ntdef::{NTSTATUS, UNICODE_STRING};
@@ -17,6 +20,7 @@ use winapi::shared::ntdef::{NTSTATUS, UNICODE_STRING};
     ObjectTypeInformation = 2,
 }
 
+#[cfg_attr(not(std), allow(dead_code))]
 pub unsafe trait OBJECT_INFORMATION : Default                       { const CLASS : OBJECT_INFORMATION_CLASS; }
 unsafe impl OBJECT_INFORMATION for PUBLIC_OBJECT_BASIC_INFORMATION  { const CLASS : OBJECT_INFORMATION_CLASS = OBJECT_INFORMATION_CLASS::ObjectBasicInformation; }
 unsafe impl OBJECT_INFORMATION for PUBLIC_OBJECT_TYPE_INFORMATION   { const CLASS : OBJECT_INFORMATION_CLASS = OBJECT_INFORMATION_CLASS::ObjectTypeInformation; }
@@ -74,21 +78,34 @@ impl core::fmt::Debug for PUBLIC_OBJECT_TYPE_INFORMATION {
 
 
 
-unsafe fn func<F>(name: &'static str) -> firehazard::Result<F> { unsafe { (*DLL)?.sym_opt(name) }.ok_or(firehazard::Error(ERROR_API_UNAVAILABLE)) }
-
 lazy_static::lazy_static! {
-    static ref DLL : firehazard::Result<minidl::Library> = minidl::Library::load("ntdll").map_err(|_| firehazard::Error(ERROR_API_UNAVAILABLE));
+    static ref DLL : OptionalLibrary = unsafe { OptionalLibrary::load_w(cstr16!("ntdll")) };
 
     // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winternl.h
     // line 674
 
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-ntqueryobject)\]
     /// NtQueryObject
-    pub static ref NtQueryObject : firehazard::Result<unsafe extern "system" fn (
+    pub static ref NtQueryObject : unsafe extern "system" fn (
         handle:                     HANDLE,
         object_information_class:   OBJECT_INFORMATION_CLASS,
         object_information:         Option<NonNull<c_void>>,
         object_information_length:  ULONG,
         return_length:              Option<&mut ULONG>,
-    ) -> NTSTATUS> = unsafe { func("NtQueryObject\0") };
+    ) -> NTSTATUS = unsafe { DLL.get_proc_address(cstr8!("NtQueryObject")) }.unwrap_or(stubs::NtQueryObject);
+}
+
+/// fallback impls if unavailable from ntdll.dll
+mod stubs {
+    use super::*;
+
+    pub unsafe extern "system" fn NtQueryObject(
+        _handle:                    HANDLE,
+        _object_information_class:  OBJECT_INFORMATION_CLASS,
+        _object_information:        Option<NonNull<c_void>>,
+        _object_information_length: ULONG,
+        _return_length:             Option<&mut ULONG>,
+    ) -> NTSTATUS {
+        ERROR_CALL_NOT_IMPLEMENTED as _
+    }
 }

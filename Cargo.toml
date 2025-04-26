@@ -41,7 +41,7 @@ targets                     = ["x86_64-pc-windows-msvc", "i686-pc-windows-msvc"]
 
 [features]
 default                     = ["std"]
-std                         = ["abistr/std", "abistr/widestring", "ialloc/std", "lazy_static", "minidl", "winapi/std"]
+std                         = ["abistr/std", "abistr/widestring", "ialloc/std", "winapi/std"]
 
 [lints.rust.unexpected_cfgs]
 level = "warn"
@@ -74,10 +74,7 @@ ialloc.default-features     = false
 ialloc.features             = ["win32"]
 
 lazy_static.version         = "1"
-lazy_static.optional        = true # alternatively, enable `spin_no_std` feature
-
-minidl.version              = "0.1"
-minidl.optional             = true  # make non-optional after unblocking https://github.com/MaulingMonkey/minidl/issues/1
+lazy_static.features        = ["spin_no_std"]
 
 valrow.version              = "0.0.0-2024-02-13"
 

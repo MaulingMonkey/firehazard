@@ -939,7 +939,6 @@ dependencies = [
  "ialloc",
  "lazy_static",
  "mcom",
- "minidl",
  "thindx",
  "valrow",
  "winapi",

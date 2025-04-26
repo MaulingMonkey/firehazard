@@ -30,7 +30,7 @@ pub use winapi::shared::ntdef::HANDLE;
 #[path = r"capability\_capability.rs"]      pub mod capability;
 #[path = r"debug\_debug.rs"]                pub mod debug;          #[doc(hidden)] pub use debug::funcs::*;
 #[path = r"desktop\_desktop.rs"]            pub mod desktop;        #[doc(hidden)] pub use desktop::funcs::*;
-#[path = r"dlls\_dlls.rs"]                  mod dlls;               #[cfg(std)] pub(crate) use dlls::*;
+#[path = r"dlls\_dlls.rs"]                  mod dlls;               pub(crate) use dlls::*;
 #[path = r"error\_error.rs"]                mod error;              pub use error::*;
 #[path = r"file\_file.rs"]                  pub mod file;           #[doc(hidden)] pub use file::funcs::*;
 #[path = r"handle\_handle.rs"]              pub mod handle;         #[doc(hidden)] pub use handle::{funcs::*, traits::*};

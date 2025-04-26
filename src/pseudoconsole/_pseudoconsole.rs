@@ -15,9 +15,8 @@
 //! In particular, while the relevant APIs all exist and return successfully, they don't actually seem to redirect the output of the process being run.
 //! Additionally, these functions will presumably cause your executable to fail to link on earlier versions of Windows.
 //!
-//! [Create an issue](https://github.com/MaulingMonkey/firehazard/issues)
-//! if you want me to replace the implementation of these psuedoconsole functions
-//! with gracefully failing [`minidl`](http://docs.rs/minidl)-based dynamic loading.
+//! [Create an issue](https://github.com/MaulingMonkey/firehazard/issues) if you want me to replace
+//! the implementation of these psuedoconsole functions with gracefully failing dynamic loading.
 //! Or if you figure out I just need to enable handle inheritance or somesuch.
 //!
 //! | Version           | Description                           | Notes     |

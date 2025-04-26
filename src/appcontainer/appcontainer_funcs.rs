@@ -116,20 +116,11 @@ pub fn create_app_container_profile(
 /// ### References
 /// *   <https://github.com/chromium/chromium/commit/9d4152381ceebbd1445489daa4f45f3d728a213c>
 ///
-#[cfg(std)] // minidl requires std for now: https://github.com/MaulingMonkey/minidl/issues/1
 pub fn create_app_container_token<'a>(
     token:      impl Into<token::Handle<'a>>,
     security:   &security::Capabilities<'a>,
 ) -> firehazard::Result<token::OwnedHandle> {
-    use winapi::shared::minwindef::*;
-    use winapi::um::winnt::*;
-
-    lazy_static::lazy_static! {
-        static ref CREATE_APP_CONTAINER_TOKEN : Option<unsafe extern "system" fn(token_handle: HANDLE, security_capabilities: *const SECURITY_CAPABILITIES, out_token: PHANDLE) -> BOOL> = {
-            minidl::Library::load("kernelbase.dll").ok().and_then(|lib| unsafe { lib.sym_opt("CreateAppContainerToken\0") })
-        };
-    }
-    #[allow(non_snake_case)] let CreateAppContainerToken = (*CREATE_APP_CONTAINER_TOKEN).ok_or(ERROR_CALL_NOT_IMPLEMENTED)?;
+    #[allow(non_snake_case)] let CreateAppContainerToken = *kernelbase::CreateAppContainerToken;
 
     let mut out_token = null_mut();
     firehazard::Error::get_last_if(0 == unsafe { CreateAppContainerToken(
@@ -251,25 +242,12 @@ pub fn derive_app_container_sid_from_app_container_name(
 /// `kernel32.dll` doesn't even re-export the symbol.
 /// I checked.
 ///
-#[cfg(std)] // minidl requires std for now
 pub fn derive_capability_sids_from_name(cap_name: impl TryIntoAsCStr<u16>) -> firehazard::Result<(AVec<sid::Box<LocalAllocFree>, DangleZst<Local>>, AVec<sid::Box<LocalAllocFree>, DangleZst<Local>>)> {
     use winapi::shared::minwindef::*;
-    use winapi::um::winnt::*;
 
     let cap_name = cap_name.try_into().map_err(|_| ERROR_INVALID_PARAMETER)?;
 
-    lazy_static::lazy_static! {
-        static ref DERIVE_CAPABILITY_SIDS_FROM_NAME : Option<unsafe extern "system" fn(
-            CapName:                    LPCWSTR,
-            CapabilityGroupSids:        *mut *mut PSID,
-            CapabilityGroupSidCount:    *mut DWORD,
-            CapabilitySids:             *mut *mut PSID,
-            CapabilitySidCount:         *mut DWORD,
-        ) -> BOOL> = {
-            minidl::Library::load("kernelbase.dll").ok().and_then(|lib| unsafe { lib.sym_opt("DeriveCapabilitySidsFromName\0") })
-        };
-    }
-    #[allow(non_snake_case)] let DeriveCapabilitySidsFromName = (*DERIVE_CAPABILITY_SIDS_FROM_NAME).ok_or(ERROR_CALL_NOT_IMPLEMENTED)?;
+    #[allow(non_snake_case)] let DeriveCapabilitySidsFromName = *kernelbase::DeriveCapabilitySidsFromName;
 
     let mut n_group_sids = 0;
     let mut   group_sids = null_mut();
@@ -320,7 +298,7 @@ fn derive_restricted_app_container_sid_from_app_container_sid_and_restricted_nam
 /// GetAppContainerFolderPath
 ///
 #[cfg(not_yet)] // someone gave GetAppContainerFolderPath a *string* based SID parameter? verify that they actually meant to require a SID and not a name before exposing
-#[cfg(std)]
+#[cfg(std)] // std::path::PathBuf
 pub fn get_app_container_folder_path(
     app_container_sid:              &sid::Value,
 ) -> firehazard::Result<std::path::PathBuf> {

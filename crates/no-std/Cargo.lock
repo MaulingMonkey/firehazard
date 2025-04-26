@@ -51,6 +51,7 @@ dependencies = [
  "abistr",
  "bytemuck",
  "ialloc",
+ "lazy_static",
  "valrow",
  "winapi",
 ]

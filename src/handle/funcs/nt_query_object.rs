@@ -1,4 +1,3 @@
-#[cfg(std)] // currently required for minidl
 #[doc(alias = "NtQueryObject")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-ntqueryobject)\]
 /// NtQueryObject(handle, ...)
@@ -7,13 +6,14 @@
 ///
 /// | error                         | condition |
 /// | ------------------------------| ----------|
-/// | ERROR_API_UNAVAILABLE         | `ntdll.dll` or `NtQueryObject` cannot be loaded
+/// | ERROR_CALL_NOT_IMPLEMENTED    | `ntdll.dll` or `NtQueryObject` cannot be loaded
 /// | STATUS_ACCESS_DENIED          | Insufficient permissions for query?
 /// | STATUS_INVALID_HANDLE         | Invalid handle
 /// | STATUS_INFO_LENGTH_MISMATCH   | For fixed sized `Info` types, unless the requested size match *exactly*?
 /// | STATUS_BUFFER_OVERFLOW        | Insufficiently large buffer for info? (documented)
 /// | STATUS_BUFFER_TOO_SMALL       | Insufficiently large buffer for info? (documented)
 ///
+#[cfg_attr(not(std), allow(dead_code))]
 pub(crate) fn nt_query_object<'h, Info: ntdll::OBJECT_INFORMATION>(
     handle:     impl Into<handle::Pseudo<'h>>,
  ) -> firehazard::Result<alloc::CBoxSized<Info>> {
@@ -21,7 +21,7 @@ pub(crate) fn nt_query_object<'h, Info: ntdll::OBJECT_INFORMATION>(
 
     let handle = handle.into();
     let handle = handle.as_handle().cast();
-    #[allow(non_snake_case)] let NtQueryObject = (*ntdll::NtQueryObject)?;
+    #[allow(non_snake_case)] let NtQueryObject = *ntdll::NtQueryObject;
 
     // Errata for ObjectBasicInformation / PUBLIC_OBJECT_BASIC_INFORMATION, as experienced on Windows 10.0.19045.5737:
     //  *   STATUS_INFO_LENGTH_MISMATCH is returned unless size == size_of::<Info>() *exactly*?
@@ -47,7 +47,7 @@ pub(crate) fn nt_query_object<'h, Info: ntdll::OBJECT_INFORMATION>(
     }
 }
 
-#[cfg(std)] #[test] fn nt_query_object_file_object_basic_information_maybe_overlapped() {
+#[test] fn nt_query_object_file_object_basic_information_maybe_overlapped() {
     let overlapped  = create_file_w(cstr16!("Readme.md"), access::GENERIC_READ, file::Share::READ, None, winapi::um::fileapi::OPEN_EXISTING, file::FLAG_OVERLAPPED, None).unwrap();
     let overlapped  = nt_query_object::<ntdll::PUBLIC_OBJECT_BASIC_INFORMATION>(&overlapped ).unwrap();
 
@@ -67,7 +67,7 @@ pub(crate) fn nt_query_object<'h, Info: ntdll::OBJECT_INFORMATION>(
 
 
 
-#[cfg(std)] // currently required for minidl
+#[cfg(std)] // required for std::ffi::OsString
 #[doc(alias = "NtQueryObject")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-ntqueryobject)\]
 /// NtQueryObject(handle, ObjectTypeInformation, ...)
@@ -89,7 +89,7 @@ pub(crate) fn nt_query_object<'h, Info: ntdll::OBJECT_INFORMATION>(
 ///
 /// | error                                                             | condition |
 /// | ------------------------------------------------------------------| ----------|
-/// | ERROR_API_UNAVAILABLE                                             | `ntdll.dll` or `NtQueryObject` cannot be loaded
+/// | ERROR_CALL_NOT_IMPLEMENTED                                        | `ntdll.dll` or `NtQueryObject` cannot be loaded
 /// | STATUS_ACCESS_DENIED                                              | Insufficient permissions to query `handle` (e.g. no `*_QUERY_[LIMITED_]INFORMATION` access?)
 /// | <span style="color: red">`Ok("Process")`</span>                   | `handle` is dangling or never valid on Windows 10.0.19045.5737?
 /// | STATUS_INVALID_HANDLE                                             | `handle` is dangling or never valid
