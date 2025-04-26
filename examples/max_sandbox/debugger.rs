@@ -1,8 +1,6 @@
 use firehazard::*;
 
 use winapi::ctypes::c_void;
-use winapi::shared::minwindef::FALSE;
-use winapi::um::handleapi::DuplicateHandle;
 use winapi::um::minwinbase::*;
 use winapi::um::winnt::*;
 
@@ -44,12 +42,8 @@ pub fn debug_loop(
             },
             CreateThread(event) => {
                 println!("[{dwProcessId}:{dwThreadId}] thread created");
-                let mut thread = event.hThread;
-
-                let process = get_current_process().as_handle();
-                assert!(FALSE != unsafe { DuplicateHandle(process, thread, process, &mut thread, access::GENERIC_ALL.into(), false as _, 0) });
-                let thread = unsafe { thread::OwnedHandle::from_raw(thread) }.unwrap();
-
+                let thread = unsafe { thread::Handle::from_raw(event.hThread) }.unwrap();
+                let thread = duplicate_handle_local(thread, access::GENERIC_ALL, false).unwrap(); // `thread` does not start with enough permission for `set_thread_token`
                 set_thread_token(&thread, &tokens.permissive).unwrap();
                 let _prev_thread = threads.insert(dwThreadId, thread);
                 debug_assert!(_prev_thread.is_none());
@@ -57,12 +51,8 @@ pub fn debug_loop(
             },
             CreateProcess(event) => {
                 println!("[{dwProcessId}:{dwThreadId}] process created");
-                let mut thread = event.hThread;
-
-                let process = get_current_process().as_handle();
-                assert!(FALSE != unsafe { DuplicateHandle(process, thread, process, &mut thread, access::GENERIC_ALL.into(), false as _, 0) });
-                let thread = unsafe { thread::OwnedHandle::from_raw(thread) }.unwrap();
-
+                let thread = unsafe { thread::Handle::from_raw(event.hThread) }.unwrap();
+                let thread = duplicate_handle_local(thread, access::GENERIC_ALL, false).unwrap(); // `thread` does not start with enough permission for `set_thread_token`
                 set_thread_token(&thread, &tokens.permissive).unwrap(); // already set?
                 let _prev_thread = threads.insert(dwThreadId, thread);
                 debug_assert!(_prev_thread.is_none());

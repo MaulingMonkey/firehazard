@@ -1,10 +1,7 @@
 use crate::prelude::*;
 use winapi::ctypes::c_char;
 use winapi::shared::minwindef::LPARAM;
-use winapi::shared::ntdef::HANDLE;
 use winapi::um::errhandlingapi::SetLastError;
-use winapi::um::handleapi::DuplicateHandle;
-use winapi::um::winnt::DUPLICATE_SAME_ACCESS;
 use winapi::um::winuser::*;
 
 
@@ -236,19 +233,8 @@ unsafe extern "system" fn fwd_enum_window_stations_w<
 ///
 pub fn open_process_window_station() -> firehazard::Result<winsta::OwnedHandle> {
     // "Do not close the handle returned by this function." - so we return a closeable clone instead
-    let mut winsta : HANDLE = unsafe { GetProcessWindowStation() }.cast();
-    firehazard::Error::get_last_if(winsta.is_null())?;
-    let process = get_current_process().as_handle();
-    firehazard::Error::get_last_if(FALSE == unsafe { DuplicateHandle(
-        process,
-        winsta,
-        process,
-        &mut winsta,
-        0,
-        0,
-        DUPLICATE_SAME_ACCESS,
-    )})?;
-    unsafe { winsta::OwnedHandle::from_raw(winsta.cast()) }
+    let winsta = unsafe { GetProcessWindowStation() };
+    unsafe { winsta::OwnedHandle::borrow_from_raw(&winsta)? }.try_clone_to_owned()
 }
 
 
