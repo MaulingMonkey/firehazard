@@ -10,27 +10,59 @@
 /// | ERROR_API_UNAVAILABLE         | `ntdll.dll` or `NtQueryObject` cannot be loaded
 /// | STATUS_ACCESS_DENIED          | Insufficient permissions for query?
 /// | STATUS_INVALID_HANDLE         | Invalid handle
-/// | STATUS_INFO_LENGTH_MISMATCH   | Insufficiently large buffer for info (observed)
+/// | STATUS_INFO_LENGTH_MISMATCH   | For fixed sized `Info` types, unless the requested size match *exactly*?
 /// | STATUS_BUFFER_OVERFLOW        | Insufficiently large buffer for info? (documented)
 /// | STATUS_BUFFER_TOO_SMALL       | Insufficiently large buffer for info? (documented)
 ///
-pub(crate) fn nt_query_object<'h, Info: dlls::ntdll::OBJECT_INFORMATION>(
+pub(crate) fn nt_query_object<'h, Info: ntdll::OBJECT_INFORMATION>(
     handle:     impl Into<handle::Pseudo<'h>>,
  ) -> firehazard::Result<alloc::CBoxSized<Info>> {
+    use winapi::shared::ntstatus::*;
+
     let handle = handle.into();
     let handle = handle.as_handle().cast();
-    #[allow(non_snake_case)] let NtQueryObject = (*dlls::ntdll::NtQueryObject)?;
+    #[allow(non_snake_case)] let NtQueryObject = (*ntdll::NtQueryObject)?;
 
+    // Errata for ObjectBasicInformation / PUBLIC_OBJECT_BASIC_INFORMATION, as experienced on Windows 10.0.19045.5737:
+    //  *   STATUS_INFO_LENGTH_MISMATCH is returned unless size == size_of::<Info>() *exactly*?
+    //  *   Contrary to docs, `ReturnLength` isn't set on the above error - it remains 0.
+    //
+    // I suspect each case is manually handled, and fixed-size information classes will often only check the size, rather than write it.
+    // As such, for every class, our first attempt is to request *exactly* size_of::<Info>().
+    // If we succeed, or fail - and aren't told a larger buffer size to attempt - we can bail early after that.
+    //
+    let mut stack = MaybeUninit::<Info>::uninit();
+    let stack_size = u32::try_from(size_of_val(&stack)).unwrap();
     let mut size = 0;
-    let _tatus = unsafe { NtQueryObject(handle, Info::CLASS, None, 0, Some(&mut size)) };
-    let mut info = alloc::CBoxSized::new_oversized(Info::default(), usize::from32(size));
+    let status = unsafe { NtQueryObject(handle, Info::CLASS, NonNull::new(stack.as_mut_ptr().cast()), stack_size, Some(&mut size)) };
+    if status == STATUS_SUCCESS { return Ok(alloc::CBoxSized::new(unsafe { stack.assume_init() })) }
+    if size <= stack_size       { return Err(firehazard::Error(status as _)) }
 
+    let info = alloc::CBoxSized::new_oversized(Info::default(), usize::from32(size));
     let status = unsafe { NtQueryObject(handle, Info::CLASS, Some(info.as_non_null().cast()), size, None) };
-    if status == 0 { // STATUS_SUCCESS
-        Ok(info)
-    } else {
-        Err(firehazard::Error::from(status))
+
+    match status {
+        STATUS_SUCCESS  => Ok(info),
+        _               => Err(firehazard::Error::from(status)),
     }
+}
+
+#[cfg(std)] #[test] fn nt_query_object_file_object_basic_information_maybe_overlapped() {
+    let overlapped  = create_file_w(cstr16!("Readme.md"), access::GENERIC_READ, file::Share::READ, None, winapi::um::fileapi::OPEN_EXISTING, file::FLAG_OVERLAPPED, None).unwrap();
+    let overlapped  = nt_query_object::<ntdll::PUBLIC_OBJECT_BASIC_INFORMATION>(&overlapped ).unwrap();
+
+    let synchronous = create_file_w(cstr16!("Readme.md"), access::GENERIC_READ, file::Share::READ, None, winapi::um::fileapi::OPEN_EXISTING, 0,                     None).unwrap();
+    let synchronous = nt_query_object::<ntdll::PUBLIC_OBJECT_BASIC_INFORMATION>(&synchronous).unwrap();
+
+    // XXX: Sadly, these appear identical: PUBLIC_OBJECT_BASIC_INFORMATION {
+    //     Attributes: 0,
+    //     GrantedAccess: READ_CONTROL | SYNCHRONIZE | 0x0089,
+    //     HandleCount: 1,
+    //     PointerCount: 32769,
+    //     ..
+    // }
+    std::dbg!((&*overlapped, &*synchronous));
+    // panic!();
 }
 
 
@@ -45,7 +77,7 @@ pub(crate) fn nt_query_object<'h, Info: dlls::ntdll::OBJECT_INFORMATION>(
 /// | `Desktop`         | [Desktops](desktop)
 /// | `File`            | [Files](crate::file), [Pipes](pipe)
 /// | `Job`             | [Jobs](job)
-/// | `Process`         | [Process](process) (including [`get_current_process`])
+/// | `Process`         | [Process](process) (including [`get_current_process`]), some dangling / never-valid handles
 /// | `Thread`          | [Threads](thread) (including [`get_current_thread`])
 /// | `Token`           | [Access Tokens](token)
 /// | `WindowStation`   | [Window Stations](winsta)
@@ -59,7 +91,8 @@ pub(crate) fn nt_query_object<'h, Info: dlls::ntdll::OBJECT_INFORMATION>(
 /// | ------------------------------------------------------------------| ----------|
 /// | ERROR_API_UNAVAILABLE                                             | `ntdll.dll` or `NtQueryObject` cannot be loaded
 /// | STATUS_ACCESS_DENIED                                              | Insufficient permissions to query `handle` (e.g. no `*_QUERY_[LIMITED_]INFORMATION` access?)
-/// | STATUS_INVALID_HANDLE                                             | `handle` is outright invalid
+/// | <span style="color: red">`Ok("Process")`</span>                   | `handle` is dangling or never valid on Windows 10.0.19045.5737?
+/// | STATUS_INVALID_HANDLE                                             | `handle` is dangling or never valid
 /// | <span style="opacity: 50%">STATUS_INFO_LENGTH_MISMATCH?</span>    | If the [`nt_query_object_type_name`]-internal buffer is too small?
 /// | <span style="opacity: 50%">STATUS_BUFFER_OVERFLOW?</span>         | If the [`nt_query_object_type_name`]-internal buffer is too small?
 /// | <span style="opacity: 50%">STATUS_BUFFER_TOO_SMALL?</span>        | If the [`nt_query_object_type_name`]-internal buffer is too small?
@@ -134,7 +167,7 @@ pub(crate) fn nt_query_object<'h, Info: dlls::ntdll::OBJECT_INFORMATION>(
 pub fn nt_query_object_type_name<'h>(
     handle:     impl Into<handle::Pseudo<'h>>,
 ) -> firehazard::Result<std::ffi::OsString> {
-    let info = nt_query_object::<dlls::ntdll::PUBLIC_OBJECT_TYPE_INFORMATION>(handle)?;
+    let info = nt_query_object::<ntdll::PUBLIC_OBJECT_TYPE_INFORMATION>(handle)?;
     Ok(std::os::windows::ffi::OsStringExt::from_wide(info.type_name()))
 }
 

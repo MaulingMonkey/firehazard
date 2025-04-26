@@ -6,7 +6,6 @@ use crate::prelude::*;
 use bytemuck::*;
 use winapi::shared::minwindef::ULONG;
 use winapi::shared::ntdef::{NTSTATUS, UNICODE_STRING};
-use winapi::um::winnt::ACCESS_MASK;
 
 
 
@@ -29,13 +28,24 @@ impl Default for PUBLIC_OBJECT_TYPE_INFORMATION  { fn default() -> Self { Zeroab
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/ns-ntifs-_public_object_basic_information)\]
 /// PUBLIC_OBJECT_BASIC_INFORMATION
 ///
-#[derive(Clone, Debug, Zeroable)]
+#[derive(Clone, Zeroable)]
 #[repr(C)] pub struct PUBLIC_OBJECT_BASIC_INFORMATION {
     pub Attributes:     ULONG,
-    pub GrantedAccess:  ACCESS_MASK,
+    pub GrantedAccess:  access::Mask,
     pub HandleCount:    ULONG,
     pub PointerCount:   ULONG,
     pub Reserved:       [MaybeUninit<ULONG>; 10],
+}
+
+impl core::fmt::Debug for PUBLIC_OBJECT_BASIC_INFORMATION {
+    fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::fmt::Result {
+        fmt.debug_struct("PUBLIC_OBJECT_BASIC_INFORMATION")
+            .field("Attributes",    &self.Attributes    )
+            .field("GrantedAccess", &self.GrantedAccess )
+            .field("HandleCount",   &self.HandleCount   )
+            .field("PointerCount",  &self.PointerCount  )
+            .finish_non_exhaustive() // Reserved
+    }
 }
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/ns-ntifs-__public_object_type_information)\]
