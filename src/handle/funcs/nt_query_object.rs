@@ -16,7 +16,7 @@
 #[cfg_attr(not(std), allow(dead_code))]
 pub(crate) fn nt_query_object<'h, Info: ntdll::OBJECT_INFORMATION>(
     handle:     impl Into<handle::Pseudo<'h>>,
- ) -> firehazard::Result<alloc::CBoxSized<Info>> {
+) -> firehazard::Result<alloc::CBoxSized<Info>> {
     use winapi::shared::ntstatus::*;
 
     let handle = handle.into();
