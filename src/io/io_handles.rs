@@ -1,9 +1,5 @@
 use crate::prelude::*;
 
-#[doc(hidden)] #[deprecated = "use `firehazard::io::FileNN` instead"        ] pub type File         = FileNN;
-#[doc(hidden)] #[deprecated = "use `firehazard::pipe::ReaderNN` instead"    ] pub type ReadPipe     = pipe::ReaderNN;
-#[doc(hidden)] #[deprecated = "use `firehazard::pipe::WriterNN` instead"    ] pub type WritePipe    = pipe::WriterNN;
-
 
 
 #[doc(alias = "HANDLE")]

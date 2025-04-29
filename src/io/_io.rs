@@ -23,4 +23,7 @@ pub(crate) mod funcs {
     include!(r"funcs\write_file.rs");
 }
 
-#[deprecated = "moved to firehazard::pipe::create"] #[doc(hidden)] pub use crate::pipe::create as create_pipe;
+#[deprecated = "use `firehazard::io::FileNN` instead"       ] #[doc(hidden)] pub type File         = FileNN;
+#[deprecated = "use `firehazard::pipe::ReaderNN` instead"   ] #[doc(hidden)] pub type ReadPipe     = crate::pipe::ReaderNN;
+#[deprecated = "use `firehazard::pipe::WriterNN` instead"   ] #[doc(hidden)] pub type WritePipe    = crate::pipe::WriterNN;
+#[deprecated = "use `firehazard::pipe::create` instead"     ] #[doc(hidden)] pub use crate::pipe::create as create_pipe;
