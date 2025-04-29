@@ -6,13 +6,13 @@
 /// CloseHandle
 impl Drop for Connected { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 
-handles!(unsafe impl *LocalHandleNN<c_void>     for self::{Connected});
-handles!(unsafe impl {Send, Sync}               for self::{Connected});
-handles!(       impl Debug                      for self::{Connected});
+handles!(unsafe impl *LocalHandleNN<c_void>     for pipe::named::{Connected});
+handles!(unsafe impl {Send, Sync}               for pipe::named::{Connected});
+handles!(       impl Debug                      for pipe::named::{Connected});
 
-handles!(unsafe impl @convert     self::Connected => handle::Owned        );
-handles!(unsafe impl @convert &'_ self::Connected => handle::Borrowed<'_> );
-handles!(unsafe impl @convert &'_ self::Connected => handle::Pseudo<'_>   );
+handles!(unsafe impl @convert     pipe::named::Connected => handle::Owned        );
+handles!(unsafe impl @convert &'_ pipe::named::Connected => handle::Borrowed<'_> );
+handles!(unsafe impl @convert &'_ pipe::named::Connected => handle::Pseudo<'_>   );
 
 //pl crate::os::windows::io::AsHandle       for Connected { fn as_handle(&self) -> crate::os::windows::io::BorrowedHandle { unsafe { crate::os::windows::io::BorrowedHandle::borrow_raw(self.0.as_ptr().cast()) } } }
 //pl crate::os::windows::io::AsRawHandle    for Connected { fn as_raw_handle(&self) -> crate::os::windows::io::RawHandle { self.0.as_ptr().cast() } }

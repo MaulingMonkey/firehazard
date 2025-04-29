@@ -1,7 +1,14 @@
 use core::fmt::{self, Formatter};
 
-pub(crate) fn debug<T>(fmt: &mut Formatter, module: &str, name: &str, handle: NonNull<T>) -> fmt::Result {
-    write!(fmt, "{module}::{name}(")?;
+pub(crate) fn debug<T>(fmt: &mut Formatter, ty: &str, handle: NonNull<T>) -> fmt::Result {
+    let ty = ty.strip_suffix(" < '_ >").unwrap_or(ty);
+    for ch in ty.chars() {
+        if ch != ' ' {
+            use core::fmt::Write;
+            fmt.write_char(ch)?;
+        }
+    }
+    write!(fmt, "(")?;
     match handle.as_ptr() as isize {
         // N.B. these are semi-ambiguous: C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h:
         // #define MEMORY_CURRENT_PARTITION_HANDLE         ((HANDLE) (LONG_PTR) -1)

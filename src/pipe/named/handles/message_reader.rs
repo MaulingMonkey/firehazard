@@ -14,12 +14,12 @@ impl Drop for MessageReader<'_> {
     }
 }
 
-handles!(unsafe impl *LocalHandleNN<c_void>     for self::{MessageReader<'_>});
-handles!(unsafe impl {Send, Sync}               for self::{MessageReader<'_>});
-handles!(       impl Debug                      for self::{MessageReader<'_>});
+handles!(unsafe impl *LocalHandleNN<c_void>     for pipe::named::{MessageReader<'_>});
+handles!(unsafe impl {Send, Sync}               for pipe::named::{MessageReader<'_>});
+handles!(       impl Debug                      for pipe::named::{MessageReader<'_>});
 
-handles!(unsafe impl @convert self::MessageReader<'_> => handle::Borrowed<'_> );
-handles!(unsafe impl @convert self::MessageReader<'_> => handle::Pseudo<'_>   );
+handles!(unsafe impl @convert pipe::named::MessageReader<'_> => handle::Borrowed<'_> );
+handles!(unsafe impl @convert pipe::named::MessageReader<'_> => handle::Pseudo<'_>   );
 
 //pl crate::os::windows::io::AsHandle       for MessageReader<'_> { fn as_handle(&self) -> crate::os::windows::io::BorrowedHandle { unsafe { crate::os::windows::io::BorrowedHandle::borrow_raw(self.0.as_ptr().cast()) } } }
 //pl crate::os::windows::io::AsRawHandle    for MessageReader<'_> { fn as_raw_handle(&self) -> crate::os::windows::io::RawHandle { self.0.as_ptr().cast() } }

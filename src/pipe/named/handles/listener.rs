@@ -6,14 +6,14 @@
 /// CloseHandle
 impl Drop for pipe::named::Listener { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 
-handles!(unsafe impl *LocalHandleNN<c_void>     for self::{Listener});
-handles!(unsafe impl TryCloneToOwned<Listener>  for self::{Listener});
-handles!(unsafe impl {Send, Sync}               for self::{Listener});
-handles!(       impl Debug                      for self::{Listener});
+handles!(unsafe impl *LocalHandleNN<c_void>     for pipe::named::{Listener});
+handles!(unsafe impl TryCloneToOwned<Listener>  for pipe::named::{Listener});
+handles!(unsafe impl {Send, Sync}               for pipe::named::{Listener});
+handles!(       impl Debug                      for pipe::named::{Listener});
 
-handles!(unsafe impl @convert     self::Listener => handle::Owned        );
-handles!(unsafe impl @convert &'_ self::Listener => handle::Borrowed<'_> );
-handles!(unsafe impl @convert &'_ self::Listener => handle::Pseudo<'_>   );
+handles!(unsafe impl @convert     pipe::named::Listener => handle::Owned        );
+handles!(unsafe impl @convert &'_ pipe::named::Listener => handle::Borrowed<'_> );
+handles!(unsafe impl @convert &'_ pipe::named::Listener => handle::Pseudo<'_>   );
 
 //pl crate::os::windows::io::AsHandle       for pipe::named::Listener { fn as_handle(&self) -> crate::os::windows::io::BorrowedHandle { unsafe { crate::os::windows::io::BorrowedHandle::borrow_raw(self.0.as_ptr().cast()) } } }
 //pl crate::os::windows::io::AsRawHandle    for pipe::named::Listener { fn as_raw_handle(&self) -> crate::os::windows::io::RawHandle { self.0.as_ptr().cast() } }

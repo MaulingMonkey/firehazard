@@ -5,12 +5,12 @@
 ///
 #[repr(transparent)] pub struct BytesReader<'m>(pub(crate) HANDLENN, PhantomData<&'m mut ()>);
 
-handles!(unsafe impl *LocalHandleNN<c_void>     for self::{BytesReader<'_>});
-handles!(unsafe impl {Send, Sync}               for self::{BytesReader<'_>});
-handles!(       impl Debug                      for self::{BytesReader<'_>});
+handles!(unsafe impl *LocalHandleNN<c_void>     for pipe::named::{BytesReader<'_>});
+handles!(unsafe impl {Send, Sync}               for pipe::named::{BytesReader<'_>});
+handles!(       impl Debug                      for pipe::named::{BytesReader<'_>});
 
-handles!(unsafe impl @convert self::BytesReader<'_> => handle::Borrowed<'_> );
-handles!(unsafe impl @convert self::BytesReader<'_> => handle::Pseudo<'_>   );
+handles!(unsafe impl @convert pipe::named::BytesReader<'_> => handle::Borrowed<'_> );
+handles!(unsafe impl @convert pipe::named::BytesReader<'_> => handle::Pseudo<'_>   );
 
 //pl crate::os::windows::io::AsHandle       for BytesReader<'_> { fn as_handle(&self) -> crate::os::windows::io::BorrowedHandle { unsafe { crate::os::windows::io::BorrowedHandle::borrow_raw(self.0.as_ptr().cast()) } } }
 //pl crate::os::windows::io::AsRawHandle    for BytesReader<'_> { fn as_raw_handle(&self) -> crate::os::windows::io::RawHandle { self.0.as_ptr().cast() } }
