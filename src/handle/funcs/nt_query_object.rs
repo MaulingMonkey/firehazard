@@ -33,8 +33,17 @@ pub(crate) fn nt_query_object<'h, Info: ntdll::OBJECT_INFORMATION>(
     let stack_size = u32::try_from(size_of_val(&stack)).unwrap();
     let mut size = 0;
     let status = unsafe { NtQueryObject(handle, Info::CLASS, NonNull::new(stack.as_mut_ptr().cast()), stack_size, Some(&mut size)) };
-    if status == STATUS::SUCCESS    { return Ok(alloc::CBoxSized::new(unsafe { stack.assume_init() })) }
-    if size <= stack_size           { return Err(status.into()) }
+    match status {
+        STATUS::SUCCESS                 => return Ok(alloc::CBoxSized::new(unsafe { stack.assume_init() })),
+        STATUS::INVALID_HANDLE          => return Err(status.into()), // avoids OOM: `size` has been known to be 0xFFFFFFF8 after querying an HMODULE's name on i686!
+        STATUS::ACCESS_DENIED           => return Err(status.into()), // documented, preusmably unrecoverable
+        STATUS::NOT_IMPLEMENTED         => return Err(status.into()), // stub-implemented, preusmably unrecoverable
+        _ if size <= stack_size         => return Err(status.into()), // a recoverable "not enough buffer" error should've requested more bytes
+        STATUS::INFO_LENGTH_MISMATCH    => {}, // continue - typical recoverable error for nt_query_object_type_name
+        STATUS::BUFFER_TOO_SMALL        => {}, // continue - not observed, but documented, probably recoverable?
+        STATUS::BUFFER_OVERFLOW         => {}, // continue - not observed, but documented, probably recoverable?
+        _                               => {}, // continue - unexpected error, might be recoverable?
+    }
 
     let info = alloc::CBoxSized::new_oversized(Info::default(), usize::from32(size));
     let status = unsafe { NtQueryObject(handle, Info::CLASS, Some(info.as_non_null().cast()), size, None) };
@@ -73,13 +82,14 @@ pub(crate) fn nt_query_object<'h, Info: ntdll::OBJECT_INFORMATION>(
 /// | Known Values      | Includes  |
 /// | ------------------| ----------|
 /// | `Desktop`         | [Desktops](desktop)
-/// | `File`            | [Files](crate::file), [Pipes](pipe)
+/// | `File`            | [Files](crate::file), [Pipes](pipe), Sockets (on NT - including [TcpListener](std::net::TcpListener)!)
 /// | `Job`             | [Jobs](job)
 /// | `Process`         | [Process](process) (including [`get_current_process`]), some dangling / never-valid handles
 /// | `Thread`          | [Threads](thread) (including [`get_current_thread`])
 /// | `Token`           | [Access Tokens](token)
 /// | `WindowStation`   | [Window Stations](winsta)
-/// | ???               | (Pseudo) Console (Buffer)s, Events, Event Logs, GDI Objects, Heaps, Mail slots, Modules, Mutexes, Semaphores, Sockets, Timers, Volumes, ...
+/// | ???               | (Pseudo) Console (Buffer)s, Events, Event Logs, GDI Objects, Heaps, Mail slots, Mutexes, Semaphores, Timers, Volumes, ...
+/// | STATUS_INVALID_HANDLE | Modules
 ///
 ///
 ///
@@ -117,6 +127,23 @@ pub(crate) fn nt_query_object<'h, Info: ntdll::OBJECT_INFORMATION>(
 /// if let Ok((r, w)) = pipe::create(None, 0) {
 ///     assert_eq!("File", nt_query_object_type_name(&r).unwrap());
 ///     assert_eq!("File", nt_query_object_type_name(&w).unwrap());
+/// }
+///
+/// let addr = std::net::SocketAddr::from(([127, 0, 0, 1], 9001));
+/// if let Ok(listener) = std::net::TcpListener::bind(addr) {
+///     assert_eq!("File", nt_query_object_type_name(&listener).unwrap());
+///     let thread = std::thread::spawn(move || {
+///         let (socket, _addr) = listener.accept().unwrap();
+///         assert_eq!("File", nt_query_object_type_name(&socket).unwrap());
+///     });
+///     std::thread::sleep(std::time::Duration::from_secs(1));
+///     let socket = std::net::TcpStream::connect(addr).unwrap();
+///     assert_eq!("File", nt_query_object_type_name(&socket).unwrap());
+///     thread.join().unwrap();
+/// }
+///
+/// if let Ok(socket) = std::net::UdpSocket::bind(addr) {
+///     assert_eq!("File", nt_query_object_type_name(&socket).unwrap());
 /// }
 ///
 ///
@@ -190,5 +217,11 @@ tests! {
         if false { // XXX: this seems unreliable:
             assert_eq!(Ok(std::ffi::OsStr::new("Process")), r.as_deref());
         }
+    }
+
+    #[test] #[isolate] fn nt_query_object_type_name_module() {
+        let hmodule = unsafe { winapi::um::libloaderapi::GetModuleHandleW(core::ptr::null_mut()) };
+        let hmodule = unsafe { handle::Borrowed::from_raw(hmodule.cast()) }.unwrap();
+        assert_eq!(Err(STATUS::INVALID_HANDLE.into()), nt_query_object_type_name(hmodule));
     }
 }

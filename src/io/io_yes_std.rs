@@ -27,6 +27,21 @@ impl     From<    std::fs::File> for handle::Owned          { fn from(file:     
 impl<'a> From<&'a std::fs::File> for handle::Borrowed<'a>   { fn from(file: &'a std::fs::File) -> Self { unsafe { Self::from_raw(file.as_raw_handle()    .cast()) }.expect(EXPECT_NONNULL_STD_FILE) } }
 impl<'a> From<&'a std::fs::File> for handle::Pseudo<'a>     { fn from(file: &'a std::fs::File) -> Self { unsafe { Self::from_raw(file.as_raw_handle()    .cast()) }.expect(EXPECT_NONNULL_STD_FILE) } }
 
+// XXX: this assumes an NT kernel.  These all identify as `File` handles, but for now I'm being conservative and only converting to basic handles.
+impl     From<    std::net::TcpListener> for handle::Owned          { fn from(sock:     std::net::TcpListener   ) -> Self { unsafe { Self::from_raw(sock.into_raw_socket() as _) }.expect(EXPECT_NONNULL_STD_FILE) } }
+impl<'a> From<&'a std::net::TcpListener> for handle::Borrowed<'a>   { fn from(sock: &'a std::net::TcpListener   ) -> Self { unsafe { Self::from_raw(sock.as_raw_socket()   as _) }.expect(EXPECT_NONNULL_STD_FILE) } }
+impl<'a> From<&'a std::net::TcpListener> for handle::Pseudo<'a>     { fn from(sock: &'a std::net::TcpListener   ) -> Self { unsafe { Self::from_raw(sock.as_raw_socket()   as _) }.expect(EXPECT_NONNULL_STD_FILE) } }
+
+// XXX: this assumes an NT kernel.  These all identify as `File` handles, but for now I'm being conservative and only converting to basic handles.
+impl     From<    std::net::TcpStream  > for handle::Owned          { fn from(sock:     std::net::TcpStream     ) -> Self { unsafe { Self::from_raw(sock.into_raw_socket() as _) }.expect(EXPECT_NONNULL_STD_FILE) } }
+impl<'a> From<&'a std::net::TcpStream  > for handle::Borrowed<'a>   { fn from(sock: &'a std::net::TcpStream     ) -> Self { unsafe { Self::from_raw(sock.as_raw_socket()   as _) }.expect(EXPECT_NONNULL_STD_FILE) } }
+impl<'a> From<&'a std::net::TcpStream  > for handle::Pseudo<'a>     { fn from(sock: &'a std::net::TcpStream     ) -> Self { unsafe { Self::from_raw(sock.as_raw_socket()   as _) }.expect(EXPECT_NONNULL_STD_FILE) } }
+
+// XXX: this assumes an NT kernel.  These all identify as `File` handles, but for now I'm being conservative and only converting to basic handles.
+impl     From<    std::net::UdpSocket  > for handle::Owned          { fn from(sock:     std::net::UdpSocket     ) -> Self { unsafe { Self::from_raw(sock.into_raw_socket() as _) }.expect(EXPECT_NONNULL_STD_FILE) } }
+impl<'a> From<&'a std::net::UdpSocket  > for handle::Borrowed<'a>   { fn from(sock: &'a std::net::UdpSocket     ) -> Self { unsafe { Self::from_raw(sock.as_raw_socket()   as _) }.expect(EXPECT_NONNULL_STD_FILE) } }
+impl<'a> From<&'a std::net::UdpSocket  > for handle::Pseudo<'a>     { fn from(sock: &'a std::net::UdpSocket     ) -> Self { unsafe { Self::from_raw(sock.as_raw_socket()   as _) }.expect(EXPECT_NONNULL_STD_FILE) } }
+
 // FileNN → File should be sound since the former currently forbids `FILE_FLAG_OVERLAPPED`.
 impl From<FileNN> for std::fs::File { fn from(file: FileNN) -> Self { unsafe { std::fs::File::from_raw_handle(file.into_handle()) } } }
 
