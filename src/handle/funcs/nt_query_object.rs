@@ -6,9 +6,9 @@
 ///
 /// | error                         | condition |
 /// | ------------------------------| ----------|
-/// | ERROR_CALL_NOT_IMPLEMENTED    | `ntdll.dll` or `NtQueryObject` cannot be loaded
+/// | STATUS_NOT_IMPLEMENTED        | `ntdll.dll` or `NtQueryObject` cannot be loaded
 /// | STATUS_ACCESS_DENIED          | Insufficient permissions for query?
-/// | STATUS_INVALID_HANDLE         | Invalid handle
+/// | STATUS_INVALID_HANDLE         | Invalid `handle`?
 /// | STATUS_INFO_LENGTH_MISMATCH   | For fixed sized `Info` types, unless the requested size match *exactly*?
 /// | STATUS_BUFFER_OVERFLOW        | Insufficiently large buffer for info? (documented)
 /// | STATUS_BUFFER_TOO_SMALL       | Insufficiently large buffer for info? (documented)
@@ -17,8 +17,6 @@
 pub(crate) fn nt_query_object<'h, Info: ntdll::OBJECT_INFORMATION>(
     handle:     impl Into<handle::Pseudo<'h>>,
 ) -> firehazard::Result<alloc::CBoxSized<Info>> {
-    use winapi::shared::ntstatus::*;
-
     let handle = handle.into();
     let handle = handle.as_handle().cast();
     #[allow(non_snake_case)] let NtQueryObject = *ntdll::NtQueryObject;
@@ -35,15 +33,15 @@ pub(crate) fn nt_query_object<'h, Info: ntdll::OBJECT_INFORMATION>(
     let stack_size = u32::try_from(size_of_val(&stack)).unwrap();
     let mut size = 0;
     let status = unsafe { NtQueryObject(handle, Info::CLASS, NonNull::new(stack.as_mut_ptr().cast()), stack_size, Some(&mut size)) };
-    if status == STATUS_SUCCESS { return Ok(alloc::CBoxSized::new(unsafe { stack.assume_init() })) }
-    if size <= stack_size       { return Err(firehazard::Error(status as _)) }
+    if status == STATUS::SUCCESS    { return Ok(alloc::CBoxSized::new(unsafe { stack.assume_init() })) }
+    if size <= stack_size           { return Err(status.into()) }
 
     let info = alloc::CBoxSized::new_oversized(Info::default(), usize::from32(size));
     let status = unsafe { NtQueryObject(handle, Info::CLASS, Some(info.as_non_null().cast()), size, None) };
 
     match status {
-        STATUS_SUCCESS  => Ok(info),
-        _               => Err(firehazard::Error::from(status)),
+        STATUS::SUCCESS => Ok(info),
+        _               => Err(status.into()),
     }
 }
 

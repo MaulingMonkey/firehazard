@@ -101,6 +101,7 @@ winapi.features = [
     "memoryapi",
     "namedpipeapi",
     "ntlsa",
+    "processenv",
     "processthreadsapi",
     "securitybaseapi",
     "synchapi",
@@ -110,6 +111,8 @@ winapi.features = [
     "winnt",
     "winuser",
 ]
+
+winresult.version           = "0.1"
 
 
 

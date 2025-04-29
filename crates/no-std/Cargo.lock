@@ -54,6 +54,7 @@ dependencies = [
  "lazy_static",
  "valrow",
  "winapi",
+ "winresult",
 ]
 
 [[package]]

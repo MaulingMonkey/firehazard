@@ -60,17 +60,37 @@ use crate::prelude::*;
 
 
 
-handles!(unsafe impl *LocalHandleNN<c_void>         for io::{FileNN, FileHandle<'_>});
+impl FromLocalHandle<c_void> for io::FileNN {
+    unsafe fn from_raw_nn       (handle:  HANDLENN) ->  Self { unsafe { type_check_owned_from_raw   ( handle) }; Self(handle) }
+    unsafe fn borrow_from_raw_nn(handle: &HANDLENN) -> &Self { unsafe { type_check_borrowed_from_raw(*handle); transmute(handle) } }
+}
+
+impl FromLocalHandle<c_void> for io::FileHandle<'_> {
+    unsafe fn from_raw_nn       (handle:  HANDLENN) ->  Self { unsafe { type_check_borrowed_from_raw( handle) }; Self(handle, PhantomData) }
+    unsafe fn borrow_from_raw_nn(handle: &HANDLENN) -> &Self { unsafe { type_check_borrowed_from_raw(*handle); transmute(handle) } }
+}
+
+impl FromLocalHandle<c_void> for io::ReadHandle<'_> {
+    unsafe fn from_raw_nn       (handle:  HANDLENN) -> Self  { unsafe { type_check_borrowed_from_raw( handle) }; Self(handle, PhantomData) }
+    unsafe fn borrow_from_raw_nn(handle: &HANDLENN) -> &Self { unsafe { type_check_borrowed_from_raw(*handle); transmute(handle) } }
+}
+
+impl FromLocalHandle<c_void> for io::WriteHandle<'_> {
+    unsafe fn from_raw_nn       (handle:  HANDLENN) ->  Self { unsafe { type_check_borrowed_from_raw( handle) }; Self(handle, PhantomData) }
+    unsafe fn borrow_from_raw_nn(handle: &HANDLENN) -> &Self { unsafe { type_check_borrowed_from_raw(*handle); transmute(handle) } }
+}
+
+handles!(unsafe impl AsLocalHandleNN<c_void>        for io::{FileNN, FileHandle<'_>});
 handles!(unsafe impl TryCloneToOwned<FileNN>        for io::{FileNN, FileHandle<'_>});
 handles!(unsafe impl {Send, Sync}                   for io::{FileNN, FileHandle<'_>}); // SAFETY: `std::fs::File` is `Send+Sync` despite `try_clone(&self)`, `impl Read for &FileNN`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for io::{FileNN, FileHandle<'_>});
 
-handles!(unsafe impl *LocalHandleNN<c_void>         for io::{ReadHandle<'_>});
+handles!(unsafe impl AsLocalHandleNN<c_void>        for io::{ReadHandle<'_>});
 handles!(unsafe impl TryCloneToOwned<pipe::ReaderNN>for io::{ReadHandle<'_>});
 handles!(unsafe impl {Send, Sync}                   for io::{ReadHandle<'_>}); // SAFETY: `std::io::PipeReader` is `Send+Sync` despite `try_clone(&self)`, `impl Read for &PipeReader`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for io::{ReadHandle<'_>});
 
-handles!(unsafe impl *LocalHandleNN<c_void>         for io::{WriteHandle<'_>});
+handles!(unsafe impl AsLocalHandleNN<c_void>        for io::{WriteHandle<'_>});
 handles!(unsafe impl TryCloneToOwned<pipe::WriterNN>for io::{WriteHandle<'_>});
 handles!(unsafe impl {Send, Sync}                   for io::{WriteHandle<'_>}); // SAFETY: `std::io::PipeWriter` is `Send+Sync` despite `try_clone(&self)`, `impl Write for &PipeWriter`, etc. all sharing a `HANDLE` - if this is unsound, so is `std`.
 handles!(       impl Debug                          for io::{WriteHandle<'_>});
@@ -122,7 +142,7 @@ impl io::Write  for     FileHandle<'_>  { fn write(&mut self, buf: &[u8]) -> io:
 impl io::Write  for &'_ WriteHandle<'_> { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(*self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
 impl io::Write  for     WriteHandle<'_> { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file( self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
 
-impl crate::os::windows::io::FromRawHandle for FileNN         { unsafe fn from_raw_handle(handle: crate::os::windows::io::RawHandle) -> Self { Self(HANDLENN::new(handle.cast()).expect("undefined behavior: null is not an open, owned handle")) } }
+impl crate::os::windows::io::FromRawHandle for FileNN         { unsafe fn from_raw_handle(handle: crate::os::windows::io::RawHandle) -> Self { let handle = HANDLENN::new(handle.cast()).expect("undefined behavior: null is not an open, owned handle"); unsafe { type_check_owned_from_raw(handle) }; Self(handle) } }
 impl crate::os::windows::io::IntoRawHandle for FileNN         { fn into_raw_handle(self) -> crate::os::windows::io::RawHandle { self.into_handle().cast() } }
 
 unsafe impl valrow::Borrowable for FileNN            { type Abi = HANDLENN; }
@@ -141,12 +161,69 @@ impl CloneToOwned for io::WriteHandle<'_>   {}
 
 
 
+// https://stackoverflow.com/questions/42513027/has-been-a-file-handle-opened-with-file-flag-sequential-scan-flag
+// https://community.osr.com/t/win32-handle-vs-nt-handle/21915/20?page=2
+// https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/wdm/ns-wdm-_file_object
+
+#[inline(never)] unsafe fn assert_is_synchronous_file(raw: HANDLENN) {
+    let _preserve_error_scope = PreserveErrorScope::new();
+
+    let handle = unsafe { handle::Pseudo::from_raw_nn(raw) };
+
+    assert!(
+        get_file_type(&handle).map_or_else(|err| err != ERROR_INVALID_HANDLE, |_| true),
+        "undefined behavior: io::FileNN::from_raw_nn: handle {raw:p} is not a file handle, and this debug check isn't guaranteed to work"
+    );
+
+    const FILE_SYNCHRONOUS_IO_ALERT     : u32 = 16;
+    const FILE_SYNCHRONOUS_IO_NONALERT  : u32 = 32;
+    const FILE_SYNCHRONOUS_IO_          : u32 = FILE_SYNCHRONOUS_IO_ALERT | FILE_SYNCHRONOUS_IO_NONALERT;
+
+    assert!(
+        nt_query_information_file::<file::ModeInformation>(handle).map_or(true, |info| 0 != (info.Mode & FILE_SYNCHRONOUS_IO_)),
+        "undefined behavior: io::FileNN::from_raw_nn: handle {raw:p} is not synchronous (e.g. it was created with `FILE_FLAG_OVERLAPPED`, and this debug check isn't guaranteed to work)"
+    );
+}
+
+#[allow(dead_code)] // XXX: casting handles not yet implemented
+#[inline(always)] unsafe fn type_check_cast_handle(handle: HANDLENN) {
+    if type_check::cast_handle() { unsafe { assert_is_synchronous_file(handle) } }
+}
+
+#[inline(always)] unsafe fn type_check_owned_from_raw(handle: HANDLENN) {
+    if type_check::owned_from_raw() { unsafe { assert_is_synchronous_file(handle) } }
+}
+
+#[inline(always)] unsafe fn type_check_borrowed_from_raw(handle: HANDLENN) {
+    if type_check::borrowed_from_raw() { unsafe { assert_is_synchronous_file(handle) } }
+}
+
+
+
 #[cfg(test)] mod tests {
     use crate::prelude::*;
     use crate::io::*;
     use crate::os::windows::io::FromRawHandle;
 
-    #[test] #[should_panic = "undefined behavior"] fn null_firehazard_io_file() {
+    #[test] fn non_overlapped_to_firehazard_io_file_nn() {
+        let file = create_file_w(cstr16!("Readme.md"), access::GENERIC_READ, file::Share::READ, None, winapi::um::fileapi::OPEN_EXISTING, 0,                     None).unwrap();
+        let _sync = unsafe { FileNN::from_raw_handle(file.into_handle()) };
+    }
+
+    #[test] #[should_panic = "undefined behavior"] fn overlapped_to_firehazard_io_file_nn() {
+        let file = create_file_w(cstr16!("Readme.md"), access::GENERIC_READ, file::Share::READ, None, winapi::um::fileapi::OPEN_EXISTING, file::FLAG_OVERLAPPED, None).unwrap();
+        let _sync = unsafe { FileNN::from_raw_handle(file.into_handle()) };
+    }
+
+    #[test] #[should_panic = "undefined behavior"] fn null_to_firehazard_io_file() {
         let _null = unsafe { FileNN::from_raw_handle(null_mut()) };
+    }
+
+    #[test] #[should_panic = "undefined behavior"] fn process_to_firehazard_io_file_nn() {
+        let _invalid = unsafe { FileNN::from_raw_handle(get_current_process().into_handle()) };
+    }
+
+    #[test] #[should_panic = "undefined behavior"] fn thread_to_firehazard_io_file_nn() {
+        let _invalid = unsafe { FileNN::from_raw_handle(get_current_thread().into_handle()) };
     }
 }

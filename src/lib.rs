@@ -21,6 +21,12 @@ pub type HANDLENN = core::ptr::NonNull<winapi::ctypes::c_void>;
 ///
 pub use winapi::shared::ntdef::HANDLE;
 
+#[cfg(doc)] pub use _doc::*;
+#[cfg(doc)] mod _doc {
+    use crate::prelude::*;
+    #[doc = include_str!(r"..\doc\environment.md"               )] pub mod _environment {}
+}
+
 #[path = r"macros\_macros.rs"] #[macro_use] mod macros;
 #[path = r"access\_access.rs"]              pub mod access;         //#[doc(hidden)] pub use access::constants::*;
 #[path = r"ace\_ace.rs"]                    pub mod ace;            //#[doc(hidden)] pub use ace::funcs::*;
@@ -56,3 +62,4 @@ mod values {
 }
 
 pub mod prelude;
+pub(crate) mod type_check;

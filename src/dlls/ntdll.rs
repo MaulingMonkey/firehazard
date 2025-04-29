@@ -1,5 +1,6 @@
 //! ntdll.dll
 
+#![allow(dead_code)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
@@ -8,22 +9,20 @@ use crate::prelude::*;
 use super::OptionalLibrary;
 use bytemuck::*;
 use winapi::shared::minwindef::ULONG;
-use winapi::shared::ntdef::{NTSTATUS, UNICODE_STRING};
+use winapi::shared::ntdef::{UNICODE_STRING};
 
 
 
 // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winternl.h
 // line 395
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
-#[repr(C)] pub enum OBJECT_INFORMATION_CLASS {
-    ObjectBasicInformation = 0,
-    ObjectTypeInformation = 2,
-}
+#[derive(Clone, Copy, Pod, Debug, Default, Zeroable, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[repr(transparent)] pub struct OBJECT_INFORMATION_CLASS(u32);
+pub const ObjectBasicInformation    : OBJECT_INFORMATION_CLASS = OBJECT_INFORMATION_CLASS(0);
+pub const ObjectTypeInformation     : OBJECT_INFORMATION_CLASS = OBJECT_INFORMATION_CLASS(2);
 
-#[cfg_attr(not(std), allow(dead_code))]
 pub unsafe trait OBJECT_INFORMATION : Default                       { const CLASS : OBJECT_INFORMATION_CLASS; }
-unsafe impl OBJECT_INFORMATION for PUBLIC_OBJECT_BASIC_INFORMATION  { const CLASS : OBJECT_INFORMATION_CLASS = OBJECT_INFORMATION_CLASS::ObjectBasicInformation; }
-unsafe impl OBJECT_INFORMATION for PUBLIC_OBJECT_TYPE_INFORMATION   { const CLASS : OBJECT_INFORMATION_CLASS = OBJECT_INFORMATION_CLASS::ObjectTypeInformation; }
+unsafe impl OBJECT_INFORMATION for PUBLIC_OBJECT_BASIC_INFORMATION  { const CLASS : OBJECT_INFORMATION_CLASS = ObjectBasicInformation; }
+unsafe impl OBJECT_INFORMATION for PUBLIC_OBJECT_TYPE_INFORMATION   { const CLASS : OBJECT_INFORMATION_CLASS = ObjectTypeInformation; }
 
 unsafe impl bytemuck::Zeroable for PUBLIC_OBJECT_TYPE_INFORMATION {} // can't derive because of UNICODE_STRING
 impl Default for PUBLIC_OBJECT_BASIC_INFORMATION { fn default() -> Self { Zeroable::zeroed() } }
@@ -81,31 +80,53 @@ impl core::fmt::Debug for PUBLIC_OBJECT_TYPE_INFORMATION {
 lazy_static::lazy_static! {
     static ref DLL : OptionalLibrary = unsafe { OptionalLibrary::load_w(cstr16!("ntdll")) };
 
+    // XXX: DDK?
+
+    /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-ntqueryinformationfile)\]
+    /// NtQueryInformationFile
+    pub(crate) static ref NtQueryInformationFile : unsafe extern "system" fn (
+        file_handle:                HANDLE,
+        io_status_block:            *mut io::StatusBlock,
+        file_information:           *mut c_void,
+        length:                     ULONG,
+        file_information_class:     file::InformationClass,
+    ) -> NtStatus = unsafe { DLL.get_proc_address(cstr8!("NtQueryInformationFile")) }.unwrap_or(stubs::NtQueryInformationFile);
+
     // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winternl.h
     // line 674
 
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntifs/nf-ntifs-ntqueryobject)\]
     /// NtQueryObject
-    pub static ref NtQueryObject : unsafe extern "system" fn (
+    pub(crate) static ref NtQueryObject : unsafe extern "system" fn (
         handle:                     HANDLE,
         object_information_class:   OBJECT_INFORMATION_CLASS,
         object_information:         Option<NonNull<c_void>>,
         object_information_length:  ULONG,
         return_length:              Option<&mut ULONG>,
-    ) -> NTSTATUS = unsafe { DLL.get_proc_address(cstr8!("NtQueryObject")) }.unwrap_or(stubs::NtQueryObject);
+    ) -> NtStatus = unsafe { DLL.get_proc_address(cstr8!("NtQueryObject")) }.unwrap_or(stubs::NtQueryObject);
 }
 
 /// fallback impls if unavailable from ntdll.dll
 mod stubs {
     use super::*;
 
-    pub unsafe extern "system" fn NtQueryObject(
+    pub(crate) unsafe extern "system" fn NtQueryInformationFile(
+        _file_handle:               HANDLE,
+        _io_status_block:           *mut io::StatusBlock,
+        _file_information:          *mut c_void,
+        _length:                    ULONG,
+        _file_information_class:    file::InformationClass,
+    ) -> NtStatus {
+        STATUS::NOT_IMPLEMENTED
+    }
+
+    pub(crate) unsafe extern "system" fn NtQueryObject(
         _handle:                    HANDLE,
         _object_information_class:  OBJECT_INFORMATION_CLASS,
         _object_information:        Option<NonNull<c_void>>,
         _object_information_length: ULONG,
         _return_length:             Option<&mut ULONG>,
-    ) -> NTSTATUS {
-        ERROR_CALL_NOT_IMPLEMENTED as _
+    ) -> NtStatus {
+        STATUS::NOT_IMPLEMENTED
     }
 }

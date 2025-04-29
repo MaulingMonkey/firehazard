@@ -52,6 +52,12 @@ mod c { #[doc(no_inline)] pub use crate::Error; }
     shared::winerror::{SUCCEEDED, *},
 };
 
+#[doc(no_inline)] pub(crate) use winresult::{
+    NtStatus,
+    ERROR,
+    STATUS,
+};
+
 #[doc(no_inline)] pub(crate) use util::{
     From32,
     none2null,

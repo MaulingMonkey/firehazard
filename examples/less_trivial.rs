@@ -23,8 +23,7 @@ fn sandbox() {
     println!("stdout");
     output_debug_string_a(cstr!("sandbox"));
     eprintln!("stderr");
-    let mut write_handle        : io::WriteHandle<'static>  = unsafe { env_var_handle("%WRITE_HANDLE%"          ) };
-    let read_handle_noinherit   : io::ReadHandle<'static>   = unsafe { env_var_handle("%READ_HANDLE_NOINHERIT%" ) };
+    let mut write_handle : io::WriteHandle<'static> = unsafe { env_var_handle("%WRITE_HANDLE%") };
     let _ = dbg!(get_handle_information(write_handle));
 
     write_handle.write_all(b"explicit handle i/o\n").unwrap();
@@ -36,6 +35,8 @@ fn sandbox() {
         // The documentation states that enabling strict handle checks causes invalid handles to throw an exception.
         // These might be unhandleable?  I don't even see them in the debugger events stream: only the immediate fatal exit.
         // At the very least, this catch_unwind doesn't do anything useful.
+
+        let read_handle_noinherit : io::ReadHandle<'static> = unsafe { env_var_handle("%READ_HANDLE_NOINHERIT%") };
         let _ = dbg!(std::panic::catch_unwind(|| get_handle_information(read_handle_noinherit)));
     }
 }

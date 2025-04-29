@@ -14,6 +14,7 @@
 
 mod io_counters;                    pub use io_counters::*;
 mod io_handles;                     pub use io_handles::*;
+mod io_status_block;                pub(crate) use io_status_block::StatusBlock;
 
 #[allow(unused_imports)] pub use funcs::*;
 pub(crate) mod funcs {
