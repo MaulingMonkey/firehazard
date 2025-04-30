@@ -35,7 +35,7 @@ There are typically three possible values:
 Attempt to validate a handle's type when casting between handle types.
 
 This does *not* apply to *proven safe* conversions, e.g.:
-*   <code>impl From<[thread:::OwnedHandle]> for [handle::Owned]</code>
+*   <code>impl From&lt;[thread::OwnedHandle]&gt; for [handle::Owned]</code>
 
 ## `%FIREHAZARD_TYPE_CHECK_BORROWED_FROM_RAW%`
 Attempt to validate a handle's type when using:
