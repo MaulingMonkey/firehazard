@@ -69,4 +69,4 @@ pub(crate) mod values {
 
 /// <strike style="opacity: 25%">`HANDLE`s to [pipe]s (created with [`file::FLAG_OVERLAPPED`])</strike> NYI
 pub mod overlapped {}
-#[path = "pipe_handles.rs"] pub mod sync; // TODO: rename file (in separate commit for nicer diff.)
+#[path = "pipe_sync_handles.rs"] pub mod sync;

@@ -56,7 +56,7 @@ use crate::prelude::*;
 
 /// <strike style="opacity: 25%">`HANDLE`s to [file](mod@file)s, [pipe]s, or sockets (created with [`file::FLAG_OVERLAPPED`])</strike> NYI
 pub mod overlapped {} // I'd call it async, but that's a reserved keyword :(
-#[path = "io_handles.rs"] pub mod sync; // TODO: rename file (in separate commit for nicer diff.)
+#[path = "io_sync_handles.rs"] pub mod sync;
 
 mod io_counters;                    pub use io_counters::*;
 mod io_status_block;                pub(crate) use io_status_block::StatusBlock;
