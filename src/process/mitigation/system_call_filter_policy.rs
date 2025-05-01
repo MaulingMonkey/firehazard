@@ -58,7 +58,7 @@ impl From<PROCESS_MITIGATION_SYSTEM_CALL_FILTER_POLICY> for SystemCallFilterPoli
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows-hardware/drivers/ddi/ntddk/ns-ntddk-_process_mitigation_system_call_filter_policy)\]
-/// ≈ typeof([PROCESS_MITIGATION_SYSTEM_CALL_FILTER_POLICY]::FilterId)
+/// ≈ PROCESS_MITIGATION_SYSTEM_CALL_FILTER_POLICY::FilterId
 ///
 #[derive(Clone, Copy)]
 #[derive(PartialEq, Eq, PartialOrd, Ord, Hash)]

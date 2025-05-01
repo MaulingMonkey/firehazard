@@ -19,7 +19,7 @@ mod sehop_policy;                   pub use sehop_policy::*;
 mod side_channel_isolation_policy;  pub use side_channel_isolation_policy::*;
 mod strict_handle_check_policy;     pub use strict_handle_check_policy::*;
 mod system_call_disable_policy;     pub use system_call_disable_policy::*;
-mod system_call_filter_policy;
+mod system_call_filter_policy;      pub use system_call_filter_policy::*;
 mod user_pointer_auth_policy;       pub use user_pointer_auth_policy::*;
 mod user_shadow_stack_policy;       pub use user_shadow_stack_policy::*;
 
