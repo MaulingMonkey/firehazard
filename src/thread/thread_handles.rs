@@ -14,6 +14,10 @@ use crate::prelude::*;
 ///
 #[repr(transparent)] pub struct OwnedHandle(HANDLENN);
 
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
+/// CloseHandle
+impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
+
 
 
 #[doc(alias = "HANDLE")]
@@ -89,10 +93,6 @@ impl<'a> TryFrom<handle::Pseudo<'a>> for thread::PseudoHandle<'a> {
 }
 
 
-
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
-/// CloseHandle
-impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 
 unsafe impl valrow::Borrowable for OwnedHandle       { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for Handle<'_>        { type Abi = HANDLENN; }

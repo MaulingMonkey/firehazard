@@ -8,6 +8,10 @@ use crate::prelude::*;
 ///
 #[repr(transparent)] pub struct OwnedHandle(HANDLENN);
 
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
+/// CloseHandle
+impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
+
 
 
 #[doc(alias = "HANDLE")]
@@ -34,10 +38,6 @@ handles!(unsafe impl @convert &'_ job::OwnedHandle  => handle::Borrowed<'_> );
 handles!(unsafe impl @convert &'_ job::OwnedHandle  => handle::Pseudo<'_>   );
 handles!(unsafe impl @convert job::Handle<'_>       => handle::Borrowed<'_> );
 handles!(unsafe impl @convert job::Handle<'_>       => handle::Pseudo<'_>   );
-
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
-/// CloseHandle
-impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 
 unsafe impl valrow::Borrowable for OwnedHandle   { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for Handle<'_>    { type Abi = HANDLENN; }

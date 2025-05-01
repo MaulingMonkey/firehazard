@@ -8,6 +8,14 @@ use crate::prelude::*;
 ///
 #[repr(transparent)] pub struct Owned(pub(super) HANDLENN);
 
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/console/closepseudoconsole)\]
+/// ClosePseudoConsole
+impl Drop for Owned { fn drop(&mut self) {
+    // NOTE: ClosePseudoConsole returns no errors
+    let h = self.as_handle();
+    unsafe { winapi::um::consoleapi::ClosePseudoConsole(h) };
+}}
+
 
 
 handles!(unsafe impl *LocalHandleNN<c_void>     for pseudoconsole::{Owned});
@@ -18,14 +26,6 @@ handles!(       impl Debug                      for pseudoconsole::{Owned});
 //ndles!(unsafe impl @convert     pseudoconsole::Owned   => handle::Owned        ); // XXX: closed via ClosePseudoConsole, not CloseHandle
 handles!(unsafe impl @convert &'_ pseudoconsole::Owned   => handle::Borrowed<'_> );
 handles!(unsafe impl @convert &'_ pseudoconsole::Owned   => handle::Pseudo<'_>   );
-
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/console/closepseudoconsole)\]
-/// ClosePseudoConsole
-impl Drop for Owned { fn drop(&mut self) {
-    // NOTE: ClosePseudoConsole returns no errors
-    let h = self.as_handle();
-    unsafe { winapi::um::consoleapi::ClosePseudoConsole(h) };
-}}
 
 unsafe impl valrow::Borrowable for Owned { type Abi = NonNull<c_void>; }
 

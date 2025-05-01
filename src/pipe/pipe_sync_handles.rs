@@ -76,6 +76,10 @@ use io::{Read, Write};
 ///
 #[repr(transparent)] pub struct OwnedWriter(pub(super) HANDLENN);
 
+#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for OwnedDuplex { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
+#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for OwnedReader { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
+#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for OwnedWriter { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
+
 
 
 #[doc(alias = "HANDLE")]
@@ -231,10 +235,6 @@ handles!(unsafe impl @convert pipe::sync::BorrowedWriter<'_>    => handle::Borro
 handles!(unsafe impl @convert pipe::sync::BorrowedWriter<'_>    => handle::Pseudo<'_>              );
 
 
-
-#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for OwnedDuplex { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
-#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for OwnedReader { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
-#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for OwnedWriter { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 
 //pl io::Read   for &'_ pipe::sync::OwnedDuplex         { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(*self, buf, None).map(usize::from32)?) } } } // deadlock bait, do not implement - see "Quirks: Serialized I/O" rant on `mod pipe::named`
 impl io::Read   for     pipe::sync::OwnedDuplex         { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file( self, buf, None).map(usize::from32)?) } } }

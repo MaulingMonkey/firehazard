@@ -10,6 +10,10 @@ use crate::prelude::*;
 ///
 #[repr(transparent)] pub struct OwnedHandle(HANDLENN);
 
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
+/// CloseHandle
+impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
+
 
 
 #[doc(alias = "HANDLE")]
@@ -58,10 +62,6 @@ handles!(unsafe impl @convert process::PseudoHandle<'_> => handle::Pseudo<'_>   
 #[cfg(std)] impl<'a> From<&'a std::process::Child> for process::PseudoHandle<'a>    { fn from(h: &'a std::process::Child) -> Self { unsafe { Self::from_raw_nn(h.as_handle_nn().cast()) } } }
 
 
-
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\]
-/// CloseHandle
-impl Drop for OwnedHandle { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 
 unsafe impl valrow::Borrowable for OwnedHandle       { type Abi = HANDLENN; }
 unsafe impl valrow::Borrowable for Handle<'_>        { type Abi = HANDLENN; }

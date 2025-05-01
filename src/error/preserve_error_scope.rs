@@ -8,15 +8,15 @@ pub(crate) struct PreserveErrorScope {
     previous: u32,
 }
 
+impl Drop for PreserveErrorScope {
+    fn drop(&mut self) {
+        unsafe { SetLastError(self.previous) };
+    }
+}
+
 impl PreserveErrorScope {
     /// Saves the value of `GetLastError()` for restoration on [`Drop`].
     pub fn new() -> Self {
         Self { previous: unsafe { GetLastError() } }
-    }
-}
-
-impl Drop for PreserveErrorScope {
-    fn drop(&mut self) {
-        unsafe { SetLastError(self.previous) };
     }
 }

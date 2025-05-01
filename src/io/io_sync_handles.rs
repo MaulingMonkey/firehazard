@@ -76,6 +76,11 @@ use crate::io::{Read, Write, Seek};
 ///
 #[repr(transparent)] pub struct OwnedWriter(HANDLENN);
 
+#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for OwnedFile     { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
+#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for OwnedDuplex   { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
+#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for OwnedReader   { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
+#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for OwnedWriter   { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
+
 
 
 #[doc(alias = "HANDLE")]
@@ -278,13 +283,6 @@ handles!(unsafe impl @convert io::sync::BorrowedReader<'_>  => handle::Pseudo<'_
 handles!(unsafe impl @convert io::sync::BorrowedWriter<'_>  => pipe::sync::BorrowedWriter<'_>   );
 handles!(unsafe impl @convert io::sync::BorrowedWriter<'_>  => handle::Borrowed<'_>             );
 handles!(unsafe impl @convert io::sync::BorrowedWriter<'_>  => handle::Pseudo<'_>               );
-
-
-
-#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for OwnedFile     { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
-#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for OwnedDuplex   { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
-#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for OwnedReader   { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
-#[doc = r"\[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/handleapi/nf-handleapi-closehandle)\] CloseHandle"] impl Drop for OwnedWriter   { fn drop(&mut self) { unsafe { drop_close_handle_nn(self) } } }
 
 
 
