@@ -78,9 +78,13 @@ pub type StartupInfoExW<'s> = StartupInfoEx<'s, u16>;
     pub show_window:    u16,
     #[doc(hidden)] pub _cb_reserved_2: DefaultOnly<u16>,
     #[doc(hidden)] pub _lp_reserved_2: DefaultOnly<usize>,
-    pub std_input:      Option<io::ReadHandle<'s>>,
-    pub std_output:     Option<io::WriteHandle<'s>>,
-    pub std_error:      Option<io::WriteHandle<'s>>,
+
+    // XXX: some people pass non-sync file handles to child processes. Those people *might* be psycopaths.
+    // See https://github.com/rust-lang/rust/issues/81357 for how you break everyone using ReadFile/WriteFile.
+
+    pub std_input:      Option<io::sync::BorrowedReader<'s>>,
+    pub std_output:     Option<io::sync::BorrowedWriter<'s>>,
+    pub std_error:      Option<io::sync::BorrowedWriter<'s>>,
 }
 
 structure!(@assert layout process::StartupInfoA => STARTUPINFOA {

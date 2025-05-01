@@ -24,7 +24,7 @@
 /// | INVALID_HANDLE_VALUE      | ERROR_INVALID_HANDLE                          | <span style="opacity: 50%">None</span>                                                        |
 /// | closed/dangling           | ERROR_INVALID_HANDLE                          | STATUS_INVALID_HANDLE                                                                         |
 /// | never valid               | ERROR_INVALID_HANDLE                          | STATUS_INVALID_HANDLE                                                                         |
-/// | unwriteable               | ERROR_ACCESS_DENIED                           | <span style="opacity: 50%">None</span>                                                        |
+/// | unwritable                | ERROR_ACCESS_DENIED                           | <span style="opacity: 50%">None</span>                                                        |
 ///
 pub(crate) unsafe fn write_file(handle: &impl firehazard::AsLocalHandle, buffer: &[u8], overlapped: Option<core::convert::Infallible>) -> Result<u32, firehazard::Error> {
     let mut written = 0;
@@ -85,18 +85,18 @@ tests! {
     }
 
     #[test] #[strict_handle_check_exception = 0] // no exception
-    fn write_file_not_writeable() {
-        let unwriteable = std::fs::File::open("Readme.md").unwrap();
-        let r = unsafe { write_file(&unwriteable, &[0u8; 1024], None) };
-        drop(unwriteable);
+    fn write_file_not_writable() {
+        let unwritable = std::fs::File::open("Readme.md").unwrap();
+        let r = unsafe { write_file(&unwritable, &[0u8; 1024], None) };
+        drop(unwritable);
         assert_eq!(r, Err(Error(ERROR_ACCESS_DENIED)));
     }
 
     #[test] #[strict_handle_check_exception = 0] // no exception
-    fn write_file_not_writeable_0_bytes() {
-        let unwriteable = std::fs::File::open("Readme.md").unwrap();
-        let r = unsafe { write_file(&unwriteable, &[], None) };
-        drop(unwriteable);
+    fn write_file_not_writable_0_bytes() {
+        let unwritable = std::fs::File::open("Readme.md").unwrap();
+        let r = unsafe { write_file(&unwritable, &[], None) };
+        drop(unwritable);
         assert_eq!(r, Err(Error(ERROR_ACCESS_DENIED)));
     }
 }

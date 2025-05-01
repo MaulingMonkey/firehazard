@@ -33,7 +33,7 @@ pub fn create_file_a<'a, 'b: 'a, 't>(
     security_attributes:    impl Into<Option<&'a security::Attributes<'b>>>,
     creation_disposition:   u32, // XXX
     flags_and_attributes:   u32, // XXX
-    template_file:          impl Into<Option<io::FileHandle<'t>>>,
+    template_file:          impl Into<Option<io::sync::BorrowedFile<'t>>>,
 ) -> firehazard::Result<handle::Owned> {
     let handle = NonNull::new(unsafe { winapi::um::fileapi::CreateFileA(
         name.try_into()?.as_cstr(),
@@ -77,14 +77,14 @@ pub fn create_file_a<'a, 'b: 'a, 't>(
 /// ```
 ///
 ///
-pub fn create_file_w<'a, 'b: 'a>(
+pub fn create_file_w<'a, 'b: 'a, 't>(
     name:                   impl TryIntoAsCStr<u16>,
     desired_access:         impl Into<access::Mask>,
     share_mode:             impl Into<file::Share>,
     security_attributes:    impl Into<Option<&'a security::Attributes<'b>>>,
     creation_disposition:   u32, // XXX
     flags_and_attributes:   u32, // XXX
-    template_file:          Option<io::FileHandle>,
+    template_file:          impl Into<Option<io::sync::BorrowedFile<'t>>>,
 ) -> firehazard::Result<handle::Owned> {
     let handle = NonNull::new(unsafe { winapi::um::fileapi::CreateFileW(
         name.try_into()?.as_cstr(),
@@ -93,7 +93,7 @@ pub fn create_file_w<'a, 'b: 'a>(
         security_attributes.into().map_or(null(), |a| a) as *mut _,
         creation_disposition,
         flags_and_attributes,
-        template_file.map_or(null_mut(), |h| h.as_handle().cast()),
+        template_file.into().map_or(null_mut(), |h| h.as_handle().cast()),
     )}).ok_or_else(|| firehazard::Error::get_last())?;
 
     Ok(unsafe { handle::Owned::from_raw_nn(handle.cast()) })
@@ -129,14 +129,14 @@ pub fn create_file_w<'a, 'b: 'a>(
 /// ).unwrap();
 /// ```
 ///
-pub fn create_file<'a, 'b: 'a>(
+pub fn create_file<'a, 'b: 'a, 't>(
     name:                   impl AsRef<std::path::Path>,
     desired_access:         impl Into<access::Mask>,
     share_mode:             impl Into<file::Share>,
     security_attributes:    impl Into<Option<&'a security::Attributes<'b>>>,
     creation_disposition:   u32, // XXX
     flags_and_attributes:   u32, // XXX
-    template_file:          Option<io::FileHandle>,
+    template_file:          impl Into<Option<io::sync::BorrowedFile<'t>>>,
 ) -> firehazard::Result<handle::Owned> {
     create_file_w(
         osstr_to_wide0(name.as_ref().as_os_str(), &mut std::vec::Vec::new())?,

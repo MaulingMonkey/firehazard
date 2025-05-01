@@ -16,8 +16,8 @@
 ///
 pub unsafe fn create_pseudo_console<'i, 'o>(
     size:   impl pseudoconsole::IntoSize,
-    input:  impl Into<io::ReadHandle<'i>>,
-    output: impl Into<io::WriteHandle<'o>>,
+    input:  impl Into<io::sync::BorrowedReader<'i>>,
+    output: impl Into<io::sync::BorrowedWriter<'o>>,
     flags:  u32, // TODO: replace with a better type?
 ) -> firehazard::Result<pseudoconsole::Owned> {
     let mut pcon = null_mut();

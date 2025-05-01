@@ -40,7 +40,7 @@
 /// | never valid               | ERROR_INVALID_HANDLE                          | STATUS_INVALID_HANDLE                                                                         |
 /// | **Valid files:**          |                                               |                                                                                               |
 /// | read-only file            | ERROR_ACCESS_DENIED                           | <span style="opacity: 50%">None</span>                                                        |
-/// | writeable files           | <span style="opacity: 50%">None</span>        | <span style="opacity: 50%">None</span>                                                        |
+/// | writable files            | <span style="opacity: 50%">None</span>        | <span style="opacity: 50%">None</span>                                                        |
 /// | **Valid non-files:**      |                                               |                                                                                               |
 /// | access token              | ERROR_INVALID_HANDLE                          | <span style="opacity: 50%">None</span>                                                        |
 /// | desktop                   | ERROR_INVALID_HANDLE                          | <span style="opacity: 50%">None</span>                                                        |

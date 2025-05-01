@@ -11,6 +11,7 @@
 /// let file    = std::fs::File::open("Readme.md").unwrap();
 /// let console = std::fs::File::open("CON").unwrap();
 /// let (pipe_r, pipe_w) = pipe::create(None, 0).unwrap();
+/// let socket  = std::net::UdpSocket::bind("127.0.0.1:0").unwrap();
 ///
 /// //sert_eq!(Ok(file::TYPE_UNKNOWN), get_file_type(&???)); // TODO: find an example?
 /// # #[cfg(nope)]
@@ -19,6 +20,7 @@
 /// assert_eq!(Ok(file::TYPE_CHAR), get_file_type(&console));
 /// assert_eq!(Ok(file::TYPE_PIPE), get_file_type(&pipe_r));
 /// assert_eq!(Ok(file::TYPE_PIPE), get_file_type(&pipe_w));
+/// assert_eq!(Ok(file::TYPE_PIPE), get_file_type(&socket));
 /// ```
 ///
 /// ### Errors

@@ -54,8 +54,8 @@ fn client(mut args: std::env::Args) {
     }
 
     // Safety: sound as we've avoided FILE_FLAG_OVERLAPPED here
-    let server_to_client = unsafe { pipe::ReaderNN::from_raw_nn(create_file_w(SERVER_TO_CLIENT_PIPE_NAME, GENERIC_READ,  None, None, OPEN_EXISTING, 0, None).unwrap().into_handle_nn()) };
-    let client_to_server = unsafe { pipe::WriterNN::from_raw_nn(create_file_w(CLIENT_TO_SERVER_PIPE_NAME, GENERIC_WRITE, None, None, OPEN_EXISTING, 0, None).unwrap().into_handle_nn()) };
+    let server_to_client = unsafe { pipe::sync::OwnedReader::from_raw_nn(create_file_w(SERVER_TO_CLIENT_PIPE_NAME, GENERIC_READ,  None, None, OPEN_EXISTING, 0, None).unwrap().into_handle_nn()) };
+    let client_to_server = unsafe { pipe::sync::OwnedWriter::from_raw_nn(create_file_w(CLIENT_TO_SERVER_PIPE_NAME, GENERIC_WRITE, None, None, OPEN_EXISTING, 0, None).unwrap().into_handle_nn()) };
     thread::scope(|s|{
         thread::Builder::new().name(format!("pipe reading thread")).spawn_scoped(s, ||{
             let mut pipe = BufReader::new(&server_to_client);

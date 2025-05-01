@@ -73,7 +73,7 @@ pub fn debug_loop(
             },
             LoadDll(event) => {
                 // XXX: May fail with ERROR_INVALID_HANDLE if the debugeee's spawn token lacks `USERS` (DLL failed to open?)
-                let hfile = unsafe { io::FileHandle::from_raw(event.hFile) }.ok();
+                let hfile = unsafe { io::sync::BorrowedFile::from_raw(event.hFile) }.ok();
                 // XXX: May fail with ERROR_ACCESS_DENIED if the debugee's restricted token lacks `SE_CHANGE_NOTIFY_NAME`
                 let image_name = hfile.and_then(|hfile| get_final_path_name_by_handle(&hfile, 0).ok()).unwrap_or_else(|| PathBuf::from("???"));
 
