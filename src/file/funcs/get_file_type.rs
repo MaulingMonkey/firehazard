@@ -13,14 +13,14 @@
 /// let (pipe_r, pipe_w) = pipe::create(None, 0).unwrap();
 /// let socket  = std::net::UdpSocket::bind("127.0.0.1:0").unwrap();
 ///
-/// //sert_eq!(Ok(file::TYPE_UNKNOWN), get_file_type(&???)); // TODO: find an example?
+/// //sert_eq!(Ok(file::Type::UNKNOWN), get_file_type(&???)); // TODO: find an example?
 /// # #[cfg(nope)]
-/// assert_eq!(Ok(file::TYPE_DISK), get_file_type(&remote));
-/// assert_eq!(Ok(file::TYPE_DISK), get_file_type(&file));
-/// assert_eq!(Ok(file::TYPE_CHAR), get_file_type(&console));
-/// assert_eq!(Ok(file::TYPE_PIPE), get_file_type(&pipe_r));
-/// assert_eq!(Ok(file::TYPE_PIPE), get_file_type(&pipe_w));
-/// assert_eq!(Ok(file::TYPE_PIPE), get_file_type(&socket));
+/// assert_eq!(Ok(file::Type::DISK), get_file_type(&remote));
+/// assert_eq!(Ok(file::Type::DISK), get_file_type(&file));
+/// assert_eq!(Ok(file::Type::CHAR), get_file_type(&console));
+/// assert_eq!(Ok(file::Type::PIPE), get_file_type(&pipe_r));
+/// assert_eq!(Ok(file::Type::PIPE), get_file_type(&pipe_w));
+/// assert_eq!(Ok(file::Type::PIPE), get_file_type(&socket));
 /// ```
 ///
 /// ### Errors
@@ -39,12 +39,12 @@
 /// | thread                    | ERROR_INVALID_HANDLE                          | <span style="opacity: 50%">None</span>                                                        |
 /// | winsta                    | ERROR_INVALID_HANDLE                          | <span style="opacity: 50%">None</span>                                                        |
 ///
-pub fn get_file_type(handle: &impl firehazard::AsLocalHandle) -> Result<u32, firehazard::Error> {
+pub fn get_file_type(handle: &impl firehazard::AsLocalHandle) -> Result<file::Type, firehazard::Error> {
     unsafe { winapi::um::errhandlingapi::SetLastError(0) }; // docs imply this isn't necessary, but I'm not sure I trust the docs, and I lack a test case for FILE_TYPE_UNKNOWN
     let ty = unsafe { winapi::um::fileapi::GetFileType(handle.as_handle()) };
     match firehazard::Error::get_last_if(ty == 0) {
-        Ok(())                  => Ok(ty),
-        Err(err) if err == 0    => Ok(ty), // NO_ERROR, ty == FILE_TYPE_UNKNOWN legitimately
+        Ok(())                  => Ok(ty.into()),
+        Err(err) if err == 0    => Ok(ty.into()), // NO_ERROR, ty == FILE_TYPE_UNKNOWN legitimately
         Err(err)                => Err(err),
     }
 }
