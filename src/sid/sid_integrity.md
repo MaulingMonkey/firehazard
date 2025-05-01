@@ -1,4 +1,5 @@
-\[[en.wikipedia.org](https://en.wikipedia.org/wiki/Mandatory_Integrity_Control)\] Integrity Levels
+\[[en.wikipedia.org](https://en.wikipedia.org/wiki/Mandatory_Integrity_Control)\]
+Integrity Levels
 
 Windows Vista introduced Integrity levels, of which 5 are named:
 

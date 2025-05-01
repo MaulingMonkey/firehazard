@@ -12,7 +12,8 @@ use io::{Read, Write};
 
 
 #[doc(alias = "HANDLE")]
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned non-null pipe `HANDLE` ([io::Read] and [io::Write]able)
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\]
+/// Owned non-null pipe `HANDLE` ([io::Read] and [io::Write]able)
 ///
 /// ### Hard Requirements
 /// *   `HANDLE` cannot be null, on pain of undefined behavior
@@ -35,7 +36,8 @@ use io::{Read, Write};
 #[repr(transparent)] pub struct OwnedDuplex(pub(super) HANDLENN);
 
 #[doc(alias = "HANDLE")]
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned non-null pipe `HANDLE` ([io::Read]able end)
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\]
+/// Owned non-null pipe `HANDLE` ([io::Read]able end)
 ///
 /// ### Hard Requirements
 /// *   `HANDLE` cannot be null, on pain of undefined behavior
@@ -56,7 +58,8 @@ use io::{Read, Write};
 #[repr(transparent)] pub struct OwnedReader(pub(super) HANDLENN);
 
 #[doc(alias = "HANDLE")]
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned non-null pipe `HANDLE` ([io::Write]able end)
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\]
+/// Owned non-null pipe `HANDLE` ([io::Write]able end)
 ///
 /// ### Hard Requirements
 /// *   `HANDLE` cannot be null, on pain of undefined behavior
@@ -83,7 +86,8 @@ use io::{Read, Write};
 
 
 #[doc(alias = "HANDLE")]
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Borrowed non-null pipe `HANDLE` ([io::Read] and [io::Write]able)
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\]
+/// Borrowed non-null pipe `HANDLE` ([io::Read] and [io::Write]able)
 ///
 /// ### Hard Requirements
 /// *   `HANDLE` cannot be null, on pain of undefined behavior
@@ -106,7 +110,8 @@ use io::{Read, Write};
 #[repr(transparent)] pub struct BorrowedDuplex<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
 
 #[doc(alias = "HANDLE")]
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Borrowed non-null pipe `HANDLE` ([io::Read]able end)
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\]
+/// Borrowed non-null pipe `HANDLE` ([io::Read]able end)
 ///
 /// ### Hard Requirements
 /// *   `HANDLE` cannot be null, on pain of undefined behavior
@@ -127,7 +132,8 @@ use io::{Read, Write};
 #[repr(transparent)] pub struct BorrowedReader<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
 
 #[doc(alias = "HANDLE")]
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Borrowed non-null pipe `HANDLE` ([io::Write]able end)
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\]
+/// Borrowed non-null pipe `HANDLE` ([io::Write]able end)
 ///
 /// ### Hard Requirements
 /// *   `HANDLE` cannot be null, on pain of undefined behavior
