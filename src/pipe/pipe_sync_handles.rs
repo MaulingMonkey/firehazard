@@ -1,6 +1,7 @@
 //! `HANDLE`s to [pipe]s (created without [`file::FLAG_OVERLAPPED`])
 
 use crate::prelude::*;
+use io::{Read, Write};
 
 
 
@@ -12,6 +13,15 @@ use crate::prelude::*;
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned non-null pipe `HANDLE` ([io::Read] and [io::Write]able)
+///
+/// ### Hard Requirements
+/// *   `HANDLE` cannot be null, on pain of undefined behavior
+/// *   `HANDLE` must not have been created with [`file::FLAG_OVERLAPPED`], on pain of undefined behavior
+/// *   `HANDLE` must be `CloseHandle`able, on pain of panics on drop (or undefined behavior?)
+///
+/// ### Soft Requirements
+/// *   `HANDLE` should probably be a byte-oriented pipe, or *maybe* a socket.
+/// *   `HANDLE` should probably be [`Read`]able and [`Write`]able.  Consider [`OwnedReader`] or [`OwnedWriter`] otherwise.
 ///
 /// ### Alternatives
 /// *   [`firehazard::pipe::sync::OwnedReader`] &mdash; read-only
@@ -27,6 +37,15 @@ use crate::prelude::*;
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned non-null pipe `HANDLE` ([io::Read]able end)
 ///
+/// ### Hard Requirements
+/// *   `HANDLE` cannot be null, on pain of undefined behavior
+/// *   `HANDLE` must not have been created with [`file::FLAG_OVERLAPPED`], on pain of undefined behavior
+/// *   `HANDLE` must be `CloseHandle`able, on pain of panics on drop (or undefined behavior?)
+///
+/// ### Soft Requirements
+/// *   `HANDLE` should probably be a byte-oriented pipe, or *maybe* a socket.
+/// *   `HANDLE` should probably be [`Read`]able.
+///
 /// ### Alternatives
 /// *   [`firehazard::pipe::sync::OwnedDuplex`] &mdash; also writable
 /// *   [`firehazard::pipe::sync::BorrowedReader`] &mdash; borrowed instead of owned
@@ -38,6 +57,15 @@ use crate::prelude::*;
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned non-null pipe `HANDLE` ([io::Write]able end)
+///
+/// ### Hard Requirements
+/// *   `HANDLE` cannot be null, on pain of undefined behavior
+/// *   `HANDLE` must not have been created with [`file::FLAG_OVERLAPPED`], on pain of undefined behavior
+/// *   `HANDLE` must be `CloseHandle`able, on pain of panics on drop (or undefined behavior?)
+///
+/// ### Soft Requirements
+/// *   `HANDLE` should probably be a byte-oriented pipe, or *maybe* a socket.
+/// *   `HANDLE` should probably be [`Write`]able.
 ///
 /// ### Alternatives
 /// *   [`firehazard::pipe::sync::OwnedDuplex`] &mdash; also readable
@@ -51,7 +79,16 @@ use crate::prelude::*;
 
 
 #[doc(alias = "HANDLE")]
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned non-null pipe `HANDLE` ([io::Read] and [io::Write]able)
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Borrowed non-null pipe `HANDLE` ([io::Read] and [io::Write]able)
+///
+/// ### Hard Requirements
+/// *   `HANDLE` cannot be null, on pain of undefined behavior
+/// *   `HANDLE` must not have been created with [`file::FLAG_OVERLAPPED`], on pain of undefined behavior
+/// *   Any `DuplicateHandle`d clones of `HANDLE` must be `CloseHandle`able, on pain of panics on drop (or undefined behavior?)
+///
+/// ### Soft Requirements
+/// *   `HANDLE` should probably be a byte-oriented pipe, or *maybe* a socket.
+/// *   `HANDLE` should probably be [`Read`]able and [`Write`]able.  Consider [`BorrowedReader`] or [`BorrowedWriter`] otherwise.
 ///
 /// ### Alternatives
 /// *   [`firehazard::pipe::sync::BorrowedReader`] &mdash; read-only
@@ -65,7 +102,16 @@ use crate::prelude::*;
 #[repr(transparent)] pub struct BorrowedDuplex<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
 
 #[doc(alias = "HANDLE")]
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned non-null pipe `HANDLE` ([io::Read]able end)
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Borrowed non-null pipe `HANDLE` ([io::Read]able end)
+///
+/// ### Hard Requirements
+/// *   `HANDLE` cannot be null, on pain of undefined behavior
+/// *   `HANDLE` must not have been created with [`file::FLAG_OVERLAPPED`], on pain of undefined behavior
+/// *   Any `DuplicateHandle`d clones of `HANDLE` must be `CloseHandle`able, on pain of panics on drop (or undefined behavior?)
+///
+/// ### Soft Requirements
+/// *   `HANDLE` should probably be a byte-oriented pipe, or *maybe* a socket.
+/// *   `HANDLE` should probably be [`Read`]able.
 ///
 /// ### Alternatives
 /// *   [`firehazard::pipe::sync::BorrowedDuplex`] &mdash; also writable
@@ -77,7 +123,16 @@ use crate::prelude::*;
 #[repr(transparent)] pub struct BorrowedReader<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
 
 #[doc(alias = "HANDLE")]
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Owned non-null pipe `HANDLE` ([io::Write]able end)
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\] Borrowed non-null pipe `HANDLE` ([io::Write]able end)
+///
+/// ### Hard Requirements
+/// *   `HANDLE` cannot be null, on pain of undefined behavior
+/// *   `HANDLE` must not have been created with [`file::FLAG_OVERLAPPED`], on pain of undefined behavior
+/// *   Any `DuplicateHandle`d clones of `HANDLE` must be `CloseHandle`able, on pain of panics on drop (or undefined behavior?)
+///
+/// ### Soft Requirements
+/// *   `HANDLE` should probably be a byte-oriented pipe, or *maybe* a socket.
+/// *   `HANDLE` should probably be [`Write`]able.
 ///
 /// ### Alternatives
 /// *   [`firehazard::pipe::sync::BorrowedDuplex`] &mdash; also readable
