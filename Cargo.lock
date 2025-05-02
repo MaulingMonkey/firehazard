@@ -1135,9 +1135,9 @@ dependencies = [
 
 [[package]]
 name = "ialloc"
-version = "0.0.0-2025-04-08"
+version = "0.0.0-2025-05-02"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3ac05662bea6fea161d26ce304ee8a9b844c2032fded949770758ab8e87c5722"
+checksum = "d748bc70ac287b9df12961c029f1470d672cc92b9af3bdc30787bb487ee709a2"
 dependencies = [
  "bytemuck",
  "lazy_static",
