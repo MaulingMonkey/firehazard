@@ -13,7 +13,7 @@ use io::{Read, Write};
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\]
-/// Owned non-null pipe `HANDLE` ([io::Read] and [io::Write]able)
+/// Owned non-null pipe `HANDLE` ([Read] and [Write]able)
 ///
 /// ### Hard Requirements
 /// *   `HANDLE` cannot be null, on pain of undefined behavior
@@ -37,7 +37,7 @@ use io::{Read, Write};
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\]
-/// Owned non-null pipe `HANDLE` ([io::Read]able end)
+/// Owned non-null pipe `HANDLE` ([Read]able end)
 ///
 /// ### Hard Requirements
 /// *   `HANDLE` cannot be null, on pain of undefined behavior
@@ -59,7 +59,7 @@ use io::{Read, Write};
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\]
-/// Owned non-null pipe `HANDLE` ([io::Write]able end)
+/// Owned non-null pipe `HANDLE` ([Write]able end)
 ///
 /// ### Hard Requirements
 /// *   `HANDLE` cannot be null, on pain of undefined behavior
@@ -87,7 +87,7 @@ use io::{Read, Write};
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\]
-/// Borrowed non-null pipe `HANDLE` ([io::Read] and [io::Write]able)
+/// Borrowed non-null pipe `HANDLE` ([Read] and [Write]able)
 ///
 /// ### Hard Requirements
 /// *   `HANDLE` cannot be null, on pain of undefined behavior
@@ -111,7 +111,7 @@ use io::{Read, Write};
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\]
-/// Borrowed non-null pipe `HANDLE` ([io::Read]able end)
+/// Borrowed non-null pipe `HANDLE` ([Read]able end)
 ///
 /// ### Hard Requirements
 /// *   `HANDLE` cannot be null, on pain of undefined behavior
@@ -133,7 +133,7 @@ use io::{Read, Write};
 
 #[doc(alias = "HANDLE")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createpipe)\]
-/// Borrowed non-null pipe `HANDLE` ([io::Write]able end)
+/// Borrowed non-null pipe `HANDLE` ([Write]able end)
 ///
 /// ### Hard Requirements
 /// *   `HANDLE` cannot be null, on pain of undefined behavior
@@ -242,24 +242,24 @@ handles!(unsafe impl @convert pipe::sync::BorrowedWriter<'_>    => handle::Pseud
 
 
 
-//pl io::Read   for &'_ pipe::sync::OwnedDuplex         { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(*self, buf, None).map(usize::from32)?) } } } // deadlock bait, do not implement - see "Quirks: Serialized I/O" rant on `mod pipe::named`
-impl io::Read   for     pipe::sync::OwnedDuplex         { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file( self, buf, None).map(usize::from32)?) } } }
-impl io::Read   for &'_ pipe::sync::OwnedReader         { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(*self, buf, None).map(usize::from32)?) } } }
-impl io::Read   for     pipe::sync::OwnedReader         { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file( self, buf, None).map(usize::from32)?) } } }
-//pl io::Read   for &'_ pipe::sync::BorrowedDuplex<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(*self, buf, None).map(usize::from32)?) } } } // deadlock bait, do not implement - see "Quirks: Serialized I/O" rant on `mod pipe::named`
-impl io::Read   for     pipe::sync::BorrowedDuplex<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file( self, buf, None).map(usize::from32)?) } } }
-impl io::Read   for &'_ pipe::sync::BorrowedReader<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(*self, buf, None).map(usize::from32)?) } } }
-impl io::Read   for     pipe::sync::BorrowedReader<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file( self, buf, None).map(usize::from32)?) } } }
+//pl Read   for &'_ pipe::sync::OwnedDuplex         { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(*self, buf, None).map(usize::from32)?) } } } // deadlock bait, do not implement - see "Quirks: Serialized I/O" rant on `mod pipe::named`
+impl Read   for     pipe::sync::OwnedDuplex         { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file( self, buf, None).map(usize::from32)?) } } }
+impl Read   for &'_ pipe::sync::OwnedReader         { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(*self, buf, None).map(usize::from32)?) } } }
+impl Read   for     pipe::sync::OwnedReader         { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file( self, buf, None).map(usize::from32)?) } } }
+//pl Read   for &'_ pipe::sync::BorrowedDuplex<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(*self, buf, None).map(usize::from32)?) } } } // deadlock bait, do not implement - see "Quirks: Serialized I/O" rant on `mod pipe::named`
+impl Read   for     pipe::sync::BorrowedDuplex<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file( self, buf, None).map(usize::from32)?) } } }
+impl Read   for &'_ pipe::sync::BorrowedReader<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file(*self, buf, None).map(usize::from32)?) } } }
+impl Read   for     pipe::sync::BorrowedReader<'_>  { fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> { unsafe { Ok(read_file( self, buf, None).map(usize::from32)?) } } }
 
 // noop flush sane: https://github.com/rust-lang/rust/blob/c2110769cd58cd3b0c31f308c8cfeab5e19340fd/library/std/src/io/pipe.rs#L271-L274
-//pl io::Write  for &'_ pipe::sync::OwnedDuplex         { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(*self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } } // deadlock bait, do not implement - see "Quirks: Serialized I/O" rant on `mod pipe::named`
-impl io::Write  for     pipe::sync::OwnedDuplex         { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file( self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
-impl io::Write  for &'_ pipe::sync::OwnedWriter         { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(*self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
-impl io::Write  for     pipe::sync::OwnedWriter         { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file( self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
-//pl io::Write  for &'_ pipe::sync::BorrowedDuplex<'_>  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(*self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } } // deadlock bait, do not implement - see "Quirks: Serialized I/O" rant on `mod pipe::named`
-impl io::Write  for     pipe::sync::BorrowedDuplex<'_>  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file( self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
-impl io::Write  for &'_ pipe::sync::BorrowedWriter<'_>  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(*self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
-impl io::Write  for     pipe::sync::BorrowedWriter<'_>  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file( self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+//pl Write  for &'_ pipe::sync::OwnedDuplex         { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(*self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } } // deadlock bait, do not implement - see "Quirks: Serialized I/O" rant on `mod pipe::named`
+impl Write  for     pipe::sync::OwnedDuplex         { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file( self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl Write  for &'_ pipe::sync::OwnedWriter         { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(*self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl Write  for     pipe::sync::OwnedWriter         { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file( self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+//pl Write  for &'_ pipe::sync::BorrowedDuplex<'_>  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(*self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } } // deadlock bait, do not implement - see "Quirks: Serialized I/O" rant on `mod pipe::named`
+impl Write  for     pipe::sync::BorrowedDuplex<'_>  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file( self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl Write  for &'_ pipe::sync::BorrowedWriter<'_>  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file(*self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
+impl Write  for     pipe::sync::BorrowedWriter<'_>  { fn write(&mut self, buf: &[u8]) -> io::Result<usize> { unsafe { Ok(write_file( self, buf, None).map(usize::from32)?) } } fn flush(&mut self) -> io::Result<()> { Ok(()) } }
 
 impl crate::os::windows::io::FromRawHandle for pipe::sync::OwnedDuplex { unsafe fn from_raw_handle(handle: crate::os::windows::io::RawHandle) -> Self { Self(HANDLENN::new(handle.cast()).expect("undefined behavior: null is not an open, owned handle")) } }
 impl crate::os::windows::io::FromRawHandle for pipe::sync::OwnedReader { unsafe fn from_raw_handle(handle: crate::os::windows::io::RawHandle) -> Self { Self(HANDLENN::new(handle.cast()).expect("undefined behavior: null is not an open, owned handle")) } }
