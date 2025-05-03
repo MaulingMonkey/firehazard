@@ -3,7 +3,7 @@ macro_rules! tests {
     $(  use $($use:tt)::*;                                                      )*
 
         #[test]
-    $(  #[isolate $(@@@@NEVER@@@@ $isolate:tt)? ]                               )?
+    $(  #[isolate $(= $isolate_exit_code:expr)? ]                               )?
     $(  #[strict_handle_check_exception = $strict_handle_check_exception:expr]  )?
         fn $test_name:ident () {
             $($test_body:tt)*
@@ -12,7 +12,7 @@ macro_rules! tests {
         $($rest:tt)*
     ) => {
         #[cfg(all(std, test))] #[test] fn $test_name() {
-            let isolate = false $($($isolate)? || true)?;
+            let isolate = false $( || { $($isolate_exit_code;)? true })?;
 
             let firehazard_mod_test_name = concat!(module_path!(), "::", stringify!($test_name));
             let mod_test_name = firehazard_mod_test_name.strip_prefix("firehazard::").unwrap_or(firehazard_mod_test_name); // module_path!() includes crate name, test names don't
@@ -29,9 +29,9 @@ macro_rules! tests {
                     // continue to test body
                 },
                 "" if isolate => {
-                    let expected = 0x1501A7E; // "ISOLATE" 1337ified (we explicitly exit with this code to ensure the test was actually pattern matched)
-                    let actual = crate::test::run_one_exact_flavor(mod_test_name, "ISOLATE").expect("expected exit code 0x{expected:0X} when running test under isolation, instead got... a *unix* signal? wat?");
-                    assert!(expected == actual, "expected exit code 0x{expected:0X} when running test with strict handle checks, instead got exit code 0x{actual:08X}");
+                    let expected = u32::from({ 0x1501A7E_u32 $($(; $isolate_exit_code )?)? }); // "ISOLATE" 1337ified (we explicitly exit with this code to ensure the test was actually pattern matched)
+                    let actual = crate::test::run_one_exact_flavor(mod_test_name, "ISOLATE").expect("expected exit code 0x{expected:0X} when running test under isolation, instead got... a *unix* signal? wat?") as u32;
+                    assert!(expected == actual, "expected exit code 0x{expected:0X} when running test under isolation, instead got exit code 0x{actual:08X}");
                     return;
                 },
                 "ISOLATE" | "" => {
@@ -39,10 +39,13 @@ macro_rules! tests {
                 },
                 _unexpected => panic!("unexpected test flavor: {_unexpected:?}"),
             }
-            {
+
+            fn test_body() {
                 $(#[allow(unused_imports)] use $($use)::*;)*
                 $($test_body)*
             }
+            test_body();
+
             match test_flavor {
                 "STRICT_HANDLE_CHECK"   => std::process::exit(0x5721C7),    // 1337ified "STRICT"
                 "ISOLATE"               => std::process::exit(0x1501A7E),   // 1337ified "ISOLATE"
