@@ -15,6 +15,12 @@ mod c { #[doc(no_inline)] pub use crate::Error; }
 
 #[doc(no_inline)] pub(crate) use crate as firehazard;
 
+#[doc(no_inline)] pub(crate) use alloc::{
+    TryIntoAsNarrowOrWideCStrNonNull,
+    AsNarrowOrWideCStrNonNull as _,
+    NarrowOrWideCStrNonNull,
+};
+
 #[doc(no_inline)] pub(crate) use core::{
     convert::Infallible,
 

@@ -12,9 +12,9 @@ pub fn convert_sid_to_string_sid_a(sid: &sid::Value) -> Option<alloc::CString<u8
     if sid.as_psid().is_null() { return None }
     let mut local_string = null_mut();
     let succeeded = 0 != unsafe { winapi::shared::sddl::ConvertSidToStringSidA(sid.as_psid(), &mut local_string) };
-    let local_string = unsafe { crate::alloc::CString::from_raw(local_string.cast()) };
+    let local_string = unsafe { crate::alloc::CString::from_raw_ptr(local_string.cast()) };
     assert!(succeeded, "ConvertSidToStringSidA");
-    Some(local_string)
+    local_string
 }
 
 
@@ -35,7 +35,7 @@ pub fn convert_sid_to_string_sid_w(sid: &sid::Value) -> Option<alloc::CString<u1
     if sid.as_psid().is_null() { return None }
     let mut local_string = null_mut();
     let succeeded = 0 != unsafe { winapi::shared::sddl::ConvertSidToStringSidW(sid.as_psid(), &mut local_string) };
-    let local_string = unsafe { alloc::CString::from_raw(local_string.cast()) };
+    let local_string = unsafe { alloc::CString::from_raw_ptr(local_string) };
     assert!(succeeded, "ConvertSidToStringSidW");
-    Some(local_string)
+    local_string
 }

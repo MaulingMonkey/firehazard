@@ -11,7 +11,7 @@
 /// # use winapi::shared::winerror::*;
 /// #
 /// // This function fails on local pipes
-/// let local = pipe::named::create_w(
+/// let local = pipe::named::create(
 ///     cstr16!(r"\\.\pipe\local\example-for-client-computer-name-check"),
 ///     pipe::ACCESS_DUPLEX, 0, pipe::UNLIMITED_INSTANCES,
 ///     0, 0, None, None,
@@ -24,7 +24,7 @@
 /// assert_eq!(ERROR_PIPE_LOCAL, pipe::named::get_client_computer_name(&write).unwrap_err());
 ///
 /// // ...including local *server* pipes available for remote connection
-/// let global = pipe::named::create_w(
+/// let global = pipe::named::create(
 ///     cstr16!(r"\\.\pipe\example-for-client-computer-name-check"),
 ///     pipe::ACCESS_DUPLEX, pipe::ACCEPT_REMOTE_CLIENTS, pipe::UNLIMITED_INSTANCES,
 ///     0, 0, None, None,

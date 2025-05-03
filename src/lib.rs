@@ -7,6 +7,7 @@
 #![deny(unreachable_patterns)]
 
 #[cfg(std)] extern crate std;
+#[cfg(alloc)] extern crate alloc as alloc_;
 #[doc(hidden)] pub extern crate abistr;
 #[doc(hidden)] pub extern crate ialloc;
 #[doc(hidden)] pub extern crate winapi;

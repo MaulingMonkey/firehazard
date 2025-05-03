@@ -17,7 +17,7 @@ pub const UNLIMITED_INSTANCES : MaxInstances = MaxInstances(PIPE_UNLIMITED_INSTA
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/namedpipeapi/nf-namedpipeapi-createnamedpipew)\]
 /// 1 ..= 254 | ∞ | \<invalid\>
 ///
-/// Exists mainly to represent [`pipe::named::create_*`](pipe::named::create_w)'s `max_instances` parameter.
+/// Exists mainly to represent [`pipe::named::create_*`](pipe::named::create)'s `max_instances` parameter.
 ///
 /// | Value         | Description   |
 /// |:-------------:| --------------|

@@ -22,7 +22,7 @@
 /// To avoid these problems, as well as possible [TOC/TOU](https://en.wikipedia.org/wiki/Time-of-check_to_time-of-use) bugs, instead consider:
 ///
 /// -   Calling [`CreateFile`](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew) and handling the error (if you wish to connect to a pipe only if it exists.)
-/// -   Calling [`pipe::named::create_w`] or similar with e.g. [`file::FLAG_FIRST_PIPE_INSTANCE`] (if you wish to avoid establishing a server pipe if it already exists.)
+/// -   Calling [`pipe::named::create`] or similar with e.g. [`file::FLAG_FIRST_PIPE_INSTANCE`] (if you wish to avoid establishing a server pipe if it already exists.)
 ///
 pub fn get_file_attributes_a(path: impl TryIntoAsCStr) -> firehazard::Result<u32> {
     let attributes = unsafe { winapi::um::fileapi::GetFileAttributesA(
@@ -56,7 +56,7 @@ pub fn get_file_attributes_a(path: impl TryIntoAsCStr) -> firehazard::Result<u32
 /// To avoid these problems, as well as possible [TOC/TOU](https://en.wikipedia.org/wiki/Time-of-check_to_time-of-use) bugs, instead consider:
 ///
 /// -   Calling [`CreateFile`](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew) and handling the error (if you wish to connect to a pipe only if it exists.)
-/// -   Calling [`pipe::named::create_w`] or similar with e.g. [`file::FLAG_FIRST_PIPE_INSTANCE`] (if you wish to avoid establishing a server pipe if it already exists.)
+/// -   Calling [`pipe::named::create`] or similar with e.g. [`file::FLAG_FIRST_PIPE_INSTANCE`] (if you wish to avoid establishing a server pipe if it already exists.)
 ///
 pub fn get_file_attributes_w(path: impl TryIntoAsCStr<u16>) -> firehazard::Result<u32> {
     let attributes = unsafe { winapi::um::fileapi::GetFileAttributesW(
@@ -92,7 +92,7 @@ pub fn get_file_attributes_w(path: impl TryIntoAsCStr<u16>) -> firehazard::Resul
 /// To avoid these problems, as well as possible [TOC/TOU](https://en.wikipedia.org/wiki/Time-of-check_to_time-of-use) bugs, instead consider:
 ///
 /// -   Calling [`CreateFile`](https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createfilew) and handling the error (if you wish to connect to a pipe only if it exists.)
-/// -   Calling [`pipe::named::create_w`] or similar with e.g. [`file::FLAG_FIRST_PIPE_INSTANCE`] (if you wish to avoid establishing a server pipe if it already exists.)
+/// -   Calling [`pipe::named::create`] or similar with e.g. [`file::FLAG_FIRST_PIPE_INSTANCE`] (if you wish to avoid establishing a server pipe if it already exists.)
 ///
 pub fn get_file_attributes(path: impl AsRef<std::path::Path>) -> firehazard::Result<u32> {
     get_file_attributes_w(osstr_to_wide0(path.as_ref().as_os_str(), &mut std::vec::Vec::new())?)

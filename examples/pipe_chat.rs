@@ -9,8 +9,10 @@ use std::sync::Mutex;
 use std::thread;
 
 const DEFAULT_USERNAME              : &'static str                      = "Default";
-const SERVER_TO_CLIENT_PIPE_NAME    : abistr::CStrNonNull<'static, u16> = abistr::cstr16!(r"\\.\pipe\firehazard-pipe_chat-server-to-client");
-const CLIENT_TO_SERVER_PIPE_NAME    : abistr::CStrNonNull<'static, u16> = abistr::cstr16!(r"\\.\pipe\firehazard-pipe_chat-client-to-server");
+//const SERVER_TO_CLIENT_PIPE_NAME    : abistr::CStrNonNull<'static, u16> = abistr::cstr16!(r"\\.\pipe\firehazard-pipe_chat-server-to-client");
+//const CLIENT_TO_SERVER_PIPE_NAME    : abistr::CStrNonNull<'static, u16> = abistr::cstr16!(r"\\.\pipe\firehazard-pipe_chat-client-to-server");
+const SERVER_TO_CLIENT_PIPE_NAME    : &'static str                      = r"\\.\pipe\firehazard-pipe_chat-server-to-client";
+const CLIENT_TO_SERVER_PIPE_NAME    : &'static str                      = r"\\.\pipe\firehazard-pipe_chat-client-to-server";
 const SERVER_TO_CLIENT_BUFFER_SIZE  : u32                               = 4 << 10; // 4 KiB
 const CLIENT_TO_SERVER_BUFFER_SIZE  : u32                               = 4 << 10; // 4 KiB
 
@@ -118,7 +120,7 @@ fn server(mut args: std::env::Args) {
             }).unwrap();
 
             fn create_client_to_server_pipe(first: bool) -> pipe::named::Listener {
-                pipe::named::create_w(
+                pipe::named::create(
                     CLIENT_TO_SERVER_PIPE_NAME,
                     pipe::ACCESS_INBOUND | (u32::from(first) * file::FLAG_FIRST_PIPE_INSTANCE),
                     pipe::REJECT_REMOTE_CLIENTS,
@@ -143,7 +145,7 @@ fn server(mut args: std::env::Args) {
             }).unwrap();
 
             fn create_server_to_client_pipe(first: bool) -> pipe::named::Listener {
-                pipe::named::create_w(
+                pipe::named::create(
                     SERVER_TO_CLIENT_PIPE_NAME,
                     pipe::ACCESS_OUTBOUND | (u32::from(first) * file::FLAG_FIRST_PIPE_INSTANCE),
                     pipe::REJECT_REMOTE_CLIENTS,
