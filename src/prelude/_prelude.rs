@@ -1,3 +1,5 @@
+//! \[~~microsoft.com~~\] Intended usage: use firehazard::prelude::\*;
+
 #![allow(unused_imports)]
 
 #[doc(no_inline)] pub use crate::*;
