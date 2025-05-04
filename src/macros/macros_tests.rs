@@ -12,7 +12,7 @@ macro_rules! tests {
         $($rest:tt)*
     ) => {
         #[cfg(all(std, test))] #[test] fn $test_name() {
-            let isolate = false $( || { $($isolate_exit_code;)? true })?;
+            let isolate = false $( || { $(let _ = $isolate_exit_code;)? true })?;
 
             let firehazard_mod_test_name = concat!(module_path!(), "::", stringify!($test_name));
             let mod_test_name = firehazard_mod_test_name.strip_prefix("firehazard::").unwrap_or(firehazard_mod_test_name); // module_path!() includes crate name, test names don't
