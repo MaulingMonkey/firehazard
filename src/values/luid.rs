@@ -1,3 +1,5 @@
+use crate::prelude::*;
+
 use winapi::shared::ntdef::LUID;
 
 use core::fmt::{self, Debug, Formatter};
@@ -7,7 +9,18 @@ use core::hash::Hash;
 
 #[doc(alias = "LUID")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-luid)\]
-/// LUID (≈ a 32-bit aligned `u64` / "Locally Unique IDentifier")
+/// Generic LUID (≈ a 32-bit aligned `u64` / "Locally Unique IDentifier")
+///
+/// LUIDs are used for multiple unrelated purpouses:
+/// *   [`privilege::Luid`] &mdash; identifies a [privilege](https://learn.microsoft.com/en-us/windows/win32/secauthz/privilege-constants#constants) such as `"SeShutdownPrivilege"`
+/// *   <strike style="opacity: 25%">`graphics::adapter::Luid`</strike> &mdash; identifies a
+///     [Direct3D9](https://learn.microsoft.com/en-us/windows/win32/api/d3d9/nf-d3d9-idirect3d9ex-getadapterluid) ..
+///     [12](https://learn.microsoft.com/en-us/windows/win32/api/d3d12/nf-d3d12-id3d12device-getadapterluid) or
+///     [DXGI](https://learn.microsoft.com/en-us/windows/win32/api/dxgi/ns-dxgi-dxgi_adapter_desc#:~:text=AdapterLuid)
+///     graphics adapter
+/// *   <strike style="opacity: 25%">`network::interface::Luid`</strike> &mdash; identifies a
+///     [Network Adapter](https://learn.microsoft.com/en-us/windows/win32/fwp/filtering-condition-identifiers-#:~:text=LUID)
+///     for the Windows Filtering Platform.
 ///
 #[derive(Clone, Copy, Default)] #[repr(transparent)] pub struct Luid(pub(crate) LUID);
 
