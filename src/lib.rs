@@ -32,7 +32,7 @@
 #[path = r"handle\_handle.rs"]              pub mod handle;         #[doc(hidden)] pub use handle::{funcs::*, traits::*};
 #[path = r"io\_io.rs"]                      pub mod io;             #[doc(hidden)] #[allow(unused_imports)] pub use io::funcs::*;
 #[path = r"job\_job.rs"]                    pub mod job;            #[doc(hidden)] pub use job::funcs::*;
-#[path = r"misc\_misc.rs"]                  mod misc;               #[doc(hidden)] pub use misc::funcs::*;
+#[path = r"time\_time.rs"]                  pub mod time;           #[doc(hidden)] pub use time::funcs::*;
 #[path = r"os\_os.rs"]                      pub(crate) mod os;
 #[path = r"pipe\_pipe.rs"]                  pub mod pipe;           #[doc(hidden)] pub use pipe::NMPWAIT;
 #[path = r"prelude\_prelude.rs"]            pub mod prelude;
