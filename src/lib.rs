@@ -11,16 +11,6 @@
 #[doc(hidden)] pub extern crate ialloc;
 #[doc(hidden)] pub extern crate winapi;
 
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
-/// A raw **N**on **N**ull handle
-///
-pub type HANDLENN = core::ptr::NonNull<winapi::ctypes::c_void>;
-
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/sysinfo/kernel-objects)\]
-/// A raw nullable handle
-///
-pub use winapi::shared::ntdef::HANDLE;
-
 #[cfg(doc)] pub use _doc::*;
 #[cfg(doc)] mod _doc {
     use crate::prelude::*;
@@ -55,6 +45,6 @@ pub use winapi::shared::ntdef::HANDLE;
 #[path = r"token\_token.rs"]                pub mod token;          #[doc(hidden)] pub use token::funcs::*;
 #[path = r"type_check\_type_check.rs"]      pub(crate) mod type_check;
 #[path = r"util\_util.rs"]                  mod util;               pub(crate) use util::*;
-#[path = r"values\_values.rs"]              mod values;             pub use values::*;
+#[path = r"values\_values.rs"]              pub mod values;         #[doc(hidden)] pub use values::*;
 #[path = r"volume\_volume.rs"]              pub mod volume;
 #[path = r"winsta\_winsta.rs"]              pub mod winsta;         #[doc(hidden)] pub use winsta::funcs::*;
