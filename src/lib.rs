@@ -45,6 +45,7 @@ pub use winapi::shared::ntdef::HANDLE;
 #[path = r"misc\_misc.rs"]                  mod misc;               #[doc(hidden)] pub use misc::funcs::*;
 #[path = r"os\_os.rs"]                      pub(crate) mod os;
 #[path = r"pipe\_pipe.rs"]                  pub mod pipe;           #[doc(hidden)] pub use pipe::NMPWAIT;
+#[path = r"prelude\_prelude.rs"]            pub mod prelude;
 #[path = r"privilege\_privilege.rs"]        pub mod privilege;      #[doc(hidden)] pub use privilege::funcs::*;
 #[path = r"process\_process.rs"]            pub mod process;        #[doc(hidden)] pub use process::funcs::*;
 #[path = r"pseudoconsole\_pseudoconsole.rs"]pub mod pseudoconsole;  #[doc(hidden)] pub use pseudoconsole::funcs::*;
@@ -52,14 +53,8 @@ pub use winapi::shared::ntdef::HANDLE;
 #[path = r"sid\_sid.rs"]                    pub mod sid;            #[doc(hidden)] pub use sid::funcs::*;
 #[path = r"thread\_thread.rs"]              pub mod thread;         #[doc(hidden)] pub use thread::funcs::*;
 #[path = r"token\_token.rs"]                pub mod token;          #[doc(hidden)] pub use token::funcs::*;
+#[path = r"type_check\_type_check.rs"]      pub(crate) mod type_check;
 #[path = r"util\_util.rs"]                  mod util;               pub(crate) use util::*;
+#[path = r"values\_values.rs"]              mod values;             pub use values::*;
 #[path = r"volume\_volume.rs"]              pub mod volume;
 #[path = r"winsta\_winsta.rs"]              pub mod winsta;         #[doc(hidden)] pub use winsta::funcs::*;
-
-pub use values::*;
-mod values {
-    mod luid;                       pub use luid::*;
-}
-
-pub mod prelude;
-pub(crate) mod type_check;
