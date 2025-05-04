@@ -1,5 +1,3 @@
-//! Error handling types and functions
-
 use crate::prelude::*;
 use winapi::shared::ntstatus::*;
 use winapi::shared::winerror::*;
@@ -9,7 +7,8 @@ use core::fmt::{self, Debug, Formatter};
 
 
 
-pub type Result<T> = core::result::Result<T, crate::Error>;
+/// <code>[Ok]\(T\)</code> | <code>[Err]\([firehazard]::[Error]\)</code>
+pub type Result<T> = core::result::Result<T, Error>;
 
 pub(crate) trait ResultErrorExt<R>      { fn unerr(self, err: u32, remap: R) -> Self; }
 impl<R> ResultErrorExt<R> for Result<R> { fn unerr(self, err: u32, remap: R) -> Self { match self { Err(e) if e == err => Ok(remap), r => r } } }

@@ -27,7 +27,7 @@
 #[path = r"debug\_debug.rs"]                pub mod debug;          #[doc(no_inline)] #[doc(hidden)] pub use debug::funcs::*;
 #[path = r"desktop\_desktop.rs"]            pub mod desktop;        #[doc(no_inline)] #[doc(hidden)] pub use desktop::funcs::*;
 #[path = r"dlls\_dlls.rs"]                  mod dlls;               pub(crate) use dlls::*;
-#[path = r"error\_error.rs"]                mod error;              pub use error::*;
+#[path = r"error\_error.rs"]                pub mod error;          #[doc(no_inline)] #[doc(hidden)] pub use error::*; pub use error::{Error, Result};
 #[path = r"file\_file.rs"]                  pub mod file;           #[doc(no_inline)] #[doc(hidden)] pub use file::funcs::*;
 #[path = r"handle\_handle.rs"]              pub mod handle;         #[doc(no_inline)] #[doc(hidden)] pub use handle::{funcs::*, traits::*};
 #[path = r"io\_io.rs"]                      pub mod io;             #[doc(no_inline)] #[doc(hidden)] #[allow(unused_imports)] pub use io::funcs::*;

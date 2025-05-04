@@ -1,3 +1,4 @@
+//! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/)\]
 //! Error handling types and functions
 
 include!(r"fast_fail.rs");
