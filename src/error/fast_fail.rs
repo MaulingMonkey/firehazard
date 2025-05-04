@@ -2,6 +2,13 @@
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/cpp/intrinsics/fastfail)\]
 /// __fastfail
 ///
+/// Terminate the process quickly via "second chance non-continuable exception" of code
+/// 0xC0000409 ([`STATUS::STACK_BUFFER_OVERRUN`]),
+/// bypassing as much in-process handling such as exception handlers as possible.
+/// Consider calling this if you believe process state is corrupt enough that more
+/// regular error handling methods such as [`panic!`]ing may exacerbate undefined behavior,
+/// corrupt context you'd rather preserve for crash dumps, etc.
+///
 pub fn __fastfail(code: impl Into<FAST_FAIL>) -> ! {
     let code = code.into().0;
     unsafe {
@@ -29,7 +36,7 @@ pub fn __fastfail(code: impl Into<FAST_FAIL>) -> ! {
 
 
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/cpp/intrinsics/fastfail)\]
-/// FAST\_FAIL\_\* constants for \_\_fastfail(code)
+/// FAST\_FAIL\_\* constants for [`__fastfail`]
 ///
 #[allow(non_camel_case_types)]
 #[derive(Clone, Copy, bytemuck::Pod, Default, bytemuck::Zeroable, PartialEq, Eq, PartialOrd, Ord, Hash)]
@@ -193,6 +200,6 @@ impl core::fmt::Debug for FAST_FAIL {
 
 tests! {
     // __fastfail shows up as STATUS_STACK_BUFFER_OVERRUN (0xC0000409)
-    #[test] #[isolate = winresult::STATUS::STACK_BUFFER_OVERRUN] fn __fastfail_9001()           { __fastfail(9001) }
-    #[test] #[isolate = winresult::STATUS::STACK_BUFFER_OVERRUN] fn __fastfail_fatal_app_exit() { __fastfail(FAST_FAIL::FATAL_APP_EXIT) }
+    #[test] #[isolate = STATUS::STACK_BUFFER_OVERRUN] fn __fastfail_9001()           { __fastfail(9001) }
+    #[test] #[isolate = STATUS::STACK_BUFFER_OVERRUN] fn __fastfail_fatal_app_exit() { __fastfail(FAST_FAIL::FATAL_APP_EXIT) }
 }

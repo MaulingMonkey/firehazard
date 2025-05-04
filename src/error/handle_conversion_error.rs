@@ -1,9 +1,3 @@
-use crate::{self as firehazard};
-use winapi::shared::winerror::ERROR_INVALID_HANDLE;
-use core::fmt::{self, Debug, Display, Formatter};
-
-
-
 /// Error converting from one handle type to another (e.g. converting a generic handle to a thread handle when the underlying object was actually a process.)
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)]
@@ -23,12 +17,12 @@ impl<H> From<HandleConversionError<H>> for firehazard::Error {
     }
 }
 
-impl<H: Debug> core::error::Error for HandleConversionError<H> {
+impl<H: core::fmt::Debug> core::error::Error for HandleConversionError<H> {
     fn description(&self) -> &str { "firehazard::HandleConversionError: unable to convert handle to a more specific type (wrong type of handle)" }
 }
 
-impl<H: Debug> Debug for HandleConversionError<H> {
-    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+impl<H: core::fmt::Debug> core::fmt::Debug for HandleConversionError<H> {
+    fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::fmt::Result {
         write!(
             fmt,
             "firehazard::HandleConversionError {{ unconverted: {:?} }}",
@@ -37,8 +31,8 @@ impl<H: Debug> Debug for HandleConversionError<H> {
     }
 }
 
-impl<H: Debug> Display for HandleConversionError<H> {
-    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+impl<H: core::fmt::Debug> core::fmt::Display for HandleConversionError<H> {
+    fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::fmt::Result {
         write!(
             fmt,
             "firehazard::HandleConversionError {{ unconverted: {:?} }}: unable to convert handle to a more specific type (wrong type of handle)",

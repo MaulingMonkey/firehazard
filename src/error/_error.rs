@@ -1,8 +1,9 @@
 //! \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/)\]
 //! Error handling types and functions
 
-include!(r"fast_fail.rs");
+use crate::prelude::*;
 
-mod error;                          pub use error::*;
-mod handle_conversion_error;        pub use handle_conversion_error::*;
-mod preserve_error_scope;           pub(crate) use preserve_error_scope::*;
+include!(r"error.rs");
+include!(r"fast_fail.rs");
+include!(r"handle_conversion_error.rs");
+include!(r"preserve_error_scope.rs");

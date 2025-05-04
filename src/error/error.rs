@@ -1,14 +1,7 @@
-use crate::prelude::*;
-use winapi::shared::ntstatus::*;
-use winapi::shared::winerror::*;
-use winapi::um::errhandlingapi::GetLastError;
-
-use core::fmt::{self, Debug, Formatter};
-
-
-
 /// <code>[Ok]\(T\)</code> | <code>[Err]\([firehazard]::[Error]\)</code>
 pub type Result<T> = core::result::Result<T, Error>;
+
+
 
 pub(crate) trait ResultErrorExt<R>      { fn unerr(self, err: u32, remap: R) -> Self; }
 impl<R> ResultErrorExt<R> for Result<R> { fn unerr(self, err: u32, remap: R) -> Self { match self { Err(e) if e == err => Ok(remap), r => r } } }
@@ -27,7 +20,7 @@ impl Error {
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)\]
     /// GetLastError
     ///
-    pub fn get_last() -> Self { Self(unsafe { GetLastError() }) }
+    pub fn get_last() -> Self { Self(unsafe { winapi::um::errhandlingapi::GetLastError() }) }
 
     #[doc(alias = "GetLastError")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror)\]
@@ -36,6 +29,8 @@ impl Error {
     pub fn get_last_if(error: bool) -> Result<()> { if !error { Ok(()) } else { Err(Self::get_last()) } }
 
     pub fn friendly(self) -> &'static str {
+        use winapi::shared::ntstatus::*;
+        use winapi::shared::winerror::*;
         match self.0 {
             NO_ERROR                        => "NO_ERROR",                      // 0
             ERROR_FILE_NOT_FOUND            => "ERROR_FILE_NOT_FOUND",          // 2
@@ -96,8 +91,8 @@ impl Error {
     }
 }
 
-impl Debug for Error {
-    fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
+impl core::fmt::Debug for Error {
+    fn fmt(&self, fmt: &mut core::fmt::Formatter) -> core::fmt::Result {
         if self.0 < 0x8000_0000 {
             write!(fmt, "Error({} {})", self.0, self.friendly())
         } else {
