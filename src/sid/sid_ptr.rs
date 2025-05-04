@@ -1,7 +1,6 @@
 use crate::prelude::*;
 
 use winapi::shared::minwindef::{BYTE, DWORD};
-use winapi::shared::winerror::*;
 use winapi::um::winnt::{SID, SID_IDENTIFIER_AUTHORITY};
 
 use core::fmt::{self, Debug, Formatter};

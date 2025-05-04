@@ -3,7 +3,6 @@ use crate::process::environment::*;
 
 use winapi::shared::minwindef::{LPVOID, DWORD};
 use winapi::shared::ntdef::{LPCSTR, LPSTR, HANDLE};
-use winapi::shared::winerror::*;
 use winapi::um::minwinbase::LPSECURITY_ATTRIBUTES;
 use winapi::um::processthreadsapi::*;
 use winapi::um::synchapi::WaitForSingleObject;
