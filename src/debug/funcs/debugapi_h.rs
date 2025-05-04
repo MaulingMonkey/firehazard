@@ -1,5 +1,4 @@
 use crate::prelude::*;
-use crate::debug::DebugEvent;
 
 use abistr::AsCStr;
 
@@ -156,11 +155,11 @@ pub fn output_debug_string_w(output_string: impl AsCStr<u16>) {
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-waitfordebugevent)\]
 /// WaitForDebugEvent
 ///
-pub fn wait_for_debug_event(timeout: impl Into<Option<Duration>>) -> firehazard::Result<DebugEvent> {
+pub fn wait_for_debug_event(timeout: impl Into<Option<Duration>>) -> firehazard::Result<debug::Event> {
     let timeout_ms = timeout.into().map_or(INFINITE, |d| u32::try_from(d.as_millis()).unwrap_or(INFINITE).max(INFINITE-1));
     let mut de = Default::default();
     firehazard::Error::get_last_if(FALSE == unsafe { WaitForDebugEvent(&mut de, timeout_ms) })?;
-    Ok(unsafe { DebugEvent::from_raw(de) })
+    Ok(unsafe { debug::Event::from_raw(de) })
 }
 
 
@@ -169,9 +168,9 @@ pub fn wait_for_debug_event(timeout: impl Into<Option<Duration>>) -> firehazard:
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-waitfordebugeventex)\]
 /// WaitForDebugEventEx
 ///
-pub fn wait_for_debug_event_ex(timeout: impl Into<Option<Duration>>) -> firehazard::Result<DebugEvent> {
+pub fn wait_for_debug_event_ex(timeout: impl Into<Option<Duration>>) -> firehazard::Result<debug::Event> {
     let timeout_ms = timeout.into().map_or(INFINITE, |d| u32::try_from(d.as_millis()).unwrap_or(INFINITE).max(INFINITE-1));
     let mut de = Default::default();
     firehazard::Error::get_last_if(FALSE == unsafe { WaitForDebugEventEx(&mut de, timeout_ms) })?;
-    Ok(unsafe { DebugEvent::from_raw(de) })
+    Ok(unsafe { debug::Event::from_raw(de) })
 }

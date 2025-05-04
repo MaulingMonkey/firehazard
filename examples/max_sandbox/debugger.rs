@@ -22,7 +22,7 @@ pub fn debug_loop(
         let DEBUG_EVENT { dwProcessId, dwThreadId, .. } = *event;
         let dbg_continue                = move || continue_debug_event(dwProcessId, dwThreadId, DBG_CONTINUE).unwrap();
         let dbg_exception_not_handled   = move || continue_debug_event(dwProcessId, dwThreadId, DBG_EXCEPTION_NOT_HANDLED).unwrap();
-        use debug::DebugEventU::*;
+        use debug::EventU::*;
         match event.u() {
             Exception(event) => {
                 let code = event.ExceptionRecord.ExceptionCode;
