@@ -44,7 +44,7 @@
 //!
 //! ### Quirks: Serialized I/O
 //!
-//! Multithreaded access to a single [`pipe::DuplexNN`] is deadlock-bait in a way that [`TcpStream`] is not.
+//! Multithreaded access to a single [`pipe::sync::Duplex`] is deadlock-bait in a way that [`TcpStream`] is not.
 //! All access to a given non-`OVERLAPPED` pipe object is serialized, even for seemingly "unrelated" operations that seem like they shouldn't be.
 //!
 //! Suppose a server and client connect to each other, and perform the following operations that happen to get syncronized in the following order:
@@ -59,8 +59,8 @@
 //! -   #1 waits forever for a single miserable byte to be read.  None are, despite #4's callstack blocked in `WriteFile`.
 //! -   #3 waits forever for a single miserable byte to be read.  None are, despite #2's callstack blocked in `WriteFile`.
 //!
-//! To combat bugs, <code>&[pipe::DuplexNN]</code> does not implement [`io::Read`] or [`io::Write`] - only [`pipe::DuplexNN`] itself does.
-//! By contrast, [`io::Read`] *is* implemented for <code>&[pipe::ReaderNN]</code>, and [`io::Write`] for <code>&[pipe::WriterNN]</code> - these are much less dangerous.
+//! To combat bugs, <code>&[pipe::sync::Duplex]</code> does not implement [`io::Read`] or [`io::Write`] - only [`pipe::sync::Duplex`] itself does.
+//! By contrast, [`io::Read`] *is* implemented for <code>&[pipe::sync::Reader]</code>, and [`io::Write`] for <code>&[pipe::sync::Writer]</code> - these are much less dangerous.
 //! `DuplicateHandle` will not help you either: the duplicated handle references the same pipe object.
 //!
 //! References:
