@@ -41,9 +41,9 @@ This does *not* apply to *proven safe* conversions, e.g.:
 Attempt to validate a handle's type when using:
 *   <code>Handle::[borrow_from_raw](FromLocalHandle::borrow_from_raw)\[[_nn](FromLocalHandle::borrow_from_raw_nn)\](&amp;handle)</code>
 *   <code>Handle::[from_raw](FromLocalHandle::from_raw)\[[_nn](FromLocalHandle::from_raw_nn)\](handle)</code>   (if `Handle` is a borrowing handle.)
-*   <code>Handle::[from_raw_handle](std::os::windows::io::FromRawHandle::from_raw_handle)</code>                (if `Handle` is a borrowing handle.)
+*   <code>Handle::[from_raw_handle](std::os::windows::io::FromRawHandle::from_raw_handle)(handle)</code>        (if `Handle` is a borrowing handle.)
 
 ## `%FIREHAZARD_TYPE_CHECK_OWNED_FROM_RAW%`
 Attempt to validate a handle's type when using:
 *   <code>Handle::[from_raw](FromLocalHandle::from_raw)\[[_nn](FromLocalHandle::from_raw_nn)\](handle)</code>   (if `Handle` is an owning handle.)
-*   <code>Handle::[from_raw_handle](std::os::windows::io::FromRawHandle::from_raw_handle)</code>                (if `Handle` is an owning handle.)
+*   <code>Handle::[from_raw_handle](std::os::windows::io::FromRawHandle::from_raw_handle)(handle)</code>        (if `Handle` is an owning handle.)
