@@ -7,8 +7,10 @@ fn main() {
     let mut v = String::new();
     Command::new("rustc").arg("--version").stdout(Stdio::piped()).spawn().unwrap().stdout.unwrap().read_to_string(&mut v).unwrap();
     let std = env::var_os("CARGO_FEATURE_STD").is_some();
+    let alloc = env::var_os("CARGO_FEATURE_ALLOC").is_some();
 
     if std { println!("cargo:rustc-cfg=std"); }
+    if alloc { println!("cargo:rustc-cfg=alloc"); }
 
     if std::env::var_os("CARGO_CFG_TARGET_ENV").map_or(false, |env| env == "msvc") { msvc_only() }
 }

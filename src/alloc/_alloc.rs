@@ -1,5 +1,7 @@
 //! Allocators, deallocators, etc.
 
+#[cfg(alloc)] pub(crate) use ::alloc_::*;
+
 mod allocator;                  pub use allocator::*;
 mod cbox;                       pub use cbox::*;
 mod cboxsized;                  pub use cboxsized::*;

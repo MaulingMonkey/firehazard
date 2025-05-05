@@ -10,6 +10,7 @@
 #[doc(hidden)] pub extern crate abistr;
 #[doc(hidden)] pub extern crate ialloc;
 #[doc(hidden)] pub extern crate winapi;
+#[cfg(alloc)]  extern crate alloc as alloc_;
 
 #[cfg(doc)] pub use _doc::*;
 #[cfg(doc)] mod _doc {
@@ -41,6 +42,7 @@
 #[path = r"pseudoconsole\_pseudoconsole.rs"]pub mod pseudoconsole;  #[doc(no_inline)] #[doc(hidden)] pub use pseudoconsole::funcs::*;
 #[path = r"security\_security.rs"]          pub mod security;       //#[doc(no_inline)] #[doc(hidden)] pub use security::funcs::*;
 #[path = r"sid\_sid.rs"]                    pub mod sid;            #[doc(no_inline)] #[doc(hidden)] pub use sid::funcs::*;
+#[path = r"string\_string.rs"]              pub mod string;         //#[doc(no_inline)] #[doc(hidden)] pub use string::funcs::*;
 #[path = r"thread\_thread.rs"]              pub mod thread;         #[doc(no_inline)] #[doc(hidden)] pub use thread::funcs::*;
 #[path = r"token\_token.rs"]                pub mod token;          #[doc(no_inline)] #[doc(hidden)] pub use token::funcs::*;
 #[path = r"type_check\_type_check.rs"]      pub(crate) mod type_check;
