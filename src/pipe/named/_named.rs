@@ -37,8 +37,8 @@
 //!
 //! On the other hand, you should likely avoid such checks anyways, favoring [TOC/TOU](https://en.wikipedia.org/wiki/Time-of-check_to_time-of-use)-avoiding alternatives such as:
 //!
-//! -   Calling [`pipe::named::create`] with [`file::FLAG_FIRST_PIPE_INSTANCE`], handling `ERROR_ACCESS_DENIED` if you wish to avoid fighting with a possibly pre-existing pipe server.
-//! -   Calling [`create_file`], handling `ERROR_PATH_NOT_FOUND` if you wish to only connect to pre-existing pipe servers.
+//! -   Calling [`pipe::named::create`] with [`file::FLAG_FIRST_PIPE_INSTANCE`], handling [`ERROR::ACCESS_DENIED`] if you wish to avoid fighting with a possibly pre-existing pipe server.
+//! -   Calling [`create_file`], handling [`ERROR::PATH_NOT_FOUND`] if you wish to only connect to pre-existing pipe servers.
 //!
 //!
 //!
