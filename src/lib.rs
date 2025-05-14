@@ -34,6 +34,7 @@
 #[path = r"io\_io.rs"]                      pub mod io;             #[doc(no_inline)] #[doc(hidden)] #[allow(unused_imports)] pub use io::funcs::*;
 #[path = r"job\_job.rs"]                    pub mod job;            #[doc(no_inline)] #[doc(hidden)] pub use job::funcs::*;
 #[path = r"time\_time.rs"]                  pub mod time;           #[doc(no_inline)] #[doc(hidden)] pub use time::funcs::*;
+#[path = r"limit\_limit.rs"]                pub(crate) mod limit;
 #[path = r"os\_os.rs"]                      pub(crate) mod os;
 #[path = r"pipe\_pipe.rs"]                  pub mod pipe;           #[doc(no_inline)] #[doc(hidden)] pub use pipe::NMPWAIT;
 #[path = r"prelude\_prelude.rs"]            pub mod prelude;

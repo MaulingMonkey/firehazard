@@ -119,16 +119,89 @@ pub fn is_debugger_present() -> bool {
 #[doc(alias = "OutputDebugStringA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-outputdebugstringa)\]
 /// OutputDebugStringA
+/// &mdash; Outputs an arbitrary string to a debugger-specific text channel.
+///
+/// Caveats:
+/// *   Messages should terminate in a newline (`\r\n`).  Failure to do so will result in inconsistent behavior between debug message viewers - see Example.
+/// *   Messages may be truncated (to as little as 512 bytes?) on some platforms.
+///
+/// ### Alternatives
+/// *   <code>bugsalot::{[debugln!](https://docs.rs/bugsalot/latest/bugsalot/macro.debugln.html), [debug!](https://docs.rs/bugsalot/latest/bugsalot/macro.debug.html)}</code>
+///     &mdash; cross platform, formatting
 ///
 /// ### Example
 /// ```
 /// # use firehazard::*;
 /// # use abistr::*;
-/// output_debug_string_a(cstr!("Hello, debugger!"));
+/// output_debug_string_a(cstr!("A"));
+/// output_debug_string_a(cstr!("B"));
 /// ```
+///
+/// In [DebugView] on Windows, this will display something like:
+///
+/// ```text
+/// 33  616.02484131 [12584] A
+/// 34  616.02490234 [12584] B
+/// ```
+///
+/// But in [Visual Studio]'s Output tab, or [Visual Studio Code]'s Debug Console, it will instead display something like:
+///
+/// ```text
+/// AB
+/// ```
+///
+/// <!-- References -->
+/// [DebugView]:            https://docs.microsoft.com/en-us/sysinternals/downloads/debugview
+/// [Visual Studio]:        https://visualstudio.microsoft.com/
+/// [Visual Studio Code]:   https://code.visualstudio.com/
 ///
 pub fn output_debug_string_a(output_string: impl AsCStr) {
     unsafe { OutputDebugStringA(output_string.as_cstr()) }
+}
+
+
+
+#[doc(alias = "OutputDebugStringW")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-outputdebugstringw)\]
+/// OutputDebugStringW
+/// &mdash; Outputs an arbitrary string to a debugger-specific text channel.
+///
+/// Caveats:
+/// *   Messages should terminate in a newline (`\r\n`).  Failure to do so will result in inconsistent behavior between debug message viewers - see Example.
+/// *   Messages may be truncated (to as little as 512 bytes?) on some platforms.
+///
+/// ### Alternatives
+/// *   <code>bugsalot::{[debugln!](https://docs.rs/bugsalot/latest/bugsalot/macro.debugln.html), [debug!](https://docs.rs/bugsalot/latest/bugsalot/macro.debug.html)}</code>
+///     &mdash; cross platform, formatting
+///
+/// ### Example
+/// ```
+/// # use firehazard::*;
+/// # use abistr::*;
+/// output_debug_string_w(cstr16!("A"));
+/// output_debug_string_w(cstr16!("B"));
+/// ```
+///
+/// In [DebugView] on Windows, this will display something like:
+///
+/// ```text
+/// 33  616.02484131 [12584] A
+/// 34  616.02490234 [12584] B
+/// ```
+///
+/// But in [Visual Studio]'s Output tab, or [Visual Studio Code]'s Debug Console, it will instead display something like:
+///
+/// ```text
+/// AB
+/// ```
+///
+/// <!-- References -->
+/// [DebugView]:            https://docs.microsoft.com/en-us/sysinternals/downloads/debugview
+/// [Visual Studio]:        https://visualstudio.microsoft.com/
+/// [Visual Studio Code]:   https://code.visualstudio.com/
+///
+pub fn output_debug_string_w(output_string: impl AsCStr<u16>) {
+    unsafe { OutputDebugStringW(output_string.as_cstr()) }
 }
 
 
@@ -137,16 +210,47 @@ pub fn output_debug_string_a(output_string: impl AsCStr) {
 #[doc(alias = "OutputDebugStringW")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/debugapi/nf-debugapi-outputdebugstringw)\]
 /// OutputDebugStringW
+/// &mdash; Outputs an arbitrary string to a debugger-specific text channel.
+///
+/// Caveats:
+/// *   Messages should terminate in a newline (`\r\n`).  Failure to do so will result in inconsistent behavior between debug message viewers - see Example.
+/// *   Messages may be truncated (to as little as 512 bytes?) on some platforms.
+/// *   This Rust wrapper may convert `\0` (U+0000) to `␀` (U+2400)
+///
+/// ### Alternatives
+/// *   <code>bugsalot::{[debugln!](https://docs.rs/bugsalot/latest/bugsalot/macro.debugln.html), [debug!](https://docs.rs/bugsalot/latest/bugsalot/macro.debug.html)}</code>
+///     &mdash; cross platform, formatting
 ///
 /// ### Example
 /// ```
 /// # use firehazard::*;
 /// # use abistr::*;
-/// output_debug_string_w(cstr16!("Hello, debugger!"));
+/// output_debug_string("A");
+/// output_debug_string("B");
 /// ```
 ///
-pub fn output_debug_string_w(output_string: impl AsCStr<u16>) {
-    unsafe { OutputDebugStringW(output_string.as_cstr()) }
+/// In [DebugView] on Windows, this will display something like:
+///
+/// ```text
+/// 33  616.02484131 [12584] A
+/// 34  616.02490234 [12584] B
+/// ```
+///
+/// But in [Visual Studio]'s Output tab, or [Visual Studio Code]'s Debug Console, it will instead display something like:
+///
+/// ```text
+/// AB
+/// ```
+///
+/// <!-- References -->
+/// [DebugView]:            https://docs.microsoft.com/en-us/sysinternals/downloads/debugview
+/// [Visual Studio]:        https://visualstudio.microsoft.com/
+/// [Visual Studio Code]:   https://code.visualstudio.com/
+///
+pub fn output_debug_string(output_string: impl string::InWide) -> firehazard::Result<()> {
+    string::convert_to_cstrnn_lossy::<{limit::stack::DEBUG_STRING}, _, _>(output_string, |output_string| {
+        unsafe { OutputDebugStringW(output_string.as_cstr()) }
+    }).map(|_| ())
 }
 
 

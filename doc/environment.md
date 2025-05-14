@@ -47,3 +47,31 @@ Attempt to validate a handle's type when using:
 Attempt to validate a handle's type when using:
 *   <code>Handle::[from_raw](FromLocalHandle::from_raw)\[[_nn](FromLocalHandle::from_raw_nn)\](handle)</code>   (if `Handle` is an owning handle.)
 *   <code>Handle::[from_raw_handle](std::os::windows::io::FromRawHandle::from_raw_handle)(handle)</code>        (if `Handle` is an owning handle.)
+
+
+
+# Stack Limits
+
+These control the maximum size of stack buffers to use when converting from e.g. `&str` (UTF-8, not `\0`-terminated) to native (UTF-16ish, `\0`-terminated) strings.
+Heap allocation will typically be attempted if these limits are exceeded.
+
+## `%FIREHAZARD_LIMIT_STACK_DEBUG_STRING%`
+
+Affected functions include:
+*   [`debug::output_debug_string`]
+
+## `%FIREHAZARD_LIMIT_STACK_PATH%`
+default: **260** (256 character path + 1 '.' + 3 character extension?)
+
+Affected functions include:
+*   [`create_file`]
+*   [`get_file_attributes`]
+
+## `%FIREHAZARD_LIMIT_STACK_PIPE_NAME%`
+
+n.b. some pipe fns won't use this limit, instead using the more generic `%FIREHAZARD_LIMIT_STACK_PATH%`
+
+Affected functions include:
+*   [`pipe::named::call`]
+*   [`pipe::named::create`]
+*   [`pipe::named::wait`]

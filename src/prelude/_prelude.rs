@@ -66,7 +66,3 @@ mod c { #[doc(no_inline)] pub use crate::Error; }
     slice_assume_init_mut,
     slice_assume_init_ref,
 };
-
-#[doc(no_inline)] #[cfg(std)] pub(crate) use util::{
-    osstr_to_wide0,
-};
