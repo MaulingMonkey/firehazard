@@ -16,6 +16,10 @@ fn main() {
 }
 
 fn test_component_filter_flags_support() {
+    // 10.0.17763.7240  (x64 Windows Server 2019 or 2025):  unsupported
+    // 10.0.19045.5854  (x64 Windows 10 Professional):      supported
+    // 10.0.20348.3561  (x64 Windows Server 2022):          supported
+
     for (desc, component) in [
         ("0",               0),
         ("COMPONENT_KTM",   1), // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h
@@ -72,23 +76,37 @@ fn test_mitigation_policy_support() {
                 ("process::creation::mitigation_policy::win32k_system_call_disable",                            process::creation::mitigation_policy::win32k_system_call_disable::ALWAYS_ON                 .into()),
 
                 ("process::creation::mitigation_policy2::allow_downgrade_dynamic_code_policy",                  process::creation::mitigation_policy2::allow_downgrade_dynamic_code_policy::ALWAYS_ON       .into()),
-                ("process::creation::mitigation_policy2::block_non_cet_binaries",                               process::creation::mitigation_policy2::block_non_cet_binaries::ALWAYS_ON                    .into()),
-                ("process::creation::mitigation_policy2::block_non_cet_binaries::NON_EHCONT",                   process::creation::mitigation_policy2::block_non_cet_binaries::NON_EHCONT                   .into()),
-                ("process::creation::mitigation_policy2::cet_dynamic_apis_out_of_proc_only",                    process::creation::mitigation_policy2::cet_dynamic_apis_out_of_proc_only::ALWAYS_ON         .into()),
-                ("process::creation::mitigation_policy2::cet_user_shadow_stacks",                               process::creation::mitigation_policy2::cet_user_shadow_stacks::ALWAYS_ON                    .into()),
-                ("process::creation::mitigation_policy2::cet_user_shadow_stacks::STRICT_MODE",                  process::creation::mitigation_policy2::cet_user_shadow_stacks::STRICT_MODE                  .into()),
+                ("process::creation::mitigation_policy2::block_non_cet_binaries",                               process::creation::mitigation_policy2::block_non_cet_binaries::ALWAYS_ON                    .into()), // 10.0.17763.7240 (x64 Windows Server 2019 or 2025): unsupported
+                ("process::creation::mitigation_policy2::block_non_cet_binaries::NON_EHCONT",                   process::creation::mitigation_policy2::block_non_cet_binaries::NON_EHCONT                   .into()), // 10.0.17763.7240 (x64 Windows Server 2019 or 2025): unsupported
+                ("process::creation::mitigation_policy2::cet_dynamic_apis_out_of_proc_only",                    process::creation::mitigation_policy2::cet_dynamic_apis_out_of_proc_only::ALWAYS_ON         .into()), // 10.0.17763.7240 (x64 Windows Server 2019 or 2025): unsupported
+                ("process::creation::mitigation_policy2::cet_user_shadow_stacks",                               process::creation::mitigation_policy2::cet_user_shadow_stacks::ALWAYS_ON                    .into()), // 10.0.17763.7240 (x64 Windows Server 2019 or 2025): unsupported
+                ("process::creation::mitigation_policy2::cet_user_shadow_stacks::STRICT_MODE",                  process::creation::mitigation_policy2::cet_user_shadow_stacks::STRICT_MODE                  .into()), // 10.0.17763.7240 (x64 Windows Server 2019 or 2025): unsupported
                 ("process::creation::mitigation_policy2::loader_integrity_continuity",                          process::creation::mitigation_policy2::loader_integrity_continuity::ALWAYS_ON               .into()),
                 ("process::creation::mitigation_policy2::loader_integrity_continuity::AUDIT",                   process::creation::mitigation_policy2::loader_integrity_continuity::AUDIT                   .into()),
                 ("process::creation::mitigation_policy2::module_tampering_protection",                          process::creation::mitigation_policy2::module_tampering_protection::ALWAYS_ON               .into()),
                 ("process::creation::mitigation_policy2::module_tampering_protection::NOINHERIT",               process::creation::mitigation_policy2::module_tampering_protection::NOINHERIT               .into()),
-                ("process::creation::mitigation_policy2::pointer_auth_user_ip",                                 process::creation::mitigation_policy2::pointer_auth_user_ip::ALWAYS_ON                      .into()), // unsupported on Windows 10 Professional 10.0.19045.5854 x64 (expected: ARM64 only)
-                ("process::creation::mitigation_policy2::restrict_core_sharing",                                process::creation::mitigation_policy2::restrict_core_sharing::ALWAYS_ON                     .into()), // unsupported on Windows 10 Professional 10.0.19045.5854 x64
+
+                // 10.0.17763.7240  (x64 Windows Server 2019 or 2025):  unsupported
+                // 10.0.19045.5854  (x64 Windows 10 Professional):      unsupported
+                // 10.0.20348.3561  (x64 Windows Server 2022):          unsupported
+                // (expected: ARM64 only)
+                ("process::creation::mitigation_policy2::pointer_auth_user_ip",                                 process::creation::mitigation_policy2::pointer_auth_user_ip::ALWAYS_ON                      .into()),
+
+                // 10.0.17763.7240  (x64 Windows Server 2019 or 2025):  unsupported
+                // 10.0.19045.5854  (x64 Windows 10 Professional):      unsupported
+                // 10.0.20348.3561  (x64 Windows Server 2022):          unsupported
+                ("process::creation::mitigation_policy2::restrict_core_sharing",                                process::creation::mitigation_policy2::restrict_core_sharing::ALWAYS_ON                     .into()),
+
                 ("process::creation::mitigation_policy2::restrict_indirect_branch_prediction",                  process::creation::mitigation_policy2::restrict_indirect_branch_prediction::ALWAYS_ON       .into()),
                 ("process::creation::mitigation_policy2::speculative_store_bypass_disable",                     process::creation::mitigation_policy2::speculative_store_bypass_disable::ALWAYS_ON          .into()),
                 ("process::creation::mitigation_policy2::strict_control_flow_guard",                            process::creation::mitigation_policy2::strict_control_flow_guard::ALWAYS_ON                 .into()),
-                ("process::creation::mitigation_policy2::user_cet_set_context_ip_validation",                   process::creation::mitigation_policy2::user_cet_set_context_ip_validation::ALWAYS_ON        .into()),
-                ("process::creation::mitigation_policy2::user_cet_set_context_ip_validation::RELAXED_MODE",     process::creation::mitigation_policy2::user_cet_set_context_ip_validation::RELAXED_MODE     .into()),
-                ("process::creation::mitigation_policy2::xtended_control_flow_guard",                           process::creation::mitigation_policy2::xtended_control_flow_guard::ALWAYS_ON                .into()), // unsupported on Windows 10 Professional 10.0.19045.5854 x64
+                ("process::creation::mitigation_policy2::user_cet_set_context_ip_validation",                   process::creation::mitigation_policy2::user_cet_set_context_ip_validation::ALWAYS_ON        .into()), // 10.0.17763.7240 (x64 Windows Server 2019 or 2025): unsupported
+                ("process::creation::mitigation_policy2::user_cet_set_context_ip_validation::RELAXED_MODE",     process::creation::mitigation_policy2::user_cet_set_context_ip_validation::RELAXED_MODE     .into()), // 10.0.17763.7240 (x64 Windows Server 2019 or 2025): unsupported
+
+                // 10.0.17763.7240  (x64 Windows Server 2019 or 2025):  unsupported
+                // 10.0.19045.5854  (x64 Windows 10 Professional):      unsupported
+                // 10.0.20348.3561  (x64 Windows Server 2022):          supported
+                ("process::creation::mitigation_policy2::xtended_control_flow_guard",                           process::creation::mitigation_policy2::xtended_control_flow_guard::ALWAYS_ON                .into()),
             ] {
                 let col1 = format!("    {desc} ");
                 let mut si = process::StartupInfoExW::default();
