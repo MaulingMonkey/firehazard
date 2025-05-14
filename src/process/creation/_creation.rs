@@ -56,6 +56,7 @@ impl MitigationPolicy {
 }
 
 impl From<MitigationPolicyFlags1> for MitigationPolicy { fn from(flags: MitigationPolicyFlags1) -> Self { Self(flags, MitigationPolicyFlags2(0)) } }
+impl From<MitigationPolicyFlags2> for MitigationPolicy { fn from(flags: MitigationPolicyFlags2) -> Self { Self(MitigationPolicyFlags1(0), flags) } }
 impl From<(MitigationPolicyFlags1, MitigationPolicyFlags2)> for MitigationPolicy { fn from(flags: (MitigationPolicyFlags1, MitigationPolicyFlags2)) -> Self { Self(flags.0, flags.1) } }
 
 #[doc(alias = "PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY")]
@@ -71,6 +72,7 @@ impl MitigationPolicyMask {
 }
 
 impl From<MitigationPolicyFlags1Mask> for MitigationPolicyMask { fn from(flags: MitigationPolicyFlags1Mask) -> Self { Self(flags, MitigationPolicyFlags2Mask(0)) } }
+impl From<MitigationPolicyFlags2Mask> for MitigationPolicyMask { fn from(flags: MitigationPolicyFlags2Mask) -> Self { Self(MitigationPolicyFlags1Mask(0), flags) } }
 impl From<(MitigationPolicyFlags1Mask, MitigationPolicyFlags2Mask)> for MitigationPolicyMask { fn from(flags: (MitigationPolicyFlags1Mask, MitigationPolicyFlags2Mask)) -> Self { Self(flags.0, flags.1) } }
 
 

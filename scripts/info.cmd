@@ -3,3 +3,4 @@
 rustc -V
 cargo -V
 ver
+cargo run --quiet --example query_os_support

@@ -112,5 +112,7 @@ impl From<NtStatus> for Error { fn from(status: NtStatus) -> Self { Self(status.
 impl From<winresult::ErrorCode> for Error { fn from(code: winresult::ErrorCode) -> Self { Self(code.into()) } }
 impl PartialEq<i32> for Error { fn eq(&self, other: &i32) -> bool { *self == Error::from(*other) } }
 impl PartialEq<u32> for Error { fn eq(&self, other: &u32) -> bool { *self == Error::from(*other) } }
+impl PartialEq<winresult::ErrorCode> for Error { fn eq(&self, other: &winresult::ErrorCode) -> bool { *self == Error::from(*other) } }
 impl PartialEq<Error> for i32 { fn eq(&self, other: &Error) -> bool { Error::from(*self) == *other } }
 impl PartialEq<Error> for u32 { fn eq(&self, other: &Error) -> bool { Error::from(*self) == *other } }
+impl PartialEq<Error> for winresult::ErrorCode { fn eq(&self, other: &Error) -> bool { Error::from(*self) == *other } }
