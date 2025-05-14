@@ -34,6 +34,7 @@ impl Error {
         match self.0 {
             NO_ERROR                        => "NO_ERROR",                      // 0
             ERROR_FILE_NOT_FOUND            => "ERROR_FILE_NOT_FOUND",          // 2
+            ERROR_PATH_NOT_FOUND            => "ERROR_PATH_NOT_FOUND",          // 3
             ERROR_ACCESS_DENIED             => "ERROR_ACCESS_DENIED",           // 5
             ERROR_INVALID_HANDLE            => "ERROR_INVALID_HANDLE",          // 6
             ERROR_BAD_ENVIRONMENT           => "ERROR_BAD_ENVIRONMENT",         // 10
