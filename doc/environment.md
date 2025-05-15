@@ -55,7 +55,21 @@ Attempt to validate a handle's type when using:
 These control the maximum size of stack buffers to use when converting from e.g. `&str` (UTF-8, not `\0`-terminated) to native (UTF-16ish, `\0`-terminated) strings.
 Heap allocation will typically be attempted if these limits are exceeded.
 
+## `%FIREHAZARD_LIMIT_STACK_APP_CONTAINER_*%`
+
+* `%FIREHAZARD_LIMIT_STACK_APP_CONTAINER_NAME%`             defaults to   **64**
+* `%FIREHAZARD_LIMIT_STACK_APP_CONTAINER_DISPLAY_NAME%`     defaults to  **512**
+* `%FIREHAZARD_LIMIT_STACK_APP_CONTAINER_DESCRIPTION%`      defaults to **2048**
+
+These limits are based on [the documented limits](https://learn.microsoft.com/en-us/windows/win32/api/userenv/nf-userenv-createappcontainerprofile) and affect the following functions:
+
+*   [`create_app_container_profile`]
+*   [`delete_app_container_profile`]
+*   [`derive_app_container_sid_from_app_container_name`]
+*   ~~`derive_restricted_app_container_sid_from_app_container_sid_and_restricted_name`~~
+
 ## `%FIREHAZARD_LIMIT_STACK_DEBUG_STRING%`
+default: **512** (limit before truncation by some versions of Windows?)
 
 Affected functions include:
 *   [`debug::output_debug_string`]
@@ -65,13 +79,23 @@ default: **260** (256 character path + 1 '.' + 3 character extension?)
 
 Affected functions include:
 *   [`create_file`]
+*   [`create_process`]
+*   [`create_process_as_user`]
 *   [`get_file_attributes`]
+*   [`convert_string_sid_to_sid`]
 
-## `%FIREHAZARD_LIMIT_STACK_PIPE_NAME%`
+There are also derived limits based on this:
 
-n.b. some pipe fns won't use this limit, instead using the more generic `%FIREHAZARD_LIMIT_STACK_PATH%`
+*   `%FIREHAZARD_LIMIT_STACK_CAPABILITY_NAME%`, affecting [`derive_capability_sids_from_name`]
+*   `%FIREHAZARD_LIMIT_STACK_COMPUTER_NAME%`,   affecting [`lookup_privilege_value`]
+*   `%FIREHAZARD_LIMIT_STACK_DESKTOP_NAME%`,    affecting [`create_desktop`], [`open_desktop`]
+*   `%FIREHAZARD_LIMIT_STACK_JOB_NAME%`,        affecting [`create_job_object`], [`open_job_object`]
+*   `%FIREHAZARD_LIMIT_STACK_PIPE_NAME%`,       affecting <code>pipe::named::{[call](pipe::named::call), [create](pipe::named::create), [wait](pipe::named::wait)}</code>
+*   `%FIREHAZARD_LIMIT_STACK_PRIVILEGE_NAME%`,  affecting [`derive_capability_sids_from_name`]
+*   `%FIREHAZARD_LIMIT_STACK_WINSTA_NAME%`,     affecting [`create_window_station`], [`open_window_station`]
+
+## `%FIREHAZARD_LIMIT_STACK_SID_STRING%`
+default: **256** (SID strings approaching 100 length are common, 256 is probably sufficient.)
 
 Affected functions include:
-*   [`pipe::named::call`]
-*   [`pipe::named::create`]
-*   [`pipe::named::wait`]
+*   [`convert_string_sid_to_sid`]

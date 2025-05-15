@@ -30,6 +30,10 @@ pub fn assign_process_to_job_object<'a>(
 
 
 
+#[doc(no_inline)] pub use create_job_object_w as create_job_object;
+
+
+
 #[doc(alias = "CreateJobObjectA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-createjobobjecta)\]
 /// CreateJobObjectA
@@ -42,11 +46,15 @@ pub fn assign_process_to_job_object<'a>(
 /// let named = create_job_object_a(None, cstr!("Local/win32_security_playground/tests/create_job_object_a")).unwrap();
 /// ```
 ///
-pub fn create_job_object_a(job_attributes: Option<core::convert::Infallible>, name: impl TryIntoAsOptCStr) -> firehazard::Result<job::OwnedHandle> {
-    let name = name.try_into()?;
-    let h = unsafe { CreateJobObjectA(none2null(job_attributes), name.as_opt_cstr()) };
-    firehazard::Error::get_last_if(h.is_null())?;
-    unsafe { job::OwnedHandle::from_raw(h) }
+pub fn create_job_object_a(
+    job_attributes:     Option<core::convert::Infallible>,
+    name:               impl string::InOptionalNarrow,
+) -> firehazard::Result<job::OwnedHandle> {
+    string::convert_to_cstr::<{limit::stack::JOB_NAME}, _, _>(name, |name| {
+        let h = unsafe { CreateJobObjectA(none2null(job_attributes), name.as_opt_cstr()) };
+        firehazard::Error::get_last_if(h.is_null())?;
+        unsafe { job::OwnedHandle::from_raw(h) }
+    })?
 }
 
 
@@ -61,14 +69,18 @@ pub fn create_job_object_a(job_attributes: Option<core::convert::Infallible>, na
 /// # use firehazard::*;
 /// # use abistr::*;
 /// let anon = create_job_object_w(None, ()).unwrap();
-/// let named = create_job_object_w(None, cstr16!("Local/win32_security_playground/tests/create_job_object_a")).unwrap();
+/// let named = create_job_object_w(None, cstr16!("Local/win32_security_playground/tests/create_job_object_w")).unwrap();
 /// ```
 ///
-pub fn create_job_object_w(job_attributes: Option<core::convert::Infallible>, name: impl TryIntoAsOptCStr<u16>) -> firehazard::Result<job::OwnedHandle> {
-    let name = name.try_into()?;
-    let h = unsafe { CreateJobObjectW(none2null(job_attributes), name.as_opt_cstr()) };
-    firehazard::Error::get_last_if(h.is_null())?;
-    unsafe { job::OwnedHandle::from_raw(h) }
+pub fn create_job_object_w(
+    job_attributes:     Option<core::convert::Infallible>,
+    name:               impl string::InOptionalWide,
+) -> firehazard::Result<job::OwnedHandle> {
+    string::convert_to_cstr::<{limit::stack::JOB_NAME}, _, _>(name, |name| {
+        let h = unsafe { CreateJobObjectW(none2null(job_attributes), name.as_opt_cstr()) };
+        firehazard::Error::get_last_if(h.is_null())?;
+        unsafe { job::OwnedHandle::from_raw(h) }
+    })?
 }
 
 
@@ -106,6 +118,10 @@ pub fn is_process_in_job<'a>(
 
 
 
+#[doc(no_inline)] pub use open_job_object_w as open_job_object;
+
+
+
 #[doc(alias = "OpenJobObjectA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-openjobobjecta)\]
 /// OpenJobObjectA
@@ -115,20 +131,24 @@ pub fn is_process_in_job<'a>(
 /// # use firehazard::*;
 /// # use firehazard::access::*;
 /// # use abistr::*;
-/// let job1 = create_job_object_a(None, cstr!("Local/win32_security_playground/tests/open_job_object_w")).unwrap();
-/// let job2 = open_job_object_a(GENERIC_ALL, false, cstr!("Local/win32_security_playground/tests/open_job_object_w")).unwrap();
+/// let job1 = create_job_object_a(None, cstr!("Local/win32_security_playground/tests/open_job_object_a")).unwrap();
+/// let job2 = open_job_object_a(GENERIC_ALL, false, cstr!("Local/win32_security_playground/tests/open_job_object_a")).unwrap();
 /// let err  = open_job_object_a(GENERIC_ALL, false, cstr!("Local/nope")).unwrap_err();
 /// ```
 ///
 pub fn open_job_object_a(
     desired_access:     impl Into<access::Mask>,
     inherit_handle:     bool,
-    name:               impl TryIntoAsCStr,
+    name:               impl string::InNarrow,
 ) -> firehazard::Result<job::OwnedHandle> {
-    let name = name.try_into()?;
-    let h = unsafe { OpenJobObjectA(desired_access.into().into(), inherit_handle as _, name.as_cstr()) };
-    firehazard::Error::get_last_if(h.is_null())?;
-    unsafe { job::OwnedHandle::from_raw(h) }
+    let desired_access  = desired_access.into().into();
+    let inherit_handle  = inherit_handle as _;
+
+    string::convert_to_cstr::<{limit::stack::JOB_NAME}, _, _>(name, |name| {
+        let h = unsafe { OpenJobObjectA(desired_access, inherit_handle, name.as_opt_cstr()) };
+        firehazard::Error::get_last_if(h.is_null())?;
+        unsafe { job::OwnedHandle::from_raw(h) }
+    })?
 }
 
 
@@ -143,20 +163,24 @@ pub fn open_job_object_a(
 /// # use firehazard::*;
 /// # use firehazard::access::*;
 /// # use abistr::*;
-/// let job1 = create_job_object_w(None, cstr16!("Local/win32_security_playground/tests/open_job_object_a")).unwrap();
-/// let job2 = open_job_object_w(GENERIC_ALL, false, cstr16!("Local/win32_security_playground/tests/open_job_object_a")).unwrap();
+/// let job1 = create_job_object_w(None, cstr16!("Local/win32_security_playground/tests/open_job_object_w")).unwrap();
+/// let job2 = open_job_object_w(GENERIC_ALL, false, cstr16!("Local/win32_security_playground/tests/open_job_object_w")).unwrap();
 /// let err  = open_job_object_w(GENERIC_ALL, false, cstr16!("Local/nope")).unwrap_err();
 /// ```
 ///
 pub fn open_job_object_w(
     desired_access:     impl Into<access::Mask>,
     inherit_handle:     bool,
-    name:               impl TryIntoAsCStr<u16>,
+    name:               impl string::InWide,
 ) -> firehazard::Result<job::OwnedHandle> {
-    let name = name.try_into()?;
-    let h = unsafe { OpenJobObjectW(desired_access.into().into(), inherit_handle as _, name.as_cstr()) };
-    firehazard::Error::get_last_if(h.is_null())?;
-    unsafe { job::OwnedHandle::from_raw(h) }
+    let desired_access  = desired_access.into().into();
+    let inherit_handle  = inherit_handle as _;
+
+    string::convert_to_cstr::<{limit::stack::JOB_NAME}, _, _>(name, |name| {
+        let h = unsafe { OpenJobObjectW(desired_access, inherit_handle, name.as_opt_cstr()) };
+        firehazard::Error::get_last_if(h.is_null())?;
+        unsafe { job::OwnedHandle::from_raw(h) }
+    })?
 }
 
 

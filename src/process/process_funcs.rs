@@ -89,41 +89,53 @@ fn argv_to_command_line_0_inplace<A: AsRef<OsStr>>(exe: impl AsRef<Path>, args: 
 
 
 
+#[doc(no_inline)] pub use create_process_w as create_process;
+
+
+
 #[doc(alias = "CreateProcessA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa)\]
 /// CreateProcessA
 ///
 pub fn create_process_a(
-    application_name:       impl TryIntoAsOptCStr,
+    application_name:       impl string::InOptionalNarrow,
     command_line:           Option<&[u8]>,
     process_attributes:     Option<&security::Attributes>,
     thread_attributes:      Option<&security::Attributes>,
     inherit_handles:        bool,
     creation_flags:         impl Into<process::CreationFlags>,
     environment:            impl TryIntoEnvironment,
-    current_directory:      impl TryIntoAsOptCStr,
+    current_directory:      impl string::InOptionalNarrow,
     startup_info:           &impl process::AsStartupInfoA,
 ) -> firehazard::Result<process::Information> {
     if let Some(command_line) = command_line.as_ref() {
         let interior = command_line.strip_suffix(&[0]).ok_or(Error(E_STRING_NOT_NULL_TERMINATED as _))?; // must be NUL terminated
         if interior.contains(&0) { return Err(Error(ERROR_ILLEGAL_CHARACTER)) }
     }
-    let creation_flags = creation_flags.into().into();
+    let command_line            = command_line.as_ref().map_or(null(), |c| c.as_ptr()) as *mut _;
+    let process_attributes      = process_attributes.map_or(null(), |a| a) as *mut _;
+    let thread_attributes       = thread_attributes.map_or(null(), |a| a) as *mut _;
+    let inherit_handles         = inherit_handles as _;
+    let creation_flags          = creation_flags.into().into();
+    let environment             = environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?;
+    let startup_info            = startup_info.as_winapi()?;
     let mut process_information = Default::default();
 
-    firehazard::Error::get_last_if(0 == unsafe { CreateProcessA(
-        application_name.try_into()?.as_opt_cstr(),
-        command_line.as_ref().map_or(null(), |c| c.as_ptr()) as *mut _,
-        process_attributes.map_or(null(), |a| a) as *mut _,
-        thread_attributes.map_or(null(), |a| a) as *mut _,
-        inherit_handles as _,
-        creation_flags,
-        environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?,
-        current_directory.try_into()?.as_opt_cstr(),
-        startup_info.as_winapi()?,
-        &mut process_information
-    )})?;
-    Ok(unsafe { process::Information::from_raw(process_information) })
+    string::convert_to_cstr::<{limit::stack::PATH}, _, _>(application_name, |application_name| string::convert_to_cstr::<{limit::stack::PATH}, _, _>(current_directory, |current_directory| {
+        firehazard::Error::get_last_if(0 == unsafe { CreateProcessA(
+            application_name.as_opt_cstr(),
+            command_line,
+            process_attributes,
+            thread_attributes,
+            inherit_handles,
+            creation_flags,
+            environment,
+            current_directory.as_opt_cstr(),
+            startup_info,
+            &mut process_information,
+        )})?;
+        Ok(unsafe { process::Information::from_raw(process_information) })
+    }))??
 }
 
 
@@ -134,7 +146,7 @@ pub fn create_process_a(
 /// CreateProcessW
 ///
 pub fn create_process_w(
-    application_name:       impl TryIntoAsOptCStr<u16>,
+    application_name:       impl string::InOptionalWide,
     // "The Unicode version of this function, CreateProcessW, can modify the contents of this string.
     // Therefore, this parameter cannot be a pointer to read-only memory (such as a const variable or a literal string).
     // If this parameter is a constant string, the function may cause an access violation."
@@ -144,30 +156,42 @@ pub fn create_process_w(
     inherit_handles:        bool,
     creation_flags:         impl Into<process::CreationFlags>,
     environment:            impl TryIntoEnvironment,
-    current_directory:      impl TryIntoAsOptCStr<u16>,
+    current_directory:      impl string::InOptionalWide,
     startup_info:           &impl process::AsStartupInfoW,
 ) -> firehazard::Result<process::Information> {
     if let Some(command_line) = command_line.as_ref() {
         let interior = command_line.strip_suffix(&[0]).ok_or(Error(E_STRING_NOT_NULL_TERMINATED as _))?; // must be NUL terminated
         if interior.contains(&0) { return Err(Error(ERROR_ILLEGAL_CHARACTER)) }
     }
-    let creation_flags = creation_flags.into().into();
+    let command_line            = command_line.as_mut().map_or(null_mut(), |c| c.as_mut_ptr());
+    let process_attributes      = process_attributes.map_or(null(), |a| a) as *mut _;
+    let thread_attributes       = thread_attributes.map_or(null(), |a| a) as *mut _;
+    let inherit_handles         = inherit_handles as _;
+    let creation_flags          = creation_flags.into().into();
+    let environment             = environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?;
+    let startup_info            = startup_info.as_winapi()?;
     let mut process_information = Default::default();
 
-    firehazard::Error::get_last_if(0 == unsafe { CreateProcessW(
-        application_name.try_into()?.as_opt_cstr(),
-        command_line.as_mut().map_or(null_mut(), |c| c.as_mut_ptr()),
-        process_attributes.map_or(null(), |a| a) as *mut _,
-        thread_attributes.map_or(null(), |a| a) as *mut _,
-        inherit_handles as _,
-        creation_flags,
-        environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?,
-        current_directory.try_into()?.as_opt_cstr(),
-        startup_info.as_winapi()?,
-        &mut process_information
-    )})?;
-    Ok(unsafe { process::Information::from_raw(process_information) })
+    string::convert_to_cstr::<{limit::stack::PATH}, _, _>(application_name, |application_name| string::convert_to_cstr::<{limit::stack::PATH}, _, _>(current_directory, |current_directory| {
+        firehazard::Error::get_last_if(0 == unsafe { CreateProcessW(
+            application_name.as_opt_cstr(),
+            command_line,
+            process_attributes,
+            thread_attributes,
+            inherit_handles,
+            creation_flags,
+            environment,
+            current_directory.as_opt_cstr(),
+            startup_info,
+            &mut process_information
+        )})?;
+        Ok(unsafe { process::Information::from_raw(process_information) })
+    }))??
 }
+
+
+
+#[doc(no_inline)] pub use create_process_as_user_w as create_process_as_user;
 
 
 
@@ -198,21 +222,28 @@ pub fn create_process_w(
 ///
 pub fn create_process_as_user_a(
     token:                  &crate::token::OwnedHandle,
-    application_name:       impl TryIntoAsOptCStr,
+    application_name:       impl string::InOptionalNarrow,
     command_line:           Option<&[u8]>,
     process_attributes:     Option<&security::Attributes>,
     thread_attributes:      Option<&security::Attributes>,
     inherit_handles:        bool,
     creation_flags:         impl Into<process::CreationFlags>,
     environment:            impl TryIntoEnvironment,
-    current_directory:      impl TryIntoAsOptCStr,
+    current_directory:      impl string::InOptionalNarrow,
     startup_info:           &impl process::AsStartupInfoA,
 ) -> firehazard::Result<process::Information> {
     if let Some(command_line) = command_line.as_ref() {
         let interior = command_line.strip_suffix(&[0]).ok_or(Error(E_STRING_NOT_NULL_TERMINATED as _))?; // must be NUL terminated
         if interior.contains(&0) { return Err(Error(ERROR_ILLEGAL_CHARACTER)) }
     }
-    let creation_flags = creation_flags.into().into();
+    let token               = token.as_handle();
+    let command_line        = command_line.as_ref().map_or(null(), |c| c.as_ptr()) as *mut _;
+    let process_attributes  = process_attributes.map_or(null(), |a| a) as *mut _;
+    let thread_attributes   = thread_attributes.map_or(null(), |a| a) as *mut _;
+    let inherit_handles     = inherit_handles as _;
+    let creation_flags      = creation_flags.into().into();
+    let environment         = environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?;
+    let startup_info        = startup_info.as_winapi()?;
     let mut process_information = Default::default();
 
     extern "system" { fn CreateProcessAsUserA(
@@ -229,21 +260,24 @@ pub fn create_process_as_user_a(
         lpProcessInformation: LPPROCESS_INFORMATION,
     ) -> BOOL;}
 
-    firehazard::Error::get_last_if(0 == unsafe { CreateProcessAsUserA(
-        token.as_handle(),
-        application_name.try_into()?.as_opt_cstr(),
-        command_line.as_ref().map_or(null(), |c| c.as_ptr()) as *mut _,
-        process_attributes.map_or(null(), |a| a) as *mut _,
-        thread_attributes.map_or(null(), |a| a) as *mut _,
-        inherit_handles as _,
-        creation_flags,
-        environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?,
-        current_directory.try_into()?.as_opt_cstr(),
-        startup_info.as_winapi()?,
-        &mut process_information
-    )})?;
-    Ok(unsafe { process::Information::from_raw(process_information) })
+    string::convert_to_cstr::<{limit::stack::PATH}, _, _>(application_name, |application_name| string::convert_to_cstr::<{limit::stack::PATH}, _, _>(current_directory, |current_directory| {
+        firehazard::Error::get_last_if(0 == unsafe { CreateProcessAsUserA(
+            token,
+            application_name.as_opt_cstr(),
+            command_line,
+            process_attributes,
+            thread_attributes,
+            inherit_handles,
+            creation_flags,
+            environment,
+            current_directory.as_opt_cstr(),
+            startup_info,
+            &mut process_information
+        )})?;
+        Ok(unsafe { process::Information::from_raw(process_information) })
+    }))??
 }
+
 
 
 #[doc(alias = "CreateProcessAsUser")]
@@ -273,7 +307,7 @@ pub fn create_process_as_user_a(
 ///
 pub fn create_process_as_user_w(
     token:                  &crate::token::OwnedHandle,
-    application_name:       impl TryIntoAsOptCStr<u16>,
+    application_name:       impl string::InOptionalWide,
     // "The Unicode version of this function, CreateProcessAsUserW, can modify the contents of this string.
     // Therefore, this parameter cannot be a pointer to read-only memory (such as a const variable or a literal string).
     // If this parameter is a constant string, the function may cause an access violation."
@@ -283,30 +317,39 @@ pub fn create_process_as_user_w(
     inherit_handles:        bool,
     creation_flags:         impl Into<process::CreationFlags>,
     environment:            impl TryIntoEnvironment,
-    current_directory:      impl TryIntoAsOptCStr<u16>,
+    current_directory:      impl string::InOptionalWide,
     startup_info:           &impl process::AsStartupInfoW,
 ) -> firehazard::Result<process::Information> {
     if let Some(command_line) = command_line.as_ref() {
         let interior = command_line.strip_suffix(&[0]).ok_or(Error(E_STRING_NOT_NULL_TERMINATED as _))?; // must be NUL terminated
         if interior.contains(&0) { return Err(Error(ERROR_ILLEGAL_CHARACTER)) }
     }
-    let creation_flags = creation_flags.into().into();
+    let token               = token.as_handle();
+    let command_line        = command_line.as_mut().map_or(null_mut(), |c| c.as_mut_ptr());
+    let process_attributes  = process_attributes.map_or(null(), |a| a) as *mut _;
+    let thread_attributes   = thread_attributes.map_or(null(), |a| a) as *mut _;
+    let inherit_handles     = inherit_handles as _;
+    let creation_flags      = creation_flags.into().into();
+    let environment         = environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?;
+    let startup_info        = startup_info.as_winapi()?;
     let mut process_information = Default::default();
 
-    firehazard::Error::get_last_if(0 == unsafe { CreateProcessAsUserW(
-        token.as_handle(),
-        application_name.try_into()?.as_opt_cstr(),
-        command_line.as_mut().map_or(null_mut(), |c| c.as_mut_ptr()),
-        process_attributes.map_or(null(), |a| a) as *mut _,
-        thread_attributes.map_or(null(), |a| a) as *mut _,
-        inherit_handles as _,
-        creation_flags,
-        environment.as_env_ptr(creation_flags & CREATE_UNICODE_ENVIRONMENT != 0)?,
-        current_directory.try_into()?.as_opt_cstr(),
-        startup_info.as_winapi()?,
-        &mut process_information
-    )})?;
-    Ok(unsafe { process::Information::from_raw(process_information) })
+    string::convert_to_cstr::<{limit::stack::PATH}, _, _>(application_name, |application_name| string::convert_to_cstr::<{limit::stack::PATH}, _, _>(current_directory, |current_directory| {
+        firehazard::Error::get_last_if(0 == unsafe { CreateProcessAsUserW(
+            token,
+            application_name.as_opt_cstr(),
+            command_line,
+            process_attributes,
+            thread_attributes,
+            inherit_handles,
+            creation_flags,
+            environment,
+            current_directory.as_opt_cstr(),
+            startup_info,
+            &mut process_information
+        )})?;
+        Ok(unsafe { process::Information::from_raw(process_information) })
+    }))??
 }
 
 

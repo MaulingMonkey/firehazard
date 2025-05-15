@@ -42,8 +42,6 @@ mod c { #[doc(no_inline)] pub use crate::Error; }
     CStrBuf,
     CStrNonNull,
     CStrPtr,
-    TryIntoAsCStr,
-    TryIntoAsOptCStr,
     InteriorNulError,
     //NotNulTerminatedError,
 };

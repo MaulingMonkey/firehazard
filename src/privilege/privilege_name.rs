@@ -24,7 +24,7 @@ impl Name {
     /// *   `ERROR_INVALID_HANDLE`      on some permission lookup errors (e.g. if the current process's token was restricted, and excluded [`sid::builtin::alias::USERS`](crate::sid::builtin::alias::USERS))
     ///
     pub fn lookup_luid(self) -> firehazard::Result<privilege::Luid> {
-        privilege::lookup_privilege_value_a(self.name)
+        privilege::lookup_privilege_value_a((), self.name)
     }
 
     /// A hardcoded [`privilege::Luid`] value.

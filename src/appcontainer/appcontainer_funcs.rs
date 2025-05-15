@@ -54,24 +54,44 @@ use winapi::um::userenv::*;
 /// *   `HRESULT_FROM_WIN32(ERROR_ALREADY_EXISTS)`  - The application data store already exists.
 ///
 pub fn create_app_container_profile(
-    app_container_name: impl TryIntoAsCStr<u16>,
-    display_name:       impl TryIntoAsCStr<u16>,
-    description:        impl TryIntoAsCStr<u16>,
+    app_container_name: impl string::InWide,
+    display_name:       impl string::InWide,
+    description:        impl string::InWide,
     capabilities:       &[sid::AndAttributes],
 ) -> firehazard::Result<sid::Box<alloc::FreeSid>> {
-    let len32 : u32 = capabilities.len().try_into().map_err(|_| E_INVALIDARG)?;
-    let mut app_container_sid = null_mut();
-    let hr = unsafe { CreateAppContainerProfile(
-        app_container_name.try_into().map_err(|_| E_INVALIDARG)?.as_cstr(),
-        display_name.try_into().map_err(|_| E_INVALIDARG)?.as_cstr(),
-        description.try_into().map_err(|_| E_INVALIDARG)?.as_cstr(),
-        if len32 == 0 { null_mut() } else { capabilities.as_ptr() as *mut _ },
-        len32,
-        &mut app_container_sid,
-    )};
-    let app_container_sid = unsafe { sid::Box::from_raw(app_container_sid.cast()) }.ok_or(ERROR_INVALID_SID);
-    if !SUCCEEDED(hr) { Err(hr)? }
-    Ok(app_container_sid?)
+    let len32           = u32::try_from(capabilities.len()).map_err(|_| E_INVALIDARG)?;
+    let capabilities    = if len32 == 0 { null_mut() } else { capabilities.as_ptr() as *mut _ };
+
+    string::convert_to_cstrnn::<{limit::stack::APP_CONTAINER_NAME           }, _, _>(app_container_name,    |app_container_name|
+    string::convert_to_cstrnn::<{limit::stack::APP_CONTAINER_DISPLAY_NAME   }, _, _>(display_name,          |display_name|
+    string::convert_to_cstrnn::<{limit::stack::APP_CONTAINER_DESCRIPTION    }, _, _>(description,           |description|
+    {
+        let mut app_container_sid = null_mut();
+        let hr = unsafe { CreateAppContainerProfile(
+            app_container_name.as_cstr(),
+            display_name.as_cstr(),
+            description.as_cstr(),
+            capabilities,
+            len32,
+            &mut app_container_sid,
+        )};
+        let app_container_sid = unsafe { sid::Box::from_raw(app_container_sid.cast()) }.ok_or(ERROR_INVALID_SID);
+        if !SUCCEEDED(hr) { Err(hr)? }
+        Ok(app_container_sid?)
+    })))
+    .map_err(hresultify)?
+    .map_err(hresultify)?
+    .map_err(hresultify)?
+}
+
+fn hresultify(e: firehazard::Error) -> firehazard::Error {
+    use winresult::E;
+
+    let hr =    if e == ERROR::ILLEGAL_CHARACTER { E::INVALIDARG    }
+    else        if e == ERROR::NOT_ENOUGH_MEMORY { E::OUTOFMEMORY   }
+    else        { return e };
+
+    u32::from(hr).into()
 }
 
 
@@ -163,11 +183,13 @@ pub fn create_app_container_token<'a>(
 /// *   `HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED)`   - If called from within an app container.
 ///
 pub fn delete_app_container_profile(
-    app_container_name: impl TryIntoAsCStr<u16>,
+    app_container_name: impl string::InWide,
 ) -> firehazard::Result<()> {
-    let hr = unsafe { DeleteAppContainerProfile(app_container_name.try_into()?.as_cstr()) };
-    if !SUCCEEDED(hr) { Err(hr)? }
-    Ok(())
+    string::convert_to_cstrnn::<{limit::stack::APP_CONTAINER_NAME}, _, _>(app_container_name, |app_container_name| {
+        let hr = unsafe { DeleteAppContainerProfile(app_container_name.as_cstr()) };
+        if !SUCCEEDED(hr) { Err(hr)? }
+        Ok(())
+    }).map_err(hresultify)?
 }
 
 
@@ -196,16 +218,18 @@ pub fn delete_app_container_profile(
 /// *   `E_INVALIDARG`  - If `app_container_name` is not valid (illegal chars? exceeds 64 codepoints?)
 ///
 pub fn derive_app_container_sid_from_app_container_name(
-    app_container_name: impl TryIntoAsCStr<u16>,
+    app_container_name: impl string::InWide,
 ) -> firehazard::Result<sid::Box<alloc::FreeSid>> {
-    let mut app_container_sid = null_mut();
-    let hr = unsafe { DeriveAppContainerSidFromAppContainerName(
-        app_container_name.try_into()?.as_cstr(),
-        &mut app_container_sid,
-    )};
-    let app_container_sid = unsafe { sid::Box::from_raw(app_container_sid.cast()) }.ok_or(ERROR_INVALID_SID);
-    if !SUCCEEDED(hr) { Err(hr)? }
-    Ok(app_container_sid?)
+    string::convert_to_cstrnn::<{limit::stack::APP_CONTAINER_NAME}, _, _>(app_container_name, |app_container_name| {
+        let mut app_container_sid = null_mut();
+        let hr = unsafe { DeriveAppContainerSidFromAppContainerName(
+            app_container_name.as_cstr(),
+            &mut app_container_sid,
+        )};
+        let app_container_sid = unsafe { sid::Box::from_raw(app_container_sid.cast()) }.ok_or(ERROR_INVALID_SID);
+        if !SUCCEEDED(hr) { Err(hr)? }
+        Ok(app_container_sid?)
+    }).map_err(hresultify)?
 }
 
 
@@ -234,7 +258,7 @@ pub fn derive_app_container_sid_from_app_container_name(
 /// ### Errors
 /// *   `ERROR_CALL_NOT_IMPLEMENTED`    - if `kernelbase.dll` failed to load
 /// *   `ERROR_CALL_NOT_IMPLEMENTED`    - if `kernelbase.dll` was missing `DeriveCapabilitySidsFromName`
-/// *   `ERROR_INVALID_PARAMETER`       - if `cap_name` contains interior `\0`s
+/// *   `ERROR_ILLEGAL_CHARACTER`       - if `cap_name` contains interior `\0`s
 ///
 /// ### Errata
 /// There appears to be no static linking against this symbol.
@@ -242,31 +266,33 @@ pub fn derive_app_container_sid_from_app_container_name(
 /// `kernel32.dll` doesn't even re-export the symbol.
 /// I checked.
 ///
-pub fn derive_capability_sids_from_name(cap_name: impl TryIntoAsCStr<u16>) -> firehazard::Result<(AVec<sid::Box<LocalAllocFree>, DangleZst<Local>>, AVec<sid::Box<LocalAllocFree>, DangleZst<Local>>)> {
+pub fn derive_capability_sids_from_name(
+    cap_name:       impl string::InWide,
+) -> firehazard::Result<(AVec<sid::Box<LocalAllocFree>, DangleZst<Local>>, AVec<sid::Box<LocalAllocFree>, DangleZst<Local>>)> {
     use winapi::shared::minwindef::*;
 
-    let cap_name = cap_name.try_into().map_err(|_| ERROR_INVALID_PARAMETER)?;
+    string::convert_to_cstrnn::<{limit::stack::CAPABILITY_NAME}, _, _>(cap_name, |cap_name| {
+        #[allow(non_snake_case)] let DeriveCapabilitySidsFromName = *kernelbase::DeriveCapabilitySidsFromName;
 
-    #[allow(non_snake_case)] let DeriveCapabilitySidsFromName = *kernelbase::DeriveCapabilitySidsFromName;
+        let mut n_group_sids = 0;
+        let mut   group_sids = null_mut();
+        let mut n_sids = 0;
+        let mut   sids = null_mut();
 
-    let mut n_group_sids = 0;
-    let mut   group_sids = null_mut();
-    let mut n_sids = 0;
-    let mut   sids = null_mut();
+        firehazard::Error::get_last_if(FALSE == unsafe { DeriveCapabilitySidsFromName(
+            cap_name.as_cstr(),
+            &mut group_sids,
+            &mut n_group_sids,
+            &mut sids,
+            &mut n_sids,
+        )})?;
+        let n_group_sids = usize::from32(n_group_sids);
+        let n_sids       = usize::from32(n_sids);
+        let group_sids = NonNull::new(group_sids).map_or(AVec::new(), |nn| unsafe { AVec::from_raw_parts(nn.cast(), n_group_sids, n_group_sids) });
+        let       sids = NonNull::new(      sids).map_or(AVec::new(), |nn| unsafe { AVec::from_raw_parts(nn.cast(),       n_sids,       n_sids) });
 
-    firehazard::Error::get_last_if(FALSE == unsafe { DeriveCapabilitySidsFromName(
-        cap_name.as_cstr(),
-        &mut group_sids,
-        &mut n_group_sids,
-        &mut sids,
-        &mut n_sids,
-    )})?;
-    let n_group_sids = usize::from32(n_group_sids);
-    let n_sids       = usize::from32(n_sids);
-    let group_sids = NonNull::new(group_sids).map_or(AVec::new(), |nn| unsafe { AVec::from_raw_parts(nn.cast(), n_group_sids, n_group_sids) });
-    let       sids = NonNull::new(      sids).map_or(AVec::new(), |nn| unsafe { AVec::from_raw_parts(nn.cast(),       n_sids,       n_sids) });
-
-    Ok((group_sids, sids))
+        Ok((group_sids, sids))
+    })? // TODO: hresultify?
 }
 
 
@@ -278,17 +304,19 @@ pub fn derive_capability_sids_from_name(cap_name: impl TryIntoAsCStr<u16>) -> fi
 #[allow(dead_code)] // "DeriveRestrictedAppContainerSidFromAppContainerSidAndRestrictedName is reserved for future use."
 fn derive_restricted_app_container_sid_from_app_container_sid_and_restricted_name(
     app_container_sid:              &sid::Value,
-    restricted_app_container_name:  impl TryIntoAsCStr<u16>,
+    restricted_app_container_name:  impl string::InWide,
 ) -> firehazard::Result<sid::Box<alloc::FreeSid>> {
-    let mut restricted_app_container_sid = null_mut();
-    let hr = unsafe { DeriveRestrictedAppContainerSidFromAppContainerSidAndRestrictedName(
-        app_container_sid.as_psid(),
-        restricted_app_container_name.try_into()?.as_cstr(),
-        &mut restricted_app_container_sid,
-    )};
-    let restricted_app_container_sid = unsafe { sid::Box::from_raw(restricted_app_container_sid.cast()) }.ok_or(ERROR_INVALID_SID);
-    if !SUCCEEDED(hr) { Err(hr)? }
-    Ok(restricted_app_container_sid?)
+    string::convert_to_cstrnn::<{limit::stack::APP_CONTAINER_NAME}, _, _>(restricted_app_container_name, |restricted_app_container_name| {
+        let mut restricted_app_container_sid = null_mut();
+        let hr = unsafe { DeriveRestrictedAppContainerSidFromAppContainerSidAndRestrictedName(
+            app_container_sid.as_psid(),
+            restricted_app_container_name.as_cstr(),
+            &mut restricted_app_container_sid,
+        )};
+        let restricted_app_container_sid = unsafe { sid::Box::from_raw(restricted_app_container_sid.cast()) }.ok_or(ERROR_INVALID_SID);
+        if !SUCCEEDED(hr) { Err(hr)? }
+        Ok(restricted_app_container_sid?)
+    }).map_err(hresultify)?
 }
 
 

@@ -6,6 +6,10 @@ use winapi::um::winuser::*;
 
 
 
+#[doc(no_inline)] pub use create_window_station_w as create_window_station;
+
+
+
 #[doc(alias = "CreateWindowStationA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowstationa)\]
 /// CreateWindowStationA
@@ -25,19 +29,22 @@ use winapi::um::winuser::*;
 /// *   `ERROR_ALREADY_EXISTS`  if the window station already exists on Windows Server 2019
 ///
 pub fn create_window_station_a(
-    winsta:         impl TryIntoAsOptCStr,
+    winsta:         impl string::InOptionalNarrow,
     flags:          impl Into<winsta::CreateWindowFlags>,
     desired_access: impl Into<winsta::AccessRights>,
     sa:             Option<&security::Attributes>,
 ) -> firehazard::Result<winsta::OwnedHandle> {
-    let handle = unsafe { CreateWindowStationA(
-        winsta.try_into()?.as_opt_cstr(),
-        flags.into().into(),
-        desired_access.into().into(),
-        sa.map_or(null(), |sa| sa) as *mut _
-    )};
-    firehazard::Error::get_last_if(handle.is_null())?;
-    unsafe { winsta::OwnedHandle::from_raw(handle) }
+    let flags           = flags.into().into();
+    let desired_access  = desired_access.into().into();
+    let sa              = sa.map_or(null(), |sa| sa) as *mut _;
+
+    string::convert_to_cstr::<{limit::stack::WINSTA_NAME}, _, _>(winsta, |winsta| {
+        let handle = unsafe { CreateWindowStationA(
+            winsta.as_opt_cstr(), flags, desired_access, sa,
+        )};
+        firehazard::Error::get_last_if(handle.is_null())?;
+        unsafe { winsta::OwnedHandle::from_raw(handle) }
+    })?
 }
 
 
@@ -62,19 +69,22 @@ pub fn create_window_station_a(
 /// *   `ERROR_ALREADY_EXISTS`  if the window station already exists on Windows Server 2019
 ///
 pub fn create_window_station_w(
-    winsta:         impl TryIntoAsOptCStr<u16>,
+    winsta:         impl string::InOptionalWide,
     flags:          impl Into<winsta::CreateWindowFlags>,
     desired_access: impl Into<winsta::AccessRights>,
     sa:             Option<&security::Attributes>,
 ) -> firehazard::Result<winsta::OwnedHandle> {
-    let handle = unsafe { CreateWindowStationW(
-        winsta.try_into()?.as_opt_cstr(),
-        flags.into().into(),
-        desired_access.into().into(),
-        sa.map_or(null(), |sa| sa) as *mut _
-    )};
-    firehazard::Error::get_last_if(handle.is_null())?;
-    unsafe { winsta::OwnedHandle::from_raw(handle) }
+    let flags           = flags.into().into();
+    let desired_access  = desired_access.into().into();
+    let sa              = sa.map_or(null(), |sa| sa) as *mut _;
+
+    string::convert_to_cstr::<{limit::stack::WINSTA_NAME}, _, _>(winsta, |winsta| {
+        let handle = unsafe { CreateWindowStationW(
+            winsta.as_opt_cstr(), flags, desired_access, sa,
+        )};
+        firehazard::Error::get_last_if(handle.is_null())?;
+        unsafe { winsta::OwnedHandle::from_raw(handle) }
+    })?
 }
 
 
@@ -239,6 +249,10 @@ pub fn open_process_window_station() -> firehazard::Result<winsta::OwnedHandle> 
 
 
 
+#[doc(no_inline)] pub use open_window_station_w as open_window_station;
+
+
+
 #[doc(alias = "OpenWindowStationA")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-openwindowstationa)\]
 /// OpenWindowStationA
@@ -251,17 +265,20 @@ pub fn open_process_window_station() -> firehazard::Result<winsta::OwnedHandle> 
 /// ```
 ///
 pub fn open_window_station_a(
-    winsta:         impl TryIntoAsCStr,
+    winsta:         impl string::InNarrow,
     inherit:        bool,
     desired_access: impl Into<winsta::AccessRights>,
 ) -> firehazard::Result<winsta::OwnedHandle> {
-    let handle = unsafe { OpenWindowStationA(
-        winsta.try_into()?.as_cstr(),
-        inherit as _,
-        desired_access.into().into()
-    )};
-    firehazard::Error::get_last_if(handle.is_null())?;
-    unsafe { winsta::OwnedHandle::from_raw(handle) }
+    let inherit         = inherit as _;
+    let desired_access  = desired_access.into().into();
+
+    string::convert_to_cstrnn::<{limit::stack::WINSTA_NAME}, _, _>(winsta, |winsta| {
+        let handle = unsafe { OpenWindowStationA(
+            winsta.as_cstr(), inherit, desired_access,
+        )};
+        firehazard::Error::get_last_if(handle.is_null())?;
+        unsafe { winsta::OwnedHandle::from_raw(handle) }
+    })?
 }
 
 
@@ -279,17 +296,20 @@ pub fn open_window_station_a(
 /// ```
 ///
 pub fn open_window_station_w(
-    winsta:         impl TryIntoAsCStr<u16>,
+    winsta:         impl string::InWide,
     inherit:        bool,
     desired_access: impl Into<winsta::AccessRights>,
 ) -> firehazard::Result<winsta::OwnedHandle> {
-    let handle = unsafe { OpenWindowStationW(
-        winsta.try_into()?.as_cstr(),
-        inherit as _,
-        desired_access.into().into()
-    )};
-    firehazard::Error::get_last_if(handle.is_null())?;
-    unsafe { winsta::OwnedHandle::from_raw(handle) }
+    let inherit         = inherit as _;
+    let desired_access  = desired_access.into().into();
+
+    string::convert_to_cstrnn::<{limit::stack::WINSTA_NAME}, _, _>(winsta, |winsta| {
+        let handle = unsafe { OpenWindowStationW(
+            winsta.as_cstr(), inherit, desired_access,
+        )};
+        firehazard::Error::get_last_if(handle.is_null())?;
+        unsafe { winsta::OwnedHandle::from_raw(handle) }
+    })?
 }
 
 
