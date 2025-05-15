@@ -12,10 +12,9 @@
 /// ```
 /// # use firehazard::*;
 /// # use firehazard::access::*;
-/// # use abistr::cstr;
 /// # use winapi::um::winuser::*;
-/// let temp1 = create_desktop_a(cstr!("wtd.temp1"), (), None, None, GENERIC_ALL, None).unwrap();
-/// let temp2 = create_desktop_a(cstr!("wtd.temp2"), (), None, None, GENERIC_ALL, None).unwrap();
+/// let temp1 = create_desktop_a(c"wtd.temp1", (), None, None, GENERIC_ALL, None).unwrap();
+/// let temp2 = create_desktop_a(c"wtd.temp2", (), None, None, GENERIC_ALL, None).unwrap();
 /// let orig  = open_thread_desktop(get_current_thread_id()).unwrap();
 /// with_thread_desktop(&temp1, || {
 ///     with_thread_desktop(&temp2, || {

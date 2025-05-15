@@ -2,7 +2,7 @@
 
 use firehazard::*;
 
-use abistr::*;
+use abistr::cstr16;
 
 use winapi::shared::minwindef::*;
 use winapi::shared::windef::HWND;

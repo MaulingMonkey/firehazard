@@ -5,7 +5,7 @@
 /// ### Example
 /// ```
 /// # use firehazard::*;
-/// # use abistr::*;
+/// # use abistr::cstr16;
 /// #
 /// let (read, write) = pipe::create(None, 0).unwrap();
 /// let local = pipe::named::create_w(

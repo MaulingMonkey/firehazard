@@ -90,7 +90,7 @@ lazy_static::lazy_static! {
         file_information:           *mut c_void,
         length:                     ULONG,
         file_information_class:     file::InformationClass,
-    ) -> NtStatus = unsafe { DLL.get_proc_address(cstr8!("NtQueryInformationFile")) }.unwrap_or(stubs::NtQueryInformationFile);
+    ) -> NtStatus = unsafe { DLL.get_proc_address(c"NtQueryInformationFile") }.unwrap_or(stubs::NtQueryInformationFile);
 
     // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winternl.h
     // line 674
@@ -103,7 +103,7 @@ lazy_static::lazy_static! {
         object_information:         Option<NonNull<c_void>>,
         object_information_length:  ULONG,
         return_length:              Option<&mut ULONG>,
-    ) -> NtStatus = unsafe { DLL.get_proc_address(cstr8!("NtQueryObject")) }.unwrap_or(stubs::NtQueryObject);
+    ) -> NtStatus = unsafe { DLL.get_proc_address(c"NtQueryObject") }.unwrap_or(stubs::NtQueryObject);
 }
 
 /// fallback impls if unavailable from ntdll.dll

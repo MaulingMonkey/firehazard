@@ -1,6 +1,6 @@
 use crate::{*, job};
 use firehazard::*;
-use abistr::*;
+use abistr::cstr16;
 use winapi::shared::winerror::ERROR_INVALID_PARAMETER;
 use winapi::um::winbase::*;
 
@@ -8,7 +8,7 @@ use winapi::um::winbase::*;
 
 pub fn all() {
     // TODO: make desktop available to low/untrusted integrity processes (currently requires Medium integrity)
-    let _alt_desktop = create_desktop_a(cstr!("max_sandbox_desktop"), (), None, None, access::GENERIC_ALL, None).unwrap();
+    let _alt_desktop = create_desktop_a(c"max_sandbox_desktop", (), None, None, access::GENERIC_ALL, None).unwrap();
     for target in settings::Target::list() {
         if std::env::var_os("CI").is_some() {
             dbg!(&target);

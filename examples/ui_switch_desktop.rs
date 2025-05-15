@@ -9,7 +9,7 @@
 
 use firehazard::*;
 use firehazard::process::{environment, StartupInfoW};
-use abistr::*;
+use abistr::cstr16;
 
 fn main() {
     let mut args = std::env::args_os();

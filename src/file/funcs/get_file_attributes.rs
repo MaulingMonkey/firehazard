@@ -10,7 +10,7 @@
 /// ```
 /// # use firehazard::*;
 /// # use winapi::um::winnt::FILE_ATTRIBUTE_ARCHIVE;
-/// let attributes = get_file_attributes_a(abistr::cstr!("Readme.md")).unwrap();
+/// let attributes = get_file_attributes_a(c"Readme.md").unwrap();
 /// # return; // likely, but technically not guaranteed:
 /// assert!(attributes & FILE_ATTRIBUTE_ARCHIVE != 0, "file is marked as 'ready for archiving'");
 /// ```

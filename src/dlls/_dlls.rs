@@ -24,14 +24,14 @@ impl OptionalLibrary {
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/libloaderapi/nf-libloaderapi-getprocaddress)\]
     /// GetProcAddress
     ///
-    pub(crate) unsafe fn get_proc_address<F>(&self, proc_name: CStrNonNull) -> Option<F> {
+    pub(crate) unsafe fn get_proc_address<F>(&self, proc_name: &core::ffi::CStr) -> Option<F> {
         use winapi::shared::minwindef::FARPROC;
         const { assert!(size_of::<F>() == size_of::<FARPROC>()) };
 
         if self.0.is_null() { return None }
         let farproc = unsafe { winapi::um::libloaderapi::GetProcAddress(
             self.0,
-            proc_name.as_cstr(),
+            proc_name.as_ptr().cast(),
         )};
         if farproc.is_null() { return None }
         Some(unsafe { core::mem::transmute_copy::<FARPROC, F>(&farproc) })

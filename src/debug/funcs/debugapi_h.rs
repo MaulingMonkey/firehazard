@@ -132,7 +132,7 @@ pub fn is_debugger_present() -> bool {
 /// ### Example
 /// ```
 /// # use firehazard::*;
-/// # use abistr::*;
+/// # use abistr::cstr;
 /// output_debug_string_a(cstr!("A"));
 /// output_debug_string_a(cstr!("B"));
 /// ```
@@ -177,7 +177,7 @@ pub fn output_debug_string_a(output_string: impl AsCStr) {
 /// ### Example
 /// ```
 /// # use firehazard::*;
-/// # use abistr::*;
+/// # use abistr::cstr16;
 /// output_debug_string_w(cstr16!("A"));
 /// output_debug_string_w(cstr16!("B"));
 /// ```
@@ -224,7 +224,6 @@ pub fn output_debug_string_w(output_string: impl AsCStr<u16>) {
 /// ### Example
 /// ```
 /// # use firehazard::*;
-/// # use abistr::*;
 /// output_debug_string("A");
 /// output_debug_string("B");
 /// ```

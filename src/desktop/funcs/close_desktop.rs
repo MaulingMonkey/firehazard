@@ -15,13 +15,12 @@
 /// ```
 /// # use firehazard::*;
 /// # use firehazard::access::*;
-/// # use abistr::cstr;
 /// # use winapi::shared::winerror::*;
-/// let desktop1name = cstr!("close_desktop_1");
+/// let desktop1name = c"close_desktop_1";
 /// let desktop1 = create_desktop_a(desktop1name, (), None, None, GENERIC_ALL, None).unwrap();
 /// close_desktop(desktop1).unwrap(); // ≈ drop(desktop1), but explicit error checking
 ///
-/// let desktop2name= cstr!("close_desktop_2");
+/// let desktop2name= c"close_desktop_2";
 /// let desktop2a   = create_desktop_a(desktop2name, (), None, None, GENERIC_ALL, None).unwrap();
 /// let desktop2bee = open_desktop_a(  desktop2name, None, false, GENERIC_ALL).unwrap();
 /// with_thread_desktop(&desktop2a, || {
@@ -40,10 +39,9 @@
 /// ```compile_fail
 /// # use firehazard::*;
 /// # use firehazard::access::*;
-/// # use abistr::cstr;
 /// # use winapi::shared::winerror::*;
 /// // No, you can't use `close_handle`:
-/// let desktop_name = cstr!("close_desktop_3");
+/// let desktop_name = c"close_desktop_3";
 /// let desktop = create_desktop_a(desktop_name, (), None, None, GENERIC_ALL, None).unwrap();
 /// let dupe = unsafe { desktop::OwnedHandle::from_raw_nn(desktop.as_handle_nn()) };
 /// assert_eq!(ERROR_INVALID_HANDLE, close_handle(dupe).unwrap_err()); // now a compile error

@@ -29,11 +29,10 @@
 /// ### Example
 /// ```
 /// # use firehazard::*;
-/// # use abistr::*;
 /// # use winapi::shared::winerror::*;
 /// #
 /// let pipe = pipe::named::create_a(
-///     cstr8!(r#"\\.\pipe\local\firehazard-create_named_pipe_a-example"#),
+///     cr#"\\.\pipe\local\firehazard-create_named_pipe_a-example"#,
 ///     pipe::ACCESS_DUPLEX,                                 // (3) open_mode
 ///     pipe::TYPE_BYTE | pipe::READMODE_BYTE | pipe::WAIT | pipe::REJECT_REMOTE_CLIENTS, // (0) pipe_mode
 ///     pipe::UNLIMITED_INSTANCES,                          // max_instances
@@ -45,13 +44,13 @@
 ///
 /// // A max_instances count of 0 will result in ERROR_INVALID_PARAMETER
 /// assert_eq!(ERROR_INVALID_PARAMETER, pipe::named::create_a(
-///     cstr8!(r#"\\.\pipe\local\firehazard-create_named_pipe_a-example-error-bad-max_instances"#),
+///     cr#"\\.\pipe\local\firehazard-create_named_pipe_a-example-error-bad-max_instances"#,
 ///     pipe::ACCESS_DUPLEX, 0, pipe::MaxInstances::from_unchecked(0), 0, 0, None, None,
 /// ).unwrap_err());
 ///
 /// // An open_mode of 0 will result in ERROR_INVALID_PARAMETER
 /// assert_eq!(ERROR_INVALID_PARAMETER, pipe::named::create_a(
-///     cstr8!(r#"\\.\pipe\local\firehazard-create_named_pipe_a-example-bad-open_mode"#),
+///     cr#"\\.\pipe\local\firehazard-create_named_pipe_a-example-bad-open_mode"#,
 ///     0, 0, pipe::UNLIMITED_INSTANCES, 0, 0, None, None,
 /// ).unwrap_err());
 /// ```
@@ -110,7 +109,7 @@ pub fn create_a<'a, 'b: 'a>(
 /// ### Example
 /// ```
 /// # use firehazard::*;
-/// # use abistr::*;
+/// # use abistr::cstr16;
 /// # use winapi::shared::winerror::*;
 /// #
 /// let pipe = pipe::named::create_w(

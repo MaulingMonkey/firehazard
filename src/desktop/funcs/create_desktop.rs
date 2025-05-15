@@ -12,9 +12,8 @@
 /// ```
 /// # use firehazard::*;
 /// # use firehazard::access::*;
-/// # use abistr::cstr;
-/// let a = create_desktop_a(cstr!("create_desktop_a"), (), None, None, GENERIC_ALL, None).unwrap();
-/// let b = create_desktop_a(cstr!("create_desktop_a"), (), None, None, GENERIC_ALL, None).unwrap();
+/// let a = create_desktop_a(c"create_desktop_a", (), None, None, GENERIC_ALL, None).unwrap();
+/// let b = create_desktop_a(c"create_desktop_a", (), None, None, GENERIC_ALL, None).unwrap();
 /// ```
 ///
 pub fn create_desktop_a(

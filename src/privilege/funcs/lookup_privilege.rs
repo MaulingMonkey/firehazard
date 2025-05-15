@@ -10,14 +10,13 @@
 ///
 /// ### Examples
 /// ```
-/// # use abistr::*;
 /// # use firehazard::*;
 /// # use winapi::shared::winerror::*;
 /// // unit tests aren't run in any kind of sandbox, so this should work:
-/// let p = lookup_privilege_value_a((), cstr!("SeChangeNotifyPrivilege"));
+/// let p = lookup_privilege_value_a((), c"SeChangeNotifyPrivilege");
 /// p.expect("SeChangeNotifyPrivilege should be a valid privilege");
 ///
-/// let r = lookup_privilege_value_a((), cstr!("not a valid privilege name"));
+/// let r = lookup_privilege_value_a((), c"not a valid privilege name");
 /// assert_eq!(r.unwrap_err(), ERROR_NO_SUCH_PRIVILEGE);
 /// ```
 ///
@@ -51,7 +50,7 @@ pub fn lookup_privilege_value_a(
 ///
 /// ### Examples
 /// ```
-/// # use abistr::*;
+/// # use abistr::cstr16;
 /// # use firehazard::*;
 /// # use winapi::shared::winerror::*;
 /// // unit tests aren't run in any kind of sandbox, so this should work:

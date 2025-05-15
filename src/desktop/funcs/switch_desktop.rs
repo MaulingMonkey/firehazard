@@ -7,9 +7,8 @@
 /// ### Example
 /// ```no_run
 /// # use firehazard::*;
-/// # use abistr::*;
 /// let original = open_thread_desktop(get_current_thread_id()).unwrap();
-/// let desktop = create_desktop_a(cstr!("examples_ui_switch_desktop"), (), None, None, access::GENERIC_ALL, None).unwrap();
+/// let desktop = create_desktop_a(c"examples_ui_switch_desktop", (), None, None, access::GENERIC_ALL, None).unwrap();
 ///
 /// // Sanity check we have permission to return to the original desktop before switching away from it
 /// switch_desktop(&original).expect("unable to switch_desktop to original desktop, that's a bit sketchy");

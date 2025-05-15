@@ -1,7 +1,6 @@
 //! Throw away `SeShutdownPrivilege`
 
 use firehazard::*;
-use abistr::cstr;
 use winapi::shared::winerror::ERROR_ACCESS_DENIED;
 use std::io;
 use std::process::{Command, Stdio};
@@ -13,7 +12,7 @@ fn main() {
     assert!(matches!(r, Ok(Some(0))), "initial `shutdown /a` failed: {r:?}");
 
     // Lock down privileges
-    let se_shutdown = lookup_privilege_value_a((), cstr!("SeShutdownPrivilege")).unwrap();
+    let se_shutdown = lookup_privilege_value_a((), c"SeShutdownPrivilege").unwrap();
     let access
         = token::QUERY              // Required to enumerate the `token.privileges()`, as used internally by `privileges_disable_if`
         | token::ADJUST_PRIVILEGES  // Required to modify the privileges

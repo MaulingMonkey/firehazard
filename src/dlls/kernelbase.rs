@@ -21,7 +21,7 @@ lazy_static::lazy_static! {
         token_handle:               HANDLE,
         security_capabilities:      *const SECURITY_CAPABILITIES,
         out_token:                  *mut HANDLE,
-    ) -> BOOL = unsafe { DLL.get_proc_address(cstr8!("CreateAppContainerToken")) }.unwrap_or(stubs::CreateAppContainerToken);
+    ) -> BOOL = unsafe { DLL.get_proc_address(c"CreateAppContainerToken") }.unwrap_or(stubs::CreateAppContainerToken);
 
     pub static ref DeriveCapabilitySidsFromName : unsafe extern "system" fn(
         CapName:                    LPCWSTR,
@@ -29,7 +29,7 @@ lazy_static::lazy_static! {
         CapabilityGroupSidCount:    *mut DWORD,
         CapabilitySids:             *mut *mut PSID,
         CapabilitySidCount:         *mut DWORD,
-    ) -> BOOL = unsafe { DLL.get_proc_address(cstr8!("DeriveCapabilitySidsFromName")) }.unwrap_or(stubs::DeriveCapabilitySidsFromName);
+    ) -> BOOL = unsafe { DLL.get_proc_address(c"DeriveCapabilitySidsFromName") }.unwrap_or(stubs::DeriveCapabilitySidsFromName);
 }
 
 mod stubs {

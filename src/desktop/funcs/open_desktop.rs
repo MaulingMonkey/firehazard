@@ -12,8 +12,7 @@
 /// ```
 /// # use firehazard::*;
 /// # use firehazard::access::*;
-/// # use abistr::cstr;
-/// let desktop = open_desktop_a(cstr!("Default"), None, false, GENERIC_ALL).unwrap();
+/// let desktop = open_desktop_a(c"Default", None, false, GENERIC_ALL).unwrap();
 /// ```
 ///
 pub fn open_desktop_a(

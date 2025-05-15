@@ -7,7 +7,7 @@
 /// ### Example
 /// ```
 /// # use firehazard::*;
-/// # use abistr::*;
+/// # use abistr::cstr16;
 /// # use winapi::shared::winerror::*;
 /// #
 /// // This function fails on local pipes

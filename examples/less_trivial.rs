@@ -2,8 +2,6 @@
 
 use firehazard::*;
 
-use abistr::*;
-
 use std::io::Write;
 
 fn main() {
@@ -21,7 +19,7 @@ fn main() {
 
 fn sandbox() {
     println!("stdout");
-    output_debug_string_a(cstr!("sandbox"));
+    output_debug_string_a(abistr::cstr!("sandbox"));
     eprintln!("stderr");
     let mut write_handle : io::sync::BorrowedWriter<'static> = unsafe { env_var_handle("%WRITE_HANDLE%") };
     let _ = dbg!(get_handle_information(write_handle));

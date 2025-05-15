@@ -13,7 +13,6 @@ use winapi::um::winbase::*;
 /// ### Example
 /// ```
 /// # use firehazard::*;
-/// # use abistr::*;
 /// let anon = create_job_object_a(None, ()).unwrap();
 /// assign_process_to_job_object(&anon, get_current_process()).unwrap();
 /// ```
@@ -41,9 +40,8 @@ pub fn assign_process_to_job_object<'a>(
 /// ### Example
 /// ```
 /// # use firehazard::*;
-/// # use abistr::*;
 /// let anon = create_job_object_a(None, ()).unwrap();
-/// let named = create_job_object_a(None, cstr!("Local/win32_security_playground/tests/create_job_object_a")).unwrap();
+/// let named = create_job_object_a(None, c"Local/win32_security_playground/tests/create_job_object_a").unwrap();
 /// ```
 ///
 pub fn create_job_object_a(
@@ -67,7 +65,7 @@ pub fn create_job_object_a(
 /// ### Example
 /// ```
 /// # use firehazard::*;
-/// # use abistr::*;
+/// # use abistr::cstr16;
 /// let anon = create_job_object_w(None, ()).unwrap();
 /// let named = create_job_object_w(None, cstr16!("Local/win32_security_playground/tests/create_job_object_w")).unwrap();
 /// ```
@@ -97,7 +95,6 @@ pub fn create_job_object_w(
 /// ### Example
 /// ```
 /// # use firehazard::*;
-/// # use abistr::*;
 /// let job = create_job_object_w(None, ()).unwrap();
 /// assert_eq!(Ok(false), is_process_in_job(get_current_process(), Some(&job)));
 /// assert_eq!(Ok(true),  is_process_in_job(get_current_process(), None));
@@ -130,10 +127,9 @@ pub fn is_process_in_job<'a>(
 /// ```
 /// # use firehazard::*;
 /// # use firehazard::access::*;
-/// # use abistr::*;
-/// let job1 = create_job_object_a(None, cstr!("Local/win32_security_playground/tests/open_job_object_a")).unwrap();
-/// let job2 = open_job_object_a(GENERIC_ALL, false, cstr!("Local/win32_security_playground/tests/open_job_object_a")).unwrap();
-/// let err  = open_job_object_a(GENERIC_ALL, false, cstr!("Local/nope")).unwrap_err();
+/// let job1 = create_job_object_a(None, c"Local/win32_security_playground/tests/open_job_object_a").unwrap();
+/// let job2 = open_job_object_a(GENERIC_ALL, false, c"Local/win32_security_playground/tests/open_job_object_a").unwrap();
+/// let err  = open_job_object_a(GENERIC_ALL, false, c"Local/nope").unwrap_err();
 /// ```
 ///
 pub fn open_job_object_a(
@@ -162,7 +158,7 @@ pub fn open_job_object_a(
 /// ```
 /// # use firehazard::*;
 /// # use firehazard::access::*;
-/// # use abistr::*;
+/// # use abistr::cstr16;
 /// let job1 = create_job_object_w(None, cstr16!("Local/win32_security_playground/tests/open_job_object_w")).unwrap();
 /// let job2 = open_job_object_w(GENERIC_ALL, false, cstr16!("Local/win32_security_playground/tests/open_job_object_w")).unwrap();
 /// let err  = open_job_object_w(GENERIC_ALL, false, cstr16!("Local/nope")).unwrap_err();

@@ -20,7 +20,7 @@
 /// # use winapi::um::fileapi::OPEN_EXISTING;
 /// #
 /// let readme = create_file_a(
-///     abistr::cstr!("Readme.md"),
+///     c"Readme.md",
 ///     access::GENERIC_READ,
 ///     file::Share::READ,
 ///     None,

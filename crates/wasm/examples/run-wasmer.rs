@@ -6,11 +6,10 @@ fn main() {
 #[cfg(target_pointer_width = "64")] // wasmer has issues on 32-bit
 fn main() {
     use firehazard::*;
-    use abistr::*;
     use wasmer::*;
 
     let _ = std::collections::HashMap::<u32, u32>::new(); // seed thread's std PRNG
-    output_debug_string_a(cstr!("sandbox"));
+    output_debug_string_a(abistr::cstr!("sandbox"));
     revert_to_self().unwrap();
     let module_wat = r#"
     (module

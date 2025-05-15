@@ -58,7 +58,7 @@ pub fn flush_file_buffers<'a>(file: impl Into<handle::Pseudo<'a>>) -> firehazard
 
 
 tests! {
-    use abistr::*;
+    use abistr::cstr16;
     use firehazard::*;
     use winapi::shared::winerror::{ERROR_ACCESS_DENIED, ERROR_INVALID_HANDLE};
 

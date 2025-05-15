@@ -52,7 +52,7 @@ pub fn get_file_type(handle: &impl firehazard::AsLocalHandle) -> Result<file::Ty
 
 
 tests! {
-    use abistr::*;
+    use abistr::cstr16;
     use firehazard::*;
     use winapi::shared::winerror::{ERROR_ACCESS_DENIED, ERROR_INVALID_HANDLE};
 

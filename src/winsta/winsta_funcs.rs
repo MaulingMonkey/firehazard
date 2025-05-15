@@ -17,9 +17,8 @@ use winapi::um::winuser::*;
 /// ### Example
 /// ```
 /// # use firehazard::*;
-/// # use abistr::cstr;
 /// # use winapi::shared::winerror::*;
-/// let err = create_window_station_a(cstr!("WinSta0"), winsta::CWF_CREATE_ONLY, winsta::ALL_ACCESS, None).unwrap_err();
+/// let err = create_window_station_a(c"WinSta0", winsta::CWF_CREATE_ONLY, winsta::ALL_ACCESS, None).unwrap_err();
 /// assert!(err == ERROR_ACCESS_DENIED || err == ERROR_ALREADY_EXISTS, "create_window_station_a(\"WinSta0\", ...) failed with error: {err:?}");
 /// let winsta = create_window_station_a((), (), winsta::ALL_ACCESS, None).unwrap();
 /// ```
@@ -260,8 +259,7 @@ pub fn open_process_window_station() -> firehazard::Result<winsta::OwnedHandle> 
 /// ### Example
 /// ```
 /// # use firehazard::*;
-/// # use abistr::cstr;
-/// let winsta0 = open_window_station_a(cstr!("WinSta0"), false, winsta::ALL_ACCESS).unwrap();
+/// let winsta0 = open_window_station_a(c"WinSta0", false, winsta::ALL_ACCESS).unwrap();
 /// ```
 ///
 pub fn open_window_station_a(

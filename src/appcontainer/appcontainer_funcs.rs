@@ -23,7 +23,7 @@ use winapi::um::userenv::*;
 /// ### Examples
 /// ```
 /// # use firehazard::*;
-/// # use abistr::*;
+/// # use abistr::cstr16;
 /// let app_container_name = cstr16!("firehazard create_app_container_profile doc example");
 /// # let _ = delete_app_container_profile(app_container_name);
 /// let app_container_sid = create_app_container_profile(
@@ -105,7 +105,7 @@ fn hresultify(e: firehazard::Error) -> firehazard::Error {
 /// ### Examples
 /// ```
 /// # use firehazard::*;
-/// # use abistr::*;
+/// # use abistr::cstr16;
 /// let process_token = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
 ///
 /// let app_container_sid = sid::NULL; // would cause ERROR_NOT_APPCONTAINER
@@ -163,7 +163,7 @@ pub fn create_app_container_token<'a>(
 /// ### Examples
 /// ```
 /// # use firehazard::*;
-/// # use abistr::*;
+/// # use abistr::cstr16;
 /// let app_container_name = cstr16!("firehazard delete_app_container_profile doc example");
 /// # let _ = delete_app_container_profile(app_container_name);
 ///
@@ -203,7 +203,7 @@ pub fn delete_app_container_profile(
 /// ### Examples
 /// ```
 /// # use firehazard::*;
-/// # use abistr::*;
+/// # use abistr::cstr16;
 /// let app_container_sid = derive_app_container_sid_from_app_container_name(
 ///     cstr16!("firehazard appcontainer")
 /// ).expect("derive_app_container_sid_from_app_container_name");
@@ -241,7 +241,7 @@ pub fn derive_app_container_sid_from_app_container_name(
 /// ### Examples
 /// ```
 /// # use firehazard::*;
-/// # use abistr::*;
+/// # use abistr::cstr16;
 /// let (group_sids, sids) = derive_capability_sids_from_name(cstr16!("internetClient")).unwrap();
 /// assert_eq!(1, group_sids.len());
 /// assert_eq!(1, sids.len());

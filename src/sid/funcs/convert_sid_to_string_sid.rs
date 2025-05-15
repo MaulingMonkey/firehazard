@@ -26,7 +26,6 @@ pub fn convert_sid_to_string_sid_a(sid: &sid::Value) -> Option<alloc::CString<u8
 ///
 /// ### Example
 /// ```
-/// # use abistr::*;
 /// # use firehazard::*;
 /// assert!("\"S-1-2-3\"" == format!("{:?}", convert_sid_to_string_sid_w(&*sid!(S-1-2-3)).unwrap()));
 /// ```

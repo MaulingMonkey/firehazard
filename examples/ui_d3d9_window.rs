@@ -1,6 +1,6 @@
 #![forbid(unsafe_op_in_unsafe_fn)]
 
-use abistr::*;
+use abistr::cstr16;
 
 use bytemuck::*;
 
