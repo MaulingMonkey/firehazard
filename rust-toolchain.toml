@@ -14,7 +14,7 @@
 # I was on 1.61.0 before, 1.62.0 is untested.
 #channel = "1.63.0"
 
-channel = "1.81.0" # ialloc MSRV
+channel = "1.87.0" # std::io::pipe MSRV
 
 targets = [ "x86_64-pc-windows-msvc", "i686-pc-windows-msvc" ]
 profile = "minimal"

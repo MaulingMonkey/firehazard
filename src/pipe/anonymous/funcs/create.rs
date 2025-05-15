@@ -3,7 +3,7 @@
 /// CreatePipe
 ///
 /// ### Alternatives
-/// *   [`std::io::pipe`](https://doc.rust-lang.org/beta/std/io/fn.pipe.html) &mdash; cross platform, not yet stable
+/// *   [`std::io::pipe`] &mdash; cross platform
 ///
 /// ### Example
 /// ```

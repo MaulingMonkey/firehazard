@@ -12,10 +12,10 @@
 //! | ~~[Communications Device]~~                   | [io::sync::OwnedFile]<br>[std::fs::File]                                  | [io::sync::BorrowedFile]<br>[io::sync::BorrowedReader]<br>[io::sync::BorrowedWriter] |    |
 //! | [Console Input Buffer]                        | [io::sync::OwnedFile]<br>[pipe::sync::OwnedReader]<br>[std::fs::File]     | [io::sync::BorrowedReader]<br>[std::io::Stdin]<br>[std::io::StdinLock] |                  | IPC
 //! | [Console Screen Buffer]                       | [io::sync::OwnedFile]<br>[pipe::sync::OwnedWriter]<br>[std::fs::File]     | [io::sync::BorrowedWriter]<br>[std::io::Stdout]<br>[std::io::StdoutLock]<br>[std::io::Stderr]<br>[std::io::StderrLock] | | IPC
-//! | [Desktop]                                     | [desktop::OwnedHandle]                                                    |                                                               |                           | Access restriction
+//! | [Desktop]                                     | [desktop::OwnedHandle]                                                    | [desktop::Handle]                                             |                           | Access restriction
 //! | [Event]                                       |                                                                           |                                                               |                           | IPC
 //! | ~~[Event Log]~~                               |                                                                           |                                                               |                           |
-//! | [File]                                        | [io::sync::OwnedFile]<br>[std::fs::File]                                  | [io::sync::BorrowedFile]<br>[io::sync::BorrowedReader]<br>[io::sync::BorrowedWriter] |    | IPC
+//! | [File]                                        | [io::sync::OwnedFile]<br>[io::sync::OwnedReader]<br>[io::sync::OwnedWriter]<br>[std::fs::File] | [io::sync::BorrowedFile]<br>[io::sync::BorrowedReader]<br>[io::sync::BorrowedWriter] | | IPC
 //! | [File Mapping]                                |                                                                           |                                                               |                           | IPC
 //! | ~~[Find File]~~                               | [std::fs::ReadDir]                                                        |                                                               |                           |
 //! | [Heap]                                        | *Other Crates:* <br> [ialloc::...::Heap]                                  |                                                               |                           | no_std
@@ -25,7 +25,7 @@
 //! | [Memory Resource Notification]                |                                                                           |                                                               |                           | Resource limits
 //! | [Module] (not a `HANDLE`)                     | *Other Crates:*<br>[minidl::Library]<br>[dlopen::raw::Library]            |                                                               |                           | Code patching <br> Debug
 //! | [Mutex]                                       | *Local, not win32:*<br>[std::sync::Mutex]                                 | *Local, not win32:*<br>[std::sync::MutexGuard]                |                           | IPC
-//! | [Pipe] (Bytewise)<br>(Anonymous or Named)     | [pipe::sync::OwnedDuplex]<br>[pipe::sync::OwnedReader]<br>[pipe::sync::OwnedWriter]<br><br>*Not yet stable:*<br>[std::io::PipeReader]<br>[std::io::PipeWriter] | [pipe::sync::BorrowedDuplex]<br>[pipe::sync::BorrowedReader]<br>[pipe::sync::BorrowedWriter] | | IPC
+//! | [Pipe] (Bytewise)<br>(Anonymous or Named)     | [pipe::sync::OwnedDuplex]<br>[pipe::sync::OwnedReader]<br>[pipe::sync::OwnedWriter]<br>[std::io::PipeReader]<br>[std::io::PipeWriter] | [pipe::sync::BorrowedDuplex]<br>[pipe::sync::BorrowedReader]<br>[pipe::sync::BorrowedWriter] | | IPC
 //! | [Pipe] (Message-based)<br>(Named Only)        |                                                                           |                                                               |                           | IPC
 //! | [Process]                                     | [process::OwnedHandle]<br>[std::process::Child]                           | [process::Handle]                                             | [process::PseudoHandle]   | Access restriction <br> IPC
 //! | [Pseudo Console]                              | [pseudoconsole::Owned]                                                    |                                                               |                           | IPC?
@@ -34,7 +34,7 @@
 //! | [Thread]                                      | [thread::OwnedHandle]<br>[std::thread::JoinHandle]                        | [thread::Handle]                                              | [thread::PseudoHandle]    | Access restriction
 //! | ~~[Timer]~~                                   |                                                                           |                                                               |                           |
 //! | [Update Resource]                             |                                                                           |                                                               |                           | Code patching
-//! | [Window Station]                              | [winsta::OwnedHandle]                                                     |                                                               |                           | Access restriction
+//! | [Window Station]                              | [winsta::OwnedHandle]                                                     | [winsta::Handle]                                              |                           | Access restriction
 //! | ~~[GDI Objects](https://learn.microsoft.com/en-us/windows/win32/sysinfo/gdi-objects)~~
 //! | ~~[User Objects](https://learn.microsoft.com/en-us/windows/win32/sysinfo/user-objects)~~
 //!
@@ -49,8 +49,8 @@
 //! [dlopen::raw::Library]:             https://docs.rs/dlopen/latest/dlopen/raw/struct.Library.html
 //! [ialloc::...::Heap]:                https://docs.rs/ialloc/latest/ialloc/allocator/win32/struct.Heap.html
 //!
-//! [std::io::PipeReader]:              https://doc.rust-lang.org/beta/std/io/struct.PipeReader.html
-//! [std::io::PipeWriter]:              https://doc.rust-lang.org/beta/std/io/struct.PipeWriter.html
+//! [std::io::PipeReader]:              https://doc.rust-lang.org/std/io/struct.PipeReader.html
+//! [std::io::PipeWriter]:              https://doc.rust-lang.org/std/io/struct.PipeWriter.html
 //! [std::...::BorrowedHandle]:         std::os::windows::io::BorrowedHandle
 //! [std::...::BorrowedSocket]:         std::os::windows::io::BorrowedSocket
 //! [std::...::OwnedHandle]:            std::os::windows::io::OwnedHandle

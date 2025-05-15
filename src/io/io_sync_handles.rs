@@ -38,7 +38,7 @@ use crate::io::{Read, Write, Seek};
 /// *   [`firehazard::io::sync::BorrowedFile`]      &mdash; borrowed instead of owned
 /// *   [`firehazard::handle::Owned`]               &mdash; untyped, possibly marked [`file::FLAG_OVERLAPPED`]
 /// *   [`std::fs::File`]                           &mdash; cross platform, not `#[repr(transparent)]`, possibly marked [`file::FLAG_OVERLAPPED`]
-/// *   [`std::os::windows::io::OwnedHandle`]       &mdash; [`std`], untyped, permits null/invalid, possibly marked [`file::FLAG_OVERLAPPED`]
+/// *   [`std::os::windows::io::OwnedHandle`]       &mdash; untyped, permits null/invalid, possibly marked [`file::FLAG_OVERLAPPED`]
 ///
 #[repr(transparent)] pub struct OwnedFile(HANDLENN);
 
@@ -50,7 +50,7 @@ use crate::io::{Read, Write, Seek};
 /// *   [`firehazard::handle::Owned`]               &mdash; untyped, possibly marked [`file::FLAG_OVERLAPPED`]
 /// *   [`std::fs::File`]                           &mdash; cross platform, not `#[repr(transparent)]`, [`Seek`]able, possibly marked [`file::FLAG_OVERLAPPED`]
 /// *   [`std::net::TcpStream`]                     &mdash; cross platform, not `#[repr(transparent)]`, possibly marked [`file::FLAG_OVERLAPPED`], socket specific fns
-/// *   [`std::os::windows::io::OwnedHandle`]       &mdash; [`std`], untyped, permits null/invalid, possibly marked [`file::FLAG_OVERLAPPED`]
+/// *   [`std::os::windows::io::OwnedHandle`]       &mdash; untyped, permits null/invalid, possibly marked [`file::FLAG_OVERLAPPED`]
 ///
 #[repr(transparent)] pub struct OwnedDuplex(HANDLENN);
 
@@ -60,8 +60,8 @@ use crate::io::{Read, Write, Seek};
 /// ### Alternatives
 /// *   [`firehazard::io::sync::BorrowedReader`]    &mdash; borrowed instead of owned
 /// *   [`firehazard::handle::Owned`]               &mdash; untyped, possibly marked [`file::FLAG_OVERLAPPED`]
-/// *   [`std::io::PipeReader`](https://doc.rust-lang.org/beta/std/io/struct.PipeReader.html) &mdash; cross platform, not `#[repr(transparent)]`, not yet stable, possibly marked [`file::FLAG_OVERLAPPED`]
-/// *   [`std::os::windows::io::OwnedHandle`]       &mdash; [`std`], untyped, permits null/invalid, possibly marked [`file::FLAG_OVERLAPPED`]
+/// *   [`std::io::PipeReader`]                     &mdash; cross platform, not `#[repr(transparent)]`, possibly marked [`file::FLAG_OVERLAPPED`]
+/// *   [`std::os::windows::io::OwnedHandle`]       &mdash; untyped, permits null/invalid, possibly marked [`file::FLAG_OVERLAPPED`]
 ///
 #[repr(transparent)] pub struct OwnedReader(HANDLENN);
 
@@ -71,8 +71,8 @@ use crate::io::{Read, Write, Seek};
 /// ### Alternatives
 /// *   [`firehazard::io::sync::BorrowedWriter`]    &mdash; borrowed instead of owned
 /// *   [`firehazard::handle::Owned`]               &mdash; untyped, possibly marked [`file::FLAG_OVERLAPPED`]
-/// *   [`std::io::PipeWriter`](https://doc.rust-lang.org/beta/std/io/struct.PipeWriter.html) &mdash; cross platform, not `#[repr(transparent)]`, not yet stable, possibly marked [`file::FLAG_OVERLAPPED`]
-/// *   [`std::os::windows::io::OwnedHandle`]       &mdash; [`std`], untyped, permits null/invalid, possibly marked [`file::FLAG_OVERLAPPED`]
+/// *   [`std::io::PipeWriter`]                     &mdash; cross platform, not `#[repr(transparent)]`, possibly marked [`file::FLAG_OVERLAPPED`]
+/// *   [`std::os::windows::io::OwnedHandle`]       &mdash; untyped, permits null/invalid, possibly marked [`file::FLAG_OVERLAPPED`]
 ///
 #[repr(transparent)] pub struct OwnedWriter(HANDLENN);
 
@@ -90,7 +90,7 @@ use crate::io::{Read, Write, Seek};
 /// *   [`firehazard::io::sync::OwnedFile`]         &mdash; owned instead of borrowed
 /// *   [`firehazard::handle::Borrowed`]            &mdash; untyped, possibly marked [`file::FLAG_OVERLAPPED`]
 /// *   <code>&amp;[std::fs::File]</code>           &mdash; cross platform, not `#[repr(transparent)]`, possibly marked [`file::FLAG_OVERLAPPED`]
-/// *   [`std::os::windows::io::BorrowedHandle`]    &mdash; [`std`], untyped, permits null/invalid, possibly marked [`file::FLAG_OVERLAPPED`]
+/// *   [`std::os::windows::io::BorrowedHandle`]    &mdash; untyped, permits null/invalid, possibly marked [`file::FLAG_OVERLAPPED`]
 ///
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct BorrowedFile<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
@@ -103,7 +103,7 @@ use crate::io::{Read, Write, Seek};
 /// *   [`firehazard::handle::Borrowed`]            &mdash; untyped, possibly marked [`file::FLAG_OVERLAPPED`]
 /// *   <code>&amp;[std::fs::File]</code>           &mdash; cross platform, not `#[repr(transparent)]`, [`Seek`]able, possibly marked [`file::FLAG_OVERLAPPED`]
 /// *   <code>&amp;[std::net::TcpStream]</code>     &mdash; cross platform, not `#[repr(transparent)]`, possibly marked [`file::FLAG_OVERLAPPED`], socket specific fns
-/// *   [`std::os::windows::io::BorrowedHandle`]    &mdash; [`std`], untyped, permits null/invalid, possibly marked [`file::FLAG_OVERLAPPED`]
+/// *   [`std::os::windows::io::BorrowedHandle`]    &mdash; untyped, permits null/invalid, possibly marked [`file::FLAG_OVERLAPPED`]
 ///
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct BorrowedDuplex<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
@@ -114,8 +114,8 @@ use crate::io::{Read, Write, Seek};
 /// ### Alternatives
 /// *   [`firehazard::io::sync::OwnedReader`]       &mdash; owned instead of borrowed
 /// *   [`firehazard::handle::Borrowed`]            &mdash; untyped, possibly marked [`file::FLAG_OVERLAPPED`]
-/// *   <code>&amp;[std::io::PipeReader](https://doc.rust-lang.org/beta/std/io/struct.PipeReader.html)</code> &mdash; cross platform, not `#[repr(transparent)]`, not yet stable, possibly marked [`file::FLAG_OVERLAPPED`]
-/// *   [`std::os::windows::io::BorrowedHandle`]    &mdash; [`std`], untyped, permits null/invalid, possibly marked [`file::FLAG_OVERLAPPED`]
+/// *   <code>&amp;[std::io::PipeReader]</code>     &mdash; cross platform, not `#[repr(transparent)]`, possibly marked [`file::FLAG_OVERLAPPED`]
+/// *   [`std::os::windows::io::BorrowedHandle`]    &mdash; untyped, permits null/invalid, possibly marked [`file::FLAG_OVERLAPPED`]
 ///
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct BorrowedReader<'a>(HANDLENN, PhantomData<&'a HANDLENN>);
@@ -126,8 +126,8 @@ use crate::io::{Read, Write, Seek};
 /// ### Alternatives
 /// *   [`firehazard::io::sync::OwnedWriter`]       &mdash; owned instead of borrowed
 /// *   [`firehazard::handle::Borrowed`]            &mdash; untyped, possibly marked [`file::FLAG_OVERLAPPED`]
-/// *   <code>&amp;[std::io::PipeWriter](https://doc.rust-lang.org/beta/std/io/struct.PipeWriter.html)</code> &mdash; cross platform, not `#[repr(transparent)]`, not yet stable, possibly marked [`file::FLAG_OVERLAPPED`]
-/// *   [`std::os::windows::io::BorrowedHandle`]    &mdash; [`std`], untyped, permits null/invalid, possibly marked [`file::FLAG_OVERLAPPED`]
+/// *   <code>&amp;[std::io::PipeWriter]</code>     &mdash; cross platform, not `#[repr(transparent)]`, possibly marked [`file::FLAG_OVERLAPPED`]
+/// *   [`std::os::windows::io::BorrowedHandle`]    &mdash; untyped, permits null/invalid, possibly marked [`file::FLAG_OVERLAPPED`]
 ///
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[repr(transparent)] pub struct BorrowedWriter<'a>(HANDLENN, PhantomData<&'a HANDLENN>);

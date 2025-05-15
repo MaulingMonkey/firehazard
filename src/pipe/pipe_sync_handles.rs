@@ -29,8 +29,8 @@ use io::{Read, Write};
 /// *   [`firehazard::pipe::sync::OwnedWriter`] &mdash; write-only
 /// *   [`firehazard::pipe::sync::BorrowedDuplex`] &mdash; borrowed instead of owned
 /// *   [`firehazard::handle::Owned`] &mdash; untyped
-/// *   [`std::io::PipeReader`](https://doc.rust-lang.org/beta/std/io/struct.PipeReader.html) &mdash; not `#[repr(transparent)]`, read-only, cross platform, not yet stable
-/// *   [`std::io::PipeWriter`](https://doc.rust-lang.org/beta/std/io/struct.PipeWriter.html) &mdash; not `#[repr(transparent)]`, write-only, cross platform, not yet stable
+/// *   [`std::io::PipeReader`] &mdash; not `#[repr(transparent)]`, read-only, cross platform
+/// *   [`std::io::PipeWriter`] &mdash; not `#[repr(transparent)]`, write-only, cross platform
 /// *   [`std::os::windows::io::OwnedHandle`] &mdash; untyped, permits null/invalid
 ///
 #[repr(transparent)] pub struct OwnedDuplex(pub(super) HANDLENN);
@@ -52,7 +52,7 @@ use io::{Read, Write};
 /// *   [`firehazard::pipe::sync::OwnedDuplex`] &mdash; also writable
 /// *   [`firehazard::pipe::sync::BorrowedReader`] &mdash; borrowed instead of owned
 /// *   [`firehazard::handle::Owned`] &mdash; untyped
-/// *   [`std::io::PipeReader`](https://doc.rust-lang.org/beta/std/io/struct.PipeReader.html) &mdash; not `#[repr(transparent)]`, cross platform, not yet stable
+/// *   [`std::io::PipeReader`] &mdash; not `#[repr(transparent)]`, cross platform
 /// *   [`std::os::windows::io::OwnedHandle`] &mdash; untyped, permits null/invalid
 ///
 #[repr(transparent)] pub struct OwnedReader(pub(super) HANDLENN);
@@ -74,7 +74,7 @@ use io::{Read, Write};
 /// *   [`firehazard::pipe::sync::OwnedDuplex`] &mdash; also readable
 /// *   [`firehazard::pipe::sync::BorrowedWriter`] &mdash; borrowed instead of owned
 /// *   [`firehazard::handle::Owned`] &mdash; untyped
-/// *   [`std::io::PipeWriter`](https://doc.rust-lang.org/beta/std/io/struct.PipeWriter.html) &mdash; not `#[repr(transparent)]`, cross platform, not yet stable
+/// *   [`std::io::PipeWriter`] &mdash; not `#[repr(transparent)]`, cross platform
 /// *   [`std::os::windows::io::OwnedHandle`] &mdash; untyped, permits null/invalid
 ///
 #[repr(transparent)] pub struct OwnedWriter(pub(super) HANDLENN);
@@ -103,8 +103,8 @@ use io::{Read, Write};
 /// *   [`firehazard::pipe::sync::BorrowedWriter`] &mdash; write-only
 /// *   [`firehazard::pipe::sync::OwnedDuplex`] &mdash; owned instead of borrowed
 /// *   [`firehazard::handle::Borrowed`] &mdash; untyped
-/// *   [`std::io::PipeReader`](https://doc.rust-lang.org/beta/std/io/struct.PipeReader.html) &mdash; not `#[repr(transparent)]`, read-only, cross platform, not yet stable
-/// *   [`std::io::PipeWriter`](https://doc.rust-lang.org/beta/std/io/struct.PipeWriter.html) &mdash; not `#[repr(transparent)]`, write-only, cross platform, not yet stable
+/// *   [`std::io::PipeReader`] &mdash; not `#[repr(transparent)]`, read-only, cross platform
+/// *   [`std::io::PipeWriter`] &mdash; not `#[repr(transparent)]`, write-only, cross platform
 /// *   [`std::os::windows::io::BorrowedHandle`] &mdash; untyped, permits null/invalid
 ///
 #[repr(transparent)] pub struct BorrowedDuplex<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
@@ -126,7 +126,7 @@ use io::{Read, Write};
 /// *   [`firehazard::pipe::sync::BorrowedDuplex`] &mdash; also writable
 /// *   [`firehazard::pipe::sync::OwnedReader`] &mdash; owned instead of borrowed
 /// *   [`firehazard::handle::Borrowed`] &mdash; untyped
-/// *   [`std::io::PipeReader`](https://doc.rust-lang.org/beta/std/io/struct.PipeReader.html) &mdash; not `#[repr(transparent)]`, cross platform, not yet stable
+/// *   [`std::io::PipeReader`] &mdash; not `#[repr(transparent)]`, cross platform
 /// *   [`std::os::windows::io::BorrowedHandle`] &mdash; untyped, permits null/invalid
 ///
 #[repr(transparent)] pub struct BorrowedReader<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
@@ -148,7 +148,7 @@ use io::{Read, Write};
 /// *   [`firehazard::pipe::sync::BorrowedDuplex`] &mdash; also readable
 /// *   [`firehazard::pipe::sync::OwnedWriter`] &mdash; owned instead of borrowed
 /// *   [`firehazard::handle::Borrowed`] &mdash; untyped
-/// *   [`std::io::PipeWriter`](https://doc.rust-lang.org/beta/std/io/struct.PipeWriter.html) &mdash; not `#[repr(transparent)]`, cross platform, not yet stable
+/// *   [`std::io::PipeWriter`] &mdash; not `#[repr(transparent)]`, cross platform
 /// *   [`std::os::windows::io::BorrowedHandle`] &mdash; untyped, permits null/invalid
 ///
 #[repr(transparent)] pub struct BorrowedWriter<'a>(pub(super) HANDLENN, PhantomData<&'a HANDLENN>);
