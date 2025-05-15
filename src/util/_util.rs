@@ -1,3 +1,4 @@
+mod assert_sendable;            pub(crate) use assert_sendable::*;
 mod bits32;                     pub(crate) use bits32::*;
 pub(crate) mod partition;
 mod provenance;                 pub(crate) use provenance::*;
