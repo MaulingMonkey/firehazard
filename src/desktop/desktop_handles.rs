@@ -91,7 +91,7 @@ fn verify_desktop_handle(handle: handle::Borrowed<'_>) -> firehazard::Result<()>
     // SAFETY:  I'm assuming `handle` is `Send`able only for the limited purpouse of attempting to call `SetThreadDesktop` on it.
     let handle = unsafe { AssertSendable::new(handle.as_handle().cast()) };
     std::thread::spawn(move || {
-        firehazard::Error::get_last_if(0 != unsafe { winapi::um::winuser::SetThreadDesktop(handle.into_inner()) })
+        firehazard::Error::get_last_if(FALSE == unsafe { winapi::um::winuser::SetThreadDesktop(handle.into_inner()) })
     }).join().map_err(|_| ERROR::NO_SYSTEM_RESOURCES)?
 }
 
