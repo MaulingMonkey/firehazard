@@ -3,9 +3,9 @@ use crate::prelude::*;
 use winapi::shared::windef::HDESK__;
 use winapi::um::winuser::CloseDesktop;
 
-
-
 type HDESKNN = NonNull<HDESK__>;
+
+
 
 #[doc(alias = "HDESK")]
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopa)\]
@@ -22,8 +22,8 @@ impl Drop for OwnedHandle { #[doc(alias = "CloseDesktop")] fn drop(&mut self) {
 
 
 
-#[doc(alias = "HANDLE")]
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/procthread/job-objects)\]
+#[doc(alias = "HDESK")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createdesktopa)\]
 /// _Borrowed_, _non-null_ `HDESK` to a *desktop*.
 ///
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
