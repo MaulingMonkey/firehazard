@@ -3,7 +3,7 @@
 //! PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY
 
 use crate::prelude::*;
-use process::creation::{MitigationPolicyFlags1, MitigationPolicyFlags1Mask};
+use process::creation::{MitigationPolicyFlags1, MitigationPolicyMask1};
 use core::fmt::{self, Debug, Formatter};
 
 
@@ -52,7 +52,7 @@ pub mod legacy {
 /// Windows 8+
 pub mod force_relocate_images {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_MASK"                       )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_MASK"                      ] pub const MASK                  : MitigationPolicyFlags1Mask = MitigationPolicyFlags1Mask(PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_MASK                           );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_MASK"                       )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_MASK"                      ] pub const MASK                  : MitigationPolicyMask1      = MitigationPolicyMask1     (PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_MASK                           );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_DEFER"                      )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_DEFER"                     ] pub const DEFER                 : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_DEFER                          );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_ALWAYS_ON"                  )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_ALWAYS_ON"                 ] pub const ALWAYS_ON             : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_ALWAYS_ON                      );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_ALWAYS_OFF"                 )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_ALWAYS_OFF"                ] pub const ALWAYS_OFF            : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_FORCE_RELOCATE_IMAGES_ALWAYS_OFF                     );
@@ -68,7 +68,7 @@ pub mod force_relocate_images {
 /// Windows 8+
 pub mod heap_terminate {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_MASK"                              )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_MASK"                             ] pub const MASK                  : MitigationPolicyFlags1Mask = MitigationPolicyFlags1Mask(PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_MASK                                  );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_MASK"                              )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_MASK"                             ] pub const MASK                  : MitigationPolicyMask1      = MitigationPolicyMask1     (PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_MASK                                  );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_DEFER"                             )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_DEFER"                            ] pub const DEFER                 : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_DEFER                                 );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_ALWAYS_ON"                         )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_ALWAYS_ON"                        ] pub const ALWAYS_ON             : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_ALWAYS_ON                             );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_ALWAYS_OFF"                        )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_ALWAYS_OFF"                       ] pub const ALWAYS_OFF            : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_HEAP_TERMINATE_ALWAYS_OFF                            );
@@ -82,7 +82,7 @@ pub mod heap_terminate {
 /// Windows 8+
 pub mod bottom_up_aslr {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_MASK"                              )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_MASK"                             ] pub const MASK                  : MitigationPolicyFlags1Mask = MitigationPolicyFlags1Mask(PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_MASK                                  );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_MASK"                              )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_MASK"                             ] pub const MASK                  : MitigationPolicyMask1      = MitigationPolicyMask1     (PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_MASK                                  );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_DEFER"                             )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_DEFER"                            ] pub const DEFER                 : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_DEFER                                 );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_ALWAYS_ON"                         )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_ALWAYS_ON"                        ] pub const ALWAYS_ON             : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_ALWAYS_ON                             );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_ALWAYS_OFF"                        )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_ALWAYS_OFF"                       ] pub const ALWAYS_OFF            : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_BOTTOM_UP_ASLR_ALWAYS_OFF                            );
@@ -98,7 +98,7 @@ pub mod bottom_up_aslr {
 /// Windows 8+
 pub mod high_entropy_aslr {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_MASK"                           )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_MASK"                          ] pub const MASK                  : MitigationPolicyFlags1Mask = MitigationPolicyFlags1Mask(PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_MASK                               );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_MASK"                           )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_MASK"                          ] pub const MASK                  : MitigationPolicyMask1      = MitigationPolicyMask1     (PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_MASK                               );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_DEFER"                          )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_DEFER"                         ] pub const DEFER                 : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_DEFER                              );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_ALWAYS_ON"                      )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_ALWAYS_ON"                     ] pub const ALWAYS_ON             : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_ALWAYS_ON                          );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_ALWAYS_OFF"                     )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_ALWAYS_OFF"                    ] pub const ALWAYS_OFF            : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_HIGH_ENTROPY_ASLR_ALWAYS_OFF                         );
@@ -113,7 +113,7 @@ pub mod high_entropy_aslr {
 /// Windows 8+
 pub mod strict_handle_checks {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_MASK"                        )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_MASK"                       ] pub const MASK                  : MitigationPolicyFlags1Mask = MitigationPolicyFlags1Mask(PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_MASK                            );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_MASK"                        )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_MASK"                       ] pub const MASK                  : MitigationPolicyMask1      = MitigationPolicyMask1     (PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_MASK                            );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_DEFER"                       )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_DEFER"                      ] pub const DEFER                 : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_DEFER                           );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_ALWAYS_ON"                   )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_ALWAYS_ON"                  ] pub const ALWAYS_ON             : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_ALWAYS_ON                       );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_ALWAYS_OFF"                  )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_ALWAYS_OFF"                 ] pub const ALWAYS_OFF            : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_STRICT_HANDLE_CHECKS_ALWAYS_OFF                      );
@@ -125,7 +125,7 @@ pub mod strict_handle_checks {
 /// Windows 8+
 pub mod win32k_system_call_disable {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_MASK"                  )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_MASK"                 ] pub const MASK                  : MitigationPolicyFlags1Mask = MitigationPolicyFlags1Mask(PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_MASK                      );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_MASK"                  )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_MASK"                 ] pub const MASK                  : MitigationPolicyMask1      = MitigationPolicyMask1     (PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_MASK                      );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_DEFER"                 )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_DEFER"                ] pub const DEFER                 : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_DEFER                     );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_ALWAYS_ON"             )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_ALWAYS_ON"            ] pub const ALWAYS_ON             : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_ALWAYS_ON                 );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_ALWAYS_OFF"            )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_ALWAYS_OFF"           ] pub const ALWAYS_OFF            : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_WIN32K_SYSTEM_CALL_DISABLE_ALWAYS_OFF                );
@@ -137,7 +137,7 @@ pub mod win32k_system_call_disable {
 /// Windows 8+
 pub mod extension_point_disable {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_MASK"                     )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_MASK"                    ] pub const MASK                  : MitigationPolicyFlags1Mask = MitigationPolicyFlags1Mask(PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_MASK                         );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_MASK"                     )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_MASK"                    ] pub const MASK                  : MitigationPolicyMask1      = MitigationPolicyMask1     (PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_MASK                         );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_DEFER"                    )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_DEFER"                   ] pub const DEFER                 : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_DEFER                        );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_ALWAYS_ON"                )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_ALWAYS_ON"               ] pub const ALWAYS_ON             : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_ALWAYS_ON                    );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_ALWAYS_OFF"               )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_ALWAYS_OFF"              ] pub const ALWAYS_OFF            : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_EXTENSION_POINT_DISABLE_ALWAYS_OFF                   );
@@ -149,7 +149,7 @@ pub mod extension_point_disable {
 /// Windows 8.1+
 pub mod prohibit_dynamic_code {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_MASK"                       )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_MASK"                      ] pub const MASK                      : MitigationPolicyFlags1Mask = MitigationPolicyFlags1Mask(PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_MASK                       );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_MASK"                       )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_MASK"                      ] pub const MASK                      : MitigationPolicyMask1      = MitigationPolicyMask1     (PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_MASK                       );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_DEFER"                      )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_DEFER"                     ] pub const DEFER                     : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_DEFER                      );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_ALWAYS_ON"                  )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_ALWAYS_ON"                 ] pub const ALWAYS_ON                 : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_ALWAYS_ON                  );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_ALWAYS_OFF"                 )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_ALWAYS_OFF"                ] pub const ALWAYS_OFF                : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_PROHIBIT_DYNAMIC_CODE_ALWAYS_OFF                 );
@@ -161,7 +161,7 @@ pub mod prohibit_dynamic_code {
 /// Windows 8.1+
 pub mod control_flow_guard {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_MASK"                          )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_MASK"                         ] pub const MASK                  : MitigationPolicyFlags1Mask = MitigationPolicyFlags1Mask(PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_MASK                              );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_MASK"                          )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_MASK"                         ] pub const MASK                  : MitigationPolicyMask1      = MitigationPolicyMask1     (PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_MASK                              );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_DEFER"                         )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_DEFER"                        ] pub const DEFER                 : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_DEFER                             );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_ALWAYS_ON"                     )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_ALWAYS_ON"                    ] pub const ALWAYS_ON             : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_ALWAYS_ON                         );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_ALWAYS_OFF"                    )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_ALWAYS_OFF"                   ] pub const ALWAYS_OFF            : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_CONTROL_FLOW_GUARD_ALWAYS_OFF                        );
@@ -173,7 +173,7 @@ pub mod control_flow_guard {
 /// Windows 8.1+
 pub mod block_non_microsoft_binaries {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_MASK"                )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_MASK"               ] pub const MASK                  : MitigationPolicyFlags1Mask = MitigationPolicyFlags1Mask(PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_MASK                    );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_MASK"                )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_MASK"               ] pub const MASK                  : MitigationPolicyMask1      = MitigationPolicyMask1     (PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_MASK                    );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_DEFER"               )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_DEFER"              ] pub const DEFER                 : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_DEFER                   );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_ON"           )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_ON"          ] pub const ALWAYS_ON             : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_ON               );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_OFF"          )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_OFF"         ] pub const ALWAYS_OFF            : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_BLOCK_NON_MICROSOFT_BINARIES_ALWAYS_OFF              );
@@ -185,7 +185,7 @@ pub mod block_non_microsoft_binaries {
 /// Windows 10+
 pub mod font_disable {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_MASK"                                )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_MASK"                               ] pub const MASK                  : MitigationPolicyFlags1Mask = MitigationPolicyFlags1Mask(PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_MASK                                    );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_MASK"                                )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_MASK"                               ] pub const MASK                  : MitigationPolicyMask1      = MitigationPolicyMask1     (PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_MASK                                    );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_DEFER"                               )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_DEFER"                              ] pub const DEFER                 : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_DEFER                                   );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_ALWAYS_ON"                           )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_ALWAYS_ON"                          ] pub const ALWAYS_ON             : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_ALWAYS_ON                               );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_ALWAYS_OFF"                          )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_ALWAYS_OFF"                         ] pub const ALWAYS_OFF            : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_FONT_DISABLE_ALWAYS_OFF                              );
@@ -198,7 +198,7 @@ pub mod font_disable {
 /// Windows 10+
 pub mod image_load_no_remote {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_MASK"                        )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_MASK"                       ] pub const MASK                  : MitigationPolicyFlags1Mask = MitigationPolicyFlags1Mask(PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_MASK                            );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_MASK"                        )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_MASK"                       ] pub const MASK                  : MitigationPolicyMask1      = MitigationPolicyMask1     (PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_MASK                            );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_DEFER"                       )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_DEFER"                      ] pub const DEFER                 : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_DEFER                           );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_ALWAYS_ON"                   )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_ALWAYS_ON"                  ] pub const ALWAYS_ON             : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_ALWAYS_ON                       );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_ALWAYS_OFF"                  )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_ALWAYS_OFF"                 ] pub const ALWAYS_OFF            : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_REMOTE_ALWAYS_OFF                      );
@@ -210,7 +210,7 @@ pub mod image_load_no_remote {
 /// Windows 10+
 pub mod image_load_no_low_label {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_MASK"                     )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_MASK"                    ] pub const MASK                  : MitigationPolicyFlags1Mask = MitigationPolicyFlags1Mask(PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_MASK                         );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_MASK"                     )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_MASK"                    ] pub const MASK                  : MitigationPolicyMask1      = MitigationPolicyMask1     (PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_MASK                         );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_DEFER"                    )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_DEFER"                   ] pub const DEFER                 : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_DEFER                        );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_ALWAYS_ON"                )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_ALWAYS_ON"               ] pub const ALWAYS_ON             : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_ALWAYS_ON                    );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_ALWAYS_OFF"               )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_ALWAYS_OFF"              ] pub const ALWAYS_OFF            : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_NO_LOW_LABEL_ALWAYS_OFF                   );
@@ -222,7 +222,7 @@ pub mod image_load_no_low_label {
 /// Windows 10+
 pub mod image_load_prefer_system32 {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_MASK"                  )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_MASK"                 ] pub const MASK                  : MitigationPolicyFlags1Mask = MitigationPolicyFlags1Mask(PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_MASK                      );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_MASK"                  )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_MASK"                 ] pub const MASK                  : MitigationPolicyMask1      = MitigationPolicyMask1     (PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_MASK                      );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_DEFER"                 )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_DEFER"                ] pub const DEFER                 : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_DEFER                     );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_ALWAYS_ON"             )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_ALWAYS_ON"            ] pub const ALWAYS_ON             : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_ALWAYS_ON                 );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_ALWAYS_OFF"            )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_ALWAYS_OFF"           ] pub const ALWAYS_OFF            : MitigationPolicyFlags1     = MitigationPolicyFlags1    (PROCESS_CREATION_MITIGATION_POLICY_IMAGE_LOAD_PREFER_SYSTEM32_ALWAYS_OFF                );
@@ -231,11 +231,11 @@ pub mod image_load_prefer_system32 {
 
 impl Debug for MitigationPolicyFlags1 {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-        Debug::fmt(&MitigationPolicyFlags1Mask(self.0), fmt)
+        Debug::fmt(&MitigationPolicyMask1(self.0), fmt)
     }
 }
 
-impl Debug for MitigationPolicyFlags1Mask {
+impl Debug for MitigationPolicyMask1 {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         flags!(self.0, fmt, "0x{:016X}", [
             PROCESS_CREATION_MITIGATION_POLICY_DEP_ENABLE,

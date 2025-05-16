@@ -2,7 +2,7 @@
 //! UpdateProcThreadAttribute value constants for use with<br>
 //! PROC_THREAD_ATTRIBUTE_MITIGATION_POLICY
 
-use crate::process::creation::{MitigationPolicyFlags2, MitigationPolicyFlags2Mask};
+use crate::process::creation::{MitigationPolicyFlags2, MitigationPolicyMask2};
 use core::fmt::{self, Debug, Formatter};
 
 
@@ -13,7 +13,7 @@ use core::fmt::{self, Debug, Formatter};
 /// Windows 10+
 pub mod loader_integrity_continuity {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_MASK"                )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_MASK"                   ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_MASK                  );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_MASK"                )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_MASK"                   ] pub const MASK          : MitigationPolicyMask2      = MitigationPolicyMask2     (PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_MASK                  );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_DEFER"               )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_DEFER"                  ] pub const DEFER         : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_DEFER                 );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_ALWAYS_ON"           )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_ALWAYS_ON"              ] pub const ALWAYS_ON     : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_ALWAYS_ON             );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_ALWAYS_OFF"          )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_ALWAYS_OFF"             ] pub const ALWAYS_OFF    : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_ALWAYS_OFF            );
@@ -26,7 +26,7 @@ pub mod loader_integrity_continuity {
 /// Windows 10+
 pub mod strict_control_flow_guard {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_MASK"                  )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_MASK"                     ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_MASK                    );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_MASK"                  )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_MASK"                     ] pub const MASK          : MitigationPolicyMask2      = MitigationPolicyMask2     (PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_MASK                    );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_DEFER"                 )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_DEFER"                    ] pub const DEFER         : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_DEFER                   );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_ALWAYS_ON"             )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_ALWAYS_ON"                ] pub const ALWAYS_ON     : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_ALWAYS_ON               );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_ALWAYS_OFF"            )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_ALWAYS_OFF"               ] pub const ALWAYS_OFF    : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_STRICT_CONTROL_FLOW_GUARD_ALWAYS_OFF              );
@@ -38,7 +38,7 @@ pub mod strict_control_flow_guard {
 /// Windows 10+
 pub mod module_tampering_protection {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_MASK"                )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_MASK"                   ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_MASK                  );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_MASK"                )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_MASK"                   ] pub const MASK          : MitigationPolicyMask2      = MitigationPolicyMask2     (PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_MASK                  );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_DEFER"               )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_DEFER"                  ] pub const DEFER         : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_DEFER                 );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_ALWAYS_ON"           )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_ALWAYS_ON"              ] pub const ALWAYS_ON     : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_ALWAYS_ON             );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_ALWAYS_OFF"          )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_ALWAYS_OFF"             ] pub const ALWAYS_OFF    : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_MODULE_TAMPERING_PROTECTION_ALWAYS_OFF            );
@@ -51,7 +51,7 @@ pub mod module_tampering_protection {
 /// Windows 10+
 pub mod restrict_indirect_branch_prediction {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_MASK"        )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_MASK"           ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_MASK          );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_MASK"        )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_MASK"           ] pub const MASK          : MitigationPolicyMask2      = MitigationPolicyMask2     (PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_MASK          );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_DEFER"       )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_DEFER"          ] pub const DEFER         : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_DEFER         );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_ALWAYS_ON"   )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_ALWAYS_ON"      ] pub const ALWAYS_ON     : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_ALWAYS_ON     );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_ALWAYS_OFF"  )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_ALWAYS_OFF"     ] pub const ALWAYS_OFF    : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_INDIRECT_BRANCH_PREDICTION_ALWAYS_OFF    );
@@ -63,7 +63,7 @@ pub mod restrict_indirect_branch_prediction {
 /// Windows 10+
 pub mod allow_downgrade_dynamic_code_policy {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_MASK"        )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_MASK"           ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_MASK          );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_MASK"        )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_MASK"           ] pub const MASK          : MitigationPolicyMask2      = MitigationPolicyMask2     (PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_MASK          );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_DEFER"       )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_DEFER"          ] pub const DEFER         : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_DEFER         );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_ALWAYS_ON"   )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_ALWAYS_ON"      ] pub const ALWAYS_ON     : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_ALWAYS_ON     );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_ALWAYS_OFF"  )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_ALWAYS_OFF"     ] pub const ALWAYS_OFF    : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_ALLOW_DOWNGRADE_DYNAMIC_CODE_POLICY_ALWAYS_OFF    );
@@ -75,7 +75,7 @@ pub mod allow_downgrade_dynamic_code_policy {
 /// Windows 10+
 pub mod speculative_store_bypass_disable {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_MASK"           )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_MASK"              ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_MASK             );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_MASK"           )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_MASK"              ] pub const MASK          : MitigationPolicyMask2      = MitigationPolicyMask2     (PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_MASK             );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_DEFER"          )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_DEFER"             ] pub const DEFER         : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_DEFER            );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_ALWAYS_ON"      )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_ALWAYS_ON"         ] pub const ALWAYS_ON     : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_ALWAYS_ON        );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_ALWAYS_OFF"     )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_ALWAYS_OFF"        ] pub const ALWAYS_OFF    : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_SPECULATIVE_STORE_BYPASS_DISABLE_ALWAYS_OFF       );
@@ -87,7 +87,7 @@ pub mod speculative_store_bypass_disable {
 /// Windows 10+
 pub mod cet_user_shadow_stacks {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_MASK"                     )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_MASK"                        ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_MASK                       );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_MASK"                     )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_MASK"                        ] pub const MASK          : MitigationPolicyMask2      = MitigationPolicyMask2     (PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_MASK                       );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_DEFER"                    )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_DEFER"                       ] pub const DEFER         : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_DEFER                      );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_ALWAYS_ON"                )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_ALWAYS_ON"                   ] pub const ALWAYS_ON     : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_ALWAYS_ON                  );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_ALWAYS_OFF"               )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_ALWAYS_OFF"                  ] pub const ALWAYS_OFF    : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_CET_USER_SHADOW_STACKS_ALWAYS_OFF                 );
@@ -99,7 +99,7 @@ pub mod cet_user_shadow_stacks {
 /// Windows 10+
 pub mod user_cet_set_context_ip_validation {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_MASK"         )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_MASK"            ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_MASK           );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_MASK"         )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_MASK"            ] pub const MASK          : MitigationPolicyMask2      = MitigationPolicyMask2     (PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_MASK           );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_DEFER"        )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_DEFER"           ] pub const DEFER         : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_DEFER          );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_ALWAYS_ON"    )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_ALWAYS_ON"       ] pub const ALWAYS_ON     : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_ALWAYS_ON      );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_ALWAYS_OFF"   )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_ALWAYS_OFF"      ] pub const ALWAYS_OFF    : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_USER_CET_SET_CONTEXT_IP_VALIDATION_ALWAYS_OFF     );
@@ -111,7 +111,7 @@ pub mod user_cet_set_context_ip_validation {
 /// Windows 10+
 pub mod block_non_cet_binaries {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_MASK"                     )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_MASK"                        ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_MASK                       );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_MASK"                     )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_MASK"                        ] pub const MASK          : MitigationPolicyMask2      = MitigationPolicyMask2     (PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_MASK                       );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_DEFER"                    )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_DEFER"                       ] pub const DEFER         : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_DEFER                      );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_ALWAYS_ON"                )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_ALWAYS_ON"                   ] pub const ALWAYS_ON     : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_ALWAYS_ON                  );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_ALWAYS_OFF"               )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_ALWAYS_OFF"                  ] pub const ALWAYS_OFF    : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_BLOCK_NON_CET_BINARIES_ALWAYS_OFF                 );
@@ -123,7 +123,7 @@ pub mod block_non_cet_binaries {
 /// Windows 10+
 pub mod xtended_control_flow_guard {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_MASK"                 )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_MASK"                    ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_MASK                   );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_MASK"                 )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_MASK"                    ] pub const MASK          : MitigationPolicyMask2      = MitigationPolicyMask2     (PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_MASK                   );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_DEFER"                )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_DEFER"                   ] pub const DEFER         : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_DEFER                  );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_ALWAYS_ON"            )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_ALWAYS_ON"               ] pub const ALWAYS_ON     : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_ALWAYS_ON              );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_ALWAYS_OFF"           )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_ALWAYS_OFF"              ] pub const ALWAYS_OFF    : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_XTENDED_CONTROL_FLOW_GUARD_ALWAYS_OFF             );
@@ -135,7 +135,7 @@ pub mod xtended_control_flow_guard {
 /// Windows 10+
 pub mod pointer_auth_user_ip {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_MASK"                       )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_MASK"                          ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_MASK                         );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_MASK"                       )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_MASK"                          ] pub const MASK          : MitigationPolicyMask2      = MitigationPolicyMask2     (PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_MASK                         );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_DEFER"                      )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_DEFER"                         ] pub const DEFER         : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_DEFER                        );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_ALWAYS_ON"                  )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_ALWAYS_ON"                     ] pub const ALWAYS_ON     : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_ALWAYS_ON                    );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_ALWAYS_OFF"                 )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_ALWAYS_OFF"                    ] pub const ALWAYS_OFF    : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_POINTER_AUTH_USER_IP_ALWAYS_OFF                   );
@@ -147,7 +147,7 @@ pub mod pointer_auth_user_ip {
 /// Windows 10+
 pub mod cet_dynamic_apis_out_of_proc_only {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_MASK"          )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_MASK"             ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_MASK            );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_MASK"          )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_MASK"             ] pub const MASK          : MitigationPolicyMask2      = MitigationPolicyMask2     (PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_MASK            );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_DEFER"         )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_DEFER"            ] pub const DEFER         : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_DEFER           );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_ALWAYS_ON"     )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_ALWAYS_ON"        ] pub const ALWAYS_ON     : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_ALWAYS_ON       );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_ALWAYS_OFF"    )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_ALWAYS_OFF"       ] pub const ALWAYS_OFF    : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_CET_DYNAMIC_APIS_OUT_OF_PROC_ONLY_ALWAYS_OFF      );
@@ -159,7 +159,7 @@ pub mod cet_dynamic_apis_out_of_proc_only {
 /// Windows 10+
 pub mod restrict_core_sharing {
     use super::*;
-    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_MASK"                      )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_MASK"                         ] pub const MASK          : MitigationPolicyFlags2Mask = MitigationPolicyFlags2Mask(PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_MASK                        );
+    #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_MASK"                      )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_MASK"                         ] pub const MASK          : MitigationPolicyMask2      = MitigationPolicyMask2     (PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_MASK                        );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_DEFER"                     )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_DEFER"                        ] pub const DEFER         : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_DEFER                       );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_ALWAYS_ON"                 )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_ALWAYS_ON"                    ] pub const ALWAYS_ON     : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_ALWAYS_ON                   );
     #[doc(alias = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_ALWAYS_OFF"                )] #[doc = "PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_ALWAYS_OFF"                   ] pub const ALWAYS_OFF    : MitigationPolicyFlags2     = MitigationPolicyFlags2    (PROCESS_CREATION_MITIGATION_POLICY2_RESTRICT_CORE_SHARING_ALWAYS_OFF                  );
@@ -168,11 +168,11 @@ pub mod restrict_core_sharing {
 
 impl Debug for MitigationPolicyFlags2 {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
-        Debug::fmt(&MitigationPolicyFlags2Mask(self.0), fmt)
+        Debug::fmt(&MitigationPolicyMask2(self.0), fmt)
     }
 }
 
-impl Debug for MitigationPolicyFlags2Mask {
+impl Debug for MitigationPolicyMask2 {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         flags!(self.0, fmt, "0x{:016X}", [
             PROCESS_CREATION_MITIGATION_POLICY2_LOADER_INTEGRITY_CONTINUITY_AUDIT,
