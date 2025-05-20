@@ -1,7 +1,4 @@
-use firehazard::access::{GENERIC_READ, GENERIC_WRITE};
 use firehazard::prelude::*;
-
-use winapi::um::fileapi::OPEN_EXISTING;
 
 use std::io::*;
 use std::process::exit;
@@ -53,9 +50,8 @@ fn client(mut args: std::env::Args) {
         exit(1);
     }
 
-    // Safety: sound as we've avoided FILE_FLAG_OVERLAPPED here
-    let server_to_client = unsafe { pipe::sync::OwnedReader::from_raw_nn(create_file_w(SERVER_TO_CLIENT_PIPE_NAME, GENERIC_READ,  None, None, OPEN_EXISTING, 0, None).unwrap().into_handle_nn()) };
-    let client_to_server = unsafe { pipe::sync::OwnedWriter::from_raw_nn(create_file_w(CLIENT_TO_SERVER_PIPE_NAME, GENERIC_WRITE, None, None, OPEN_EXISTING, 0, None).unwrap().into_handle_nn()) };
+    let server_to_client = pipe::sync::read_existing(SERVER_TO_CLIENT_PIPE_NAME).unwrap();
+    let client_to_server = pipe::sync::write_existing(CLIENT_TO_SERVER_PIPE_NAME).unwrap();
     thread::scope(|s|{
         thread::Builder::new().name(format!("pipe reading thread")).spawn_scoped(s, ||{
             let mut pipe = BufReader::new(&server_to_client);

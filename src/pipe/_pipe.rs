@@ -42,7 +42,7 @@
 //! [`std::io::PipeWriter`]:    https://doc.rust-lang.org/std/io/struct.PipeWriter.html
 
 use crate::prelude::*;
-#[cfg(doc)] use crate::io::{Read, Write, Seek};
+#[cfg(doc)] use crate::io::{Read, Write};
 
 
 
