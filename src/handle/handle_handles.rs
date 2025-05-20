@@ -93,9 +93,9 @@ impl CloneToOwned for Borrowed<'_>  {}
 
     impl AsLocalHandle   for Invalid                { fn as_handle(&self)       -> HANDLE   { self.0 } }
     impl AsLocalHandleNN for InvalidNN              { fn as_handle_nn(&self)    -> HANDLENN { self.0 } }
-    impl From<InvalidNN> for handle::Owned          { fn from(_: InvalidNN) -> Self { unsafe { core::mem::transmute(winapi::um::handleapi::INVALID_HANDLE_VALUE) } } }
-    impl From<InvalidNN> for handle::Borrowed<'_>   { fn from(_: InvalidNN) -> Self { unsafe { core::mem::transmute(winapi::um::handleapi::INVALID_HANDLE_VALUE) } } }
-    impl From<InvalidNN> for handle::Pseudo<'_>     { fn from(_: InvalidNN) -> Self { unsafe { core::mem::transmute(winapi::um::handleapi::INVALID_HANDLE_VALUE) } } }
+    impl From<InvalidNN> for handle::Owned          { fn from(i: InvalidNN) -> Self { unsafe { core::mem::transmute(i.0) } } }
+    impl From<InvalidNN> for handle::Borrowed<'_>   { fn from(i: InvalidNN) -> Self { unsafe { core::mem::transmute(i.0) } } }
+    impl From<InvalidNN> for handle::Pseudo<'_>     { fn from(i: InvalidNN) -> Self { unsafe { core::mem::transmute(i.0) } } }
 
     pub(crate) fn null()                    -> impl AsLocalHandle                                                                                                           { Invalid(null_mut()) }
     pub(crate) fn invalid_value()           -> impl AsLocalHandle + AsLocalHandleNN + Into<handle::Owned> + Into<handle::Borrowed<'static>> + Into<handle::Pseudo<'static>> { InvalidNN(unsafe { NonNull::new_unchecked(winapi::um::handleapi::INVALID_HANDLE_VALUE.cast()) }) }
