@@ -12,9 +12,6 @@ pub fn call_a<'out_buffer>(
     out_buffer:         &'out_buffer mut [core::mem::MaybeUninit<u8>],
     timeout:            impl Into<firehazard::NMPWAIT>,
 ) -> Result<&'out_buffer mut [u8], firehazard::Error> {
-    use crate::From32;
-    use abistr::AsCStr;
-
     let in_buffer_len32     = u32::try_from(in_buffer .len()).map_err(|_| ERROR::INVALID_PARAMETER)?;
     let out_buffer_len32    = u32::try_from(out_buffer.len()).unwrap_or(!0);
     let timeout             = timeout.into().0;
@@ -32,7 +29,7 @@ pub fn call_a<'out_buffer>(
         )})
     )??;
 
-    Ok(unsafe { crate::slice_assume_init_mut(&mut out_buffer[..usize::from32(read_bytes)]) })
+    Ok(unsafe { slice::assume_init_mut(&mut out_buffer[..usize::from32(read_bytes)]) })
 }
 
 
@@ -48,9 +45,6 @@ pub fn call_w<'out_buffer>(
     out_buffer:         &'out_buffer mut [core::mem::MaybeUninit<u8>],
     timeout:            impl Into<firehazard::NMPWAIT>,
 ) -> Result<&'out_buffer mut [u8], firehazard::Error> {
-    use crate::From32;
-    use abistr::AsCStr;
-
     let in_buffer_len32     = u32::try_from(in_buffer .len()).map_err(|_| ERROR::INVALID_PARAMETER)?;
     let out_buffer_len32    = u32::try_from(out_buffer.len()).unwrap_or(!0);
     let timeout             = timeout.into().0;
@@ -68,5 +62,5 @@ pub fn call_w<'out_buffer>(
         )})
     )??;
 
-    Ok(unsafe { crate::slice_assume_init_mut(&mut out_buffer[..usize::from32(read_bytes)]) })
+    Ok(unsafe { slice::assume_init_mut(&mut out_buffer[..usize::from32(read_bytes)]) })
 }

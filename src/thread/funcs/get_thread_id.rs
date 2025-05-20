@@ -57,8 +57,6 @@ pub(crate) fn is_thread_handle(handle: &impl firehazard::AsLocalHandle) -> bool 
 
 
 tests! {
-    use abistr::cstr16;
-    use firehazard::*;
     use winapi::shared::winerror::{ERROR_ACCESS_DENIED, ERROR_INVALID_HANDLE};
 
     #[test] #[strict_handle_check_exception = 0] fn is_thread_handle_null()                             { assert!(!is_thread_handle(&crate::handle::invalid::null()                                         )) }

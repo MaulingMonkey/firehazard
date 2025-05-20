@@ -21,5 +21,5 @@ pub fn peek<'buffer, 'a, 'b>(
         bytes_left_this_message .into().map_or(null_mut(), |v| v),
     )})?;
 
-    Ok(buffer.map(|b| unsafe { slice_assume_init_mut(&mut (*b)[..usize::from32(bytes_read)]) }))
+    Ok(buffer.map(|b| unsafe { slice::assume_init_mut(&mut (*b)[..usize::from32(bytes_read)]) }))
 }

@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-use abistr::{CStrPtr, Unit};
+use abistr::Unit;
 
 use ialloc::meta::Stateless;
 use ialloc::thin::Free;

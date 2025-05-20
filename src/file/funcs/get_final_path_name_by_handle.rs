@@ -7,7 +7,6 @@ pub fn get_final_path_name_by_handle_a_inplace<'path>(
     path:   &'path mut [core::mem::MaybeUninit<u8>],
     flags:  u32, // TODO: type
 ) -> Result<&'path mut [u8], firehazard::Error> {
-    use crate::From32;
     let buf_chars = path.len().try_into().unwrap_or(!0_u32);
     let full_chars = usize::from32(unsafe { winapi::um::fileapi::GetFinalPathNameByHandleA(
         handle.as_handle().cast(),
@@ -16,7 +15,7 @@ pub fn get_final_path_name_by_handle_a_inplace<'path>(
         flags
     )});
     firehazard::Error::get_last_if(full_chars == 0 || full_chars > path.len())?;
-    Ok(unsafe { crate::slice_assume_init_mut(&mut path[..full_chars]) })
+    Ok(unsafe { slice::assume_init_mut(&mut path[..full_chars]) })
 }
 
 
@@ -30,7 +29,6 @@ pub fn get_final_path_name_by_handle_w_inplace<'path>(
     path:   &'path mut [core::mem::MaybeUninit<u16>],
     flags:  u32, // TODO: type
 ) -> Result<&'path mut [u16], firehazard::Error> {
-    use crate::From32;
     let buf_chars = path.len().try_into().unwrap_or(!0_u32);
     let full_chars = usize::from32(unsafe { winapi::um::fileapi::GetFinalPathNameByHandleW(
         handle.as_handle().cast(),
@@ -39,7 +37,7 @@ pub fn get_final_path_name_by_handle_w_inplace<'path>(
         flags
     )});
     firehazard::Error::get_last_if(full_chars == 0 || full_chars > path.len())?;
-    Ok(unsafe { crate::slice_assume_init_mut(&mut path[..full_chars]) })
+    Ok(unsafe { slice::assume_init_mut(&mut path[..full_chars]) })
 }
 
 
@@ -96,7 +94,6 @@ pub fn get_final_path_name_by_handle_w_inplace<'path>(
 /// *   `ERROR_ACCESS_DENIED`               &mdash; seen by the `max_sandbox`'s debugging of LoadDll for a very restricted process
 ///
 pub fn get_final_path_name_by_handle(handle: &impl firehazard::AsLocalHandle, flags: u32) -> Result<std::path::PathBuf, firehazard::Error> {
-    use crate::From32;
     use std::ffi::OsString;
     use std::os::windows::prelude::OsStringExt;
     use std::path::PathBuf;
@@ -110,7 +107,7 @@ pub fn get_final_path_name_by_handle(handle: &impl firehazard::AsLocalHandle, fl
         flags
     )});
     firehazard::Error::get_last_if(full_chars == 0)?;
-    if let Some(buf) = buf.get_mut(..full_chars) { return Ok(PathBuf::from(OsString::from_wide(unsafe { crate::slice_assume_init_mut(buf) }))) }
+    if let Some(buf) = buf.get_mut(..full_chars) { return Ok(PathBuf::from(OsString::from_wide(unsafe { slice::assume_init_mut(buf) }))) }
 
     // else `buf` was too small:
     let mut buf = std::vec![MaybeUninit::uninit(); full_chars+1];
@@ -123,28 +120,28 @@ pub fn get_final_path_name_by_handle(handle: &impl firehazard::AsLocalHandle, fl
 tests! {
     #[test] fn get_final_path_name_by_handle_null() {
         assert_eq!(
-            get_final_path_name_by_handle(&crate::handle::invalid::null(), 0),
+            get_final_path_name_by_handle(&handle::invalid::null(), 0),
             Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)),
         );
     }
 
     #[test] fn get_final_path_name_by_handle_invalid_handle_value() {
         assert_eq!(
-            get_final_path_name_by_handle(&crate::handle::invalid::invalid_value(), 0),
+            get_final_path_name_by_handle(&handle::invalid::invalid_value(), 0),
             Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)),
         );
     }
 
     #[test] #[isolate] fn get_final_path_name_by_handle_bad_handle_value() {
         assert_eq!(
-            get_final_path_name_by_handle(&crate::handle::invalid::never_valid(), 0),
+            get_final_path_name_by_handle(&handle::invalid::never_valid(), 0),
             Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)),
         );
     }
 
     #[test] #[isolate] fn get_final_path_name_by_handle_dangling() {
         assert_eq!(
-            get_final_path_name_by_handle(&crate::handle::invalid::dangling(), 0),
+            get_final_path_name_by_handle(&handle::invalid::dangling(), 0),
             Err(firehazard::Error(winapi::shared::winerror::ERROR_INVALID_HANDLE)),
         );
     }
@@ -175,7 +172,6 @@ tests! {
     }
 
     #[test] fn get_final_path_name_by_handle_job() {
-        use firehazard::abistr::cstr16;
         let anon_job  = firehazard::create_job_object_w(None, ()).unwrap();
         let named_job = firehazard::create_job_object_w(None, cstr16!("Local/firehazard/get_final_path_name_by_handle_job")).unwrap();
 

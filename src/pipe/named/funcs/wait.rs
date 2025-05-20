@@ -10,7 +10,6 @@ pub fn wait_a(
     name:           impl string::InNarrow,
     timeout:        impl Into<firehazard::NMPWAIT>,
 ) -> Result<(), firehazard::Error> {
-    use abistr::AsCStr;
     let timeout = timeout.into().0;
 
     string::convert_to_cstrnn::<{limit::stack::PIPE_NAME}, _, _>(name, |name| {
@@ -31,7 +30,6 @@ pub fn wait_w(
     name:           impl string::InWide,
     timeout:        impl Into<firehazard::NMPWAIT>,
 ) -> Result<(), firehazard::Error> {
-    use abistr::AsCStr;
     let timeout = timeout.into().0;
 
     string::convert_to_cstrnn::<{limit::stack::PIPE_NAME}, _, _>(name, |name| {

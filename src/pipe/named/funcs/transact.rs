@@ -8,7 +8,6 @@ pub fn transact<'buffer>(
     out_buffer:     &'buffer mut [core::mem::MaybeUninit<u8>],
     overlapped:     Option<core::convert::Infallible>,
 ) -> Result<&'buffer mut [u8], firehazard::Error> {
-    use crate::From32;
     use winapi::shared::winerror::ERROR_BAD_LENGTH;
 
     let in_buffer_len32     = u32::try_from(in_buffer.len()).map_err(|_| ERROR_BAD_LENGTH)?;
@@ -23,10 +22,10 @@ pub fn transact<'buffer>(
         out_buffer          .as_mut_ptr().cast(),
         out_buffer_len32,
         &mut bytes_read,
-        crate::none2null(overlapped),
+        none2null(overlapped),
     )})?;
 
-    Ok(unsafe { crate::slice_assume_init_mut(&mut out_buffer[..usize::from32(bytes_read)]) })
+    Ok(unsafe { slice::assume_init_mut(&mut out_buffer[..usize::from32(bytes_read)]) })
 }
 
 

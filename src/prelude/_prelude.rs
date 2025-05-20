@@ -61,6 +61,5 @@ mod c { #[doc(no_inline)] pub use crate::Error; }
 #[doc(no_inline)] pub(crate) use util::{
     From32,
     none2null,
-    slice_assume_init_mut,
-    slice_assume_init_ref,
+    slice,
 };

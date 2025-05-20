@@ -51,8 +51,6 @@ pub fn get_client_computer_name_a<'name>(
     handle:                 &impl firehazard::AsLocalHandle, // XXX
     client_computer_name:   &'name mut [core::mem::MaybeUninit<u8>],
 ) -> Result<&'name [u8], firehazard::Error> { // XXX: CStr?
-    use crate::From32;
-
     let client_computer_name_len32 = u32::try_from(client_computer_name.len()).unwrap_or(!0);
     let client_computer_name_len = usize::from32(client_computer_name_len32);
     let client_computer_name = &mut client_computer_name[..client_computer_name_len];
@@ -63,7 +61,7 @@ pub fn get_client_computer_name_a<'name>(
     )})?;
     let nul = client_computer_name.iter().copied().position(|b| 0 == unsafe { b.assume_init() });
     let client_computer_name = &mut client_computer_name[..nul.unwrap_or(client_computer_name_len)];
-    Ok(unsafe { crate::slice_assume_init_mut(client_computer_name) })
+    Ok(unsafe { slice::assume_init_mut(client_computer_name) })
 }
 
 
@@ -77,8 +75,6 @@ pub fn get_client_computer_name_w<'name>(
     handle:                 &impl firehazard::AsLocalHandle, // XXX
     client_computer_name:   &'name mut [core::mem::MaybeUninit<u16>],
 ) -> Result<&'name mut [u16], firehazard::Error> { // XXX: OsStr?
-    use crate::From32;
-
     let client_computer_name_len32 = u32::try_from(client_computer_name.len()).unwrap_or(!0);
     let client_computer_name_len = usize::from32(client_computer_name_len32);
     let client_computer_name = &mut client_computer_name[..client_computer_name_len];
@@ -89,5 +85,5 @@ pub fn get_client_computer_name_w<'name>(
     )})?;
     let nul = client_computer_name.iter().copied().position(|b| 0 == unsafe { b.assume_init() });
     let client_computer_name = &mut client_computer_name[..nul.unwrap_or(client_computer_name_len)];
-    Ok(unsafe { crate::slice_assume_init_mut(client_computer_name) })
+    Ok(unsafe { slice::assume_init_mut(client_computer_name) })
 }

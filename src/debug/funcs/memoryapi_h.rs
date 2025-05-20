@@ -38,5 +38,5 @@ pub unsafe fn read_process_memory<'a, 'p, T>(
     )})?;
     if read > size { Err(ERROR_BUFFER_OVERFLOW)?; }
     let n = read/size_of::<T>();
-    Ok(unsafe { slice_assume_init_ref(&buffer[..n]) })
+    Ok(unsafe { slice::assume_init_ref(&buffer[..n]) })
 }

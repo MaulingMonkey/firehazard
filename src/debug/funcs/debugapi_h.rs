@@ -1,7 +1,5 @@
 use crate::prelude::*;
 
-use abistr::AsCStr;
-
 use winapi::shared::minwindef::FALSE;
 use winapi::um::debugapi::*;
 use winapi::um::winbase::INFINITE;
