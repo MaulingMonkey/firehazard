@@ -4,7 +4,7 @@ use winapi::um::minwinbase::SECURITY_ATTRIBUTES;
 
 
 #[doc(alias = "SECURITY_ATTRIBUTES")]
-/// \[[microsoft.com](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa379560(v=vs.85))\]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/wtypesbase/ns-wtypesbase-security_attributes)\]
 /// SECURITY_ATTRIBUTES
 ///
 #[derive(Clone, Copy, Default)]
