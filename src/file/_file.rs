@@ -5,6 +5,7 @@
 
 use crate::prelude::*;
 
+mod file_access;                pub use file_access::*;
 mod file_constants;             pub use file_constants::*;
 mod file_share;                 pub use file_share::*;
 mod file_type;                  pub use file_type::*;
