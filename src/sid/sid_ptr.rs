@@ -15,6 +15,9 @@ use core::ops::Deref;
 ///
 #[derive(Clone, Copy)] #[repr(transparent)] pub struct Ptr<'a>(*mut SID, PhantomData<&'a SID>);
 
+unsafe impl Send for Ptr<'_> {}
+unsafe impl Sync for Ptr<'_> {}
+
 impl Debug for Ptr<'_> { fn fmt(&self, fmt: &mut Formatter) -> fmt::Result { Debug::fmt(&**self, fmt) } }
 impl Deref for Ptr<'_> { type Target = sid::Value; fn deref(&self) -> &Self::Target { unsafe { core::mem::transmute(self) } } }
 

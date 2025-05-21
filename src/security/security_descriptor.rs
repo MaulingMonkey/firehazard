@@ -11,3 +11,6 @@ use winapi::um::winnt::*;
     pub(super) desc:    SECURITY_DESCRIPTOR,
     pub(super) phantom: PhantomData<(sid::Ptr<'b>, acl::Ptr<'b>)>,
 }
+
+unsafe impl Send for Descriptor<'_> {}
+unsafe impl Sync for Descriptor<'_> {}

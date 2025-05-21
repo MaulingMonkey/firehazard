@@ -21,6 +21,9 @@ use core::hash::Hash;
 // DO NOT IMPLEMENT:
 // * Clone, Copy: Given `&'a Value`, lifetime of the underlying SID may be limited to `'a` - these traits would allow a copy to escape to `'static`.
 
+unsafe impl Send for Value {}
+unsafe impl Sync for Value {}
+
 impl Value {
     // These fns return different types!  PSID is `*mut c_void`, not `*mut SID` !
     pub fn as_psid(&self) -> PSID { self.0.cast() }

@@ -13,6 +13,9 @@ use winapi::um::minwinbase::SECURITY_ATTRIBUTES;
     phantom:     PhantomData<security::Descriptor<'sd>>,
 }
 
+unsafe impl Send for Attributes<'_> {}
+unsafe impl Sync for Attributes<'_> {}
+
 impl<'sd> Attributes<'sd> {
     pub fn new(security_descriptor: Option<&'sd security::Descriptor<'sd>>, inherit_handle: bool) -> Self {
         let security_descriptor = security_descriptor.map_or(null(), |d| d);
