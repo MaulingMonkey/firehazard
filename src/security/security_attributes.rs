@@ -7,7 +7,7 @@ use winapi::um::minwinbase::SECURITY_ATTRIBUTES;
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/wtypesbase/ns-wtypesbase-security_attributes)\]
 /// SECURITY_ATTRIBUTES
 ///
-#[derive(Clone, Copy, Default)]
+#[derive(Clone, Copy)]
 #[repr(transparent)] pub struct Attributes<'sd> {
     attributes:  SECURITY_ATTRIBUTES,
     phantom:     PhantomData<security::Descriptor<'sd>>,
@@ -45,6 +45,8 @@ impl<'sd> Attributes<'sd> {
         a
     }
 }
+
+impl Default for Attributes<'_> { fn default() -> Self { Self::new(None, false) } } // sets attributes.nLength
 
 impl From<&    Attributes<'_>> for *const SECURITY_ATTRIBUTES { fn from(a: &    Attributes) -> Self { &    a.attributes } }
 impl From<&mut Attributes<'_>> for *mut   SECURITY_ATTRIBUTES { fn from(a: &mut Attributes) -> Self { &mut a.attributes } }
