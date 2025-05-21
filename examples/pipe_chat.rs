@@ -85,6 +85,18 @@ fn server(mut args: std::env::Args) {
         exit(1);
     }
 
+    // TODO: make logon_sid return a wrapper which is less gross? and returns an error even if windows doesn't if GroupCount != 1?
+    let token = open_process_token(get_current_process(), token::QUERY).unwrap();
+    let logon = token.logon_sid().unwrap();
+    let logon = logon.groups()[0].sid;
+
+    let rev = acl::REVISION; // TODO: make acl::REVISION nonsense more internal?  choice between it and REVISION_DS is if object guids are present...?
+    let mut dacl = acl::Builder::new(rev);
+    dacl.add_access_allowed_ace(rev, file::GENERIC_READ | file::GENERIC_WRITE, logon).unwrap(); // If the client needs to open the pipe for read or write, the server needs the other, even though it's creating the pipe.
+    dacl.finish().unwrap(); // TODO: gross
+    let security_descriptor = security::DescriptorBuilder::new().dacl(true, Some(dacl.as_acl_ptr()), false).unwrap().finish(); // TODO: dacl.as_acl_ptr() is also gross
+    let security_attributes = security::Attributes::new(Some(&security_descriptor), false);
+
     thread::scope(|s|{
         static SERVER_TO_CLIENT_PIPES : Mutex<Vec<pipe::named::Connected>> = Mutex::new(Vec::new());
 
@@ -92,7 +104,7 @@ fn server(mut args: std::env::Args) {
 
             // client to server
 
-            let pipe = create_client_to_server_pipe(no == 1);
+            let pipe = create_client_to_server_pipe(no == 1, &security_attributes);
             thread::Builder::new().name(format!("client to server pipe listener #{no}")).spawn_scoped(s, move || {
                 let mut pipe = pipe;
                 loop {
@@ -109,11 +121,11 @@ fn server(mut args: std::env::Args) {
                             });
                         }
                     }).unwrap();
-                    pipe = create_client_to_server_pipe(false);
+                    pipe = create_client_to_server_pipe(false, &security_attributes);
                 }
             }).unwrap();
 
-            fn create_client_to_server_pipe(first: bool) -> pipe::named::Listener {
+            fn create_client_to_server_pipe(first: bool, security_attributes: &security::Attributes) -> pipe::named::Listener {
                 pipe::named::create_w(
                     CLIENT_TO_SERVER_PIPE_NAME,
                     pipe::ACCESS_INBOUND | (u32::from(first) * file::FLAG_FIRST_PIPE_INSTANCE),
@@ -122,23 +134,23 @@ fn server(mut args: std::env::Args) {
                     CLIENT_TO_SERVER_BUFFER_SIZE,
                     0,
                     pipe::NMPWAIT::USE_DEFAULT_WAIT,
-                    None
+                    Some(security_attributes)
                 ).unwrap()
             }
 
             // server to client
 
-            let pipe = create_server_to_client_pipe(no == 1);
+            let pipe = create_server_to_client_pipe(no == 1, &security_attributes);
             thread::Builder::new().name(format!("server to client pipe listener #{no}")).spawn_scoped(s, move || {
                 let mut pipe = pipe;
                 loop {
                     let accepted = pipe.accept().unwrap();
                     SERVER_TO_CLIENT_PIPES.lock().unwrap().push(accepted);
-                    pipe = create_server_to_client_pipe(false);
+                    pipe = create_server_to_client_pipe(false, &security_attributes);
                 }
             }).unwrap();
 
-            fn create_server_to_client_pipe(first: bool) -> pipe::named::Listener {
+            fn create_server_to_client_pipe(first: bool, security_attributes: &security::Attributes) -> pipe::named::Listener {
                 pipe::named::create_w(
                     SERVER_TO_CLIENT_PIPE_NAME,
                     pipe::ACCESS_OUTBOUND | (u32::from(first) * file::FLAG_FIRST_PIPE_INSTANCE),
@@ -147,7 +159,7 @@ fn server(mut args: std::env::Args) {
                     0,
                     SERVER_TO_CLIENT_BUFFER_SIZE,
                     pipe::NMPWAIT::USE_DEFAULT_WAIT,
-                    None
+                    Some(security_attributes)
                 ).unwrap()
             }
 
