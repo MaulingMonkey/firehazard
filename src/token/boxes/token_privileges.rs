@@ -1,11 +1,12 @@
 use super::*;
 
 use crate::prelude::*;
-use crate::alloc::*;
+use crate::alloc::{CBox, CBoxSized};
 
 use winapi::um::winnt::TOKEN_PRIVILEGES;
 
 use core::fmt::{self, Debug, Formatter};
+use core::mem::offset_of;
 
 
 
@@ -23,20 +24,15 @@ impl BoxTokenPrivileges {
 
     pub fn new(v: impl Into<Self>) -> Self { v.into() }
 
+    pub fn as_winapi(&mut self) -> *mut TOKEN_PRIVILEGES { self.0.as_mut_ptr().cast() }
+
     pub fn privilege_count(&self) -> u32 { self.0.PrivilegeCount }
 
-    pub fn privileges    (&    self) -> &    [privilege::LuidAndAttributes] { unsafe { core::slice::from_raw_parts    (self.privileges_ptr    (), self.privileges_len()) } }
-    pub fn privileges_mut(&mut self) -> &mut [privilege::LuidAndAttributes] { unsafe { core::slice::from_raw_parts_mut(self.privileges_mut_ptr(), self.privileges_len()) } }
+    pub fn privileges    (&    self) -> &    [privilege::LuidAndAttributes] { unsafe { slice::from_flexible_array_ref(self.0.as_ptr()    .cast::<TokenPrivileges>(), |p| usize::from32(p.privilege_count), |p| &raw const (*p).privileges) } }
+    pub fn privileges_mut(&mut self) -> &mut [privilege::LuidAndAttributes] { unsafe { slice::from_flexible_array_mut(self.0.as_mut_ptr().cast::<TokenPrivileges>(), |p| usize::from32(p.privilege_count), |p| &raw mut   (*p).privileges) } }
 
-    pub fn as_token_privileges_mut_ptr(&mut self) -> *mut TOKEN_PRIVILEGES { self.0.as_mut_ptr().cast() }
-
-    fn privileges_len(&self) -> usize { usize::from32(self.privilege_count()) }
-
-    fn privileges_ptr    (&    self) -> *const privilege::LuidAndAttributes { provenance_addr    (self.0.as_ptr(),     self.0.Privileges.as_ptr().cast()    ) }
-    fn privileges_mut_ptr(&mut self) -> *mut   privilege::LuidAndAttributes { provenance_addr_mut(self.0.as_mut_ptr(), self.0.Privileges.as_mut_ptr().cast()) }
-
-    const fn max_usize(a: usize, b: usize) -> usize { if a < b { b } else { a } }
-    const PRIVILEGES_OFFSET : usize = Self::max_usize(size_of ::<u32>(), align_of::<privilege::LuidAndAttributes>());
+    #[doc(hidden)] #[deprecated = "renamed to `as_winapi`"]
+    pub fn as_token_privileges_mut_ptr(&mut self) -> *mut TOKEN_PRIVILEGES { self.as_winapi() }
 }
 
 impl Debug for BoxTokenPrivileges {
@@ -50,7 +46,7 @@ impl Debug for BoxTokenPrivileges {
 impl From<&'_ [privilege::LuidAndAttributes]> for BoxTokenPrivileges {
     fn from(laa: &'_ [privilege::LuidAndAttributes]) -> Self {
         let len32 = u32::try_from(laa.len()).unwrap();
-        let n_bytes = BoxTokenPrivileges::PRIVILEGES_OFFSET + size_of_val(laa).max(size_of::<privilege::LuidAndAttributes>());
+        let n_bytes = offset_of!(TOKEN_PRIVILEGES, Privileges) + size_of_val(laa).max(size_of::<privilege::LuidAndAttributes>());
         let mut data = CBoxSized::<TOKEN_PRIVILEGES>::new_oversized(Default::default(), n_bytes);
         data.PrivilegeCount = len32;
         let mut data = BoxTokenPrivileges::from_raw(data);
@@ -58,3 +54,19 @@ impl From<&'_ [privilege::LuidAndAttributes]> for BoxTokenPrivileges {
         data
     }
 }
+
+
+
+#[doc(alias = "TOKEN_PRIVILEGES")]
+/// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-token_privileges)\]
+/// TOKEN_PRIVILEGES
+///
+#[repr(C)] struct TokenPrivileges {
+    privilege_count:    u32,
+    privileges:         [privilege::LuidAndAttributes; 1],
+}
+
+structure!(@assert layout TokenPrivileges => TOKEN_PRIVILEGES {
+    privilege_count     == PrivilegeCount,
+    privileges          == Privileges,
+});

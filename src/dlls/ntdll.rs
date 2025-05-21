@@ -63,7 +63,7 @@ impl core::fmt::Debug for PUBLIC_OBJECT_BASIC_INFORMATION {
 impl PUBLIC_OBJECT_TYPE_INFORMATION {
     pub fn type_name(&self) -> &[u16] {
         // Why yes, `UNICODE_STRING::Length` *is* in bytes for some god forsaken reason.
-        unsafe { core::slice::from_raw_parts(self.TypeName.Buffer, (self.TypeName.Length / 2).into()) }
+        unsafe { slice::from_nullable_len_ref(self.TypeName.Buffer, (self.TypeName.Length / 2).into()) }
     }
 }
 

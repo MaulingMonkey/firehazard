@@ -15,7 +15,7 @@ use winapi::um::winnt::*;
 
 impl<'s> Capabilities<'s> {
     pub fn app_container_sid(&self) -> sid::Ptr<'s> { unsafe { sid::Ptr::from_raw_unchecked(self.capabilities.AppContainerSid.cast()) } }
-    pub fn capabilities(&self) -> &[sid::AndAttributes<'s>] { unsafe { core::slice::from_raw_parts(self.capabilities.Capabilities.cast(), usize::from32(self.capabilities.CapabilityCount)) } }
+    pub fn capabilities(&self) -> &[sid::AndAttributes<'s>] { unsafe { slice::from_nullable_len_ref(self.capabilities.Capabilities.cast(), usize::from32(self.capabilities.CapabilityCount)) } }
 }
 
 impl From<&    Capabilities<'_>> for *const SECURITY_CAPABILITIES { fn from(c: &    Capabilities) -> Self { &    c.capabilities } }

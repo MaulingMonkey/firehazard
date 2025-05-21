@@ -153,7 +153,7 @@ unsafe fn adjust_token_privileges(
     _previous_state:            Option<Infallible>,
     _return_length:             Option<Infallible>,
 ) -> firehazard::Result<()> {
-    let new_state = new_state.map_or(null_mut(), |s| s.as_token_privileges_mut_ptr()).cast();
+    let new_state = new_state.map_or(null_mut(), |s| s.as_winapi()).cast();
     firehazard::Error::get_last_if(0 == unsafe { winapi::um::securitybaseapi::AdjustTokenPrivileges(
         token.as_handle(),
         disable_all_privileges as _,

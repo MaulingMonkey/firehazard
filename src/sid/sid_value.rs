@@ -70,7 +70,7 @@ impl Value {
 
         let result = {
             let domains : &LSA_REFERENCED_DOMAIN_LIST = unsafe { &*domains };
-            let domains = unsafe { core::slice::from_raw_parts(domains.Domains, usize::from32(domains.Entries)) };
+            let domains = unsafe { slice::from_nullable_len_ref(domains.Domains, usize::from32(domains.Entries)) };
             let name : &LSA_TRANSLATED_NAME = unsafe { &*names };
             let valid_domain_index  = ![SidTypeInvalid, SidTypeUnknown, SidTypeWellKnownGroup]  .contains(&name.Use); // name.DomainIndex   is valid
             let valid_name          = ![SidTypeDomain, SidTypeInvalid, SidTypeUnknown]          .contains(&name.Use); // name.Name          is valid
@@ -86,7 +86,7 @@ impl Value {
 
             if valid_domain_index { // name.DomainIndex is valid
                 if let Some(domain) = domains.get(name.DomainIndex as isize as usize) {
-                    let name = unsafe { core::slice::from_raw_parts(domain.Name.Buffer, (domain.Name.Length/2).into()) };
+                    let name = unsafe { slice::from_nullable_len_ref(domain.Name.Buffer, (domain.Name.Length/2).into()) };
                     append_utf16_lossy(&mut r, name);
                 }
             }
@@ -96,7 +96,7 @@ impl Value {
             }
 
             if valid_name { // name.Name is valid
-                let name = unsafe { core::slice::from_raw_parts(name.Name.Buffer, (name.Name.Length/2).into()) }; // Length is in *bytes*, Buffer is *wchar_t* s
+                let name = unsafe { slice::from_nullable_len_ref(name.Name.Buffer, (name.Name.Length/2).into()) }; // Length is in *bytes*, Buffer is *wchar_t* s
                 append_utf16_lossy(&mut r, name);
             }
 

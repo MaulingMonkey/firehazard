@@ -1,7 +1,7 @@
 use super::*;
 
 use crate::prelude::*;
-use crate::alloc::*;
+use crate::alloc::{CBox, CBoxSized};
 
 use winapi::um::winnt::TOKEN_GROUPS_AND_PRIVILEGES;
 
@@ -27,19 +27,19 @@ impl BoxTokenGroupsAndPrivileges {
     }
 
     /// Sids[.. SidCount]
-    pub fn sids    (&    self) -> &    [sid::AndAttributes] { unsafe { core::slice::from_raw_parts    (self.header().Sids.cast(), usize::from32(self.header().SidCount)) } }
+    pub fn sids    (&    self) -> &    [sid::AndAttributes] { unsafe { slice::from_nullable_len_ref(self.header().Sids.cast(), usize::from32(self.header().SidCount)) } }
     /// Sids[.. SidCount]
-    pub fn sids_mut(&mut self) -> &mut [sid::AndAttributes] { unsafe { core::slice::from_raw_parts_mut(self.header().Sids.cast(), usize::from32(self.header().SidCount)) } }
+    pub fn sids_mut(&mut self) -> &mut [sid::AndAttributes] { unsafe { slice::from_nullable_len_mut(self.header().Sids.cast(), usize::from32(self.header().SidCount)) } }
 
     /// RestrictedSids[.. RestrictedSidCount]
-    pub fn restricted_sids    (&    self) -> &    [sid::AndAttributes] { unsafe { core::slice::from_raw_parts    (self.header().RestrictedSids.cast(), usize::from32(self.header().RestrictedSidCount)) } }
+    pub fn restricted_sids    (&    self) -> &    [sid::AndAttributes] { unsafe { slice::from_nullable_len_ref(self.header().RestrictedSids.cast(), usize::from32(self.header().RestrictedSidCount)) } }
     /// RestrictedSids[.. RestrictedSidCount]
-    pub fn restricted_sids_mut(&mut self) -> &mut [sid::AndAttributes] { unsafe { core::slice::from_raw_parts_mut(self.header().RestrictedSids.cast(), usize::from32(self.header().RestrictedSidCount)) } }
+    pub fn restricted_sids_mut(&mut self) -> &mut [sid::AndAttributes] { unsafe { slice::from_nullable_len_mut(self.header().RestrictedSids.cast(), usize::from32(self.header().RestrictedSidCount)) } }
 
     /// Privileges[.. PrivilegeCount]
-    pub fn privileges    (&    self) -> &    [privilege::LuidAndAttributes] { unsafe { core::slice::from_raw_parts    (self.header().Privileges.cast(), usize::from32(self.header().PrivilegeCount)) } }
+    pub fn privileges    (&    self) -> &    [privilege::LuidAndAttributes] { unsafe { slice::from_nullable_len_ref(self.header().Privileges.cast(), usize::from32(self.header().PrivilegeCount)) } }
     /// Privileges[.. PrivilegeCount]
-    pub fn privileges_mut(&mut self) -> &mut [privilege::LuidAndAttributes] { unsafe { core::slice::from_raw_parts_mut(self.header().Privileges.cast(), usize::from32(self.header().PrivilegeCount)) } }
+    pub fn privileges_mut(&mut self) -> &mut [privilege::LuidAndAttributes] { unsafe { slice::from_nullable_len_mut(self.header().Privileges.cast(), usize::from32(self.header().PrivilegeCount)) } }
 
     /// AuthenticationId
     pub fn authentication_id(&self) -> Luid { self.header().AuthenticationId.into() }
