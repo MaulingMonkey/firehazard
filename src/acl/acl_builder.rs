@@ -61,13 +61,13 @@ impl Builder {
     ///
     pub fn add_access_allowed_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:   acl::Revision,
-        access_mask:    token::AccessRights,
+        access_mask:    impl Into<access::Mask>,
         sid:            impl Into<sid::Ptr<'sid>>,
     ) -> firehazard::Result<&'acl mut Self> {
         firehazard::Error::get_last_if(FALSE == unsafe { AddAccessAllowedAce(
             self.as_winapi(),
             ace_revision.into(),
-            access_mask.into(),
+            access_mask.into().into(),
             sid.into().as_psid(),
         )})?;
         Ok(self)
@@ -80,14 +80,14 @@ impl Builder {
     pub fn add_access_allowed_ace_ex<'acl, 'sid>(&'acl mut self,
         ace_revision:   acl::Revision,
         ace_flags:      ace::Flags,
-        access_mask:    token::AccessRights,
+        access_mask:    impl Into<access::Mask>,
         sid:            impl Into<sid::Ptr<'sid>>,
     ) -> firehazard::Result<&'acl mut Self> {
         firehazard::Error::get_last_if(FALSE == unsafe { AddAccessAllowedAceEx(
             self.as_winapi(),
             ace_revision.into(),
             ace_flags.into(),
-            access_mask.into(),
+            access_mask.into().into(),
             sid.into().as_psid(),
         )})?;
         Ok(self)
@@ -100,7 +100,7 @@ impl Builder {
     pub fn add_access_allowed_object_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:               acl::Revision,
         ace_flags:                  ace::Flags,
-        access_mask:                token::AccessRights,
+        access_mask:                impl Into<access::Mask>,
         object_type_guid:           impl Into<Option<GUID>>,
         inherited_object_type_guid: impl Into<Option<GUID>>,
         sid:                        impl Into<sid::Ptr<'sid>>,
@@ -109,7 +109,7 @@ impl Builder {
             self.as_winapi(),
             ace_revision.into(),
             ace_flags.into(),
-            access_mask.into(),
+            access_mask.into().into(),
             object_type_guid.into().as_mut().map_or(null_mut(), |g| g),
             inherited_object_type_guid.into().as_mut().map_or(null_mut(), |g| g),
             sid.into().as_psid()
@@ -123,13 +123,13 @@ impl Builder {
     ///
     pub fn add_access_denied_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:   acl::Revision,
-        access_mask:    token::AccessRights,
+        access_mask:    impl Into<access::Mask>,
         sid:            impl Into<sid::Ptr<'sid>>,
     ) -> firehazard::Result<&'acl mut Self> {
         firehazard::Error::get_last_if(FALSE == unsafe { AddAccessDeniedAce(
             self.as_winapi(),
             ace_revision.into(),
-            access_mask.into(),
+            access_mask.into().into(),
             sid.into().as_psid(),
         )})?;
         Ok(self)
@@ -142,14 +142,14 @@ impl Builder {
     pub fn add_access_denied_ace_ex<'acl, 'sid>(&'acl mut self,
         ace_revision:   acl::Revision,
         ace_flags:      ace::Flags,
-        access_mask:    token::AccessRights,
+        access_mask:    impl Into<access::Mask>,
         sid:            impl Into<sid::Ptr<'sid>>,
     ) -> firehazard::Result<&'acl mut Self> {
         firehazard::Error::get_last_if(FALSE == unsafe { AddAccessDeniedAceEx(
             self.as_winapi(),
             ace_revision.into(),
             ace_flags.into(),
-            access_mask.into(),
+            access_mask.into().into(),
             sid.into().as_psid(),
         )})?;
         Ok(self)
@@ -162,7 +162,7 @@ impl Builder {
     pub fn add_access_denied_object_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:               acl::Revision,
         ace_flags:                  ace::Flags,
-        access_mask:                token::AccessRights,
+        access_mask:                impl Into<access::Mask>,
         object_type_guid:           impl Into<Option<GUID>>,
         inherited_object_type_guid: impl Into<Option<GUID>>,
         sid:                        impl Into<sid::Ptr<'sid>>,
@@ -171,7 +171,7 @@ impl Builder {
             self.as_winapi(),
             ace_revision.into(),
             ace_flags.into(),
-            access_mask.into(),
+            access_mask.into().into(),
             object_type_guid.into().as_mut().map_or(null_mut(), |g| g),
             inherited_object_type_guid.into().as_mut().map_or(null_mut(), |g| g),
             sid.into().as_psid()
@@ -208,7 +208,7 @@ impl Builder {
     pub fn add_audit_access_object_ace<'acl, 'sid>(&'acl mut self,
         ace_revision:               acl::Revision,
         ace_flags:                  ace::Flags,
-        access_mask:                token::AccessRights,
+        access_mask:                impl Into<access::Mask>,
         object_type_guid:           impl Into<Option<GUID>>,
         inherited_object_type_guid: impl Into<Option<GUID>>,
         sid:                        impl Into<sid::Ptr<'sid>>,
@@ -219,7 +219,7 @@ impl Builder {
             self.as_winapi(),
             ace_revision.into(),
             ace_flags.into(),
-            access_mask.into(),
+            access_mask.into().into(),
             object_type_guid.into().as_mut().map_or(null_mut(), |g| g),
             inherited_object_type_guid.into().as_mut().map_or(null_mut(), |g| g),
             sid.into().as_psid(),
