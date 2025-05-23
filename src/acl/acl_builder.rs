@@ -22,7 +22,7 @@ pub struct Builder {
     acl:    ACL,
 }
 
-impl<'a> From<&'a mut Builder> for acl::Ptr<'a> { fn from(b: &'a mut Builder) -> Self { b.as_acl_ptr() } }
+impl<'a> From<&'a mut Builder> for acl::Ref<'a> { fn from(b: &'a mut Builder) -> Self { b.as_acl() } }
 
 impl Builder {
     #[doc(alias = "InitializeAcl")]
@@ -41,13 +41,13 @@ impl Builder {
 
     fn as_winapi(&mut self) -> *mut ACL { unsafe { &mut self.u.acl } }
     fn as_winapi_const(&self) -> *mut ACL { unsafe { &self.u.acl as *const _ as *mut _ } }
-    pub fn as_acl_ptr(&self) -> acl::Ptr { unsafe { acl::Ptr::from_raw_unchecked(&self.u.acl as *const _ as *mut _) } }
-    #[allow(dead_code)] pub(crate) fn as_bytes(&self) -> &[u8] { let len = usize::from32(self.as_acl_ptr().get_acl_size_information().AclBytesInUse); unsafe { &self.u.bytes[..len] } }
+    pub fn as_acl(&self) -> acl::Ref { unsafe { acl::Ref::from_raw_unchecked(NonNull::new_unchecked((&raw const self.u.acl).cast_mut())) } }
+    #[allow(dead_code)] pub(crate) fn as_bytes(&self) -> &[u8] { let len = usize::from32(self.as_acl().get_acl_size_information().AclBytesInUse); unsafe { &self.u.bytes[..len] } }
 
 
     pub fn finish(&mut self) -> firehazard::Result<&mut Self> {
         // TODO: eliminate the need for this by only temporarilly growing AclSize immediately before add_*_ace and then shrinking it afterwards?
-        let size = self.as_acl_ptr().get_acl_size_information().AclBytesInUse;
+        let size = self.as_acl().get_acl_size_information().AclBytesInUse;
         let size = u16::try_from(size).map_err(|_| ERROR_ALLOTTED_SPACE_EXCEEDED)?;
         self.u.acl.AclSize = size;
         Ok(self)
@@ -186,9 +186,8 @@ impl Builder {
     pub fn add_acl(&mut self,
         ace_revision:           acl::Revision,
         starting_ace_index:     u32,
-        acl:                    acl::Ptr
+        acl:                    acl::Ref
     ) -> firehazard::Result<&mut Self> {
-        if acl.as_pacl().is_null() { return Err(Error(ERROR_INVALID_PARAMETER)); }
         let size : u16 = acl.aces().map(|a| a.header().size).sum();
         let ptr = acl.aces().as_ptr().cast();
         firehazard::Error::get_last_if(FALSE == unsafe { AddAce(
@@ -270,14 +269,14 @@ impl Builder {
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-getace)\]
     /// GetAce
     ///
-    pub fn get_ace(&self, ace_index: u32) -> firehazard::Result<ace::Ptr> {
+    pub fn get_ace(&self, ace_index: u32) -> firehazard::Result<ace::Ref> {
         let mut ace = null_mut();
         firehazard::Error::get_last_if(FALSE == unsafe { GetAce(
             self.as_winapi_const(),
             ace_index,
             &mut ace,
         )})?;
-        unsafe { ace::Ptr::from_raw(ace.cast()) }.ok_or(Error(ERROR_INVALID_HANDLE))
+        unsafe { ace::Ref::from_raw(ace.cast()) }.ok_or(Error(ERROR_INVALID_HANDLE))
     }
 
     // https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setaclinformation

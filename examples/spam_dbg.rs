@@ -19,7 +19,7 @@ fn main() {
     dbgl!(t.privileges().unwrap().privileges());
     dbg!(t.owner());
     dbg!(t.primary_group());
-    dbgl!(t.default_dacl().unwrap().default_dacl().aces());
+    dbgl!(t.default_dacl().unwrap().default_dacl().unwrap().aces());
     dbg!(t.source());
     dbg!(t.ty());
     dbg!(t.impersonation_level());

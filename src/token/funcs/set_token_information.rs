@@ -18,7 +18,7 @@ use winapi::um::winnt::*;
 /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\]
 /// `SetTokenInformation(self, TokenDefaultDacl, ...)`
 ///
-pub fn default_dacl<'acl>(token: &token::OwnedHandle, dacl: impl Into<acl::Ptr<'acl>>) -> firehazard::Result<()> { unsafe { raw_fixed(token, TokenDefaultDacl, &TOKEN_DEFAULT_DACL { DefaultDacl: dacl.into().as_pacl() }) } }
+pub fn default_dacl<'acl>(token: &token::OwnedHandle, dacl: impl acl::InNullOrRef<'acl>) -> firehazard::Result<()> { unsafe { raw_fixed(token, TokenDefaultDacl, &TOKEN_DEFAULT_DACL { DefaultDacl: dacl.into_ptr().map_or(null_mut(), |r| r.as_pacl().as_ptr()) }) } }
 
 
 
@@ -37,7 +37,7 @@ impl token::OwnedHandle {
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-settokeninformation)\]
     /// `SetTokenInformation(self, TokenDefaultDacl, ...)`
     ///
-    pub fn set_default_dacl<'acl>(&self, dacl: impl Into<acl::Ptr<'acl>>) -> firehazard::Result<()> { default_dacl(self, dacl) }
+    pub fn set_default_dacl<'acl>(&self, dacl: impl acl::InNullOrRef<'acl>) -> firehazard::Result<()> { default_dacl(self, dacl) }
 
 
 

@@ -94,7 +94,7 @@ fn server(mut args: std::env::Args) {
     let mut dacl = acl::Builder::new(rev);
     dacl.add_access_allowed_ace(rev, file::GENERIC_READ | file::GENERIC_WRITE, logon).unwrap(); // If the client needs to open the pipe for read or write, the server needs the other, even though it's creating the pipe.
     dacl.finish().unwrap(); // TODO: gross
-    let security_descriptor = security::DescriptorBuilder::new().dacl(true, Some(dacl.as_acl_ptr()), false).unwrap().finish(); // TODO: dacl.as_acl_ptr() is also gross
+    let security_descriptor = security::DescriptorBuilder::new().dacl(&mut dacl, false).unwrap().finish();
     let security_attributes = security::Attributes::new(Some(&security_descriptor), false);
 
     thread::scope(|s|{

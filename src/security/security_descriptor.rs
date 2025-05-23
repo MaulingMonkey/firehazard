@@ -9,7 +9,7 @@ use winapi::um::winnt::*;
 ///
 #[repr(transparent)] pub struct Descriptor<'b> {
     pub(super) desc:    SECURITY_DESCRIPTOR,
-    pub(super) phantom: PhantomData<(sid::Ptr<'b>, acl::Ptr<'b>)>,
+    pub(super) phantom: PhantomData<(sid::Ptr<'b>, acl::Ref<'b>)>,
 }
 
 unsafe impl Send for Descriptor<'_> {}

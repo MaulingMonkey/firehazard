@@ -41,16 +41,24 @@ impl<'builder> DescriptorBuilder<'builder> {
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setsecuritydescriptordacl)\]
     /// SetSecurityDescriptorDacl
     ///
+    /// ### Arguments
+    ///
+    /// | `dacl`            | Present   | Behavior  |
+    /// | ------------------| ----------| ----------|
+    /// | [`acl::Default`]  | false     | Default DACL for object type
+    /// | [`acl::Null`]     | true      | ❌ All access for everyone, no security! ❌
+    /// | [`acl::Ref`]      | true      | A custom DACL
+    ///
     pub fn dacl<'acl>(
         mut self,
-        dacl_present:       bool,
-        dacl:               impl Into<Option<acl::Ptr<'acl>>>,
+        dacl:               impl acl::InDefaultOrNullOrRef<'acl>,
         dacl_defaulted:     bool,
     ) -> firehazard::Result<DescriptorBuilder<'acl>> where 'builder : 'acl {
+        let (present, dacl) = dacl.into_present_ptr();
         firehazard::Error::get_last_if(FALSE == unsafe { SetSecurityDescriptorDacl(
             self.as_pdesc(),
-            dacl_present as _,
-            dacl.into().map_or(null_mut(), |o| o.as_pacl()),
+            present as _,
+            dacl.map_or(null_mut(), |p| p.as_pacl().as_ptr()),
             dacl_defaulted as _,
         )})?;
         Ok(self)
@@ -97,16 +105,24 @@ impl<'builder> DescriptorBuilder<'builder> {
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/securitybaseapi/nf-securitybaseapi-setsecuritydescriptorsacl)\]
     /// SetSecurityDescriptorSacl
     ///
+    /// ### Arguments
+    ///
+    /// | `sacl`            | Present   | Behavior  |
+    /// | ------------------| ----------| ----------|
+    /// | [`acl::Default`]  | false     | Default SACL for object type
+    /// | [`acl::Null`]     | true      | ❌ All access for everyone? No security? ❌
+    /// | [`acl::Ref`]      | true      | A custom SACL
+    ///
     pub fn sacl<'acl>(
         mut self,
-        sacl_present:       bool,
-        sacl:               impl Into<Option<acl::Ptr<'acl>>>,
+        sacl:               impl acl::InDefaultOrNullOrRef<'acl>,
         sacl_defaulted:     bool,
     ) -> firehazard::Result<DescriptorBuilder<'acl>> where 'builder : 'acl {
+        let (present, sacl) = sacl.into_present_ptr();
         firehazard::Error::get_last_if(FALSE == unsafe { SetSecurityDescriptorSacl(
             self.as_pdesc(),
-            sacl_present as _,
-            sacl.into().map_or(null_mut(), |o| o.as_pacl()),
+            present as _,
+            sacl.map_or(null_mut(), |p| p.as_pacl().as_ptr()),
             sacl_defaulted as _,
         )})?;
         Ok(self)

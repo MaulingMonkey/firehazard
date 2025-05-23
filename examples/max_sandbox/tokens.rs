@@ -37,7 +37,7 @@ pub fn create(target: &crate::settings::Target) -> Tokens {
         // under the thread's current access token (currently done before `revert_to_self()`, so `permissive`).
         // `permissive` is currently restricted to only "Everyone" and "LogonSession_x_yyyyyyy" - the latter seems narrower, so we grant access to it.
         let mut acl = acl::Builder::new(acl::REVISION);
-        acl.add_acl(acl::REVISION, 0, restricted.default_dacl().unwrap().default_dacl()).unwrap(); // allow debuggers to attach, task managers to kill, etc.
+        acl.add_acl(acl::REVISION, 0, restricted.default_dacl().unwrap().default_dacl().unwrap()).unwrap(); // allow debuggers to attach, task managers to kill, etc.
         acl.add_access_allowed_ace(acl::REVISION, token::ADJUST_DEFAULT | token::QUERY, logon_session_sid).unwrap();
         acl.finish().unwrap();
         restricted.set_default_dacl(&mut acl).unwrap();

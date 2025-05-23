@@ -16,14 +16,16 @@ use core::fmt::{self, Debug, Formatter};
 
 impl BoxTokenDefaultDacl {
     pub unsafe fn from_raw(cbs: CBoxSized<TOKEN_DEFAULT_DACL>) -> Self {
-        let acl_bytes = assert_valid_ptr_bytes(&cbs, cbs.DefaultDacl, 1);
-        unsafe { acl::Ptr::from_raw(cbs.DefaultDacl, acl_bytes) }.unwrap(); // this isn't 100% safe yet
+        NonNull::new(cbs.DefaultDacl).map(|dacl| {
+            let acl_bytes = assert_valid_ptr_bytes(&cbs, cbs.DefaultDacl, 1);
+            unsafe { acl::Ref::from_raw(dacl, acl_bytes) }.unwrap(); // this isn't 100% safe yet
+        });
         Self(cbs.into())
     }
 
     /// DefaultDacl
-    pub fn default_dacl<'s>(&'s self) -> acl::Ptr<'s> {
-        unsafe { acl::Ptr::from_raw_unchecked(self.0.DefaultDacl) }
+    pub fn default_dacl<'s>(&'s self) -> Option<acl::Ref<'s>> {
+        NonNull::new(self.0.DefaultDacl).map(|dacl| unsafe { acl::Ref::from_raw_unchecked(dacl) })
     }
 }
 
@@ -31,4 +33,14 @@ impl Debug for BoxTokenDefaultDacl {
     fn fmt(&self, fmt: &mut Formatter) -> fmt::Result {
         fmt.debug_struct("BoxTokenDefaultDacl").field("default_dacl", &self.default_dacl()).finish()
     }
+}
+
+
+
+#[test] fn null_default_dacl() {
+    let t = open_process_token(get_current_process(), token::ALL_ACCESS).unwrap();
+    let t = create_restricted_token(&t, None, None, None, None).unwrap();
+    assert!(t.default_dacl().unwrap().default_dacl().is_some());
+    t.set_default_dacl(acl::Null).unwrap();
+    assert!(t.default_dacl().unwrap().default_dacl().is_none());
 }

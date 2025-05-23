@@ -17,6 +17,8 @@ use winapi::um::winnt::ACE_HEADER;
 #[derive(Clone, Copy, Debug)] #[repr(C, align(4))] pub struct Header {
     pub ty:     ace::Type,
     pub flags:  ace::Flags,
+
+    /// Size of the ACE, in bytes, including this `Header`.
     pub size:   u16,
 }
 
