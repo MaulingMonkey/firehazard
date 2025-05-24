@@ -1,6 +1,5 @@
 use firehazard::*;
 use firehazard::process::ThreadAttributeList;
-use winapi::shared::winerror::ERROR_NOT_SUPPORTED;
 
 
 
@@ -92,24 +91,19 @@ impl<'s> List<'s> {
             inherit,
             component_filter,
         ].into_iter().flatten().collect::<Vec<_>>();
-        let mut n = list.len();
-        let min = n - if component_filter.is_some() { 1 } else { 0 }; // component_filter is optional
 
-        loop {
-            match process::ThreadAttributeList::try_from(&list[..n]) {
-                Ok(list) => return list,
-                Err(err) if err == ERROR_NOT_SUPPORTED && n > min => n -= 1,
-                err => {
-                    dbg!(mitigation_policy  .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
-                    dbg!(child_policy       .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
-                    dbg!(dab_policy         .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
-                    dbg!(component_filter   .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
-                    dbg!(protection_level   .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
-                    dbg!(job_list           .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
-                    dbg!(inherit            .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
-                    err.unwrap();
-                },
-            }
+        match process::ThreadAttributeList::try_from(&list[..]) {
+            Ok(list) => return list,
+            Err(err) => {
+                dbg!(mitigation_policy  .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
+                dbg!(child_policy       .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
+                dbg!(dab_policy         .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
+                dbg!(component_filter   .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
+                dbg!(protection_level   .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
+                dbg!(job_list           .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
+                dbg!(inherit            .map(|p| process::ThreadAttributeList::try_from(&[p][..]).err()));
+                panic!("unable to create process::ThreadAttributeList: {err:?}")
+            },
         }
     }
 }

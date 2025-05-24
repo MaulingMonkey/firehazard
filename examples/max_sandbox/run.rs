@@ -7,6 +7,8 @@ use winapi::um::winbase::*;
 
 
 pub fn all() {
+    let os_supported = shared::OsSupported::query();
+
     // TODO: make desktop available to low/untrusted integrity processes (currently requires Medium integrity)
     let _alt_desktop = create_desktop_a(c"max_sandbox_desktop", (), None, None, access::GENERIC_ALL, None).unwrap();
     for target in settings::Target::list() {
@@ -15,11 +17,11 @@ pub fn all() {
         } else {
             println!("sandboxing {}", target.exe.display());
         }
-        one(target);
+        one(target, &os_supported);
     }
 }
 
-pub fn one(target: settings::Target) {
+pub fn one(target: settings::Target, os_supported: &shared::OsSupported) {
     assert!(target.spawn.integrity >= target.lockdown.integrity, "target.lockdown.integrity cannot be more permissive than spawn integrity");
 
     let tokens = tokens::create(&target);
@@ -28,7 +30,13 @@ pub fn one(target: settings::Target) {
 
     let (_read, write) = pipe::create(Some(&security::Attributes::new(None, true)), 0).unwrap();
     let job = job::create();
-    let original_attribute_list = attribute::List::new(&target, &job, vec![(&write).into()]);
+    let original_attribute_list = {
+        let mut list = attribute::List::new(&target, &job, vec![(&write).into()]);
+        list.component_filter   = list.component_filter.and_then(|a| os_supported.components.map(|b| a & b));
+        list.child_policy       = list.child_policy.filter(|&c| os_supported.is_child_process_policy_supported(c));
+        list
+    };
+
     let mut attribute_list = original_attribute_list.clone();
 
     let environment = format!(
@@ -91,23 +99,6 @@ pub fn one(target: settings::Target) {
         ("removing process::creation::mitigation_policy2::*",                                           |o, list| { *list = o.clone(); list.mitigation_policy.as_mut().map(|p| *p = process::creation::MitigationPolicy::from((true  * p.flags1(), false * p.flags2()))); }),
         ("removing process::creation::mitigation_policy::*",                                            |o, list| { *list = o.clone(); list.mitigation_policy.as_mut().map(|p| *p = process::creation::MitigationPolicy::from((false * p.flags1(), true  * p.flags2()))); }),
         ("removing the mitigation policy outright",                                                     |o, list| *list = attribute::List { mitigation_policy:  None, .. o.clone() }),
-        ("removing the child policy",                                                                   |o, list| *list = attribute::List { child_policy:       None, .. o.clone() }),
-        ("removing the dab policy",                                                                     |o, list| *list = attribute::List { dab_policy:         None, .. o.clone() }),
-        ("removing the component filter",                                                               |o, list| *list = attribute::List { component_filter:   None, .. o.clone() }),
-        ("removing the protection level",                                                               |o, list| *list = attribute::List { protection_level:   None, .. o.clone() }),
-        ("removing the job list",                                                                       |o, list| *list = attribute::List { job_list:           None, .. o.clone() }),
-        ("removing the inherited handles list",                                                         |o, list| *list = attribute::List { inherit:            None, .. o.clone() }),
-
-        ("removing most attributes", |o, list| {
-            *list = o.clone();
-            list.mitigation_policy  = None;
-            list.child_policy       = None;
-            list.dab_policy         = None;
-            list.component_filter   = None;
-            list.protection_level   = None;
-            list.job_list           = None;
-            list.inherit            = None;
-        }),
     ].iter();
     let _ = modifications.next(); // skip typing
 
