@@ -19,7 +19,7 @@ fn main() {
         ;
     let token = open_process_token(get_current_process(), access).unwrap();
     token.privileges_remove_if(|p| p == se_shutdown).unwrap();
-    // FOOTGUN: don't just use privileges_disable_if - `SeShutdownPRivilege` is already disabled, and disabled privileges can be re-enabled, as `shutdown` will!
+    // FOOTGUN: don't just use privileges_disable_if - `SeShutdownPrivilege` is already disabled, and disabled privileges can be re-enabled, as `shutdown` will!
 
     // Locked down
     let r = shutdown("/s /t 3600");
