@@ -1,0 +1,258 @@
+{
+    "version":          "2.0.0",
+    "problemMatcher":   "$rustc",
+    "type":             "shell",
+    "presentation":     { "clear": true, "panel": "shared", "reveal": "always" },
+    //"options":          { "env": { "RUST_BACKTRACE": "1" } },
+    "tasks": [
+        {
+            "label":    "build/test",
+            "command":  "scripts\\build.cmd",
+            "group":    { "kind": "build", "isDefault": true }
+        },
+        {
+            "label":    "help",
+            "command":  "cargo +stable doc --target-dir=target\\docs --package firehazard --all-features --open",
+        },
+        {
+            "label":    "check-file",
+            "command":  "scripts\\check.cmd ${relativeFile}",
+        },
+
+
+
+        { "label": "clean",             "dependsOn": ["clean • common", "clean • no-std"] },
+        { "label": "clean • common",    "command": "cargo clean" },
+        { "label": "clean • no-std",    "command": "cargo clean", "options": { "cwd": "${workspaceFolder}/crates/no-std" } },
+
+        {
+            "label":        "build • nightly • examples • *",
+            "dependsOn":    ["build • nightly • examples • no-std", "build • nightly • examples • common"],
+        },
+        {
+            "label":        "build • nightly • examples • no-std",
+            "command":      "cargo +nightly build --release --examples --target=x86_64-pc-windows-msvc -Zbuild-std=core",
+            "options":      { "env": { "CARGO_TARGET_DIR": "target\\nightly", "cwd": "${workspaceFolder}/crates/no-std" } },
+        },
+        {
+            "label":        "build • nightly • examples • common",
+            "command":      "cargo +nightly build --release --examples --target=x86_64-pc-windows-msvc -Zbuild-std=core",
+            "options":      { "env": { "CARGO_TARGET_DIR": "target\\nightly" } },
+        },
+
+
+
+        {
+            "label":    "scripts\\build-basic",
+            "command":  "scripts\\build-basic",
+        },
+        {
+            "label":    "scripts\\build-nightly",
+            "command":  "scripts\\build-nightly",
+        },
+        {
+            "label":    "scripts\\build-no-features",
+            "command":  "scripts\\build-no-features",
+        },
+
+
+
+        // crates\no-std\examples
+        {
+            // XXX: broken (missing symbols like memcpy etc.)
+            "label":    "cargo build --example trivial",
+            "command":  "cargo build --example trivial",
+            "options":  { "cwd": "${workspaceFolder}/crates/no-std" },
+        },
+        {
+            "label":    "cargo build --example trivial --release",
+            "command":  "cargo build --example trivial --release",
+            "options":  { "cwd": "${workspaceFolder}/crates/no-std" },
+        },
+
+        // crates\wasm\examples
+        {
+            "label":    "cargo build --example run-wasmer",
+            "command":  "cargo build --example run-wasmer",
+            "options":  { "cwd": "${workspaceFolder}/crates/wasm" },
+        },
+        {
+            "label":    "cargo build --example run-wasmer --release",
+            "command":  "cargo build --example run-wasmer --release",
+            "options":  { "cwd": "${workspaceFolder}/crates/wasm" },
+        },
+        {
+            "label":    "cargo build --example run-wasmtime",
+            "command":  "cargo build --example run-wasmtime",
+            "options":  { "cwd": "${workspaceFolder}/crates/wasm" },
+        },
+        {
+            "label":    "cargo build --example run-wasmtime --release",
+            "command":  "cargo build --example run-wasmtime --release",
+            "options":  { "cwd": "${workspaceFolder}/crates/wasm" },
+        },
+
+        // examples
+        {
+            "label":    "cargo build --examples",
+            "command":  "cargo build --examples",
+        },
+        {
+            "label":    "cargo build --examples --release",
+            "command":  "cargo build --examples --release",
+        },
+        {
+            "label":    "cargo build --example max_sandbox",
+            "command":  "cargo build --example max_sandbox",
+        },
+        {
+            "label":    "cargo build --example max_sandbox --release",
+            "command":  "cargo build --example max_sandbox --release",
+        },
+        {
+            "label":    "cargo build --example less_trivial",
+            "command":  "cargo build --example less_trivial",
+        },
+        {
+            "label":    "cargo build --example less_trivial --release",
+            "command":  "cargo build --example less_trivial --release",
+        },
+        {
+            "label":    "cargo build --example pipe_chat",
+            "command":  "cargo build --example pipe_chat",
+        },
+        {
+            "label":    "cargo build --example pipe_chat --release",
+            "command":  "cargo build --example pipe_chat --release",
+        },
+        {
+            "label":    "cargo build --example query_os_support",
+            "command":  "cargo build --example query_os_support",
+        },
+        {
+            "label":    "cargo build --example query_os_support --release",
+            "command":  "cargo build --example query_os_support --release",
+        },
+        {
+            "label":    "cargo build --example restrict_child_shutdown",
+            "command":  "cargo build --example restrict_child_shutdown",
+        },
+        {
+            "label":    "cargo build --example restrict_child_shutdown --release",
+            "command":  "cargo build --example restrict_child_shutdown --release",
+        },
+        {
+            "label":    "cargo build --example restrict_self_integrity",
+            "command":  "cargo build --example restrict_self_integrity",
+        },
+        {
+            "label":    "cargo build --example restrict_self_integrity --release",
+            "command":  "cargo build --example restrict_self_integrity --release",
+        },
+        {
+            "label":    "cargo build --example restrict_self_policy",
+            "command":  "cargo build --example restrict_self_policy",
+        },
+        {
+            "label":    "cargo build --example restrict_self_policy --release",
+            "command":  "cargo build --example restrict_self_policy --release",
+        },
+        {
+            "label":    "cargo build --example restrict_self_shutdown",
+            "command":  "cargo build --example restrict_self_shutdown",
+        },
+        {
+            "label":    "cargo build --example restrict_self_shutdown --release",
+            "command":  "cargo build --example restrict_self_shutdown --release",
+        },
+        {
+            "label":    "cargo build --example spam_dbg",
+            "command":  "cargo build --example spam_dbg",
+        },
+        {
+            "label":    "cargo build --example spam_dbg --release",
+            "command":  "cargo build --example spam_dbg --release",
+        },
+        {
+            "label":    "cargo build --example ui_basic_window",
+            "command":  "cargo build --example ui_basic_window",
+        },
+        {
+            "label":    "cargo build --example ui_basic_window --release",
+            "command":  "cargo build --example ui_basic_window --release",
+        },
+        {
+            "label":    "cargo build --example ui_d3d9_window",
+            "command":  "cargo build --example ui_d3d9_window",
+        },
+        {
+            "label":    "cargo build --example ui_d3d9_window --release",
+            "command":  "cargo build --example ui_d3d9_window --release",
+        },
+        {
+            "label":    "cargo build --example ui_d3d11_window",
+            "command":  "cargo build --example ui_d3d11_window",
+        },
+        {
+            "label":    "cargo build --example ui_d3d11_window --release",
+            "command":  "cargo build --example ui_d3d11_window --release",
+        },
+        {
+            "label":    "cargo build --example ui_switch_desktop",
+            "command":  "cargo build --example ui_switch_desktop",
+        },
+        {
+            "label":    "cargo build --example ui_switch_desktop --release",
+            "command":  "cargo build --example ui_switch_desktop --release",
+        },
+
+
+
+        {
+            "label":        "backup-wiki",
+            "command":      "scripts\\backup-wiki.cmd",
+        },
+        {
+            "label":        "git push github master",
+            "command":      "git push github master",
+        },
+        {
+            "label":        "gitk --all",
+            "command":      "gitk --all || ver",
+            "presentation": { "reveal": "never", "close": true }
+        },
+        {
+            "label":        "git commit --amend",
+            "command":      "git commit --amend",
+            "presentation": { "reveal": "never", "close": true }
+        },
+        {
+            "label":        "open issues",
+            "windows":      { "command": "start \"\"    \"https://github.com/MaulingMonkey/firehazard/issues\"" },
+            "linux":        { "command": "xdg-open      \"https://github.com/MaulingMonkey/firehazard/issues\"" },
+            "osx":          { "command": "open          \"https://github.com/MaulingMonkey/firehazard/issues\"" },
+            "presentation": { "clear": true, "panel": "shared", "reveal": "silent" },
+        },
+        {
+            "label":        "open repository",
+            "windows":      { "command": "start \"\"    \"https://github.com/MaulingMonkey/firehazard\"" },
+            "linux":        { "command": "xdg-open      \"https://github.com/MaulingMonkey/firehazard\"" },
+            "osx":          { "command": "open          \"https://github.com/MaulingMonkey/firehazard\"" },
+            "presentation": { "clear": true, "panel": "shared", "reveal": "silent" },
+        },
+        {
+            "label":        "open documentation",
+            "windows":      { "command": "start \"\"    \"https://docs.rs/firehazard\"" },
+            "linux":        { "command": "xdg-open      \"https://docs.rs/firehazard\"" },
+            "osx":          { "command": "open          \"https://docs.rs/firehazard\"" },
+            "presentation": { "clear": true, "panel": "shared", "reveal": "silent" },
+        },
+        {
+            "label":        "open file on github",
+            "windows":      { "command": "start \"\"    \"https://github.com/MaulingMonkey/firehazard/blob/master/${relativeFile}\"" },
+            "linux":        { "command": "xdg-open      \"https://github.com/MaulingMonkey/firehazard/blob/master/${relativeFile}\"" },
+            "osx":          { "command": "open          \"https://github.com/MaulingMonkey/firehazard/blob/master/${relativeFile}\"" },
+            "presentation": { "clear": true, "panel": "shared", "reveal": "silent" },
+        },
+    ]
+}
