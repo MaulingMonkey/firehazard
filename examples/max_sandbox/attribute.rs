@@ -96,7 +96,7 @@ impl<'s> List<'s> {
         let min = n - if component_filter.is_some() { 1 } else { 0 }; // component_filter is optional
 
         loop {
-            match process::ThreadAttributeList::try_from(&list[..n-1]) {
+            match process::ThreadAttributeList::try_from(&list[..n]) {
                 Ok(list) => return list,
                 Err(err) if err == ERROR_NOT_SUPPORTED && n > min => n -= 1,
                 err => {
