@@ -109,10 +109,14 @@ fn main() {
         .. Default::default()
     }).unwrap_err(); // ERROR_INVALID_PARAMETER regardless of settings - older windows?
 
-    set_process_mitigation_policy(process::mitigation::UserPointerAuthPolicy {
+    match set_process_mitigation_policy(process::mitigation::UserPointerAuthPolicy {
         enable_pointer_auth_user_ip: true,
         .. Default::default()
-    }).unwrap_err(); // ERROR_INVALID_PARAMETER - not new enough windows?
+    }) {
+        Ok(())                                      => {}, // succeeds on Windows 10 Professional x64 (10.0.19045.5854)
+        Err(err) if err == ERROR_INVALID_PARAMETER  => {}, // failed   on Windows 10 Professional x64 (previous versions)?
+        result                                      => result.expect("unexpected error setting process::mitigation::UserPointerAuthPolicy"),
+    }
 
     set_process_mitigation_policy(process::mitigation::UserShadowStackPolicy {
         block_non_cet_binaries:                 true,
