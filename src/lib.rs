@@ -2,6 +2,7 @@
 #![cfg(windows)]
 
 #![no_std]
+//[debugger_visualizer(natvis_file = r"debug\firehazard.natvis")] // XXX: currently specified via launch.json
 #![cfg_attr(not(std), allow(unused_imports))]
 #![forbid(unsafe_op_in_unsafe_fn)]
 #![deny(unreachable_patterns)]

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <!--
+    References
+        https://learn.microsoft.com/en-us/visualstudio/debugger/create-custom-views-of-native-objects
+        https://learn.microsoft.com/en-us/visualstudio/debugger/format-specifiers-in-cpp
+        https://learn.microsoft.com/en-us/visualstudio/debugger/context-operator-cpp
+    -->
+
+    <Type Name="firehazard::process::process_thread_attribute_list::ThreadAttributeList">
+        <DisplayString>{__0.__0.pointer}</DisplayString>
+        <Expand>
+            <ExpandedItem>__0.__0.pointer</ExpandedItem>
+        </Expand>
+    </Type>
+
+    <Type Name="winapi::um::processthreadsapi::PROC_THREAD_ATTRIBUTE_LIST">
+        <!--
+            Internals of this type are undocumented and based on debugging.
+            https://learn.microsoft.com/en-us/windows/win32/procthread/process-and-thread-functions#process-and-thread-extended-attribute-functions
+        -->
+        <Expand>
+            <Synthetic Name="[present attributes]">
+                <DisplayString>{((unsigned int *)this)[0],b}</DisplayString>
+                <Expand>
+                    <!-- see e.g. `enum _PROC_THREAD_ATTRIBUTE_NUM` in WinBase.h -->
+                    <Item Name="ParentProcess"                  >(((unsigned int *)this)[0] &amp; (1 &lt;&lt;  0)) != 0</Item>
+                    <Item Name="???"                            >(((unsigned int *)this)[0] &amp; (1 &lt;&lt;  1)) != 0</Item>
+                    <Item Name="HandleList"                     >(((unsigned int *)this)[0] &amp; (1 &lt;&lt;  2)) != 0</Item>
+                    <Item Name="GroupAffinity"                  >(((unsigned int *)this)[0] &amp; (1 &lt;&lt;  3)) != 0</Item>
+                    <Item Name="PreferredNode"                  >(((unsigned int *)this)[0] &amp; (1 &lt;&lt;  4)) != 0</Item>
+                    <Item Name="IdealProcessor"                 >(((unsigned int *)this)[0] &amp; (1 &lt;&lt;  5)) != 0</Item>
+                    <Item Name="UmsThread"                      >(((unsigned int *)this)[0] &amp; (1 &lt;&lt;  6)) != 0</Item>
+                    <Item Name="MitigationPolicy"               >(((unsigned int *)this)[0] &amp; (1 &lt;&lt;  7)) != 0</Item>
+                    <Item Name="???"                            >(((unsigned int *)this)[0] &amp; (1 &lt;&lt;  8)) != 0</Item>
+                    <Item Name="SecurityCapabilities"           >(((unsigned int *)this)[0] &amp; (1 &lt;&lt;  9)) != 0</Item>
+                    <Item Name="???"                            >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 10)) != 0</Item>
+                    <Item Name="ProtectionLevel"                >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 11)) != 0</Item>
+                    <Item Name="???"                            >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 12)) != 0</Item>
+                    <Item Name="JobList"                        >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 13)) != 0</Item>
+                    <Item Name="ChildProcessPolicy"             >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 14)) != 0</Item>
+                    <Item Name="AllApplicationPackagesPolicy"   >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 15)) != 0</Item>
+                    <Item Name="Win32kFilter"                   >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 16)) != 0</Item>
+                    <Item Name="SafeOpenPromptOriginClaim"      >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 17)) != 0</Item>
+                    <Item Name="DesktopAppPolicy"               >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 18)) != 0</Item>
+                    <Item Name="???"                            >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 19)) != 0</Item>
+                    <Item Name="???"                            >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 20)) != 0</Item>
+                    <Item Name="???"                            >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 21)) != 0</Item>
+                    <Item Name="PseudoConsole"                  >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 22)) != 0</Item>
+                    <Item Name="???"                            >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 23)) != 0</Item>
+                    <Item Name="MitigationAuditPolicy"          >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 24)) != 0</Item>
+                    <Item Name="MachineType"                    >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 25)) != 0</Item>
+                    <Item Name="ComponentFilter"                >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 26)) != 0</Item>
+                    <Item Name="EnableOptionalXStateFeatures"   >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 27)) != 0</Item>
+                    <Item Name="???"                            >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 28)) != 0</Item>
+                    <Item Name="TrustedApp"                     >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 29)) != 0</Item>
+                    <Item Name="???"                            >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 30)) != 0</Item>
+                    <Item Name="???"                            >(((unsigned int *)this)[0] &amp; (1 &lt;&lt; 31)) != 0</Item>
+                </Expand>
+            </Synthetic>
+            <Item Name="[capacity]"         >((unsigned int *)this)[1]</Item>
+            <Item Name="[size]"             >((unsigned int *)this)[2]</Item>
+            <!--
+            <Item Name="[unknown @ 3]"      >((unsigned int *)this)[3]</Item>
+            <Item Name="[unknown @ 4]"      >((unsigned int *)this)[4]</Item>
+            <Item Name="[unknown @ 5]"      >((unsigned int *)this)[5]</Item>
+            -->
+
+            <CustomListItems MaxItemsPerView="5000">
+                <Variable Name="index"      InitialValue="0" />
+                <Variable Name="size"       InitialValue="((unsigned int *)this)[2]" />
+                <Variable Name="attribute"  InitialValue="((unsigned int *)this) + 6" />
+
+                <Loop Condition="index &lt; size">
+                    <Item Name="[{index}].attribute"  >attribute[0]</Item>
+                    <Item Name="[{index}].size"       >attribute[2]</Item>
+                    <Item Name="[{index}].value"      >*(void**)(attribute+4)</Item>
+                    <!--
+                    <Item Name="[{index}].unknown"    >attribute[1]</Item>
+                    <Item Name="[{index}].unknown"    >attribute[3]</Item>
+                    -->
+                    <Exec>attribute += 4 + sizeof(void*)/4</Exec> <!-- not actually tested on 32-bit -->
+                    <Exec>index += 1</Exec>
+                </Loop>
+            </CustomListItems>
+        </Expand>
+    </Type>
+</AutoVisualizer>

@@ -13,6 +13,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "max_sandbox • release",
@@ -25,6 +26,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "less_trivial • debug",
@@ -37,6 +39,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "less_trivial • release",
@@ -49,6 +52,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "pipe_chat • client • debug",
@@ -62,6 +66,7 @@
             "args":                     ["client"],
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "pipe_chat • client • release",
@@ -75,6 +80,7 @@
             "args":                     ["client"],
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "pipe_chat • server • debug",
@@ -88,6 +94,7 @@
             "args":                     ["server"],
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "pipe_chat • server • release",
@@ -101,6 +108,7 @@
             "args":                     ["server"],
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "query_os_support • debug",
@@ -113,6 +121,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "query_os_support • release",
@@ -125,6 +134,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "restrict_child_shutdown • debug",
@@ -137,6 +147,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "restrict_child_shutdown • release",
@@ -149,6 +160,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "restrict_self_integrity • debug",
@@ -161,6 +173,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "restrict_self_integrity • release",
@@ -173,6 +186,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "restrict_self_policy • debug",
@@ -185,6 +199,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "restrict_self_policy • release",
@@ -197,6 +212,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "restrict_self_shutdown • debug",
@@ -209,6 +225,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "restrict_self_shutdown • release",
@@ -221,6 +238,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "spam_dbg • debug",
@@ -233,6 +251,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "spam_dbg • release",
@@ -245,6 +264,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "ui_basic_window • debug",
@@ -257,6 +277,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "ui_basic_window • release",
@@ -269,6 +290,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "ui_d3d9_window • debug",
@@ -281,6 +303,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "ui_d3d9_window • release",
@@ -293,6 +316,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "ui_d3d11_window • debug",
@@ -305,6 +329,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "ui_d3d11_window • release",
@@ -317,6 +342,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "ui_switch_desktop • debug",
@@ -329,6 +355,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "ui_switch_desktop • release",
@@ -341,6 +368,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
 
 
@@ -358,6 +386,7 @@
             "cwd":                      "${workspaceFolder}/crates/no-std",
             //"environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "trivial • release",
@@ -370,6 +399,7 @@
             "cwd":                      "${workspaceFolder}/crates/no-std",
             //"environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
 
 
@@ -386,6 +416,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "run-wasmer • release",
@@ -398,6 +429,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "run-wasmtime • debug",
@@ -410,6 +442,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
         {
             "name":                     "run-wasmtime • release",
@@ -422,6 +455,7 @@
             "cwd":                      "${workspaceFolder}",
             "environment":              [ { "name": "RUST_BACKTRACE", "value": "1" }, { "name": "VERBOSE", "value": "1" } ],
             "symbolOptions":            { "searchMicrosoftSymbolServer": true },
+            "visualizerFile":           "${workspaceFolder}/src/debug/firehazard.natvis",
         },
     ],
     "compounds": [
