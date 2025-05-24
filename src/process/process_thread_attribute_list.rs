@@ -45,7 +45,7 @@ impl<'a> ThreadAttributeList<'a> {
     /// InitializeProcThreadAttributeList
     ///
     /// ### Errors
-    /// *   `ERROR_INVALID_PARAMETER` if `attributes` > `27` as of Windows 10.0.19043.1889
+    /// *   [`ERROR::INVALID_PARAMETER`]    &mdash; if `attributes` > `27` as of Windows 10.0.19043.1889
     ///
     pub fn with_attribute_capacity(attributes: u32) -> firehazard::Result<Self> {
         let mut bytes = 0;
@@ -58,6 +58,11 @@ impl<'a> ThreadAttributeList<'a> {
     #[doc(alias = "UpdateProcThreadAttribute")]
     /// \[[microsoft.com](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-updateprocthreadattribute)\]
     /// UpdateProcThreadAttribute
+    ///
+    /// ### Errors
+    /// -   [`ERROR::NOT_SUPPORTED`]    &mdash; if e.g. `PROC_THREAD_ATTRIBUTE_COMPONENT_FILTER` isn't supported.
+    /// -   [`ERROR::BAD_LENGTH`]       &mdash; if e.g. `PROC_THREAD_ATTRIBUTE_COMPONENT_FILTER`'s value wasn't exactly 32 bits.
+    /// -   `ERROR::???`                &mdash; the above errors are not an exhaustive list
     ///
     pub fn update<'s>(&'s mut self, ThreadAttributeRef(attribute, value, size, _): ThreadAttributeRef<'a>) -> firehazard::Result<&'s mut Self> where 'a : 's {
         firehazard::Error::get_last_if(FALSE == unsafe { UpdateProcThreadAttribute(
@@ -220,19 +225,32 @@ impl<'a> ThreadAttributeRef<'a> {
     /// ### 0
     /// Protect against nothing.
     ///
-    /// ### COMPONENT_KTM (1)
+    /// ### COMPONENT_KTM (1 << 0)
     /// Blocks access to [Kernel Transaction Manager](https://learn.microsoft.com/en-us/windows/win32/ktm/kernel-transaction-manager-portal) APIs to mitigate
-    /// [CVE-2018-8611](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-8611)
+    /// [CVE-2018-8611](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2018-8611).
     ///
-    /// <https://research.nccgroup.com/2020/04/27/cve-2018-8611-exploiting-windows-ktm-part-1-5-introduction/>
+    /// References:
+    /// *   <https://big5-sec.github.io/posts/component-filter-mitigation/>
+    /// *   [https://research.nccgroup.com/2020/04/27/cve-2018-8611-exploiting-windows-ktm-part-1-5-introduction/](https://web.archive.org/web/20200427131306/https://research.nccgroup.com/2020/04/27/cve-2018-8611-exploiting-windows-ktm-part-1-5-introduction/)
+    /// *   [https://research.nccgroup.com/2020/05/04/cve-2018-8611-exploiting-windows-ktm-part-2-5-patch-analysis-and-basic-triggering/](https://web.archive.org/web/20200510224136/https://research.nccgroup.com/2020/05/04/cve-2018-8611-exploiting-windows-ktm-part-2-5-patch-analysis-and-basic-triggering/)
+    /// *   [https://research.nccgroup.com/2020/05/11/cve-2018-8611-exploiting-windows-ktm-part-3-5-triggering-the-race-condition-and-debugging-tricks/](https://web.archive.org/web/20200516173733/https://research.nccgroup.com/2020/05/11/cve-2018-8611-exploiting-windows-ktm-part-3-5-triggering-the-race-condition-and-debugging-tricks/)
+    /// *   [https://research.nccgroup.com/2020/05/18/cve-2018-8611-exploiting-windows-ktm-part-4-5-from-race-win-to-kernel-read-and-write-primitive/](https://web.archive.org/web/20200525021855/https://research.nccgroup.com/2020/05/18/cve-2018-8611-exploiting-windows-ktm-part-4-5-from-race-win-to-kernel-read-and-write-primitive/)
+    /// *   [https://research.nccgroup.com/2020/05/25/cve-2018-8611-exploiting-windows-ktm-part-5-5-vulnerability-detection-and-a-better-read-write-primitive/](https://web.archive.org/web/20211017104658/https://research.nccgroup.com/2020/05/25/cve-2018-8611-exploiting-windows-ktm-part-5-5-vulnerability-detection-and-a-better-read-write-primitive/)
+    ///
+    /// ### COMPONENT_??? (1 << 1)
+    /// New components will presumably use new bits.
+    /// Please [file an issue](https://github.com/MaulingMonkey/firehazard/issues) if you become aware of new components that aren't documented here!
     ///
     /// ### Platforms
-    /// |     | SKU                  | `ver`            |
-    /// | --- | -------------------- | ---------------- |
-    /// | ✔️ | Windows 10           | 10.0.19043.2251   |
-    /// | ❌ | Windows Server 2019  | 10.0.17763.3534   |
+    /// |     | SKU                                              | `cmd /C ver`                              |
+    /// | --- | ------------------------------------------------ | ----------------------------------------- |
+    /// | ✔️ | Windows Server 2022                              | 10.0.20348.3561                           |
+    /// | ✔️ | Windows 10 Professional                          | 10.0.19045.5854 <br> 10.0.19043.2251      |
+    /// | ❌ | Windows Server 2025 <br> Windows Server 2019     | 10.0.17763.3534                           |
     ///
-    pub fn component_filter_flags(component_flags: &'a DWORD) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_COMPONENT_FILTER, component_flags) } }
+    pub fn component_filter_flags(component_flags: &'a u32) -> Self { unsafe { Self::from_raw(PROC_THREAD_ATTRIBUTE_COMPONENT_FILTER, component_flags) } }
+    // Windows 10 (10.0.19043.2251) will report ERROR_BAD_LENGTH if you attempt to pass a u64 instead.
+    // OTOH it would not suprise me if this is expanded to support larger sets of component flags in future versions of windows?
 
 
 

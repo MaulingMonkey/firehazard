@@ -18,17 +18,32 @@ fn main() {
 fn test_component_filter_flags_support() {
     // 10.0.17763.7240  (x64 Windows Server 2019 or 2025):  unsupported
     // 10.0.19045.5854  (x64 Windows 10 Professional):      supported
+    // 10.0.19043.2251  (x64 Windows 10 Professional):      supported
     // 10.0.20348.3561  (x64 Windows Server 2022):          supported
 
-    for (desc, component) in [
-        ("0",               0),
-        ("COMPONENT_KTM",   1), // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h
+    let col1 = "process::ThreadAttributeRef::component_filter_flags(&…) ";
+    match process::ThreadAttributeList::try_from(&[process::ThreadAttributeRef::component_filter_flags(&0)][..]) {
+        Ok(_)                                   =>        println!("{col1:…<COL1_WIDTH$} supported"),
+        Err(err) if err == ERROR::NOT_SUPPORTED => return println!("{col1:…<COL1_WIDTH$} unsupported"),
+        Err(err)                                => panic!("process::ThreadAttributeRef::component_filter_flags: unsupported, unexpected error creating attribute list: {err:?}"),
+    };
+
+    for (desc,              component   ) in [
+        ("0",               0           ),
+        ("COMPONENT_KTM",   1 <<  0     ), // C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\winnt.h
+        ("(1 <<  1)",       1 <<  1     ), // Not yet implemented/documented?
+        ("(1 << 31)",       1 << 31     ), // Not yet implemented, but still succeeds
     ] {
-        let col1 = format!("process::ThreadAttributeRef::component_filter_flags(&{desc}) ");
-        match process::ThreadAttributeList::try_from(&[process::ThreadAttributeRef::component_filter_flags(&component)][..]) {
-            Ok(_)                                   => println!("{col1:…<COL1_WIDTH$} supported"),
-            Err(err) if err == ERROR::NOT_SUPPORTED => println!("{col1:…<COL1_WIDTH$} not supported"),
-            Err(err)                                => panic!("process::ThreadAttributeRef::component_filter_flags: not supported, unexpected error creating attribute list: {err:?}"),
+        let col1 = format!("    process::ThreadAttributeRef::component_filter_flags(&{desc}) ");
+        let mut si = process::StartupInfoExW::default();
+        si.attribute_list = Some(process::ThreadAttributeList::try_from(&[process::ThreadAttributeRef::component_filter_flags(&component)][..]).expect("should be able to create *any* mitigation policy thread attribute list if we can create one"));
+        let r = create_process_w(cstr16!(""), None, None, None, false, process::EXTENDED_STARTUPINFO_PRESENT, process::environment::Clear, (), &si);
+        match r.as_ref() {
+            //r(&err) if err == ERROR::FILE_NOT_FOUND       => println!("{col1:…<COL1_WIDTH$} supported"),   // never observed
+            Err(&err) if err == ERROR::PATH_NOT_FOUND       => println!("{col1:…<COL1_WIDTH$} supported"),   // failed because "" isn't an executable, not because the attribute was invalid
+            Err(&err) if err == ERROR::INVALID_PARAMETER    => println!("{col1:…<COL1_WIDTH$} unsupported"), // failed because the attribute list contained "invalid" component filters (unrecognized by the current version of Windows)
+            Err(&err)                                       => panic!("{col1} unexpected error while testing for support: {err:?}"),
+            Ok(process)                                     => panic!("{col1} unexpectedly created process {pid} for \"\" while testing OS support", pid = process.process_id),
         }
     }
 }
@@ -44,8 +59,8 @@ fn test_component_filter_flags_support() {
 ///
 fn test_mitigation_policy_support() {
     match process::ThreadAttributeList::try_from(&[process::ThreadAttributeRef::mitigation_policy(&Default::default())][..]) {
-        Err(err) if err == ERROR::NOT_SUPPORTED     => return println!("process::ThreadAttributeRef::mitigation_policy: not supported"),
-        Err(err)                                    => panic!("process::ThreadAttributeRef::mitigation_policy: not supported, unexpected error creating attribute list: {err:?}"),
+        Err(err) if err == ERROR::NOT_SUPPORTED     => return println!("process::ThreadAttributeRef::mitigation_policy: unsupported"),
+        Err(err)                                    => panic!("process::ThreadAttributeRef::mitigation_policy: unsupported, unexpected error creating attribute list: {err:?}"),
         Ok(_) => {
             println!("{:…<COL1_WIDTH$} supported", "process::ThreadAttributeRef::mitigation_policy(&…) ");
 
