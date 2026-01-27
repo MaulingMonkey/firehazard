@@ -13,4 +13,4 @@ firehazard.path             = "../.."
 
 [target."cfg(target_pointer_width=\"64\")".dev-dependencies]
 wasmer                      = "5"
-wasmtime                    = "29" # last version that works with rustc 1.81.0
+wasmtime                    = "36" # last version that works with rustc 1.81.0
